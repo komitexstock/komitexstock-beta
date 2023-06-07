@@ -1,0 +1,315 @@
+import { 
+    View, 
+    Text, 
+    StyleSheet, 
+    TouchableOpacity, 
+    TextInput, 
+    TouchableWithoutFeedback, 
+    Keyboard, 
+    FlatList,
+} from "react-native";
+import NotificationIcon from "../assets/icons/NotificationIcon";
+import SearchIcon from "../assets/icons/SearchIcon";
+import QuickOrderIcon from "../assets/icons/QuickOrderIcon";
+import QuickAnalyticsIcon from "../assets/icons/QuickAnalyticsIcon";
+import QuickInventoryIcon from "../assets/icons/QuickInventoryIcon";
+import QuickWaybiillIcon from "../assets/icons/QuickWaybillIcon";
+import BottomNavigation from "../components/BottomNavigation";
+import Orders from "../components/Orders";
+
+const HomeStack = () => {
+      
+    const orders = [
+        {
+          name: "John Doe",
+          location: "New York",
+          products: [
+            { product_name: "Shirt", quantity: 2 },
+            { product_name: "Jeans", quantity: 1 },
+          ],
+          datetime: "2023-03-15 09:30",
+          id: "abc123",
+          price: 15000,
+          status: "Delivered",
+        },
+        {
+          name: "Jane Smith",
+          location: "London",
+          products: [
+            { product_name: "Shoes", quantity: 1 },
+            { product_name: "Socks", quantity: 3 },
+          ],
+          datetime: "2023-02-22 14:45",
+          id: "def456",
+          price: 13000,
+          status: "Pending",
+        },
+        {
+          name: "Michael Johnson",
+          location: "Los Angeles",
+          products: [
+            { product_name: "Hat", quantity: 1 },
+          ],
+          datetime: "2023-01-10 12:15",
+          id: "ghi789",
+          price: 14000,
+          status: "Dispatched",
+        },
+        {
+          name: "Robert Davis",
+          location: "Berlin",
+          products: [
+            { product_name: "Sunglasses", quantity: 1 },
+          ],
+          datetime: "2023-03-01 11:10",
+          id: "mno345",
+          price: 16000,
+          status: "Canceled",
+        },
+        {
+          name: "Sophia Brown",
+          location: "Tokyo",
+          products: [
+            { product_name: "T-Shirt", quantity: 3 },
+          ],
+          datetime: "2023-02-14 16:55",
+          id: "pqr678",
+          price: 12000,
+          status: "Rescheduled",
+        }
+    ] 
+
+    return (
+        <TouchableWithoutFeedback 
+            onPress={() => Keyboard.dismiss()}
+            style={{backgroundColor: "#f8f8f8"}}
+        >
+            <View style={style.main}>
+                <FlatList 
+                    style={style.homeScrollView}
+                    data={orders}
+                    ListHeaderComponent={() => (
+                        <View style={style.homeWrapper}>
+                            <View style={style.header}>
+                                <View style={style.headerTextContainer}>
+                                    <Text style={style.paragraph}>Welcome back!</Text>
+                                    <Text style={style.heading}> Abayomi Daniel</Text>
+                                </View>
+                                <TouchableOpacity style={style.notificationWrapper}>
+                                    <NotificationIcon />
+                                </TouchableOpacity>
+                            </View>
+                            <View style={style.searchWrapper}>
+                                <SearchIcon />
+                                <TextInput 
+                                    style={style.searchInput}
+                                    placeholder="Search Orders"
+                                    placeholderTextColor="rgba(34, 34, 34, 0.6)"
+                                />
+                            </View>
+                            <View>
+                                <Text style={style.callToActionText}>What do you want to do today?</Text>
+                            </View>
+                            <View style={style.quickAccessWrapper}>
+                                <TouchableOpacity style={style.quickOrder}>
+                                    <QuickOrderIcon />
+                                    <Text style={style.quickActionHeading}>Send an Order</Text>
+                                    <Text style={style.quickActionParagraph}>Make fast deliveries to your customers</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={style.quickInventory}>
+                                    <QuickInventoryIcon />
+                                    <Text style={style.quickActionHeading}>Manage Inventory</Text>
+                                    <Text style={style.quickActionParagraph}>Review and add to your stores inventory</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={style.quickWaybill}>
+                                    <QuickWaybiillIcon />
+                                    <Text style={style.quickActionHeading}>Send Waybill</Text>
+                                    <Text style={style.quickActionParagraph}>Restock your inventory with your preferred partner</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={style.quickAnalytics}>
+                                    <QuickAnalyticsIcon />
+                                    <Text style={style.quickActionHeading}>View Analytics</Text>
+                                    <Text style={style.quickActionParagraph}>Easily view your business growth and analytics</Text>
+                                </TouchableOpacity>
+                            </View>
+                            <View style={style.homeOrders}>
+                                <View style={style.homeOrdersHeader}>
+                                    <Text style={style.homeOrdersHeading}>Recent Orders</Text>
+                                    <TouchableOpacity>
+                                        <Text style={style.seeMore}>
+                                            See more
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </View>
+                    )}
+                    keyExtractor={item => item.id}
+                    renderItem={({item, index}) => (
+                        <Orders item={item} index={index} orders={orders} />
+                    )}
+                />
+                <BottomNavigation />
+            </View>
+        </TouchableWithoutFeedback>
+    );
+}
+
+const style = StyleSheet.create({
+    main: {
+        paddingBottom: 70,
+        backgroundColor: '#f8f8f8',
+    },
+    homeScrollView: {
+        minHeight:  "100%",
+        backgroundColor: '#f8f8f8',
+        paddingHorizontal: 20,
+    },  
+    homeWrapper: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+    },
+    header: {
+        flexDirection: 'row',
+        display: 'flex',
+        justifyContent: 'space-between',
+        height: 100,
+        paddingVertical: 20,
+        alignItems: 'flex-end',
+        width: '100%',
+    },
+    headerTextContainer: {
+        display: 'flex',
+        flexDirection:  'column',
+    },
+    paragraph: {
+        fontFamily: 'mulish-regular',
+        color: 'rgba(34, 34, 34, 0.6)',
+        fontSize: 10,
+    },
+    heading: {
+        color: 'rgb(34, 34, 34)',
+        fontFamily: 'mulish-bold',
+        fontSize: 12,
+    },
+    notificationWrapper: {
+        width: 24,
+        height: 24,
+        backgroundColor: '#ffffff',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 5,
+    },
+    searchWrapper: {
+        height: 40,
+        width: "100%",
+        backgroundColor: '#ffffff',
+        borderRadius: 10,
+        paddingHorizontal: 12,
+        paddingVertical: 10,
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 10,
+        justifyContent: 'flex-start',
+    },
+    searchInput: {
+        flexGrow: 1,
+    },  
+    callToActionText: {
+        color: 'rgba(34, 34, 34, 0.8)',
+        fontFamily: 'mulish-bold',
+        fontSize: 12,
+        marginTop: 20,
+        marginBottom: 10,
+    },
+    quickAccessWrapper: {
+        display: 'flex',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: 20,
+    },
+    quickOrder: {
+        width: '45%',
+        height: 100,
+        flexGrow: 1,
+        backgroundColor: 'rgba(7, 66, 124, 0.05)',
+        borderRadius: 12,
+        display: 'flex',
+        flexDirection: 'column',
+        padding: 15,
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+    },
+    quickInventory: {
+        width: '45%',
+        height: 100,
+        flexGrow: 1,
+        backgroundColor: 'rgba(230, 109, 28, 0.05)',
+        borderRadius: 12,
+        display: 'flex',
+        flexDirection: 'column',
+        padding: 15,
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+    },
+    quickWaybill: {
+        width: '45%',
+        flexGrow: 1,
+        height: 100,
+        backgroundColor: 'rgba(255, 255, 0, 0.05)',
+        borderRadius: 12,
+        display: 'flex',
+        flexDirection: 'column',
+        padding: 15,
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+    },
+    quickAnalytics: {
+        flexGrow: 1,
+        width: '45%',
+        height: 100,
+        backgroundColor: 'rgba(3, 152, 85, 0.05)',
+        borderRadius: 12,
+        display: 'flex',
+        flexDirection: 'column',
+        padding: 15,
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+    },
+    quickActionHeading: {
+        color: 'rgba(34, 34, 34, 1)',
+        fontFamily: 'mulish-bold',
+        fontSize: 12,
+    },
+    quickActionParagraph: {
+        color: 'rgba(34, 34, 34, 0.6)',
+        fontFamily: 'mulish-regular',
+        fontSize: 10,
+    },
+    homeOrders: {
+        width: "100%",
+    },
+    homeOrdersHeader: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        width: "100%",
+        height: 50,
+    },
+    homeOrdersHeading: {
+        fontFamily: 'mulish-bold',
+        color: 'rgba(34, 34, 34, 0.8)',
+    },
+    seeMore: {
+        fontFamily: 'mulish-bold',
+        color: '#07427C',
+    },
+})
+ 
+export default HomeStack;

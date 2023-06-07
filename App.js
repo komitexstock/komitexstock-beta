@@ -1,20 +1,30 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import BottomNav from './components/BottomNav';
+import HomeStack from './stacks/HomeStack';
+import { useCallback } from 'react';
+import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
+
 
 export default function App() {
+
+  const [fontsLoaded] = useFonts({
+    'mulish-regular': require('./assets/fonts/Mulish-Regular.ttf'),
+    'mulish-italic': require('./assets/fonts/Mulish-Italic.ttf'),
+    'mulish-light': require('./assets/fonts/Mulish-Light.ttf'),
+    'mulish-semibold': require('./assets/fonts/Mulish-SemiBold.ttf'),
+    'mulish-bold': require('./assets/fonts/Mulish-Bold.ttf'),
+  });
+
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
   return (
-    <View style={styles.container}>
-      <BottomNav />
-    </View>
+    <HomeStack />
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
