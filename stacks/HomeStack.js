@@ -3,7 +3,6 @@ import {
     Text, 
     StyleSheet, 
     TouchableOpacity, 
-    TextInput, 
     TouchableWithoutFeedback, 
     Keyboard, 
     FlatList,
@@ -14,10 +13,10 @@ import QuickOrderIcon from "../assets/icons/QuickOrderIcon";
 import QuickAnalyticsIcon from "../assets/icons/QuickAnalyticsIcon";
 import QuickInventoryIcon from "../assets/icons/QuickInventoryIcon";
 import QuickWaybiillIcon from "../assets/icons/QuickWaybillIcon";
-import BottomNavigation from "../components/BottomNavigation";
 import Orders from "../components/Orders";
+import { useStackUpdate } from "../context/AppContext";
 
-const HomeStack = () => {
+const HomeStack = ({navigation}) => {
       
     const orders = [
         {
@@ -79,6 +78,8 @@ const HomeStack = () => {
         }
     ] 
 
+    const setCurrentStack = useStackUpdate();
+
     return (
         <TouchableWithoutFeedback 
             onPress={() => Keyboard.dismiss()}
@@ -101,11 +102,9 @@ const HomeStack = () => {
                             </View>
                             <View style={style.searchWrapper}>
                                 <SearchIcon />
-                                <TextInput 
-                                    style={style.searchInput}
-                                    placeholder="Search Orders"
-                                    placeholderTextColor="rgba(34, 34, 34, 0.6)"
-                                />
+                                <TouchableOpacity style={style.searchInput}>
+                                    <Text style={style.searchPlaceholder}>Search Orders</Text>
+                                </TouchableOpacity>
                             </View>
                             <View>
                                 <Text style={style.callToActionText}>What do you want to do today?</Text>
@@ -135,8 +134,13 @@ const HomeStack = () => {
                             <View style={style.homeOrders}>
                                 <View style={style.homeOrdersHeader}>
                                     <Text style={style.homeOrdersHeading}>Recent Orders</Text>
-                                    <TouchableOpacity>
-                                        <Text style={style.seeMore}>
+                                    <TouchableOpacity
+                                        onPress={() => {
+                                            navigation.navigate("Orders");
+                                            setCurrentStack("Orders")
+                                        }}
+                                    >
+                                        <Text style={style.seeMore} >
                                             See more
                                         </Text>
                                     </TouchableOpacity>
@@ -149,7 +153,6 @@ const HomeStack = () => {
                         <Orders item={item} index={index} orders={orders} />
                     )}
                 />
-                <BottomNavigation />
             </View>
         </TouchableWithoutFeedback>
     );
@@ -217,7 +220,15 @@ const style = StyleSheet.create({
     },
     searchInput: {
         flexGrow: 1,
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
     },  
+    searchPlaceholder: {
+        fontFamily: 'mulish-regular',
+        fontSize: 12,  
+        color: "rgba(34, 34, 34, 0.6)",
+    },
     callToActionText: {
         color: 'rgba(34, 34, 34, 0.8)',
         fontFamily: 'mulish-bold',

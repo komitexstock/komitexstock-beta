@@ -8,6 +8,6 @@ const xml = `
     </svg>
 `;
 
-const AccountsIcon = () => <SvgXml xml={xml} />;
+const AccountIcon = () => <SvgXml xml={xml} />;
 
-export default AccountsIcon;
+export default AccountIcon;
