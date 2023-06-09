@@ -112,7 +112,10 @@ const HomeStack = ({navigation}) => {
                                 <Text style={style.callToActionText}>What do you want to do today?</Text>
                             </View>
                             <View style={style.quickAccessWrapper}>
-                                <TouchableOpacity style={style.quickOrder}>
+                                <TouchableOpacity 
+                                    style={style.quickOrder}
+                                    onPress={() => {navigation.navigate("CreateOrder")}}
+                                >
                                     <QuickOrderIcon />
                                     <Text style={style.quickActionHeading}>Send an Order</Text>
                                     <Text style={style.quickActionParagraph}>Make fast deliveries to your customers</Text>
@@ -179,7 +182,7 @@ const style = StyleSheet.create({
         flexDirection: 'row',
         display: 'flex',
         justifyContent: 'space-between',
-        height: 100,
+        height: 70,
         paddingVertical: 20,
         alignItems: 'flex-end',
         width: '100%',

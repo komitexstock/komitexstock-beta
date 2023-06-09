@@ -18,7 +18,10 @@ const BottomNavigation = () => {
 
     const currentStack = useStack();
 
-    if (currentStack === "Chat" || currentStack === "Notifications") return (<></>);
+    // stack where navigation should be visible
+    const visibleNavigation = ["Home", "Orders", "Waybill", "Inventory", "Account"]; 
+
+    if (!visibleNavigation.includes(currentStack)) return (<></>);
     else return (
         <View style={style.bottomNavigation}>
             <TouchableOpacity 

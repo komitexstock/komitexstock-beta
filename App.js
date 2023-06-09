@@ -10,10 +10,12 @@ import WaybillStack from './stacks/WaybillStack';
 import InventoryStack from './stacks/InventoryStack';
 import AccountStack from './stacks/AccountStack';
 import NotificationsStack from './stacks/NotificationsStack';
+import CreatNewOrderStack from './stacks/CreateNewOrderStack';
 import BottomNavigation from './components/BottomNavigation';
 import AppProvider from './context/AppContext';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { StatusBar } from 'react-native';
 
 export default function App() {
 
@@ -43,6 +45,7 @@ export default function App() {
      <AppProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <BottomSheetModalProvider>
+          <StatusBar backgroundColor="#ffffff" barStyle="light-content" />
           <Stack.Navigator initialRouteName='Home'>
             <Stack.Screen 
               name="Home" 
@@ -86,9 +89,16 @@ export default function App() {
                 headerShown: false,
               }}
             />
+            <Stack.Screen 
+              name="CreateOrder" 
+              component={CreatNewOrderStack}
+              options={{
+                headerShown: false,
+              }}
+            />
           </Stack.Navigator>
+          <BottomNavigation />
         </BottomSheetModalProvider>
-        <BottomNavigation />
       </GestureHandlerRootView>
       </AppProvider>
     </NavigationContainer>

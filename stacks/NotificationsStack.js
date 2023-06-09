@@ -1,11 +1,12 @@
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from "react-native";
-import ArrowLeft from "../assets/icons/ArrowLeft";
 import FilterIcon from "../assets/icons/FilterIcon";
 import Orders from "../components/Orders";
 import FilterNotifications from "../BottomSheets/FilterNotifications";
 import { useRef } from "react";
 import { useState } from "react";
 import { ScrollView } from "react-native";
+import Header from "../components/Header";
+import { globalStyleSheet } from "../style/globalStyleSheet";
 
 const NotificationsStack = ({navigation}) => {
 
@@ -144,25 +145,14 @@ const NotificationsStack = ({navigation}) => {
 
     return (
         <ScrollView>
-          <View style={style.main}>
-              <View style={style.header}>
-                  <TouchableOpacity
-                      onPress={() => {
-                          navigation.goBack();
-                      }}
-                  >
-                      <ArrowLeft />
-                  </TouchableOpacity>
-                  <View style={style.headerBar}>
-                      <Text style={style.headerText}>Notifications</Text>
-                      <TouchableOpacity
-                          style={style.filter}
-                          onPress={() => handlePresentModal()}
-                      >
-                          <FilterIcon />
-                      </TouchableOpacity>
-                  </View>
-              </View>
+          <View style={globalStyleSheet.main}>
+              <Header 
+                navigation={navigation} 
+                stackName={"Notifications"} 
+                iconFunction={handlePresentModal} 
+                icon={<FilterIcon />} 
+                iconExist={true} 
+              />
               <View style={style.dateWrapper}>
                 <Text style={style.date}>Today</Text>
               </View>
@@ -200,46 +190,6 @@ const NotificationsStack = ({navigation}) => {
 }
 
 const style = StyleSheet.create({
-    main: {
-        minHeight: "100%",
-        display: 'flex',
-        alignItems: 'center',
-        backgroundColor: '#f8f8f8',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'flex-start',
-        padding: 20,
-    },
-    header: {
-        height: 150,
-        width: "100%",
-        display: 'flex',
-        gap: 25,
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'flex-start',
-    },
-    headerBar: {
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between', 
-        width: "100%",       
-    },
-    headerText: {
-        fontFamily: 'mulish-bold',
-        fontSize: 20,
-        color: '#222222',
-    },
-    filter: {
-        width: 24,
-        height: 24,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#ffffff',
-        borderRadius: 5
-    },
     notificationWrapper: {
         width: "100%",
         flex: 1,
