@@ -1,22 +1,27 @@
-import { TouchableOpacity, Text, View, StyleSheet } from "react-native";
-const SelectInput = ({label, placeholder, onPress, icon, value}) => {
+import { Text, View, StyleSheet, TextInput } from "react-native";
+import { useState } from "react";
+
+const Input = ({label, placeholder, onChange, value, multiline, minRows}) => {
+
+    const handleTextChange = (text) => {
+        console.log(text);
+        onChange(text);
+    }
+
     return (
         <View style={style.inputWrapper}>
             <Text style={style.label}>{label}</Text>
-            <TouchableOpacity 
-                onPress={onPress}
+            <TextInput 
+                onChangeText={handleTextChange}
                 style={style.input}
-            >
-                <Text 
-                    style={value ? style.value : style.placeholder}
-                >
-                    {/* if value is present show value, else show placeholder */}
-                    {value ? value : placeholder} 
-                </Text>
-                {icon && (
-                    <>{icon}</>
-                )}
-            </TouchableOpacity>
+                inputMode="text"
+                placeholder={placeholder}
+                placeholderTextColor="#B1B2B2"
+                defaultValue={value}
+                multiline={multiline}
+                numberOfLines={minRows}
+                textAlignVertical="top"
+            />
         </View>
     );
 }
@@ -34,7 +39,6 @@ const style = StyleSheet.create({
         color: '#837F7F',
     },
     input: {
-        height: 44,
         width: "100%",
         display: 'flex',
         flexDirection: 'row',
@@ -42,18 +46,13 @@ const style = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#E7E5E5',
         borderRadius: 12,
-        alignItems: 'center',
+        alignItems: 'flex-start',
         paddingHorizontal: 16,
         paddingVertical: 10,
         justifyContent: 'space-between',
-    },
-    placeholder: {
         fontFamily: 'mulish-semibold',
-        color: '#B1B2B2',
-    },
-    value: {
-        fontFamily: 'mulish-semibold',
+        maxHeight: 100,
     }
 })
  
-export default SelectInput;
+export default Input;

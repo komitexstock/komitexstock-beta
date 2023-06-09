@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from "react-native";
 import FilterIcon from "../assets/icons/FilterIcon";
 import Orders from "../components/Orders";
-import FilterNotifications from "../BottomSheets/FilterNotifications";
+import CustomBottomSheet from "../components/CustomBottomSheet";
 import { useRef } from "react";
 import { useState } from "react";
 import { ScrollView } from "react-native";
@@ -131,7 +131,7 @@ const NotificationsStack = ({navigation}) => {
     ];
 
     const [showOverlay, setShowOverlay] = useState(false);
-
+    
     const bottomSheetModalRef = useRef(null);
 
     const closeModal = () => {
@@ -170,21 +170,18 @@ const NotificationsStack = ({navigation}) => {
                 ))}
               </View>
           </View>
-          {showOverlay && (
-            <View
-              style={style.overlay}
-            >
-              <TouchableOpacity
-                style={style.closeOverlay}
-                onPress={closeModal}
-              >
-              </TouchableOpacity>
-            </View>
-          )}
-          <FilterNotifications 
+          <CustomBottomSheet 
             bottomSheetModalRef={bottomSheetModalRef}
             setShowOverlay={setShowOverlay}
-          />
+            showOverlay={showOverlay}
+            closeModal={closeModal}
+            snapPointsArray={["30%", "50%"]}
+            autoSnapAt={0}
+          >
+            <View style={style.modalContent}>
+              <Text style={style.modalText}>Filter Results</Text>
+            </View>
+          </CustomBottomSheet>
         </ScrollView>
     );
 }
@@ -206,19 +203,18 @@ const style = StyleSheet.create({
       width: "100%",
       paddingVertical: 10,
     },
-    overlay: {
-      position: 'absolute',
-      width: "100%",
-      height: "100%",
-      bottom: 0,
-      left: 0,
-      backgroundColor: 'rgba(0, 0, 0, 0.3)',
-
-    }, 
-    closeOverlay: {
-      widyth: "100%",
-      height: "100%",
-    }
+    modalContent: {
+      display: "flex",
+      flexDirection: 'row',
+      alignItems: "flex-start",
+      justifyContent: "center",
+      flex: 1,
+      padding: 20,
+    },
+    modalText: {
+        fontSize: 25,
+        fontFamily: 'mulish-semibold',
+    },
 });
  
 export default NotificationsStack;
