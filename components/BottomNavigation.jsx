@@ -11,21 +11,19 @@ import AccountIcon from "../assets/icons/AccountIcon";
 import AccountActiveIcon from "../assets/icons/AccountActiveIcon";
 import { useNavigation } from '@react-navigation/native';
 import { useStack } from "../context/AppContext";
-import { useStackUpdate } from "../context/AppContext";
 
 const BottomNavigation = () => {
 
     const navigation = useNavigation();
 
     const currentStack = useStack();
-    const setCurrentStack = useStackUpdate();
 
-    if (currentStack === "Chat") return (<></>);
+    if (currentStack === "Chat" || currentStack === "Notifications") return (<></>);
     else return (
         <View style={style.bottomNavigation}>
             <TouchableOpacity 
                 style={style.navButton}
-                onPress={() => {navigation.navigate("Home"); setCurrentStack("Home")}}
+                onPress={() => {navigation.navigate("Home")}}
             >
                 {currentStack === "Home" ? (<HomeActiveIcon />) : (<HomeIcon />)}
                 <Text 
@@ -36,7 +34,7 @@ const BottomNavigation = () => {
             </TouchableOpacity>
             <TouchableOpacity 
                 style={style.navButton}
-                onPress={() => {navigation.navigate("Orders"); setCurrentStack("Orders")}}
+                onPress={() => {navigation.navigate("Orders")}}
             >
                 {currentStack === "Orders" ? (<OrdersActiveIcon />) : (<OrdersIcon />)}
                 <Text 
@@ -47,7 +45,7 @@ const BottomNavigation = () => {
             </TouchableOpacity>
             <TouchableOpacity 
                 style={style.navButton}
-                onPress={() => {navigation.navigate("Waybill"); setCurrentStack("Waybill")}}
+                onPress={() => {navigation.navigate("Waybill")}}
             >
                 {currentStack === "Waybill" ? (<WaybillActiveIcon />) : (<WaybillIcon />)}
                 <Text 
@@ -58,7 +56,7 @@ const BottomNavigation = () => {
             </TouchableOpacity>
             <TouchableOpacity 
                 style={style.navButton}
-                onPress={() => {navigation.navigate("Inventory"); setCurrentStack("Inventory")}}
+                onPress={() => {navigation.navigate("Inventory")}}
             >                
                 {currentStack === "Inventory" ? (<InventoryActiveIcon />) : (<InventoryIcon />)}
                 <Text 
@@ -69,7 +67,7 @@ const BottomNavigation = () => {
             </TouchableOpacity>
             <TouchableOpacity 
                 style={style.navButton}
-                onPress={() => {navigation.navigate("Account"); setCurrentStack("Account")}}
+                onPress={() => {navigation.navigate("Account")}}
             >
                 {currentStack === "Account" ? (<AccountActiveIcon />) : (<AccountIcon />)}
                 <Text 

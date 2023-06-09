@@ -1,3 +1,4 @@
+import 'react-native-gesture-handler'; //required import for bottomsheet to function
 import { useCallback } from 'react';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
@@ -8,8 +9,11 @@ import OrdersStack from './stacks/OrdersStack';
 import WaybillStack from './stacks/WaybillStack';
 import InventoryStack from './stacks/InventoryStack';
 import AccountStack from './stacks/AccountStack';
+import NotificationsStack from './stacks/NotificationsStack';
 import BottomNavigation from './components/BottomNavigation';
 import AppProvider from './context/AppContext';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 export default function App() {
 
@@ -35,47 +39,58 @@ export default function App() {
   const Stack = createNativeStackNavigator();
 
   return (
-    <AppProvider>
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName='Home'>
-          <Stack.Screen 
-            name="Home" 
-            component={HomeStack}
-            options={{
-              headerShown: false,
-            }} 
-          />
-          <Stack.Screen 
-            name="Orders" 
-            component={OrdersStack} 
-            options={{
-              headerShown: false,
-            }} 
-          />
-          <Stack.Screen 
-            name="Waybill" 
-            component={WaybillStack} 
-            options={{
-              headerShown: false,
-            }} 
-          />
-          <Stack.Screen 
-            name="Inventory" 
-            component={InventoryStack} 
-            options={{
-              headerShown: false,
-            }} 
-          />
-          <Stack.Screen 
-            name="Account" 
-            component={AccountStack} 
-            options={{
-              headerShown: false,
-            }} 
-          />
-        </Stack.Navigator>
+    <NavigationContainer>
+     <AppProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <BottomSheetModalProvider>
+          <Stack.Navigator initialRouteName='Home'>
+            <Stack.Screen 
+              name="Home" 
+              component={HomeStack}
+              options={{
+                headerShown: false,
+              }} 
+            />
+            <Stack.Screen 
+              name="Orders" 
+              component={OrdersStack} 
+              options={{
+                headerShown: false,
+              }} 
+            />
+            <Stack.Screen 
+              name="Waybill" 
+              component={WaybillStack} 
+              options={{
+                headerShown: false,
+              }} 
+            />
+            <Stack.Screen 
+              name="Inventory" 
+              component={InventoryStack} 
+              options={{
+                headerShown: false,
+              }} 
+            />
+            <Stack.Screen 
+              name="Account" 
+              component={AccountStack} 
+              options={{
+                headerShown: false,
+              }} 
+            />
+            <Stack.Screen 
+              name="Notifications" 
+              component={NotificationsStack}
+              options={{
+                headerShown: false,
+              }}
+            />
+          </Stack.Navigator>
+        </BottomSheetModalProvider>
         <BottomNavigation />
-      </NavigationContainer>
-    </AppProvider>
+      </GestureHandlerRootView>
+      </AppProvider>
+    </NavigationContainer>
   );
 }

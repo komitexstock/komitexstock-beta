@@ -14,7 +14,6 @@ import QuickAnalyticsIcon from "../assets/icons/QuickAnalyticsIcon";
 import QuickInventoryIcon from "../assets/icons/QuickInventoryIcon";
 import QuickWaybiillIcon from "../assets/icons/QuickWaybillIcon";
 import Orders from "../components/Orders";
-import { useStackUpdate } from "../context/AppContext";
 
 const HomeStack = ({navigation}) => {
       
@@ -78,8 +77,6 @@ const HomeStack = ({navigation}) => {
         }
     ] 
 
-    const setCurrentStack = useStackUpdate();
-
     return (
         <TouchableWithoutFeedback 
             onPress={() => Keyboard.dismiss()}
@@ -89,6 +86,7 @@ const HomeStack = ({navigation}) => {
                 <FlatList 
                     style={style.homeScrollView}
                     data={orders}
+                    // list header component, the search bar and quick action  buttons
                     ListHeaderComponent={() => (
                         <View style={style.homeWrapper}>
                             <View style={style.header}>
@@ -96,7 +94,11 @@ const HomeStack = ({navigation}) => {
                                     <Text style={style.paragraph}>Welcome back!</Text>
                                     <Text style={style.heading}> Abayomi Daniel</Text>
                                 </View>
-                                <TouchableOpacity style={style.notificationWrapper}>
+                                {/* navigate to notification stack */}
+                                <TouchableOpacity 
+                                    style={style.notificationWrapper}
+                                    onPress={() => {navigation.navigate("Notifications")}}
+                                >
                                     <NotificationIcon />
                                 </TouchableOpacity>
                             </View>
@@ -115,7 +117,10 @@ const HomeStack = ({navigation}) => {
                                     <Text style={style.quickActionHeading}>Send an Order</Text>
                                     <Text style={style.quickActionParagraph}>Make fast deliveries to your customers</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={style.quickInventory}>
+                                <TouchableOpacity 
+                                    style={style.quickInventory}
+                                    onPress={() => {navigation.navigate("Inventory")}}    
+                                >
                                     <QuickInventoryIcon />
                                     <Text style={style.quickActionHeading}>Manage Inventory</Text>
                                     <Text style={style.quickActionParagraph}>Review and add to your stores inventory</Text>
@@ -135,10 +140,7 @@ const HomeStack = ({navigation}) => {
                                 <View style={style.homeOrdersHeader}>
                                     <Text style={style.homeOrdersHeading}>Recent Orders</Text>
                                     <TouchableOpacity
-                                        onPress={() => {
-                                            navigation.navigate("Orders");
-                                            setCurrentStack("Orders")
-                                        }}
+                                        onPress={() => {navigation.navigate("Orders")}}
                                     >
                                         <Text style={style.seeMore} >
                                             See more
