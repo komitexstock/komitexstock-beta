@@ -1,11 +1,25 @@
 import { TouchableOpacity, Text, View, StyleSheet } from "react-native";
-const SelectInput = ({label, placeholder, onPress, icon, value}) => {
+import { primaryColor } from "../style/globalStyleSheet";
+const SelectInput = ({label, labelIcon, placeholder, onPress, icon, value, active}) => {
     return (
         <View style={style.inputWrapper}>
-            <Text style={style.label}>{label}</Text>
+                { labelIcon ? (
+                    <View style={style.labelWrapper}>
+                        <Text style={style.label}>
+                            {label}
+                        </Text>
+                        <TouchableOpacity>
+                            {labelIcon}
+                        </TouchableOpacity>
+                    </View>
+                ) : (
+                    <Text style={style.label}>
+                        {label}
+                    </Text>
+                )}
             <TouchableOpacity 
                 onPress={onPress}
-                style={style.input}
+                style={!active ? style.input : [style.input, style.activeInput]}
             >
                 <Text 
                     style={value ? style.value : style.placeholder}
@@ -28,6 +42,13 @@ const style = StyleSheet.create({
         gap: 5,
         width: "100%",
     },
+    labelWrapper: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        gap: 5,
+        alignItems: 'flex-end',
+    },
     label: {
         fontFamily: 'mulish-semibold',
         fontSize: 10,
@@ -46,6 +67,9 @@ const style = StyleSheet.create({
         paddingHorizontal: 16,
         paddingVertical: 10,
         justifyContent: 'space-between',
+    },
+    activeInput: {
+        borderColor: primaryColor,
     },
     placeholder: {
         fontFamily: 'mulish-semibold',

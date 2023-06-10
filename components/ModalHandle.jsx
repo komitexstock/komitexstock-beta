@@ -1,9 +1,9 @@
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 
 const ModalHandle = () => {
     return (
         <View style={styles.modalHandleWrapper}>
-            <View style={styles.modalHandle}></View>
+            <TouchableOpacity style={styles.modalHandle}></TouchableOpacity>
         </View>
     );
 }

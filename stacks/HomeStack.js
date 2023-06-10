@@ -14,6 +14,10 @@ import QuickAnalyticsIcon from "../assets/icons/QuickAnalyticsIcon";
 import QuickInventoryIcon from "../assets/icons/QuickInventoryIcon";
 import QuickWaybiillIcon from "../assets/icons/QuickWaybillIcon";
 import Orders from "../components/Orders";
+import CustomBottomSheet from "../components/CustomBottomSheet";
+import SearchBar from "../components/SearchBar";
+import { useState, useRef } from "react";
+
 
 const HomeStack = ({navigation}) => {
       
@@ -75,7 +79,28 @@ const HomeStack = ({navigation}) => {
           price: 12000,
           status: "Rescheduled",
         }
-    ] 
+    ]
+
+    // state to control overlay
+    const [showOverlay, setShowOverlay] = useState(false);
+    // state to hold search query
+    const [searchQuery, setSearchQuery] = useState("");
+
+    // bottom sheet ref
+    const bottomSheetModalRef = useRef(null);
+
+    // close bottom sheet functiom
+    const closeModal = () => {
+        bottomSheetModalRef.current?.close();
+        setShowOverlay(false);
+    };
+    
+    // open bottom sheet functiom
+    const openModal = () => {
+        bottomSheetModalRef.current?.present();
+        setShowOverlay(true);
+        Keyboard.dismiss();
+    }
 
     return (
         <TouchableWithoutFeedback 
@@ -104,8 +129,11 @@ const HomeStack = ({navigation}) => {
                             </View>
                             <View style={style.searchWrapper}>
                                 <SearchIcon />
-                                <TouchableOpacity style={style.searchInput}>
-                                    <Text style={style.searchPlaceholder}>Search Orders</Text>
+                                <TouchableOpacity 
+                                    style={style.searchInput}
+                                    onPress={openModal}
+                                >
+                                    <Text style={style.searchPlaceholder}>Search Komitex Stocks</Text>
                                 </TouchableOpacity>
                             </View>
                             <View>
@@ -158,6 +186,21 @@ const HomeStack = ({navigation}) => {
                         <Orders item={item} index={index} orders={orders} />
                     )}
                 />
+                <CustomBottomSheet
+                    bottomSheetModalRef={bottomSheetModalRef}
+                    setShowOverlay={setShowOverlay}
+                    showOverlay={showOverlay}
+                    closeModal={closeModal}
+                    snapPointsArray={["50%", "90%"]}
+                    autoSnapAt={1}
+                    sheetTitle={""}
+                >
+                    <SearchBar 
+                        placeholder={"Search Komitex Stocks"}
+                        searchQuery={searchQuery}
+                        setSearchQuery={setSearchQuery}
+                    />
+                </CustomBottomSheet>
             </View>
         </TouchableWithoutFeedback>
     );

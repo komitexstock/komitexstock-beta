@@ -1,26 +1,31 @@
 import { Text, View, StyleSheet, TextInput } from "react-native";
 import { useState } from "react";
+import { primaryColor } from "../style/globalStyleSheet";
 
-const Input = ({label, placeholder, onChange, value, multiline, minRows}) => {
+const Input = ({label, placeholder, onChange, value, multiline, editable, minRows, textAlign, height, keyboardType}) => {
 
     const handleTextChange = (text) => {
-        console.log(text);
         onChange(text);
     }
+
+    const [inputInFocus, setInputInFocus] = useState(false);
 
     return (
         <View style={style.inputWrapper}>
             <Text style={style.label}>{label}</Text>
             <TextInput 
                 onChangeText={handleTextChange}
-                style={style.input}
-                inputMode="text"
+                style={!inputInFocus ? [style.input, {height: height}] : [style.input, style.focusedInput, {height: height}]}
+                keyboardType={keyboardType}
                 placeholder={placeholder}
+                onFocus={() => setInputInFocus(true)}
+                onBlur={() => setInputInFocus(false)}
                 placeholderTextColor="#B1B2B2"
                 defaultValue={value}
                 multiline={multiline}
                 numberOfLines={minRows}
-                textAlignVertical="top"
+                textAlignVertical={textAlign}
+                editable={editable}
             />
         </View>
     );
@@ -52,6 +57,9 @@ const style = StyleSheet.create({
         justifyContent: 'space-between',
         fontFamily: 'mulish-semibold',
         maxHeight: 100,
+    }, 
+    focusedInput: {
+        borderColor: primaryColor
     }
 })
  

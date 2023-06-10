@@ -1,9 +1,10 @@
-import { TouchableOpacity, StyleSheet, View } from "react-native";
+import { TouchableOpacity, StyleSheet, View, Text } from "react-native";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useMemo } from "react";
 import ModalHandle from "./ModalHandle";
+import Add from "../assets/icons/Add";
 
-const CustomBottomSheet = ({bottomSheetModalRef, setShowOverlay, showOverlay, closeModal, snapPointsArray, autoSnapAt, children}) => {
+const CustomBottomSheet = ({bottomSheetModalRef, setShowOverlay, showOverlay, closeModal, snapPointsArray, autoSnapAt, children, sheetTitle}) => {
 
     const snapPoints = useMemo(() => snapPointsArray, []);
 
@@ -18,11 +19,11 @@ const CustomBottomSheet = ({bottomSheetModalRef, setShowOverlay, showOverlay, cl
                 <View
                 style={styles.overlay}
                 >
-                <TouchableOpacity
-                    style={styles.closeOverlay}
-                    onPress={closeModal}
-                >
-                </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.closeOverlay}
+                        onPress={closeModal}
+                    >
+                    </TouchableOpacity>
                 </View>
             )}
             <View style={styles.container}>
@@ -39,7 +40,20 @@ const CustomBottomSheet = ({bottomSheetModalRef, setShowOverlay, showOverlay, cl
                         <ModalHandle />
                     )}
                 >
-                    {children}
+                    <View style={styles.sheetTitle}>
+                        <TouchableOpacity 
+                            style={styles.closeButtonWrapper} 
+                            onPress={closeModal}
+                        >
+                            <Add />
+                        </TouchableOpacity>
+                        <Text style={styles.sheetTitleText}>
+                            {sheetTitle}
+                        </Text>
+                    </View>
+                    <View style={styles.modalWrapper}>
+                        {children}
+                    </View>
                 </BottomSheetModal>
             </View>
         </>
@@ -63,12 +77,38 @@ const styles = StyleSheet.create({
         top: 0,
         right: 0,
         backgroundColor: 'rgba(0, 0, 0, 0.3)',
-  
-      }, 
-      closeOverlay: {
+    }, 
+    closeOverlay: {
         widyth: "100%",
         height: "100%",
-      }
+    },
+    sheetTitle: {
+        width: "100%",
+        height: 40,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    sheetTitleText: {
+        fontFamily: "mulish-bold",
+        fontSize: 16,
+        position: "relative",
+    },
+    closeButtonWrapper: {
+        width: 20,
+        height: 20,
+        position: "absolute",
+        left: 20,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    modalWrapper: {
+        display: "flex",
+        flexDirection: "column",
+        flex: 1,
+        padding: 20,
+    }
 });
 
 export default CustomBottomSheet;
