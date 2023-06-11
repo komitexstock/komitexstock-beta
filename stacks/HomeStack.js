@@ -208,7 +208,8 @@ const HomeStack = ({navigation}) => {
 
 const style = StyleSheet.create({
     main: {
-        paddingBottom: 70,
+        paddingBottom: 100,
+        marginBottom: 100,
         backgroundColor: '#f8f8f8',
     },
     homeScrollView: {
@@ -225,10 +226,11 @@ const style = StyleSheet.create({
         flexDirection: 'row',
         display: 'flex',
         justifyContent: 'space-between',
-        height: 70,
-        paddingVertical: 20,
-        alignItems: 'flex-end',
+        height: 72,
+        // backgroundColor: 'red',
+        alignItems: 'center',
         width: '100%',
+        marginTop: 20,
     },
     headerTextContainer: {
         display: 'flex',
@@ -265,6 +267,7 @@ const style = StyleSheet.create({
         alignItems: 'center',
         gap: 10,
         justifyContent: 'flex-start',
+        marginBottom: 10,
     },
     searchInput: {
         flexGrow: 1,
@@ -291,6 +294,7 @@ const style = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         gap: 20,
+        marginBottom: 15,
     },
     quickOrder: {
         width: '45%',

@@ -1,6 +1,5 @@
 import { Text, View, TouchableOpacity, StyleSheet } from "react-native";
 import ArrowLeft from "../assets/icons/ArrowLeft";
-import { StatusBar } from "react-native";
 
 
 const Header = ({navigation, stackName, iconFunction, icon, iconExist}) => {

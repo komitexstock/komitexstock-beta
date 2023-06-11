@@ -4,6 +4,10 @@ import {
     ScrollView, 
     TouchableWithoutFeedback,
     Keyboard,
+    Text,
+    TouchableOpacity,
+    Image,
+    TextInput
 } from "react-native";
 import Header from "../components/Header";
 import Input from "../components/Input";
@@ -11,10 +15,13 @@ import SelectInput from "../components/SelectInput";
 import CustomBottomSheet from "../components/CustomBottomSheet";
 import AddLogisticsModalContent from "../components/AddLogisticsModalContent";
 import AddLocationModalContent from "../components/AddLocationModalContent";
+import AddProductsModalContent from "../components/AddProductsModalContent";
 import ArrowDown from "../assets/icons/ArrowDown";
 import Info from "../assets/icons/Info";
 import CustomButton from "../components/CustomButton";
 import { useState, useRef } from "react";
+import { primaryColor } from "../style/globalStyleSheet";
+import ClearSearch from "../assets/icons/ClearSearch";
 
 const CreatNewOrderStack = ({navigation}) => {
 
@@ -25,6 +32,16 @@ const CreatNewOrderStack = ({navigation}) => {
     // state to store selected location
     const [location, setLocation] = useState("Warri (₦3,500)");
     // response from ChatGPT after extracting order details
+    const [products, setProducts] = useState([
+        {
+            id: 2,
+            product_name: "Phoenix Sneakers",
+            quantity: 1,
+            imageUrl: require("../assets/images/sneakers.png"),
+            checked: true,
+        },
+    ]);
+
     const [processOrderResponse, setProcessOrderResponse] = useState(false);
 
     // state to indicate if select logistics input is active
@@ -82,6 +99,36 @@ const CreatNewOrderStack = ({navigation}) => {
         setLocation(data);
     }
 
+    const decreaseQuantity = (index) => {
+        setProducts((prev) => {
+            const newProducts = [...prev];
+            if (newProducts[index].quantity !== 1) {
+                newProducts[index].quantity -= 1;
+            } 
+            return newProducts;
+        })
+    }
+
+    // increase product quanityt
+    const increaseQuantity = (index) => {
+        setProducts((prev) => {
+            const newProducts = [...prev];
+            newProducts[index].quantity += 1;
+            return newProducts;
+        })
+    }
+
+    const removeProduct = (index) => {
+        const newProduct = products.filter((product, i) => index !== i);
+        setProducts(newProduct);
+    }
+
+    const addProducts = (productsList) => {
+        setProducts(productsList);
+        closeModal();
+        // console.log(productsList)
+    }
+
     const updateName = (text) => {
         console.log(text);
 
@@ -116,6 +163,7 @@ const CreatNewOrderStack = ({navigation}) => {
             textAlign: "center",
             height: 44,
             keyboardType: "default",
+            adornment: false,
         },
         {
             id: 2,
@@ -129,6 +177,7 @@ const CreatNewOrderStack = ({navigation}) => {
             textAlign: "center",
             height: 44,
             keyboardType: "phone-pad",
+            adornment: false,
         },
         {
             id: 3,
@@ -142,6 +191,7 @@ const CreatNewOrderStack = ({navigation}) => {
             textAlign: "center",
             height: 44,
             keyboardType: "default",
+            adornment: false,
         },
         {
             id: 4,
@@ -156,8 +206,9 @@ const CreatNewOrderStack = ({navigation}) => {
             textAlign: "center",
             height: 44,
             keyboardType: "numeric",
+            adornment: "₦",
         },
-    ]
+    ];
     
     return (
         <>
@@ -217,6 +268,61 @@ const CreatNewOrderStack = ({navigation}) => {
                                         active={selectLocationActive}
                                     />
                                 )}
+                                {
+                                    processOrderDetails && (
+                                        <View style={style.productsWrapper}>
+                                            <View style={style.productsHeading}>
+                                                <Text style={style.producPlaceholder}>Products Selected</Text>
+                                                <TouchableOpacity
+                                                    onPress={() => openModal("Products", "Select Products")}
+                                                >
+                                                    <Text style={style.addProduct}>+Add Product</Text>
+                                                </TouchableOpacity>
+                                            </View>
+                                            { products.map((product, index) => (
+                                                <View key={index} style={style.productItem}>
+                                                    <Image
+                                                        style={style.productImage}
+                                                        source={product.imageUrl}
+                                                    />
+                                                    <Text style={style.productName}>
+                                                        {product.product_name}
+                                                    </Text>
+                                                    <View style={style.productQuantityContainer}>
+                                                        {/* reduce quantity button */}
+                                                        <TouchableOpacity 
+                                                            style={style.quantityButton}
+                                                            onPress={() => {
+                                                                decreaseQuantity(index);
+                                                            }}
+                                                        >
+                                                            <Text style={style.quantityButtonText}>-</Text>
+                                                        </TouchableOpacity>
+                                                        <TextInput 
+                                                            keyboardType="numeric"
+                                                            defaultValue={String(product.quantity)}
+                                                            style={style.quantityInput}
+                                                        />
+                                                        {/* increase quantity button */}
+                                                        <TouchableOpacity 
+                                                            style={style.quantityButton}
+                                                            onPress={() => {
+                                                                increaseQuantity(index);
+                                                            }}
+                                                        >
+                                                            <Text style={style.quantityButtonText}>+</Text>
+                                                        </TouchableOpacity>
+                                                    </View>
+                                                    <TouchableOpacity
+                                                        onPress={() => removeProduct(index)}
+                                                    >
+                                                        <ClearSearch />
+                                                    </TouchableOpacity>
+                                                </View>
+                                            ))}
+                                        </View>
+                                    )
+                                }
                                 { processOrderDetails && inputs.map(
                                     (input) => (
                                         <Input 
@@ -231,6 +337,7 @@ const CreatNewOrderStack = ({navigation}) => {
                                             textAlign={input.textAlign}
                                             height={input.height}
                                             keyboardType={input.keyboardType}
+                                            adornment={input.adornment}
                                         />
                                     )
                                 ) }
@@ -258,6 +365,11 @@ const CreatNewOrderStack = ({navigation}) => {
                         handleSelectedLocation={handleSelectedLocation}
                     />
                 )}
+                {modal.type === "Products" && (
+                    <AddProductsModalContent 
+                        addProducts={addProducts} selectedProducts={products}
+                    />
+                )}
             </CustomBottomSheet>
             { !processOrderResponse && (
                 <CustomButton 
@@ -271,6 +383,79 @@ const CreatNewOrderStack = ({navigation}) => {
 }
 
 const style = StyleSheet.create({
+
+    productsWrapper: {
+        display: "flex",
+        flexDirection: "column",
+        width: "100%",
+        justifyContent: "flex-start",
+        alignContent: "center", 
+        gap: 10,       
+    },
+    productsHeading: {
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",  
+    },
+    producPlaceholder:  {
+        fontFamily: "mulish-bold",
+        fontSize: 12,
+        color: "#222222",
+    },
+    addProduct: {
+        fontFamily: "mulish-semibold",
+        color: primaryColor,
+        textDecorationLine: "underline",
+        fontSize: 12,
+    },
+    productItem: {
+        display: "flex",
+        flexDirection: "row",
+        width: "100%",
+        justifyContent: 'space-between',
+        alignItems: "center",
+        padding: 12,
+        borderRadius: 12,
+        backgroundColor: "#ffffff",
+        borderColor: "#E7E5E5",
+        borderWidth: 1,
+    },
+    productImage: {
+        width: 40,
+        height: 40,
+        borderRadius: 8,
+    },
+    productName: {
+        fontFamily: "mulish-semibold",
+        color: "#222222",
+    },
+    productQuantityContainer: {
+        display: "flex",
+        flexDirection: "row",  
+        height: 30,
+        backgroundColor: "#f8f8f8",
+        width: 80,
+        justifyContent: "space-between",
+        alignItems: "center",
+    },
+    quantityButton: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: 20,
+        height: 20,
+    },
+    quantityButtonText: {
+        fontFamily: "mulish-bold",
+        color: "#222222",
+    },
+    quantityInput: {
+        fontFamily: "mulish-regular",
+        textAlign: "center",
+    },
+
+
     main: {
         minHeight: "100%",
         display: 'flex',

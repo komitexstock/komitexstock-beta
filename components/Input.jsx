@@ -2,7 +2,7 @@ import { Text, View, StyleSheet, TextInput } from "react-native";
 import { useState } from "react";
 import { primaryColor } from "../style/globalStyleSheet";
 
-const Input = ({label, placeholder, onChange, value, multiline, editable, minRows, textAlign, height, keyboardType}) => {
+const Input = ({label, placeholder, onChange, value, multiline, editable, minRows, textAlign, height, keyboardType, adornment}) => {
 
     const handleTextChange = (text) => {
         onChange(text);
@@ -13,20 +13,42 @@ const Input = ({label, placeholder, onChange, value, multiline, editable, minRow
     return (
         <View style={style.inputWrapper}>
             <Text style={style.label}>{label}</Text>
-            <TextInput 
-                onChangeText={handleTextChange}
-                style={!inputInFocus ? [style.input, {height: height}] : [style.input, style.focusedInput, {height: height}]}
-                keyboardType={keyboardType}
-                placeholder={placeholder}
-                onFocus={() => setInputInFocus(true)}
-                onBlur={() => setInputInFocus(false)}
-                placeholderTextColor="#B1B2B2"
-                defaultValue={value}
-                multiline={multiline}
-                numberOfLines={minRows}
-                textAlignVertical={textAlign}
-                editable={editable}
-            />
+            { adornment ? (
+                <View
+                    style={!inputInFocus ? [style.input, {height: height}] : [style.input, style.focusedInput, {height: height}]}
+                >   
+                    <Text style={style.adornment}>{adornment}</Text>
+                    <TextInput
+                        onChangeText={handleTextChange}
+                        keyboardType={keyboardType}
+                        placeholder={placeholder}
+                        style={style.adornedInput}
+                        onFocus={() => setInputInFocus(true)}
+                        onBlur={() => setInputInFocus(false)}
+                        placeholderTextColor="#B1B2B2"
+                        defaultValue={value}
+                        multiline={multiline}
+                        numberOfLines={minRows}
+                        textAlignVertical={textAlign}
+                        editable={editable}
+                    />
+                </View>                
+            ) : (
+                <TextInput
+                    onChangeText={handleTextChange}
+                    style={!inputInFocus ? [style.input, {height: height}] : [style.input, style.focusedInput, {height: height}]}
+                    keyboardType={keyboardType}
+                    placeholder={placeholder}
+                    onFocus={() => setInputInFocus(true)}
+                    onBlur={() => setInputInFocus(false)}
+                    placeholderTextColor="#B1B2B2"
+                    defaultValue={value}
+                    multiline={multiline}
+                    numberOfLines={minRows}
+                    textAlignVertical={textAlign}
+                    editable={editable}
+                />
+            )}
         </View>
     );
 }
@@ -51,15 +73,23 @@ const style = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#E7E5E5',
         borderRadius: 12,
-        alignItems: 'flex-start',
+        alignItems: 'center',
         paddingHorizontal: 16,
         paddingVertical: 10,
-        justifyContent: 'space-between',
+        justifyContent: 'flex-start',
         fontFamily: 'mulish-semibold',
         maxHeight: 100,
+        gap: 3,
     }, 
+    adornment: {
+        fontFamily: 'mulish-bold',
+        color: "#837F7F",        
+    },
     focusedInput: {
         borderColor: primaryColor
+    },
+    adornedInput: {
+        flex: 1,
     }
 })
  
