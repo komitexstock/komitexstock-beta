@@ -5,7 +5,7 @@ import {
     TouchableOpacity, 
     TouchableWithoutFeedback, 
     Keyboard, 
-    FlatList,
+    ScrollView,
 } from "react-native";
 import NotificationIcon from "../assets/icons/NotificationIcon";
 import SearchIcon from "../assets/icons/SearchIcon";
@@ -105,14 +105,15 @@ const HomeStack = ({navigation}) => {
     return (
         <TouchableWithoutFeedback 
             onPress={() => Keyboard.dismiss()}
-            style={{backgroundColor: "#f8f8f8"}}
         >
-            <View style={style.main}>
-                <FlatList 
-                    style={style.homeScrollView}
-                    data={orders}
-                    // list header component, the search bar and quick action  buttons
-                    ListHeaderComponent={() => (
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                style={style.container}
+            >
+                <View style={style.main}>
+                    <View
+                        style={style.homeScrollView}
+                    >
                         <View style={style.homeWrapper}>
                             <View style={style.header}>
                                 <View style={style.headerTextContainer}>
@@ -179,48 +180,51 @@ const HomeStack = ({navigation}) => {
                                     </TouchableOpacity>
                                 </View>
                             </View>
+                            <View
+                                style={style.ordersListWrapper}
+                            >
+                                {orders.map((order, index) => (
+                                    <Orders key={order.id} item={order} index={index} orders={orders} />
+                                ))}
+                            </View>
                         </View>
-                    )}
-                    keyExtractor={item => item.id}
-                    renderItem={({item, index}) => (
-                        <Orders item={item} index={index} orders={orders} />
-                    )}
-                />
-                <CustomBottomSheet
-                    bottomSheetModalRef={bottomSheetModalRef}
-                    setShowOverlay={setShowOverlay}
-                    showOverlay={showOverlay}
-                    closeModal={closeModal}
-                    snapPointsArray={["50%", "90%"]}
-                    autoSnapAt={1}
-                    sheetTitle={""}
-                >
-                    <SearchBar 
-                        placeholder={"Search Komitex Stocks"}
-                        searchQuery={searchQuery}
-                        setSearchQuery={setSearchQuery}
-                    />
-                </CustomBottomSheet>
-            </View>
+                    </View>
+                    <CustomBottomSheet
+                        bottomSheetModalRef={bottomSheetModalRef}
+                        setShowOverlay={setShowOverlay}
+                        showOverlay={showOverlay}
+                        closeModal={closeModal}
+                        snapPointsArray={["50%", "90%"]}
+                        autoSnapAt={1}
+                        sheetTitle={""}
+                    >
+                        <SearchBar 
+                            placeholder={"Search Komitex Stocks"}
+                            searchQuery={searchQuery}
+                            setSearchQuery={setSearchQuery}
+                        />
+                    </CustomBottomSheet>
+                </View>
+            </ScrollView>
         </TouchableWithoutFeedback>
     );
 }
 
 const style = StyleSheet.create({
     main: {
-        paddingBottom: 100,
-        marginBottom: 100,
-        backgroundColor: '#f8f8f8',
+    },
+    container: {
+        
     },
     homeScrollView: {
         minHeight:  "100%",
-        backgroundColor: '#f8f8f8',
         paddingHorizontal: 20,
     },  
     homeWrapper: {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'flex-start',
+        marginBottom: 90,
     },
     header: {
         flexDirection: 'row',
@@ -230,7 +234,6 @@ const style = StyleSheet.create({
         // backgroundColor: 'red',
         alignItems: 'center',
         width: '100%',
-        marginTop: 20,
     },
     headerTextContainer: {
         display: 'flex',
@@ -373,6 +376,9 @@ const style = StyleSheet.create({
         fontFamily: 'mulish-bold',
         color: '#07427C',
     },
+    ordersListWrapper: {
+        height: "100%",
+    }
 })
  
 export default HomeStack;

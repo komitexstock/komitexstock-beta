@@ -16,6 +16,7 @@ import CustomBottomSheet from "../components/CustomBottomSheet";
 import AddLogisticsModalContent from "../components/AddLogisticsModalContent";
 import AddLocationModalContent from "../components/AddLocationModalContent";
 import AddProductsModalContent from "../components/AddProductsModalContent";
+import AddSummaryModalContent from "../components/AddSummaryModalContent";
 import ArrowDown from "../assets/icons/ArrowDown";
 import Info from "../assets/icons/Info";
 import CustomButton from "../components/CustomButton";
@@ -26,11 +27,16 @@ import ClearSearch from "../assets/icons/ClearSearch";
 const CreatNewOrderStack = ({navigation}) => {
 
     // state to store order details
-    const [orderDetails, setOrderdetails] = useState(null);
+    const [ orderDetails, setOrderdetails] = useState(null);
+    
     // state to store selected logistics
     const [logistics, setLogistics] = useState(null);
     // state to store selected location
-    const [location, setLocation] = useState("Warri (₦3,500)");
+    const [location, setLocation] = useState({
+        id: Math.random(),
+        location: "Warri",
+        charge: 3500,
+    });
     // response from ChatGPT after extracting order details
     const [products, setProducts] = useState([
         {
@@ -41,6 +47,19 @@ const CreatNewOrderStack = ({navigation}) => {
             checked: true,
         },
     ]);
+    // customer name
+    const [customerName, setCustomerName] = useState("Richard Idana");
+    // customer phone number
+    const [phoneNumber, setPhoneNumber] = useState([
+        "08012345678",
+        "09078945612",
+    ]);
+    // customer address
+    const [address, setAddress] = useState("No 3 Izomo street Udu road Warri");
+
+    // price
+    const [price, setPrice] = useState(20000);
+    
 
     const [processOrderResponse, setProcessOrderResponse] = useState(false);
 
@@ -48,11 +67,15 @@ const CreatNewOrderStack = ({navigation}) => {
     const [selectLogisticsActive, setSelectLogisticsActive] = useState(false);
     // state to indicate if select logistics input is active
     const [selectLocationActive, setSelectLocationActive] = useState(false);
+    // other input active states are handled within the components
+    // logistics and location are custom select input thats why their active states needs to be handled differently
+    
 
     // state to control the type of modal to show in the bottom sheet
     const [modal, setModal] = useState({
         type: "Logistics",
         title: "Select Logistcs",
+        subtitle: null,
     });
     
     // state to control modal overlay
@@ -61,14 +84,6 @@ const CreatNewOrderStack = ({navigation}) => {
     // modal ref
     const bottomSheetModalRef = useRef(null);
 
-    const handleOrderDetails = () => {
-        
-    }
-
-    const processOrderDetails = async () => {
-        setProcessOrderResponse("any response");
-    }
-
     const closeModal = () => {
       bottomSheetModalRef.current?.close();
       setShowOverlay(false);
@@ -76,18 +91,34 @@ const CreatNewOrderStack = ({navigation}) => {
       else if (modal.type === "Location") setSelectLocationActive(false);
     };
 
-    const openModal = (type, title) => {
+    // function to open bottom sheet modal
+    const openModal = (type, title, subtitle) => {
         bottomSheetModalRef.current?.present();
         setShowOverlay(true);
         Keyboard.dismiss();
         setModal({
             type: type,
             title: title,
+            subtitle: subtitle,
         });
         if (type === "Logistics") setSelectLogisticsActive(true);
         else if (type === "Location") setSelectLocationActive(true);
         
     }
+
+    
+    const handleOrderDetails = () => {
+        
+    }
+
+    const processOrderDetails = async () => {
+        setProcessOrderResponse("Response from ChatGPT");
+    }
+
+    const showOrderSummary = () => {
+        openModal("Summary", "Order Summary", "Review your order details");    
+    }
+
 
     const handleSelectedLogistics = (data) => {
         closeModal();
@@ -118,8 +149,8 @@ const CreatNewOrderStack = ({navigation}) => {
         })
     }
 
-    const removeProduct = (index) => {
-        const newProduct = products.filter((product, i) => index !== i);
+    const removeProduct = (id) => {
+        const newProduct = products.filter((product) => product.id !== id);
         setProducts(newProduct);
     }
 
@@ -130,25 +161,25 @@ const CreatNewOrderStack = ({navigation}) => {
     }
 
     const updateName = (text) => {
-        console.log(text);
-
+        setCustomerName(text);
     }
-
+    
+    // console.log(phoneNumber);
+    
     const updatePhoneNumber = (text) => {
-        console.log(text);
+        let newText = text.replace(new RegExp(' ', 'g'), '');
+        // remove all occurrence of the space character ' ' in text gloablly
+        // where 'g' means global
+        setPhoneNumber(newText.split(','));
     }
     
     const updateAddress = (text) => {
-        console.log(text);
-        
+        setAddress(text);
     }
     
     const updatePrice = (text) => {
-        console.log(text);
-        
+        setPrice(parseFloat(text));
     }
-
-    const [customerName, setCustomerName] = useState("Richard Idana");
 
     const inputs = [
         {
@@ -170,7 +201,7 @@ const CreatNewOrderStack = ({navigation}) => {
             editable: true,
             maxRows: 1,
             multiline: false,
-            value: "08012345678",
+            value: phoneNumber,
             onChange: updatePhoneNumber,
             placeholder: "Customer's Phone Number",
             label: "Customer's Phone Number",
@@ -184,7 +215,7 @@ const CreatNewOrderStack = ({navigation}) => {
             editable: true,
             maxRows: 1,
             multiline: false,
-            value: "No 3 Izomo street Udu road Warri",
+            value: address,
             onChange: updateAddress,
             placeholder: "Address",
             label: "Delivery Address",
@@ -199,7 +230,7 @@ const CreatNewOrderStack = ({navigation}) => {
             maxRows: 1,
             multiline: false,
             maxRows: 1,
-            value: "20000",
+            value: String(price),
             onChange: updatePrice,
             placeholder: "Price",
             label: "Price",
@@ -219,130 +250,141 @@ const CreatNewOrderStack = ({navigation}) => {
                 style={{backgroundColor: "pink"}}
             >
                 <ScrollView
+                    showsVerticalScrollIndicator={false}
                     style={{
-                        display: "flex",
                         minHeight: "100%",
                         width: "100%",
                         backgroundColor: "#f8f8f8",
                     }}
                 >
                     <View style={style.main}>
-                        <Header 
-                            iconExist={false} 
-                            navigation={navigation} 
-                            stackName={"Create New Order"} 
-                            iconFunction={null} 
-                            icon={null} 
-                        />
-                        <View style={style.container}>
-                            <View style={style.inputWrapper}>
-                                <SelectInput 
-                                    label={"Select Logistics"} 
-                                    placeholder={"Choose a logistics"} 
-                                    value={logistics}
-                                    onPress={() => openModal("Logistics", "Select Logistics")}
-                                    icon={<ArrowDown />}
-                                    active={selectLogisticsActive}
-                                />
-
-                                <Input 
-                                    label={"Order Details"} 
-                                    placeholder={"Paste order details here..."} 
-                                    onChange={handleOrderDetails}
-                                    value={orderDetails}
-                                    multiline={true}
-                                    maxRows={5}
-                                    editable={true}
-                                    textAlign={"top"}
-                                    height={100}
-                                    keyboardType={"default"}
-                                />
-                                { processOrderDetails && (
+                        <View style={style.mainContent}>
+                            <Header 
+                                iconExist={false} 
+                                navigation={navigation} 
+                                stackName={"Create New Order"} 
+                                iconFunction={null} 
+                                icon={null} 
+                            />
+                            <View style={style.container}>
+                                <View style={style.inputWrapper}>
                                     <SelectInput 
-                                        label={"Delivery Location"}
-                                        labelIcon={<Info />}
-                                        placeholder={"Delivery Location"} 
-                                        value={location}
-                                        onPress={() => openModal("Location", "Delivery Location")}
+                                        label={"Select Logistics"} 
+                                        placeholder={"Choose a logistics"} 
+                                        value={logistics}
+                                        onPress={() => openModal("Logistics", "Select Logistics", null)}
                                         icon={<ArrowDown />}
-                                        active={selectLocationActive}
+                                        active={selectLogisticsActive}
+                                        inputFor={"Logistics"}
                                     />
-                                )}
-                                {
-                                    processOrderDetails && (
+
+                                    <Input 
+                                        label={"Order Details"} 
+                                        placeholder={"Paste order details here..."} 
+                                        onChange={handleOrderDetails}
+                                        value={orderDetails}
+                                        multiline={true}
+                                        maxRows={5}
+                                        editable={true}
+                                        textAlign={"top"}
+                                        height={100}
+                                        keyboardType={"default"}
+                                    />
+                                    {processOrderResponse && (<>
+                                        <SelectInput 
+                                            label={"Delivery Location"}
+                                            labelIcon={<Info />}
+                                            placeholder={"Delivery Location"} 
+                                            value={location}
+                                            onPress={() => openModal("Location", "Delivery Location", null)}
+                                            icon={<ArrowDown />}
+                                            active={selectLocationActive}
+                                            inputFor={"Location"}
+                                        />
                                         <View style={style.productsWrapper}>
                                             <View style={style.productsHeading}>
                                                 <Text style={style.producPlaceholder}>Products Selected</Text>
                                                 <TouchableOpacity
-                                                    onPress={() => openModal("Products", "Select Products")}
+                                                    onPress={() => openModal("Products", "Select Products", null)}
                                                 >
                                                     <Text style={style.addProduct}>+Add Product</Text>
                                                 </TouchableOpacity>
                                             </View>
                                             { products.map((product, index) => (
                                                 <View key={index} style={style.productItem}>
-                                                    <Image
-                                                        style={style.productImage}
-                                                        source={product.imageUrl}
-                                                    />
-                                                    <Text style={style.productName}>
-                                                        {product.product_name}
-                                                    </Text>
-                                                    <View style={style.productQuantityContainer}>
-                                                        {/* reduce quantity button */}
-                                                        <TouchableOpacity 
-                                                            style={style.quantityButton}
-                                                            onPress={() => {
-                                                                decreaseQuantity(index);
-                                                            }}
-                                                        >
-                                                            <Text style={style.quantityButtonText}>-</Text>
-                                                        </TouchableOpacity>
-                                                        <TextInput 
-                                                            keyboardType="numeric"
-                                                            defaultValue={String(product.quantity)}
-                                                            style={style.quantityInput}
+                                                    
+                                                    <View style={style.productDetailsWrapper}>
+                                                        <Image
+                                                            style={style.productImage}
+                                                            source={product.imageUrl}
                                                         />
-                                                        {/* increase quantity button */}
-                                                        <TouchableOpacity 
-                                                            style={style.quantityButton}
-                                                            onPress={() => {
-                                                                increaseQuantity(index);
-                                                            }}
+                                                        <Text style={style.productName}>
+                                                            {product.product_name}
+                                                        </Text>
+                                                    </View>
+
+                                                    <View style={style.productQuantityWrapper}>
+                                                        <View style={style.productQuantityContainer}>
+                                                            {/* reduce quantity button */}
+                                                            <TouchableOpacity 
+                                                                style={style.quantityButton}
+                                                                onPress={() => {
+                                                                    decreaseQuantity(index);
+                                                                }}
+                                                            >
+                                                                <Text style={style.quantityButtonText}>-</Text>
+                                                            </TouchableOpacity>
+                                                            <TextInput 
+                                                                keyboardType="numeric"
+                                                                defaultValue={String(product.quantity)}
+                                                                style={style.quantityInput}
+                                                            />
+                                                            {/* increase quantity button */}
+                                                            <TouchableOpacity 
+                                                                style={style.quantityButton}
+                                                                onPress={() => {
+                                                                    increaseQuantity(index);
+                                                                }}
+                                                            >
+                                                                <Text style={style.quantityButtonText}>+</Text>
+                                                            </TouchableOpacity>
+                                                        </View>
+                                                        <TouchableOpacity
+                                                            onPress={() => removeProduct(product.id)}
                                                         >
-                                                            <Text style={style.quantityButtonText}>+</Text>
+                                                            <ClearSearch />
                                                         </TouchableOpacity>
                                                     </View>
-                                                    <TouchableOpacity
-                                                        onPress={() => removeProduct(index)}
-                                                    >
-                                                        <ClearSearch />
-                                                    </TouchableOpacity>
                                                 </View>
                                             ))}
                                         </View>
-                                    )
-                                }
-                                { processOrderDetails && inputs.map(
-                                    (input) => (
-                                        <Input 
-                                            key={input.id}
-                                            label={input.label} 
-                                            placeholder={input.placeholder} 
-                                            onChange={input.onChange}
-                                            value={input.value}
-                                            multiline={input.multiline}
-                                            maxRows={input.maxRows}
-                                            editable={input.editable}
-                                            textAlign={input.textAlign}
-                                            height={input.height}
-                                            keyboardType={input.keyboardType}
-                                            adornment={input.adornment}
-                                        />
-                                    )
-                                ) }
+                                        {inputs.map((input) => (
+                                            <Input 
+                                                key={input.id}
+                                                label={input.label} 
+                                                placeholder={input.placeholder} 
+                                                onChange={input.onChange}
+                                                value={input.value}
+                                                multiline={input.multiline}
+                                                maxRows={input.maxRows}
+                                                editable={input.editable}
+                                                textAlign={input.textAlign}
+                                                height={input.height}
+                                                keyboardType={input.keyboardType}
+                                                adornment={input.adornment}
+                                            />
+                                        ))}
+                                    </>)}
+                                </View>
                             </View>
                         </View>
+                        { processOrderResponse && (
+                            <CustomButton 
+                                name="Continue" 
+                                onPress={showOrderSummary}
+                                backgroundColor={"#ffffff"}
+                            />
+                        )}
                     </View>
                 </ScrollView>
             </TouchableWithoutFeedback>
@@ -354,6 +396,7 @@ const CreatNewOrderStack = ({navigation}) => {
                 snapPointsArray={["40%", "80%"]}
                 autoSnapAt={0}
                 sheetTitle={modal.title}
+                sheetSubtitle={modal.subtitle}
             >   
                 {modal.type === "Logistics" && (
                     <AddLogisticsModalContent 
@@ -370,12 +413,24 @@ const CreatNewOrderStack = ({navigation}) => {
                         addProducts={addProducts} selectedProducts={products}
                     />
                 )}
+                {modal.type === "Summary" && (
+                    <AddSummaryModalContent 
+                        logistics={logistics}
+                        customerName={customerName}
+                        products={products}
+                        location={location}
+                        phoneNumber={phoneNumber}
+                        price={price}
+                        address={address}
+                    />
+                )}
             </CustomBottomSheet>
             { !processOrderResponse && (
                 <CustomButton 
                     name="Continue" 
                     onPress={processOrderDetails}
-                    backgroundColor={"#ffffff"}
+                    backgroundColor={"#f8f8f8"}
+                    fixed={true}
                 />
             )}
         </>
@@ -418,8 +473,15 @@ const style = StyleSheet.create({
         padding: 12,
         borderRadius: 12,
         backgroundColor: "#ffffff",
-        borderColor: "#E7E5E5",
-        borderWidth: 1,
+        gap: 10,
+    },
+    productDetailsWrapper: {
+        display: "flex",
+        flexDirection: "row",
+        width: "55%",
+        flexWrap: "nowrap",
+        alignItems: "center",
+        gap: 10,
     },
     productImage: {
         width: 40,
@@ -429,13 +491,22 @@ const style = StyleSheet.create({
     productName: {
         fontFamily: "mulish-semibold",
         color: "#222222",
+        flexWrap: "wrap",
+    },
+    productQuantityWrapper: {
+        display: "flex",
+        flexDirection: "row",
+        width: "35%",
+        justifyContent: "flex-end",
+        alignItems: "center",
+        gap: 7.5,
     },
     productQuantityContainer: {
         display: "flex",
         flexDirection: "row",  
         height: 30,
         backgroundColor: "#f8f8f8",
-        width: 80,
+        width: 70,
         justifyContent: "space-between",
         alignItems: "center",
     },
@@ -458,14 +529,21 @@ const style = StyleSheet.create({
 
     main: {
         minHeight: "100%",
+        width: "100%",
         display: 'flex',
+        alignItems: 'center',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+    },
+    mainContent: {
+        display: 'flex',
+        flex: 1,
+        width: "100%",
         alignItems: 'center',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'flex-start',
         padding: 20,
-        paddingBottom: 150,
-        flex: 1,
     },
     container: {
         flex: 1,

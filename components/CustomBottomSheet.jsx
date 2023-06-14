@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import ModalHandle from "./ModalHandle";
 import Add from "../assets/icons/Add";
 
-const CustomBottomSheet = ({bottomSheetModalRef, setShowOverlay, showOverlay, closeModal, snapPointsArray, autoSnapAt, children, sheetTitle}) => {
+const CustomBottomSheet = ({bottomSheetModalRef, setShowOverlay, showOverlay, closeModal, snapPointsArray, autoSnapAt, children, sheetTitle, sheetSubtitle}) => {
 
     const snapPoints = useMemo(() => snapPointsArray, []);
 
@@ -47,9 +47,16 @@ const CustomBottomSheet = ({bottomSheetModalRef, setShowOverlay, showOverlay, cl
                         >
                             <Add />
                         </TouchableOpacity>
-                        <Text style={styles.sheetTitleText}>
-                            {sheetTitle}
-                        </Text>
+                        {!sheetSubtitle ? (
+                            <Text style={styles.sheetTitleText}>
+                                {sheetTitle}
+                            </Text>
+                            ) : (
+                                <View style={styles.titleWrapper}>
+                                    <Text style={styles.sheetTitleText}>{sheetTitle}</Text>
+                                    <Text style={styles.sheetSubtitleText}>{sheetSubtitle}</Text>
+                                </View>
+                            )}
                     </View>
                     <View style={styles.modalWrapper}>
                         {children}
@@ -88,11 +95,23 @@ const styles = StyleSheet.create({
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        flexDirection: "column",
     },
     sheetTitleText: {
         fontFamily: "mulish-bold",
         fontSize: 16,
         position: "relative",
+    },
+    titleWrapper: {
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    sheetSubtitleText: {
+        fontFamily: "mulish-regular",
+        fontSize: 12,
+        color: "rgba(34, 34, 34, 0.6)",
     },
     closeButtonWrapper: {
         width: 20,

@@ -1,26 +1,85 @@
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { ScrollView, View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import SearchBar from "./SearchBar";
 import { useState } from "react";
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 
 const AddLocationModalContent = ({handleSelectedLocation}) => {
 
     // state to store search queries
     const [searchQuery, setSearchQuery] = useState(null);
 
-    const logisticsData = [
+    const locations = [
         {
-            id: 1,
-            name: "Warri (₦3,500)",
+            id: Math.random(),
+            location: "Asaba",
+            charge: 4000,
         },
         {
-            id: 2,
-            name: "Benin (₦4,500)",
+            id: Math.random(),
+            location: "Benin City",
+            charge: 5000,
         },
         {
-            id: 3,
-            name: "Asaba (₦4,500)",
+            id: Math.random(),
+            location: "Sapele",
+            charge: 3500,
         },
-    ];
+        {
+            id: Math.random(),
+            location: "Ughelli",
+            charge: 4000,
+        },
+        {
+            id: Math.random(),
+            location: "Agbor",
+            charge: 3500,
+        },
+        {
+            id: Math.random(),
+            location: "Warri",
+            charge: 4500,
+        },
+        {
+            id: Math.random(),
+            location: "Abraka",
+            charge: 4000,
+        },
+        {
+            id: Math.random(),
+            location: "Ibusa",
+            charge: 3500,
+        },
+        {
+            id: Math.random(),
+            location: "Okpanam",
+            charge: 3000,
+        },
+        {
+            id: Math.random(),
+            location: "Uromi",
+            charge: 4000,
+        },
+        {
+            id: Math.random(),
+            location: "Ogwashi-Uku",
+            charge: 3500,
+        },
+        {
+            id: Math.random(),
+            location: "Auchi",
+            charge: 4500,
+        },
+        {
+            id: Math.random(),
+            location: "Agbor",
+            charge: 3500,
+        },
+        {
+            id: Math.random(),
+            location: "Eku",
+            charge: 4000,
+        }
+    ]
 
     return (
         <>
@@ -32,17 +91,20 @@ const AddLocationModalContent = ({handleSelectedLocation}) => {
             <View>
                 <Text style={style.modalHeading}>Available Locations</Text>
             </View>
-            <View style={style.listWrapper}>
-                {logisticsData.map((data) => (
+            <BottomSheetScrollView 
+                showsVerticalScrollIndicator={false}
+                style={style.listWrapper}
+            >
+                {locations.map((data) => (
                     <TouchableOpacity
                         style={style.list}
                         key={data.id}
                         onPress={() => handleSelectedLocation(data.name)}
                     >   
-                        <Text style={style.listText}>{data.name}</Text>
+                        <Text style={style.listText}>{data.location} (₦{data.charge})</Text>
                     </TouchableOpacity>
                 ))}
-            </View>
+            </BottomSheetScrollView>
         </>
     );
 }

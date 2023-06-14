@@ -26,7 +26,7 @@ const Input = ({label, placeholder, onChange, value, multiline, editable, minRow
                         onFocus={() => setInputInFocus(true)}
                         onBlur={() => setInputInFocus(false)}
                         placeholderTextColor="#B1B2B2"
-                        defaultValue={value}
+                        defaultValue={!Array.isArray(value) ? value : value.join(", ")}
                         multiline={multiline}
                         numberOfLines={minRows}
                         textAlignVertical={textAlign}
@@ -42,7 +42,7 @@ const Input = ({label, placeholder, onChange, value, multiline, editable, minRow
                     onFocus={() => setInputInFocus(true)}
                     onBlur={() => setInputInFocus(false)}
                     placeholderTextColor="#B1B2B2"
-                    defaultValue={value}
+                    defaultValue={!Array.isArray(value) ? value : value.join(", ")}
                     multiline={multiline}
                     numberOfLines={minRows}
                     textAlignVertical={textAlign}
@@ -82,8 +82,9 @@ const style = StyleSheet.create({
         gap: 3,
     }, 
     adornment: {
-        fontFamily: 'mulish-bold',
-        color: "#837F7F",        
+        fontFamily: 'mulish-semibold',
+        color: "#837F7F",
+        fontSize: 20,     
     },
     focusedInput: {
         borderColor: primaryColor

@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import CheckBox from 'expo-checkbox';
 import SearchBar from "./SearchBar";
 import { useState } from "react";
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { primaryColor } from "../style/globalStyleSheet";
 
 const AddProductsModalContent = ({addProducts, selectedProducts}) => {
@@ -74,7 +75,10 @@ const AddProductsModalContent = ({addProducts, selectedProducts}) => {
                 <Text style={style.modalHeading}>Available Products</Text>
             </View>
             <View style={style.listContainer}>
-                <View style={style.listWrapper}>
+                <BottomSheetScrollView 
+                    style={style.listWrapper}  
+                    contentContainerStyle={style.listContainer}
+                >
                     {productList.map((data) => (
                         <View 
                             key={data.id}
@@ -100,7 +104,7 @@ const AddProductsModalContent = ({addProducts, selectedProducts}) => {
                             />
                         </View>
                     ))}
-                </View>
+                </BottomSheetScrollView>
                 <View style={style.fixedButton}>
                     <TouchableOpacity 
                         style={style.button}
@@ -118,27 +122,27 @@ const style = StyleSheet.create({
     modalHeading: {
         fontFamily: "mulish-semibold",
         fontSize: 12,
-        marginVertical: 10
+        marginVertical: 10,
     },
     listContainer: {
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-start',
         alignItems: 'center',
         width: '100%',
         flex: 1,
     },  
     listWrapper: {
-        display: 'flex',
-        flexDirection: 'column',
         width: '100%',
-        gap: 10,    
+
     },
     listItemWrapper: {
         display: 'flex',
         flexDirection: "row",
         width: '100%',
         alignItems: 'center',
+        borderBottomColor: "#E7E5E5",
+        borderBottomWidth: 1,
     },
     list: {
         height: 50,
@@ -186,6 +190,7 @@ const style = StyleSheet.create({
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: "#ffffff",
     }
 })
  

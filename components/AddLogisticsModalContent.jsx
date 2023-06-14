@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import SearchBar from "./SearchBar";
 import { useState } from "react";
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 
 const AddLogisticsModalContent = ({handleSelectedLogistics}) => {
 
@@ -9,21 +10,32 @@ const AddLogisticsModalContent = ({handleSelectedLogistics}) => {
 
     const logisticsData = [
         {
-            id: 1,
-            name: "Fedex",
+            company_id: "E3F7J1g4X6r9L2Y",
+            business_name: "Komitex Logistics",
+            imageUrl: require("../assets/images/komitex.png")
+        },
+        {
+            company_id: "H9i2L4t6R3d7K1w",
+            business_name: "Fedex",
             imageUrl: require("../assets/images/fedex.png")
         },
         {
-            id: 2,
-            name: "UPS",
+            company_id: "X7y2G4z9Q1a3w6J",
+            business_name: "UPS",
             imageUrl: require("../assets/images/ups.png")
         },
         {
-            id: 3,
-            name: "DHL",
+            company_id: "N5o8V2s6W3D1r4E",
+            business_name: "DHL",
             imageUrl: require("../assets/images/dhl.png")
         },
     ];
+
+    const getLogistics = (company_id) => {
+        const selectedLogistics = logisticsData.find((logistics) => logistics.company_id === company_id);
+
+        return handleSelectedLogistics(selectedLogistics);
+    }
 
     return (
         <>
@@ -35,31 +47,21 @@ const AddLogisticsModalContent = ({handleSelectedLogistics}) => {
             <View>
                 <Text style={style.modalHeading}>Available Logistics</Text>
             </View>
-            <View style={style.listWrapper}>
-                <TouchableOpacity
-                    style={style.list}
-                    onPress={() => handleSelectedLogistics("Komitex Logistics")}
-                >   
-                    <Image
-                        style={style.logisticsImage}
-                        source={require("../assets/images/komitex.png")}
-                    />
-                    <Text style={style.listText}>Komitex Logistics</Text>
-                </TouchableOpacity>
+            <BottomSheetScrollView style={style.listWrapper}>
                 {logisticsData.map((data) => (
                     <TouchableOpacity
                         style={style.list}
-                        key={data.id}
-                        onPress={() => handleSelectedLogistics(data.name)}
+                        key={data.company_id}
+                        onPress={() => getLogistics(data.company_id)}
                     >   
                         <Image
                             style={style.logisticsImage}
                             source={data.imageUrl}
                         />
-                        <Text style={style.listText}>{data.name}</Text>
+                        <Text style={style.listText}>{data.business_name}</Text>
                     </TouchableOpacity>
                 ))}
-            </View>
+            </BottomSheetScrollView>
         </>
     );
 }
@@ -82,6 +84,8 @@ const style = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'flex-start',
         gap: 10,
+        borderBottomColor: "#E7E5E5",
+        borderBottomWidth: 1
     },
     logisticsImage: {
         width: 30,

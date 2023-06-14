@@ -64,12 +64,12 @@ const style = StyleSheet.create({
         height: 16,
         width: 60,
         borderRadius: 20,
-        backgroundColor: "rgba(254, 228, 226, 1)",
+        backgroundColor: "rgba(254, 243, 242, 1)",
     },  
     canceledStatus: {
         fontFamily: 'mulish-regular',
         fontSize: 8,
-        color: "rgba(217, 45, 32, 1)"
+        color: "rgba(180, 35, 24, 1)"
     },
     dispatchedContainer: {
         display: 'flex',
@@ -78,12 +78,14 @@ const style = StyleSheet.create({
         height: 16,
         width: 60,
         borderRadius: 20,
-        backgroundColor: "rgba(7, 66, 2187, 0.05)",
+        // backgroundColor: "rgba(7, 66, 2187, 0.05)",
+        backgroundColor: "rgba(7, 66, 124, 0.05)",
     },  
     dispatchedStatus: {
         fontSize: 8,
         fontFamily: 'mulish-regular',
-        color: "rgba(7, 66, 124, 1)"
+        // color: "rgba(7, 66, 124, 1)", 
+        color: "rgba(7, 66, 124, 1)", 
     },
     pendingContainer: {
         display: 'flex',

@@ -1,6 +1,6 @@
 import { TouchableOpacity, Text, View, StyleSheet } from "react-native";
 import { primaryColor } from "../style/globalStyleSheet";
-const SelectInput = ({label, labelIcon, placeholder, onPress, icon, value, active}) => {
+const SelectInput = ({label, labelIcon, placeholder, onPress, icon, value, active, inputFor}) => {
     return (
         <View style={style.inputWrapper}>
                 { labelIcon ? (
@@ -24,8 +24,18 @@ const SelectInput = ({label, labelIcon, placeholder, onPress, icon, value, activ
                 <Text 
                     style={value ? style.value : style.placeholder}
                 >
+                    { inputFor === "Location" && (
+                        <>
+                            {value ? `${value.location} (₦${value.charge})` : placeholder}
+                        </>
+                    )}
+
+                    { inputFor == "Logistics" && (
+                        <>
+                            {value ? value.business_name : placeholder} 
+                        </>
+                    )}
                     {/* if value is present show value, else show placeholder */}
-                    {value ? value : placeholder} 
                 </Text>
                 {icon && (
                     <>{icon}</>
