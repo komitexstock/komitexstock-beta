@@ -18,7 +18,7 @@ import AddLocationModalContent from "../components/AddLocationModalContent";
 import AddProductsModalContent from "../components/AddProductsModalContent";
 import AddSummaryModalContent from "../components/AddSummaryModalContent";
 import ArrowDown from "../assets/icons/ArrowDown";
-import Info from "../assets/icons/Info";
+import InfoIcon from "../assets/icons/InfoIcon";
 import CustomButton from "../components/CustomButton";
 import { useState, useRef } from "react";
 import { primaryColor } from "../style/globalStyleSheet";
@@ -76,6 +76,7 @@ const CreatNewOrderStack = ({navigation}) => {
         type: "Logistics",
         title: "Select Logistcs",
         subtitle: null,
+        openAtIndex: 0,
     });
     
     // state to control modal overlay
@@ -92,7 +93,7 @@ const CreatNewOrderStack = ({navigation}) => {
     };
 
     // function to open bottom sheet modal
-    const openModal = (type, title, subtitle) => {
+    const openModal = (type, title, subtitle, openAtIndex) => {
         bottomSheetModalRef.current?.present();
         setShowOverlay(true);
         Keyboard.dismiss();
@@ -100,12 +101,17 @@ const CreatNewOrderStack = ({navigation}) => {
             type: type,
             title: title,
             subtitle: subtitle,
+            openAtIndex: openAtIndex
         });
         if (type === "Logistics") setSelectLogisticsActive(true);
-        else if (type === "Location") setSelectLocationActive(true);
-        
+        else if (type === "Location") setSelectLocationActive(true);   
     }
 
+    const emptyLogisticsAndOrderDetails = [logistics, orderDetails].some(
+            (item) => item === null || item === ''
+    );
+
+    console.log(emptyLogisticsAndOrderDetails);
     
     const handleOrderDetails = () => {
         
@@ -116,7 +122,7 @@ const CreatNewOrderStack = ({navigation}) => {
     }
 
     const showOrderSummary = () => {
-        openModal("Summary", "Order Summary", "Review your order details");    
+        openModal("Summary", "Order Summary", "Review your order details", 2);    
     }
 
 
@@ -164,8 +170,7 @@ const CreatNewOrderStack = ({navigation}) => {
         setCustomerName(text);
     }
     
-    // console.log(phoneNumber);
-    
+    // function to update phone number
     const updatePhoneNumber = (text) => {
         let newText = text.replace(new RegExp(' ', 'g'), '');
         // remove all occurrence of the space character ' ' in text gloablly
@@ -173,14 +178,20 @@ const CreatNewOrderStack = ({navigation}) => {
         setPhoneNumber(newText.split(','));
     }
     
+    // function to update address
     const updateAddress = (text) => {
         setAddress(text);
     }
     
+    
+    // function to update price
     const updatePrice = (text) => {
-        setPrice(parseFloat(text));
+        let newText = text.replace(new RegExp(',', 'g'), '');
+        // remove all occurrence of the comma character ',' in text gloablly
+        setPrice(parseFloat(newText));
     }
 
+    // inputs
     const inputs = [
         {
             id: 1,
@@ -195,6 +206,7 @@ const CreatNewOrderStack = ({navigation}) => {
             height: 44,
             keyboardType: "default",
             adornment: false,
+            helperText: false,
         },
         {
             id: 2,
@@ -209,6 +221,7 @@ const CreatNewOrderStack = ({navigation}) => {
             height: 44,
             keyboardType: "phone-pad",
             adornment: false,
+            helperText: "Seperate multiple phone number with \",\"",
         },
         {
             id: 3,
@@ -223,6 +236,7 @@ const CreatNewOrderStack = ({navigation}) => {
             height: 44,
             keyboardType: "default",
             adornment: false,
+            helperText: false,
         },
         {
             id: 4,
@@ -230,7 +244,7 @@ const CreatNewOrderStack = ({navigation}) => {
             maxRows: 1,
             multiline: false,
             maxRows: 1,
-            value: String(price),
+            value: price ? price.toLocaleString() : "",
             onChange: updatePrice,
             placeholder: "Price",
             label: "Price",
@@ -238,6 +252,7 @@ const CreatNewOrderStack = ({navigation}) => {
             height: 44,
             keyboardType: "numeric",
             adornment: "₦",
+            helperText: false,
         },
     ];
     
@@ -272,7 +287,7 @@ const CreatNewOrderStack = ({navigation}) => {
                                         label={"Select Logistics"} 
                                         placeholder={"Choose a logistics"} 
                                         value={logistics}
-                                        onPress={() => openModal("Logistics", "Select Logistics", null)}
+                                        onPress={() => openModal("Logistics", "Select Logistics", null, 0)}
                                         icon={<ArrowDown />}
                                         active={selectLogisticsActive}
                                         inputFor={"Logistics"}
@@ -293,10 +308,10 @@ const CreatNewOrderStack = ({navigation}) => {
                                     {processOrderResponse && (<>
                                         <SelectInput 
                                             label={"Delivery Location"}
-                                            labelIcon={<Info />}
+                                            labelIcon={<InfoIcon />}
                                             placeholder={"Delivery Location"} 
                                             value={location}
-                                            onPress={() => openModal("Location", "Delivery Location", null)}
+                                            onPress={() => openModal("Location", "Delivery Location", null, 0)}
                                             icon={<ArrowDown />}
                                             active={selectLocationActive}
                                             inputFor={"Location"}
@@ -305,7 +320,7 @@ const CreatNewOrderStack = ({navigation}) => {
                                             <View style={style.productsHeading}>
                                                 <Text style={style.producPlaceholder}>Products Selected</Text>
                                                 <TouchableOpacity
-                                                    onPress={() => openModal("Products", "Select Products", null)}
+                                                    onPress={() => openModal("Products", "Select Products", null, 0)}
                                                 >
                                                     <Text style={style.addProduct}>+Add Product</Text>
                                                 </TouchableOpacity>
@@ -372,6 +387,7 @@ const CreatNewOrderStack = ({navigation}) => {
                                                 height={input.height}
                                                 keyboardType={input.keyboardType}
                                                 adornment={input.adornment}
+                                                helperText={input.helperText}
                                             />
                                         ))}
                                     </>)}
@@ -383,6 +399,7 @@ const CreatNewOrderStack = ({navigation}) => {
                                 name="Continue" 
                                 onPress={showOrderSummary}
                                 backgroundColor={"#ffffff"}
+                                // inactive={true}
                             />
                         )}
                     </View>
@@ -390,11 +407,10 @@ const CreatNewOrderStack = ({navigation}) => {
             </TouchableWithoutFeedback>
             <CustomBottomSheet
                 bottomSheetModalRef={bottomSheetModalRef}
-                setShowOverlay={setShowOverlay}
                 showOverlay={showOverlay}
                 closeModal={closeModal}
-                snapPointsArray={["40%", "80%"]}
-                autoSnapAt={0}
+                snapPointsArray={["40%", "60%", "80%"]}
+                autoSnapAt={modal.openAtIndex}
                 sheetTitle={modal.title}
                 sheetSubtitle={modal.subtitle}
             >   
@@ -427,9 +443,10 @@ const CreatNewOrderStack = ({navigation}) => {
             </CustomBottomSheet>
             { !processOrderResponse && (
                 <CustomButton 
-                    name="Continue" 
+                    name="Process Order" 
                     onPress={processOrderDetails}
                     backgroundColor={"#f8f8f8"}
+                    // inactive={true}
                     fixed={true}
                 />
             )}
@@ -509,6 +526,8 @@ const style = StyleSheet.create({
         width: 70,
         justifyContent: "space-between",
         alignItems: "center",
+        borderRadius: 5,
+
     },
     quantityButton: {
         display: "flex",
@@ -525,8 +544,6 @@ const style = StyleSheet.create({
         fontFamily: "mulish-regular",
         textAlign: "center",
     },
-
-
     main: {
         minHeight: "100%",
         width: "100%",

@@ -14,10 +14,22 @@ const CustomButton = ({name, onPress, backgroundColor, fixed}) => {
     );
 }
 
+console.log(inactive);
+
 const style = StyleSheet.create({
     button: {
         width: "100%",
         backgroundColor: primaryColor,
+        height: 44,
+        borderRadius: 12,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 10,
+    }, 
+    inactive: {
+        width: "100%",
+        backgroundColor: "rgba(7, 66, 124, 0.3)",
         height: 44,
         borderRadius: 12,
         display: 'flex',

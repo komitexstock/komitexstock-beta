@@ -16,9 +16,9 @@ import AppProvider from './context/AppContext';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StatusBar } from 'react-native';
+import { AppRegistry } from 'react-native';
 
 export default function App() {
-
 
   const [fontsLoaded] = useFonts({
     'mulish-regular': require('./assets/fonts/Mulish-Regular.ttf'),
@@ -104,3 +104,5 @@ export default function App() {
     </NavigationContainer>
   );
 }
+
+AppRegistry.registerComponent('MyApp', () => App);

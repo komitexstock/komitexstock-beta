@@ -2,7 +2,7 @@ import { Text, View, StyleSheet, TextInput } from "react-native";
 import { useState } from "react";
 import { primaryColor } from "../style/globalStyleSheet";
 
-const Input = ({label, placeholder, onChange, value, multiline, editable, minRows, textAlign, height, keyboardType, adornment}) => {
+const Input = ({label, placeholder, onChange, value, multiline, editable, minRows, textAlign, height, keyboardType, adornment, helperText}) => {
 
     const handleTextChange = (text) => {
         onChange(text);
@@ -15,7 +15,7 @@ const Input = ({label, placeholder, onChange, value, multiline, editable, minRow
             <Text style={style.label}>{label}</Text>
             { adornment ? (
                 <View
-                    style={!inputInFocus ? [style.input, {height: height}] : [style.input, style.focusedInput, {height: height}]}
+                    style={!inputInFocus ? [style.input, style.adornmentWrapper, {height: height}] : [style.input, style.adornmentWrapper, style.focusedInput, {height: height}]}
                 >   
                     <Text style={style.adornment}>{adornment}</Text>
                     <TextInput
@@ -49,6 +49,9 @@ const Input = ({label, placeholder, onChange, value, multiline, editable, minRow
                     editable={editable}
                 />
             )}
+            { helperText && (
+                <Text style={style.label}>{helperText}</Text>
+            )}
         </View>
     );
 }
@@ -81,17 +84,30 @@ const style = StyleSheet.create({
         maxHeight: 100,
         gap: 3,
     }, 
+    adornmentWrapper: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+    },  
+    adornedInput: {
+        flex: 1,
+        fontFamily: 'mulish-semibold',   
+        height: "100%",
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'flex-end',
+        justifyContent: 'center',
+        fontSize: 12,
+    },
     adornment: {
-        fontFamily: 'mulish-semibold',
+        fontFamily: 'mulish-regular',
         color: "#837F7F",
-        fontSize: 20,     
+        fontSize: 16,   
     },
     focusedInput: {
         borderColor: primaryColor
     },
-    adornedInput: {
-        flex: 1,
-    }
 })
  
 export default Input;

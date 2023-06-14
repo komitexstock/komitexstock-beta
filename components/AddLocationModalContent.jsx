@@ -1,4 +1,4 @@
-import { ScrollView, View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import SearchBar from "./SearchBar";
 import { useState } from "react";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
@@ -10,76 +10,82 @@ const AddLocationModalContent = ({handleSelectedLocation}) => {
 
     const locations = [
         {
-            id: Math.random(),
+            id: 1,
             location: "Asaba",
             charge: 4000,
         },
         {
-            id: Math.random(),
+            id: 2,
             location: "Benin City",
             charge: 5000,
         },
         {
-            id: Math.random(),
+            id: 3,
             location: "Sapele",
             charge: 3500,
         },
         {
-            id: Math.random(),
+            id: 4,
             location: "Ughelli",
             charge: 4000,
         },
         {
-            id: Math.random(),
+            id: 5,
             location: "Agbor",
             charge: 3500,
         },
         {
-            id: Math.random(),
+            id: 6,
             location: "Warri",
             charge: 4500,
         },
         {
-            id: Math.random(),
+            id: 7,
             location: "Abraka",
             charge: 4000,
         },
         {
-            id: Math.random(),
+            id: 8,
             location: "Ibusa",
             charge: 3500,
         },
         {
-            id: Math.random(),
+            id: 9,
             location: "Okpanam",
             charge: 3000,
         },
         {
-            id: Math.random(),
+            id: 10,
             location: "Uromi",
             charge: 4000,
         },
         {
-            id: Math.random(),
+            id: 11,
             location: "Ogwashi-Uku",
             charge: 3500,
         },
         {
-            id: Math.random(),
+            id: 12,
             location: "Auchi",
             charge: 4500,
         },
         {
-            id: Math.random(),
+            id: 13,
             location: "Agbor",
             charge: 3500,
         },
         {
-            id: Math.random(),
+            id: 14,
             location: "Eku",
             charge: 4000,
         }
     ]
+
+    const getLocation = (id) => {
+        const selectedLocation = locations.find((location) => location.id === id);
+
+        return handleSelectedLocation(selectedLocation);
+    }
 
     return (
         <>
@@ -95,13 +101,14 @@ const AddLocationModalContent = ({handleSelectedLocation}) => {
                 showsVerticalScrollIndicator={false}
                 style={style.listWrapper}
             >
-                {locations.map((data) => (
+                {locations.map((data, index) => (
                     <TouchableOpacity
-                        style={style.list}
+                        style={[style.list, locations.length - 1 === index ? { borderBottomWidth: 0 } : null]}
                         key={data.id}
-                        onPress={() => handleSelectedLocation(data.name)}
+                        onPress={() => getLocation(data.id)}
                     >   
-                        <Text style={style.listText}>{data.location} (₦{data.charge})</Text>
+                        <Text style={style.listText}>{data.location}</Text>
+                        <Text style={style.listText}>₦{data.charge}</Text>
                     </TouchableOpacity>
                 ))}
             </BottomSheetScrollView>
@@ -121,11 +128,11 @@ const style = StyleSheet.create({
         gap: 10,    
     },
     list: {
-        height: 30,
+        height: 50,
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'flex-start',
+        justifyContent: 'space-between',
         gap: 10,
         borderBottomColor: "#E7E5E5",
         borderBottomWidth: 1

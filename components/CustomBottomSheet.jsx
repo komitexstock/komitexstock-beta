@@ -4,13 +4,13 @@ import { useMemo } from "react";
 import ModalHandle from "./ModalHandle";
 import Add from "../assets/icons/Add";
 
-const CustomBottomSheet = ({bottomSheetModalRef, setShowOverlay, showOverlay, closeModal, snapPointsArray, autoSnapAt, children, sheetTitle, sheetSubtitle}) => {
+const CustomBottomSheet = ({bottomSheetModalRef, showOverlay, closeModal, snapPointsArray, autoSnapAt, children, sheetTitle, sheetSubtitle}) => {
 
     const snapPoints = useMemo(() => snapPointsArray, []);
 
     const handleGestureEnd = (event) => {
         // console.log(event);
-        if (event === -1) setShowOverlay(false);
+        if (event === -1) closeModal();
     };
 
     return (
