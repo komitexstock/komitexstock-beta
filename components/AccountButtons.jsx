@@ -1,13 +1,16 @@
 import { Text, View, TouchableOpacity, StyleSheet } from "react-native";
 import RightArrowIcon from "../assets/icons/RightArrowIcon";
 
-const AccountButtons = ({title, subtitle, icon, length, index}) => {
+const AccountButtons = ({title, subtitle, icon, length, index, onPress}) => {
     return (
-        <TouchableOpacity style={[
-            style.accountButtonWrapper, 
-            index === 0 && style.topBorderRadius,
-            length === index && style.bottomBorderRadius,
-        ]}>
+        <TouchableOpacity 
+            onPress={onPress}
+            style={[
+                style.accountButtonWrapper, 
+                index === 0 && style.topBorderRadius,
+                length === index && style.bottomBorderRadius,
+            ]}
+        >
             {icon}
             <View style={style.accountButtonContent}>
                 <Text style={style.accountButtonPrimaryText}>{title}</Text>

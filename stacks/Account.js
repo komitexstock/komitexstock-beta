@@ -25,7 +25,7 @@ const Account = ({navigation}) => {
             title: "Profile",
             subtitle: "Show Profile",
             icon: <EditUserIcon />,
-            onPress: () => {},
+            onPress: () => {navigation.navigate("Profile")},
         },
         business: [
             {
@@ -33,21 +33,21 @@ const Account = ({navigation}) => {
                 title: "Analytics",
                 subtitle: false,
                 icon: <AnalyticsIcon />,
-                onPress: () => {},
+                onPress: () => {navigation.navigate("Analytics")},
             },
             {
                 id: 2,
                 title: "Team Members",
                 subtitle: false,
                 icon: <TeamIcon />,
-                onPress: () => {},
+                onPress: () => {navigation.navigate("Team")},
             },
             {
                 id: 3,
                 title: "logistics",
                 subtitle: false,
                 icon: <LogisticsIcon />,
-                onPress: () => {},
+                onPress: () => {navigation.navigate("Logistics")},
             },
         ],
         security: [
@@ -56,7 +56,7 @@ const Account = ({navigation}) => {
                 title: "Security",
                 subtitle: false,
                 icon: <SecurityIcon />,
-                onPress: () => {},
+                onPress: () => {navigation.navigate("Security")},
             },
             {
                 id: 2,
@@ -110,6 +110,7 @@ const Account = ({navigation}) => {
                         icon={accountButtons.profile.icon}
                         length={0}
                         index={0}
+                        onPress={accountButtons.profile.onPress}
                     />
                 </View>
                 <View style={style.infoWrapper}>
@@ -123,6 +124,7 @@ const Account = ({navigation}) => {
                                 icon={item.icon}
                                 length={accountButtons.business.length - 1}
                                 index={index}
+                                onPress={item.onPress}
                             />
                         )
                     })}
@@ -138,6 +140,7 @@ const Account = ({navigation}) => {
                                 icon={item.icon}
                                 length={accountButtons.security.length - 1}
                                 index={index}
+                                onPress={item.onPress}
                             />
                         )
                     })}

@@ -4,6 +4,7 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+// stacks
 import Home from './stacks/Home';
 import Orders from './stacks/Orders';
 import Waybill from './stacks/Waybill';
@@ -12,6 +13,13 @@ import Account from './stacks/Account';
 import Notifications from './stacks/Notifications';
 import SendOrder from './stacks/SendOrder';
 import SendWaybill from './stacks/SendWaybill';
+import Profile from './stacks/Profile';
+import Analytics from './stacks/Analytics';
+import Team from './stacks/Team';
+import Logistics from './stacks/Logistics';
+import Security from './stacks/Security';
+
+// components
 import BottomNavigation from './components/BottomNavigation';
 import AppProvider from './context/AppContext';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
@@ -79,6 +87,41 @@ export default function App() {
             <Stack.Screen 
               name="Account" 
               component={Account} 
+              options={{
+                headerShown: false,
+              }} 
+            />
+            <Stack.Screen 
+              name="Profile" 
+              component={Profile} 
+              options={{
+                headerShown: false,
+              }} 
+            />
+            <Stack.Screen 
+              name="Analytics" 
+              component={Analytics} 
+              options={{
+                headerShown: false,
+              }} 
+            />
+            <Stack.Screen 
+              name="Team" 
+              component={Team} 
+              options={{
+                headerShown: false,
+              }} 
+            />
+            <Stack.Screen 
+              name="Logistics" 
+              component={Logistics} 
+              options={{
+                headerShown: false,
+              }} 
+            />
+            <Stack.Screen 
+              name="Security" 
+              component={Security} 
               options={{
                 headerShown: false,
               }} 

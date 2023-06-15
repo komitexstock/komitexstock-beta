@@ -167,7 +167,7 @@ const Home = ({navigation}) => {
                                 </TouchableOpacity>
                                 <TouchableOpacity 
                                     style={style.quickAnalytics}
-                                    onPress={() => {navigation.navigate("ViewAnalytics")}}
+                                    onPress={() => {navigation.navigate("Analytics")}}
                                 >
                                     <QuickAnalyticsIcon />
                                     <Text style={style.quickActionHeading}>View Analytics</Text>
