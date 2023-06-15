@@ -17,9 +17,10 @@ import AddLogisticsModalContent from "../components/AddLogisticsModalContent";
 import AddLocationModalContent from "../components/AddLocationModalContent";
 import AddProductsModalContent from "../components/AddProductsModalContent";
 import AddSummaryModalContent from "../components/AddSummaryModalContent";
+import CustomButton from "../components/CustomButton";
+import Product from "../components/Product";
 import ArrowDown from "../assets/icons/ArrowDown";
 import InfoIcon from "../assets/icons/InfoIcon";
-import CustomButton from "../components/CustomButton";
 import { useState, useRef } from "react";
 import { primaryColor } from "../style/globalStyleSheet";
 import ClearSearch from "../assets/icons/ClearSearch";
@@ -107,13 +108,25 @@ const CreatNewOrderStack = ({navigation}) => {
         else if (type === "Location") setSelectLocationActive(true);   
     }
 
-    const emptyLogisticsAndOrderDetails = [logistics, orderDetails].some(
+    const emptyLogisticsAndOrderDetails = [
+            logistics, 
+            orderDetails
+        ].some(
             (item) => item === null || item === ''
     );
 
-    const isAnyFieldEmpty = [logistics, orderDetails, location, products, phoneNumber, address, price].some((item) => {
-        return item === null || item === '' || item === undefined || item === 0 || item === NaN || (Array.isArray(item) && item.length === 0);
-    });
+    const isAnyFieldEmpty = [
+            logistics, 
+            orderDetails, 
+            location, 
+            products, 
+            phoneNumber, 
+            address, 
+            price
+        ].some((item) => {
+            return item === null || item === '' || item === undefined || item === 0 || item === NaN || (Array.isArray(item) && item.length === 0);
+        }
+    );
 
     // console.log(products);
     
@@ -136,22 +149,37 @@ const CreatNewOrderStack = ({navigation}) => {
         setLocation(data);
     }
 
-    const decreaseQuantity = (index) => {
-        setProducts((prev) => {
-            const newProducts = [...prev];
-            if (newProducts[index].quantity !== 1) {
-                newProducts[index].quantity -= 1;
-            } 
-            return newProducts;
+    const decreaseQuantity = (id) => {
+        setProducts(prevProducts => {
+            return prevProducts.map(product => {
+                if (product.id === id) {
+                    let decrement;
+                    if (product.quantity === 1) decrement = 0;
+                    else decrement = 1
+                    return {
+                        ...product,
+                        quantity: product.quantity -= decrement,
+                    }
+                } else {
+                    return product
+                }
+            })
         })
     }
 
     // increase product quanityt
-    const increaseQuantity = (index) => {
-        setProducts((prev) => {
-            const newProducts = [...prev];
-            newProducts[index].quantity += 1;
-            return newProducts;
+    const increaseQuantity = (id) => {
+        setProducts(prevProducts => {
+            return prevProducts.map(product => {
+                if (product.id === id) {
+                    return {
+                        ...product,
+                        quantity: product.quantity += 1,
+                    }
+                } else {
+                    return product
+                }
+            })
         })
     }
 
@@ -165,7 +193,6 @@ const CreatNewOrderStack = ({navigation}) => {
         closeModal();
         // console.log(productsList)
     }
-
 
     // function to update orderdetails
     const updateOrderDetails = (text) => {
@@ -188,7 +215,6 @@ const CreatNewOrderStack = ({navigation}) => {
     const updateAddress = (text) => {
         setAddress(text);
     }
-    
     
     // function to update price
     const updatePrice = (text) => {
@@ -350,52 +376,14 @@ const CreatNewOrderStack = ({navigation}) => {
                                                     <Text style={style.addProduct}>+Add Product</Text>
                                                 </TouchableOpacity>
                                             </View>
-                                            { products.map((product, index) => (
-                                                <View key={index} style={style.productItem}>
-                                                    
-                                                    <View style={style.productDetailsWrapper}>
-                                                        <Image
-                                                            style={style.productImage}
-                                                            source={product.imageUrl}
-                                                        />
-                                                        <Text style={style.productName}>
-                                                            {product.product_name}
-                                                        </Text>
-                                                    </View>
-
-                                                    <View style={style.productQuantityWrapper}>
-                                                        <View style={style.productQuantityContainer}>
-                                                            {/* reduce quantity button */}
-                                                            <TouchableOpacity 
-                                                                style={style.quantityButton}
-                                                                onPress={() => {
-                                                                    decreaseQuantity(index);
-                                                                }}
-                                                            >
-                                                                <Text style={style.quantityButtonText}>-</Text>
-                                                            </TouchableOpacity>
-                                                            <TextInput 
-                                                                keyboardType="numeric"
-                                                                defaultValue={String(product.quantity)}
-                                                                style={style.quantityInput}
-                                                            />
-                                                            {/* increase quantity button */}
-                                                            <TouchableOpacity 
-                                                                style={style.quantityButton}
-                                                                onPress={() => {
-                                                                    increaseQuantity(index);
-                                                                }}
-                                                            >
-                                                                <Text style={style.quantityButtonText}>+</Text>
-                                                            </TouchableOpacity>
-                                                        </View>
-                                                        <TouchableOpacity
-                                                            onPress={() => removeProduct(product.id)}
-                                                        >
-                                                            <ClearSearch />
-                                                        </TouchableOpacity>
-                                                    </View>
-                                                </View>
+                                            { products.map((product) => (
+                                                <Product 
+                                                    key={product.id} 
+                                                    product={product} 
+                                                    removeProduct={removeProduct}
+                                                    increaseQuantity={increaseQuantity}
+                                                    decreaseQuantity={decreaseQuantity}
+                                                />
                                             ))}
                                         </View>
                                         {inputs.map((input) => (
@@ -571,6 +559,8 @@ const style = StyleSheet.create({
         fontFamily: "mulish-regular",
         textAlign: "center",
     },
+
+
     main: {
         minHeight: "100%",
         width: "100%",
