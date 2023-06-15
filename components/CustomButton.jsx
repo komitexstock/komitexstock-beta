@@ -1,12 +1,17 @@
 import { TouchableOpacity, Text, StyleSheet, View } from "react-native";
 import { primaryColor } from "../style/globalStyleSheet";
 
-const CustomButton = ({name, onPress, backgroundColor, fixed}) => {
+const CustomButton = ({name, onPress, backgroundColor, fixed, inactive}) => {
+
+    // const inactive = true;
+
+    // console.log(inactive);
+
     return (
         <View style={[ fixed ? style.fixed : style.buttonWrapper, {backgroundColor: backgroundColor}]}>
             <TouchableOpacity 
-                style={style.button}
-                onPress={onPress}
+                style={inactive ? style.inactive : style.button}
+                onPress={inactive ? () => {} : onPress}
             >
                 <Text style={style.buttonText}>{name}</Text>
             </TouchableOpacity>
@@ -14,7 +19,7 @@ const CustomButton = ({name, onPress, backgroundColor, fixed}) => {
     );
 }
 
-console.log(inactive);
+// console.log(inactive);
 
 const style = StyleSheet.create({
     button: {

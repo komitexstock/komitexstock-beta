@@ -111,12 +111,12 @@ const CreatNewOrderStack = ({navigation}) => {
             (item) => item === null || item === ''
     );
 
-    console.log(emptyLogisticsAndOrderDetails);
-    
-    const handleOrderDetails = () => {
-        
-    }
+    const isAnyFieldEmpty = [logistics, orderDetails, location, products, phoneNumber, address, price].some((item) => {
+        return item === null || item === '' || item === undefined || item === 0 || item === NaN || (Array.isArray(item) && item.length === 0);
+    });
 
+    // console.log(products);
+    
     const processOrderDetails = async () => {
         setProcessOrderResponse("Response from ChatGPT");
     }
@@ -166,6 +166,12 @@ const CreatNewOrderStack = ({navigation}) => {
         // console.log(productsList)
     }
 
+
+    // function to update orderdetails
+    const updateOrderDetails = (text) => {
+        setOrderdetails(text)
+    }
+
     const updateName = (text) => {
         setCustomerName(text);
     }
@@ -188,8 +194,17 @@ const CreatNewOrderStack = ({navigation}) => {
     const updatePrice = (text) => {
         let newText = text.replace(new RegExp(',', 'g'), '');
         // remove all occurrence of the comma character ',' in text gloablly
-        setPrice(parseFloat(newText));
+        if (newText) setPrice(parseFloat(newText));
+        else setPrice(0);
+        
     }
+
+    // console.log(price)
+
+    const [errorCustomerName, setErrorCustomerName] = useState(false);
+    const [errorPhoneNumber, setErrorPhoneNumber] = useState(false);
+    const [errorAddress, setErrorAddress] = useState(false);
+    const [errorPrice, setErrorPrice] = useState(false);
 
     // inputs
     const inputs = [
@@ -207,6 +222,8 @@ const CreatNewOrderStack = ({navigation}) => {
             keyboardType: "default",
             adornment: false,
             helperText: false,
+            error: errorCustomerName,
+            setError: setErrorCustomerName,
         },
         {
             id: 2,
@@ -222,6 +239,8 @@ const CreatNewOrderStack = ({navigation}) => {
             keyboardType: "phone-pad",
             adornment: false,
             helperText: "Seperate multiple phone number with \",\"",
+            error: errorPhoneNumber,
+            setError: setErrorPhoneNumber,
         },
         {
             id: 3,
@@ -237,6 +256,8 @@ const CreatNewOrderStack = ({navigation}) => {
             keyboardType: "default",
             adornment: false,
             helperText: false,
+            error: errorAddress,
+            setError: setErrorAddress,
         },
         {
             id: 4,
@@ -244,7 +265,7 @@ const CreatNewOrderStack = ({navigation}) => {
             maxRows: 1,
             multiline: false,
             maxRows: 1,
-            value: price ? price.toLocaleString() : "",
+            value: price ? price.toLocaleString() : '',
             onChange: updatePrice,
             placeholder: "Price",
             label: "Price",
@@ -253,6 +274,8 @@ const CreatNewOrderStack = ({navigation}) => {
             keyboardType: "numeric",
             adornment: "₦",
             helperText: false,
+            error: errorPrice,
+            setError: setErrorPrice,
         },
     ];
     
@@ -277,7 +300,7 @@ const CreatNewOrderStack = ({navigation}) => {
                             <Header 
                                 iconExist={false} 
                                 navigation={navigation} 
-                                stackName={"Create New Order"} 
+                                stackName={"Send an Order"} 
                                 iconFunction={null} 
                                 icon={null} 
                             />
@@ -296,7 +319,7 @@ const CreatNewOrderStack = ({navigation}) => {
                                     <Input 
                                         label={"Order Details"} 
                                         placeholder={"Paste order details here..."} 
-                                        onChange={handleOrderDetails}
+                                        onChange={updateOrderDetails}
                                         value={orderDetails}
                                         multiline={true}
                                         maxRows={5}
@@ -304,6 +327,8 @@ const CreatNewOrderStack = ({navigation}) => {
                                         textAlign={"top"}
                                         height={100}
                                         keyboardType={"default"}
+                                        error={false}
+                                        setError={() => {}}
                                     />
                                     {processOrderResponse && (<>
                                         <SelectInput 
@@ -388,6 +413,8 @@ const CreatNewOrderStack = ({navigation}) => {
                                                 keyboardType={input.keyboardType}
                                                 adornment={input.adornment}
                                                 helperText={input.helperText}
+                                                error={input.error}
+                                                setError={input.setError}
                                             />
                                         ))}
                                     </>)}
@@ -399,7 +426,7 @@ const CreatNewOrderStack = ({navigation}) => {
                                 name="Continue" 
                                 onPress={showOrderSummary}
                                 backgroundColor={"#ffffff"}
-                                // inactive={true}
+                                inactive={isAnyFieldEmpty}
                             />
                         )}
                     </View>
@@ -446,7 +473,7 @@ const CreatNewOrderStack = ({navigation}) => {
                     name="Process Order" 
                     onPress={processOrderDetails}
                     backgroundColor={"#f8f8f8"}
-                    // inactive={true}
+                    inactive={emptyLogisticsAndOrderDetails}
                     fixed={true}
                 />
             )}
