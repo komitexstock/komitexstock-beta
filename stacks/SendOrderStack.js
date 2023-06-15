@@ -6,8 +6,6 @@ import {
     Keyboard,
     Text,
     TouchableOpacity,
-    Image,
-    TextInput
 } from "react-native";
 import Header from "../components/Header";
 import Input from "../components/Input";
@@ -23,9 +21,8 @@ import ArrowDown from "../assets/icons/ArrowDown";
 import InfoIcon from "../assets/icons/InfoIcon";
 import { useState, useRef } from "react";
 import { primaryColor } from "../style/globalStyleSheet";
-import ClearSearch from "../assets/icons/ClearSearch";
 
-const CreatNewOrderStack = ({navigation}) => {
+const SendOrderStack = ({navigation}) => {
 
     // state to store order details
     const [ orderDetails, setOrderdetails] = useState(null);
@@ -453,6 +450,7 @@ const CreatNewOrderStack = ({navigation}) => {
                         phoneNumber={phoneNumber}
                         price={price}
                         address={address}
+                        type={"order"}
                     />
                 )}
             </CustomBottomSheet>
@@ -470,7 +468,6 @@ const CreatNewOrderStack = ({navigation}) => {
 }
 
 const style = StyleSheet.create({
-
     productsWrapper: {
         display: "flex",
         flexDirection: "column",
@@ -597,4 +594,4 @@ const style = StyleSheet.create({
     },
 })
  
-export default CreatNewOrderStack;
+export default SendOrderStack;

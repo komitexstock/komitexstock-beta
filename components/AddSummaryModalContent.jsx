@@ -2,28 +2,42 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { primaryColor } from "../style/globalStyleSheet";
 import InfoIconWhite from "../assets/icons/InfoIconWhite";
 
-const AddSummaryModalContent = ({logistics, products, customerName, location, phoneNumber, price, address}) => {
+const AddSummaryModalContent = ({logistics, products, customerName, location, phoneNumber, price, address, waybillDetails, type}) => {
 
-    const receivable = price - location.charge;
+    const receivable = price ? price - location.charge : null;
 
     return (
         <View style={style.mainContainer}>
             <View style={style.listContainer}>
                 <View style={style.detailsWrapper}>
-                    <View>
-                        <Text style={style.detailDescription}>Customer's Name</Text>
-                        <Text style={style.detail}>{customerName}</Text>
-                        <Text style={style.detailDescription}>Delivery Address</Text>
-                        <Text style={style.detail}>{address}</Text>
-                        <Text style={style.detailDescription}>Logistics</Text>
-                        <Text style={style.detail}>{logistics.business_name}</Text>
-                    </View>
-                    <View style={style.rightAlignedText}>
-                        <Text style={style.detailDescription}>Date</Text>
-                        <Text style={style.detail}>{"20 Dec, 2023 10.04am"}</Text>
-                        <Text style={style.detailDescription}>Phone Number</Text>
-                        <Text style={style.detail}>{phoneNumber.join(", ")}</Text>
-                    </View>
+                    {type === "order" && <>
+                        <View>
+                            <Text style={style.detailDescription}>Customer's Name</Text>
+                            <Text style={style.detail}>{customerName}</Text>
+                            <Text style={style.detailDescription}>Delivery Address</Text>
+                            <Text style={style.detail}>{address}</Text>
+                            <Text style={style.detailDescription}>Logistics</Text>
+                            <Text style={style.detail}>{logistics.business_name}</Text>
+                        </View>
+                        <View style={style.rightAlignedText}>
+                            <Text style={style.detailDescription}>Date</Text>
+                            <Text style={style.detail}>{"20 Dec, 2023 10.04am"}</Text>
+                            <Text style={style.detailDescription}>Phone Number</Text>
+                            <Text style={style.detail}>{phoneNumber.join(", ")}</Text>
+                        </View>
+                    </>}
+                    {type === "waybill" && <>
+                        <View>
+                            <Text style={style.detailDescription}>Logistics</Text>
+                            <Text style={style.detail}>{logistics.business_name}</Text>
+                            <Text style={style.detailDescription}>Waybill Details</Text>
+                            <Text style={style.detail}>{waybillDetails}</Text>
+                        </View>
+                        <View style={style.rightAlignedText}>
+                            <Text style={style.detailDescription}>Date</Text>
+                            <Text style={style.detail}>{"20 Dec, 2023 10.04am"}</Text>
+                        </View>
+                    </>}
                 </View>
                 <View style={style.productHeadingWrapper}>
                     <Text style={style.productHeading}>Product Details</Text>
@@ -51,23 +65,25 @@ const AddSummaryModalContent = ({logistics, products, customerName, location, ph
                     ))}
                 </View>
                 <View style={style.priceContainer}>
-                    <View style={style.priceWrapper}>
-                        <Text style={style.priceDescriptionText}>Price</Text>
-                        <View style={style.deliveryFee}>
-                            <Text style={style.priceDescriptionText}>
-                                Delivery Fee ({location.location})
-                            </Text>
-                            <TouchableOpacity>
-                                <InfoIconWhite />
-                            </TouchableOpacity>
+                    {type === "order" && <>
+                        <View style={style.priceWrapper}>
+                            <Text style={style.priceDescriptionText}>Price</Text>
+                            <View style={style.deliveryFee}>
+                                <Text style={style.priceDescriptionText}>
+                                    Delivery Fee ({location.location})
+                                </Text>
+                                <TouchableOpacity>
+                                    <InfoIconWhite />
+                                </TouchableOpacity>
+                            </View>
+                            <Text style={style.priceDescriptionText}>Total Receivable</Text>
                         </View>
-                        <Text style={style.priceDescriptionText}>Total Receivable</Text>
-                    </View>
-                    <View style={style.priceWrapper}>
-                        <Text style={style.priceText}>₦{price.toLocaleString() }</Text>
-                        <Text style={style.priceText}>-₦{location.charge.toLocaleString()}</Text>
-                        <Text style={style.priceText}>₦{receivable.toLocaleString()}</Text>
-                    </View>
+                        <View style={style.priceWrapper}>
+                            <Text style={style.priceText}>₦{price.toLocaleString() }</Text>
+                            <Text style={style.priceText}>-₦{location.charge.toLocaleString()}</Text>
+                            <Text style={style.priceText}>₦{receivable.toLocaleString()}</Text>
+                        </View>
+                    </>}
                 </View>
             </View>
             <View style={style.fixedButton}>

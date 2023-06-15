@@ -143,7 +143,7 @@ const HomeStack = ({navigation}) => {
                             <View style={style.quickAccessWrapper}>
                                 <TouchableOpacity 
                                     style={style.quickOrder}
-                                    onPress={() => {navigation.navigate("CreateOrder")}}
+                                    onPress={() => {navigation.navigate("SendOrder")}}
                                 >
                                     <QuickOrderIcon />
                                     <Text style={style.quickActionHeading}>Send an Order</Text>
@@ -157,12 +157,18 @@ const HomeStack = ({navigation}) => {
                                     <Text style={style.quickActionHeading}>Manage Inventory</Text>
                                     <Text style={style.quickActionParagraph}>Review and add to your stores inventory</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={style.quickWaybill}>
+                                <TouchableOpacity 
+                                    style={style.quickWaybill}
+                                    onPress={() => {navigation.navigate("SendWaybill")}}
+                                >
                                     <QuickWaybiillIcon />
                                     <Text style={style.quickActionHeading}>Send Waybill</Text>
                                     <Text style={style.quickActionParagraph}>Restock your inventory with your preferred partner</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={style.quickAnalytics}>
+                                <TouchableOpacity 
+                                    style={style.quickAnalytics}
+                                    onPress={() => {navigation.navigate("ViewAnalytics")}}
+                                >
                                     <QuickAnalyticsIcon />
                                     <Text style={style.quickActionHeading}>View Analytics</Text>
                                     <Text style={style.quickActionParagraph}>Easily view your business growth and analytics</Text>

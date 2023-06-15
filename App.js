@@ -10,7 +10,8 @@ import WaybillStack from './stacks/WaybillStack';
 import InventoryStack from './stacks/InventoryStack';
 import AccountStack from './stacks/AccountStack';
 import NotificationsStack from './stacks/NotificationsStack';
-import CreatNewOrderStack from './stacks/CreateNewOrderStack';
+import SendOrderStack from './stacks/SendOrderStack';
+import SendWaybillStack from './stacks/SendWaybillStack';
 import BottomNavigation from './components/BottomNavigation';
 import AppProvider from './context/AppContext';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
@@ -90,8 +91,15 @@ export default function App() {
               }}
             />
             <Stack.Screen 
-              name="CreateOrder" 
-              component={CreatNewOrderStack}
+              name="SendOrder" 
+              component={SendOrderStack}
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen 
+              name="SendWaybill" 
+              component={SendWaybillStack}
               options={{
                 headerShown: false,
               }}
