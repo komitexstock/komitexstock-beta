@@ -19,7 +19,7 @@ import SearchBar from "../components/SearchBar";
 import { useState, useRef } from "react";
 
 
-const HomeStack = ({navigation}) => {
+const Home = ({navigation}) => {
       
     const orders = [
         {
@@ -387,4 +387,4 @@ const style = StyleSheet.create({
     }
 })
  
-export default HomeStack;
+export default Home;

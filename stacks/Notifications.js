@@ -8,7 +8,7 @@ import Header from "../components/Header";
 import { globalStyleSheet, primaryColor } from "../style/globalStyleSheet";
 import FilterButtonGroup from "../components/FilterButtonGroup";
 
-const NotificationsStack = ({navigation}) => {
+const Notifications = ({navigation}) => {
 
     const orders = [
         {
@@ -291,4 +291,4 @@ const style = StyleSheet.create({
     }
 });
  
-export default NotificationsStack;
+export default Notifications;

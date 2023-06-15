@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
 
-const OrdersStack = ({navigation}) => {
+const Orders = ({navigation}) => {
     return (
         <View style={{minHeight: "100%", display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
             <Text>Orders Stack</Text>
@@ -8,4 +8,4 @@ const OrdersStack = ({navigation}) => {
     );
 }
  
-export default OrdersStack;
+export default Orders;

@@ -18,7 +18,7 @@ import NotificationBlackIcon from "../assets/icons/NotificationBlackIcon";
 import HelpIcon from "../assets/icons/HelpIcon";
 import LogoutIcon from "../assets/icons/LogoutIcon";
 
-const AccountStack = ({navigation}) => {
+const Account = ({navigation}) => {
 
     const accountButtons = {
         profile: {
@@ -261,4 +261,4 @@ const style = StyleSheet.create({
 
 })
  
-export default AccountStack;
+export default Account;

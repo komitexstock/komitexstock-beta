@@ -4,14 +4,14 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import HomeStack from './stacks/HomeStack';
-import OrdersStack from './stacks/OrdersStack';
-import WaybillStack from './stacks/WaybillStack';
-import InventoryStack from './stacks/InventoryStack';
-import AccountStack from './stacks/AccountStack';
-import NotificationsStack from './stacks/NotificationsStack';
-import SendOrderStack from './stacks/SendOrderStack';
-import SendWaybillStack from './stacks/SendWaybillStack';
+import Home from './stacks/Home';
+import Orders from './stacks/Orders';
+import Waybill from './stacks/Waybill';
+import Inventory from './stacks/Inventory';
+import Account from './stacks/Account';
+import Notifications from './stacks/Notifications';
+import SendOrder from './stacks/SendOrder';
+import SendWaybill from './stacks/SendWaybill';
 import BottomNavigation from './components/BottomNavigation';
 import AppProvider from './context/AppContext';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
@@ -50,56 +50,56 @@ export default function App() {
           <Stack.Navigator initialRouteName='Home'>
             <Stack.Screen 
               name="Home" 
-              component={HomeStack}
+              component={Home}
               options={{
                 headerShown: false,
               }} 
             />
             <Stack.Screen 
               name="Orders" 
-              component={OrdersStack} 
+              component={Orders} 
               options={{
                 headerShown: false,
               }} 
             />
             <Stack.Screen 
               name="Waybill" 
-              component={WaybillStack} 
+              component={Waybill} 
               options={{
                 headerShown: false,
               }} 
             />
             <Stack.Screen 
               name="Inventory" 
-              component={InventoryStack} 
+              component={Inventory} 
               options={{
                 headerShown: false,
               }} 
             />
             <Stack.Screen 
               name="Account" 
-              component={AccountStack} 
+              component={Account} 
               options={{
                 headerShown: false,
               }} 
             />
             <Stack.Screen 
               name="Notifications" 
-              component={NotificationsStack}
+              component={Notifications}
               options={{
                 headerShown: false,
               }}
             />
             <Stack.Screen 
               name="SendOrder" 
-              component={SendOrderStack}
+              component={SendOrder}
               options={{
                 headerShown: false,
               }}
             />
             <Stack.Screen 
               name="SendWaybill" 
-              component={SendWaybillStack}
+              component={SendWaybill}
               options={{
                 headerShown: false,
               }}

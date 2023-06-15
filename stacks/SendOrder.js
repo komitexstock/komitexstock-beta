@@ -22,7 +22,7 @@ import InfoIcon from "../assets/icons/InfoIcon";
 import { useState, useRef } from "react";
 import { primaryColor } from "../style/globalStyleSheet";
 
-const SendOrderStack = ({navigation}) => {
+const SendOrder = ({navigation}) => {
 
     // state to store order details
     const [ orderDetails, setOrderdetails] = useState(null);
@@ -593,4 +593,4 @@ const style = StyleSheet.create({
     },
 })
  
-export default SendOrderStack;
+export default SendOrder;
