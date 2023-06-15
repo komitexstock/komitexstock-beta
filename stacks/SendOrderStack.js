@@ -321,7 +321,6 @@ const SendOrderStack = ({navigation}) => {
                     <View style={style.main}>
                         <View style={style.mainContent}>
                             <Header 
-                                iconExist={false} 
                                 navigation={navigation} 
                                 stackName={"Send an Order"} 
                                 iconFunction={null} 

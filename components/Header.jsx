@@ -2,7 +2,7 @@ import { Text, View, TouchableOpacity, StyleSheet } from "react-native";
 import ArrowLeft from "../assets/icons/ArrowLeft";
 
 
-const Header = ({navigation, stackName, iconFunction, icon, iconExist}) => {
+const Header = ({navigation, stackName, iconFunction, icon}) => {
     return (
         <>
             <View style={style.header}>
@@ -15,7 +15,7 @@ const Header = ({navigation, stackName, iconFunction, icon, iconExist}) => {
                 </TouchableOpacity>
                 <View style={style.headerBar}>
                     <Text style={style.headerText}>{stackName}</Text>
-                    { iconExist && (
+                    { icon && (
                         <TouchableOpacity
                             style={style.filter}
                             onPress={iconFunction}

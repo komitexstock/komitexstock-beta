@@ -29,15 +29,7 @@ const SendWaybillStack = ({navigation}) => {
     // state to store selected logistics
     const [logistics, setLogistics] = useState(null);
 
-    const [products, setProducts] = useState([
-        {
-            id: 2,
-            product_name: "Phoenix Sneakers",
-            quantity: 1,
-            imageUrl: require("../assets/images/sneakers.png"),
-            checked: true,
-        },
-    ]);
+    const [products, setProducts] = useState([]);
 
     // state to indicate if select logistics input is active
     const [selectLogisticsActive, setSelectLogisticsActive] = useState(false);
@@ -172,7 +164,6 @@ const SendWaybillStack = ({navigation}) => {
                     <View style={style.main}>
                         <View style={style.mainContent}>
                             <Header 
-                                iconExist={false} 
                                 navigation={navigation} 
                                 stackName={"Send Waybill"} 
                                 iconFunction={null} 
@@ -204,25 +195,25 @@ const SendWaybillStack = ({navigation}) => {
                                         error={errorWaybillDetails}
                                         setError={setErrorWaybillDetails}
                                     />
-                                    <View style={style.productsWrapper}>
-                                        <View style={style.productsHeading}>
-                                            <Text style={style.producPlaceholder}>Products Selected</Text>
-                                            <TouchableOpacity
-                                                onPress={() => openModal("Products", "Select Products", null, 0)}
-                                            >
-                                                <Text style={style.addProduct}>+Add Product</Text>
-                                            </TouchableOpacity>
-                                        </View>
-                                        { products.map((product) => (
-                                            <Product 
-                                                key={product.id} 
-                                                product={product} 
-                                                removeProduct={removeProduct}
-                                                increaseQuantity={increaseQuantity}
-                                                decreaseQuantity={decreaseQuantity}
-                                            />
-                                        ))}
-                                    </View>
+                                    { logistics && <View style={style.productsWrapper}>
+                                            <View style={style.productsHeading}>
+                                                <Text style={style.producPlaceholder}>Products Selected</Text>
+                                                <TouchableOpacity
+                                                    onPress={() => openModal("Products", "Select Products", null, 0)}
+                                                >
+                                                    <Text style={style.addProduct}>+Add Product</Text>
+                                                </TouchableOpacity>
+                                            </View>
+                                            { products.map((product) => (
+                                                <Product 
+                                                    key={product.id} 
+                                                    product={product} 
+                                                    removeProduct={removeProduct}
+                                                    increaseQuantity={increaseQuantity}
+                                                    decreaseQuantity={decreaseQuantity}
+                                                />
+                                            ))}
+                                    </View>}
                                 </View>
                             </View>
                         </View>
