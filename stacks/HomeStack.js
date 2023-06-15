@@ -66,7 +66,7 @@ const HomeStack = ({navigation}) => {
           datetime: "2023-03-01 11:10",
           id: "mno345",
           price: 16000,
-          status: "Canceled",
+          status: "Cancelled",
         },
         {
           name: "Sophia Brown",

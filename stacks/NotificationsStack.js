@@ -1,12 +1,12 @@
-import { View, Text, StyleSheet, TouchableOpacity, FlatList } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import FilterIcon from "../assets/icons/FilterIcon";
 import Orders from "../components/Orders";
 import CustomBottomSheet from "../components/CustomBottomSheet";
 import { useRef } from "react";
 import { useState } from "react";
-import { ScrollView } from "react-native";
 import Header from "../components/Header";
-import { globalStyleSheet } from "../style/globalStyleSheet";
+import { globalStyleSheet, primaryColor } from "../style/globalStyleSheet";
+import FilterButtonGroup from "../components/FilterButtonGroup";
 
 const NotificationsStack = ({navigation}) => {
 
@@ -143,6 +143,53 @@ const NotificationsStack = ({navigation}) => {
       setShowOverlay(true);
     }
 
+    const statusFilter = {
+      title: "Status",
+      buttons: [
+        {
+          id: 1,
+          text: "All",
+          selected: true,
+        },
+        {
+          id: 2,
+          text: "Pending",
+          selected: false,
+        },
+        {
+          id: 3,
+          text: "Delivered",
+          selected: false,
+        },
+        {
+          id: 4,
+          text: "Cancelled",
+          selected: false,
+        },
+      ]
+    }
+
+    const sortFilter = {
+      title: "Sort by",
+      buttons: [
+        {
+          id: 1,
+          text: "Time",
+          selected: true,
+        },
+        {
+          id: 2,
+          text: "Logistics",
+          selected: false,
+        },
+        {
+          id: 3,
+          text: "Customer Name",
+          selected: false,
+        },
+      ]
+    }
+
     return (
         <ScrollView>
           <View style={globalStyleSheet.main}>
@@ -175,11 +222,24 @@ const NotificationsStack = ({navigation}) => {
             setShowOverlay={setShowOverlay}
             showOverlay={showOverlay}
             closeModal={closeModal}
-            snapPointsArray={["30%", "50%"]}
+            snapPointsArray={["40%"]}
             autoSnapAt={0}
+            sheetTitle={"Filter by"}
           >
             <View style={style.modalContent}>
-              <Text style={style.modalText}>Filter Results</Text>
+                <FilterButtonGroup 
+                  buttons={statusFilter.buttons} 
+                  title={statusFilter.title} 
+                />
+                <FilterButtonGroup 
+                  buttons={sortFilter.buttons} 
+                  title={sortFilter.title} 
+                />
+                <View style={style.footerButtonWrapper}>
+                  <TouchableOpacity style={style.footerButton}>
+                      <Text style={style.footerButtonText}>Apply</Text>
+                  </TouchableOpacity>
+                </View>
             </View>
           </CustomBottomSheet>
         </ScrollView>
@@ -205,16 +265,30 @@ const style = StyleSheet.create({
     },
     modalContent: {
       display: "flex",
-      flexDirection: 'row',
-      alignItems: "flex-start",
-      justifyContent: "center",
+      flexDirection: 'column',
+      alignItems: "center",
+      justifyContent: "space-between",
+      width: "100%",
+      // backgroundColor: "pink",
       flex: 1,
-      padding: 20,
     },
-    modalText: {
-        fontSize: 25,
-        fontFamily: 'mulish-semibold',
+    footerButtonWrapper: {
+      width: "100%",
     },
+    footerButton: {
+      width: "100%",
+      height: 44,
+      backgroundColor: primaryColor,
+      borderRadius: 12,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center", 
+    },
+    footerButtonText: {
+      color: "white",
+      fontSize: 16,
+      fontFamily: 'mulish-semibold',
+    }
 });
  
 export default NotificationsStack;

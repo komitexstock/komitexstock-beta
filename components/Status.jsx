@@ -6,9 +6,9 @@ const Status = ({status}) => {
             <Text style={style.deliveredStatus}>Delivered</Text>
         </View>
     );
-    else if (status === "Canceled") return (
+    else if (status === "Cancelled") return (
         <View style={style.canceledContainer}>
-            <Text style={style.canceledStatus}>Canceled</Text>
+            <Text style={style.canceledStatus}>Cancelled</Text>
         </View>
     );
     else if (status === "Rescheduled") return (
