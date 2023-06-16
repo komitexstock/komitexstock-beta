@@ -8,9 +8,10 @@ import {
     ScrollView,
 } from "react-native";
 import NotificationIcon from "../assets/icons/NotificationIcon";
+// icons
 import SearchIcon from "../assets/icons/SearchIcon";
 import QuickOrderIcon from "../assets/icons/QuickOrderIcon";
-import QuickAnalyticsIcon from "../assets/icons/QuickAnalyticsIcon";
+import QuickAnalyticsIcon from "../assets/icons/AnalyticsIcon";
 import QuickInventoryIcon from "../assets/icons/QuickInventoryIcon";
 import QuickWaybiillIcon from "../assets/icons/QuickWaybillIcon";
 import Orders from "../components/Orders";
