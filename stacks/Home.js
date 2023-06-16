@@ -24,61 +24,111 @@ const Home = ({navigation}) => {
       
     const orders = [
         {
-          name: "John Doe",
-          location: "New York",
-          products: [
-            { product_name: "Shirt", quantity: 2 },
-            { product_name: "Jeans", quantity: 1 },
-          ],
-          datetime: "2023-03-15 09:30",
-          id: "abc123",
-          price: 15000,
-          status: "Delivered",
+            name: "John Doe",
+            location: "New York",
+            products: [
+                { product_name: "Shirt", quantity: 2 },
+                { product_name: "Jeans", quantity: 1 },
+            ],
+            datetime: "2023-03-15 09:30",
+            id: "abc123",
+            price: 15000,
+            status: "Delivered",
+            imageUrl: require('../assets/images/komitex.png'),
+            navigateToChat: () => {
+                navigation.navigate("Chat", {
+                    id: "abc123",
+                    type: "order",
+                    order: "Chat Message",
+                    name: "Komitex",
+                    imageUrl: require('../assets/images/komitex.png'),
+                })
+            },
         },
         {
-          name: "Jane Smith",
-          location: "London",
-          products: [
-            { product_name: "Shoes", quantity: 1 },
-            { product_name: "Socks", quantity: 3 },
-          ],
-          datetime: "2023-02-22 14:45",
-          id: "def456",
-          price: 13000,
-          status: "Pending",
+            name: "Jane Smith",
+            location: "London",
+            products: [
+                { product_name: "Shoes", quantity: 1 },
+                { product_name: "Socks", quantity: 3 },
+            ],
+            datetime: "2023-02-22 14:45",
+            id: "def456",
+            price: 13000,
+            status: "Pending",
+            imageUrl: require('../assets/images/fedex.png'),
+            navigateToChat: () => {
+                navigation.navigate("Chat", {
+                    id: "def456",
+                    type: "order",
+                    order: "Chat Message",
+                    name: "Fedex",
+                    imageUrl: require('../assets/images/fedex.png'),
+                })
+            },
         },
         {
-          name: "Michael Johnson",
-          location: "Los Angeles",
-          products: [
-            { product_name: "Hat", quantity: 1 },
-          ],
-          datetime: "2023-01-10 12:15",
-          id: "ghi789",
-          price: 14000,
-          status: "Dispatched",
+            name: "Michael Johnson",
+            location: "Los Angeles",
+            products: [
+                { product_name: "Hat", quantity: 1 },
+            ],
+            datetime: "2023-01-10 12:15",
+            id: "ghi789",
+            price: 14000,
+            status: "Dispatched",
+            imageUrl: require('../assets/images/komitex.png'),
+            navigateToChat: () => {
+                navigation.navigate("Chat", {
+                    id: "ghi789",
+                    type: "order",
+                    order: "Chat Message",
+                    name: "Komitex",
+                    imageUrl: require('../assets/images/komitex.png'),
+                })
+            },
         },
         {
-          name: "Robert Davis",
-          location: "Berlin",
-          products: [
-            { product_name: "Sunglasses", quantity: 1 },
-          ],
-          datetime: "2023-03-01 11:10",
-          id: "mno345",
-          price: 16000,
-          status: "Cancelled",
+            name: "Robert Davis",
+            location: "Berlin",
+            products: [
+                { product_name: "Sunglasses", quantity: 1 },
+            ],
+            datetime: "2023-03-01 11:10",
+            id: "mno345",
+            price: 16000,
+            status: "Cancelled",
+            imageUrl: require('../assets/images/dhl.png'),
+            navigateToChat: () => {
+                navigation.navigate("Chat", {
+                    id: "mno345",
+                    type: "order",
+                    order: "Chat Message",
+                    name: "Dhl",
+                    imageUrl: require('../assets/images/dhl.png'),
+                })
+            },
         },
         {
-          name: "Sophia Brown",
-          location: "Tokyo",
-          products: [
-            { product_name: "T-Shirt", quantity: 3 },
-          ],
-          datetime: "2023-02-14 16:55",
-          id: "pqr678",
-          price: 12000,
-          status: "Rescheduled",
+            name: "Sophia Brown",
+            location: "Tokyo",
+            products: [
+                { product_name: "T-Shirt", quantity: 3 },
+            ],
+            datetime: "2023-02-14 16:55",
+            id: "pqr678",
+            price: 12000,
+            status: "Rescheduled",
+            imageUrl: require('../assets/images/komitex.png'),
+            navigateToChat: () => {
+                navigation.navigate("Chat", {
+                    id: "pqr678",
+                    type: "order",
+                    order: "Chat Message",
+                    name: "Komitex",
+                    imageUrl: require('../assets/images/komitex.png'),
+                })
+            },
         }
     ]
 
@@ -191,7 +241,7 @@ const Home = ({navigation}) => {
                                 style={style.ordersListWrapper}
                             >
                                 {orders.map((order, index) => (
-                                    <Orders key={order.id} item={order} index={index} orders={orders} />
+                                    <Orders key={order.id} item={order} index={index} length={orders.length} />
                                 ))}
                             </View>
                         </View>

@@ -4,6 +4,7 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
 // stacks
 import Home from './stacks/Home';
 import Orders from './stacks/Orders';
@@ -18,6 +19,7 @@ import Analytics from './stacks/Analytics';
 import Team from './stacks/Team';
 import Logistics from './stacks/Logistics';
 import Security from './stacks/Security';
+import Chat from './stacks/Chat';
 
 // components
 import BottomNavigation from './components/BottomNavigation';
@@ -73,6 +75,13 @@ export default function App() {
             <Stack.Screen 
               name="Waybill" 
               component={Waybill} 
+              options={{
+                headerShown: false,
+              }} 
+            />
+            <Stack.Screen 
+              name="Chat" 
+              component={Chat} 
               options={{
                 headerShown: false,
               }} 

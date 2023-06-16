@@ -22,6 +22,7 @@ const Notifications = ({navigation}) => {
           id: "abc123",
           price: 15000,
           status: "Delivered",
+          imageUrl: require('../assets/images/fedex.png'),
         },
         {
           name: "Jane Smith",
@@ -34,6 +35,7 @@ const Notifications = ({navigation}) => {
           id: "def456",
           price: 13000,
           status: "Pending",
+          imageUrl: require('../assets/images/komitex.png'),
         },
         {
           name: "Michael Johnson",
@@ -45,6 +47,7 @@ const Notifications = ({navigation}) => {
           id: "ghi789",
           price: 14000,
           status: "Dispatched",
+          imageUrl: require('../assets/images/dhl.png'),
         },
         {
           name: "Robert Davis",
@@ -56,6 +59,7 @@ const Notifications = ({navigation}) => {
           id: "mno345",
           price: 16000,
           status: "Canceled",
+          imageUrl: require('../assets/images/komitex.png'),
         },
     ];
 
@@ -70,6 +74,7 @@ const Notifications = ({navigation}) => {
           id: "pqr678",
           price: 12000,
           status: "Rescheduled",
+          imageUrl: require('../assets/images/dhl.png'),
         },
         {
           name: "Sarah Johnson",
@@ -81,6 +86,7 @@ const Notifications = ({navigation}) => {
           id: "789def",
           price: 15500,
           status: "Delivered",
+          imageUrl: require('../assets/images/ups.png'),
         },
         {
           name: "Matthew Wilson",
@@ -93,6 +99,7 @@ const Notifications = ({navigation}) => {
           id: "012ghi",
           price: 17000,
           status: "Pending",
+          imageUrl: require('../assets/images/komitex.png'),
         },
         {
           name: "Sophie Lee",
@@ -104,6 +111,7 @@ const Notifications = ({navigation}) => {
           id: "345jkl",
           price: 12500,
           status: "Dispatched",
+          imageUrl: require('../assets/images/komitex.png'),
         },
         {
           name: "Daniel Brown",
@@ -116,6 +124,7 @@ const Notifications = ({navigation}) => {
           id: "678mno",
           price: 19500,
           status: "Delivered",
+          imageUrl: require('../assets/images/komitex.png'),
         },
         {
           name: "Emma Davis",
@@ -127,6 +136,7 @@ const Notifications = ({navigation}) => {
           id: "901pqr",
           price: 8000,
           status: "Canceled",
+          imageUrl: require('../assets/images/fedex.png'),
         },
     ];
 
@@ -205,7 +215,7 @@ const Notifications = ({navigation}) => {
               </View>
               <View style={style.notificationWrapper}>
                 {orders.map((item, index) => (
-                    <Orders item={item} index={index} key={index} orders={orders} />
+                    <Orders item={item} index={index} key={index} length={orders.length} />
                 ))}
               </View>
               <View style={style.dateWrapper}>
@@ -213,7 +223,7 @@ const Notifications = ({navigation}) => {
               </View>
               <View style={style.notificationWrapper}>
                 {orders1.map((item, index) => (
-                    <Orders item={item} index={index} key={index} orders={orders} />
+                    <Orders item={item} index={index} key={index} length={orders.length} />
                 ))}
               </View>
           </View>

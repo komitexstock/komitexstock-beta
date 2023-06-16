@@ -1,11 +1,18 @@
 import { TouchableOpacity, Image, View, Text, StyleSheet } from 'react-native';
 import Status from './Status';
 
-const Orders = ({item, index, orders}) => {
+const Orders = ({item, index, length}) => {
     return (
-        <TouchableOpacity style={[style.orderWrapper, index === 0 && style.firstOrderWrapper, index === (orders.length - 1) && style.lastOrderWrapper]}>
+        <TouchableOpacity 
+            style={[
+                style.orderWrapper, 
+                index === 0 && style.firstOrderWrapper, 
+                index === (length - 1) && style.lastOrderWrapper
+            ]}
+            onPress={item.navigateToChat}
+        >
             <Image 
-                source={require('../assets/images/komitex.jpg')}
+                source={item.imageUrl}
                 style={style.orderImage}
             />
             <View style={style.orderInfo}>
