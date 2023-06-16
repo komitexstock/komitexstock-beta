@@ -14,10 +14,11 @@ import QuickOrderIcon from "../assets/icons/QuickOrderIcon";
 import QuickAnalyticsIcon from "../assets/icons/AnalyticsIcon";
 import QuickInventoryIcon from "../assets/icons/QuickInventoryIcon";
 import QuickWaybiillIcon from "../assets/icons/QuickWaybillIcon";
-import Orders from "../components/Orders";
+import Order from "../components/Order";
 import CustomBottomSheet from "../components/CustomBottomSheet";
 import SearchBar from "../components/SearchBar";
 import { useState, useRef } from "react";
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 
 
 const Home = ({navigation}) => {
@@ -119,14 +120,14 @@ const Home = ({navigation}) => {
             id: "pqr678",
             price: 12000,
             status: "Rescheduled",
-            imageUrl: require('../assets/images/komitex.png'),
+            imageUrl: require('../assets/images/ups.png'),
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "pqr678",
                     type: "order",
                     order: "Chat Message",
-                    name: "Komitex",
-                    imageUrl: require('../assets/images/komitex.png'),
+                    name: "Ups",
+                    imageUrl: require('../assets/images/ups.png'),
                 })
             },
         }
@@ -241,7 +242,7 @@ const Home = ({navigation}) => {
                                 style={style.ordersListWrapper}
                             >
                                 {orders.map((order, index) => (
-                                    <Orders key={order.id} item={order} index={index} length={orders.length} />
+                                    <Order key={order.id} item={order} index={index} length={orders.length} />
                                 ))}
                             </View>
                         </View>
@@ -260,6 +261,11 @@ const Home = ({navigation}) => {
                             searchQuery={searchQuery}
                             setSearchQuery={setSearchQuery}
                         />
+                        <BottomSheetScrollView style={style.orderSearchResults}>
+                            {orders.map((order, index) => (
+                                <Order key={order.id} item={order} index={index} length={orders.length} />
+                            ))}
+                        </BottomSheetScrollView>
                     </CustomBottomSheet>
                 </View>
             </ScrollView>

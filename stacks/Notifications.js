@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import FilterIcon from "../assets/icons/FilterIcon";
-import Orders from "../components/Orders";
+import Order from "../components/Order";
 import CustomBottomSheet from "../components/CustomBottomSheet";
 import { useRef } from "react";
 import { useState } from "react";
@@ -215,7 +215,7 @@ const Notifications = ({navigation}) => {
               </View>
               <View style={style.notificationWrapper}>
                 {orders.map((item, index) => (
-                    <Orders item={item} index={index} key={index} length={orders.length} />
+                    <Order item={item} index={index} key={index} length={orders.length} />
                 ))}
               </View>
               <View style={style.dateWrapper}>
@@ -223,7 +223,7 @@ const Notifications = ({navigation}) => {
               </View>
               <View style={style.notificationWrapper}>
                 {orders1.map((item, index) => (
-                    <Orders item={item} index={index} key={index} length={orders.length} />
+                    <Order item={item} index={index} key={index} length={orders.length} />
                 ))}
               </View>
           </View>

@@ -29,6 +29,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StatusBar } from 'react-native';
 import { AppRegistry } from 'react-native';
 
+import { SafeAreaView } from 'react-native-safe-area-context';
 export default function App() {
 
   const [fontsLoaded] = useFonts({
@@ -57,106 +58,106 @@ export default function App() {
       <GestureHandlerRootView style={{ flex: 1 }}>
         <BottomSheetModalProvider>
           <StatusBar backgroundColor="#ffffff" barStyle="light-content" />
-          <Stack.Navigator initialRouteName='Home'>
-            <Stack.Screen 
-              name="Home" 
-              component={Home}
-              options={{
-                headerShown: false,
-              }} 
-            />
-            <Stack.Screen 
-              name="Orders" 
-              component={Orders} 
-              options={{
-                headerShown: false,
-              }} 
-            />
-            <Stack.Screen 
-              name="Waybill" 
-              component={Waybill} 
-              options={{
-                headerShown: false,
-              }} 
-            />
-            <Stack.Screen 
-              name="Chat" 
-              component={Chat} 
-              options={{
-                headerShown: false,
-              }} 
-            />
-            <Stack.Screen 
-              name="Inventory" 
-              component={Inventory} 
-              options={{
-                headerShown: false,
-              }} 
-            />
-            <Stack.Screen 
-              name="Account" 
-              component={Account} 
-              options={{
-                headerShown: false,
-              }} 
-            />
-            <Stack.Screen 
-              name="Profile" 
-              component={Profile} 
-              options={{
-                headerShown: false,
-              }} 
-            />
-            <Stack.Screen 
-              name="Analytics" 
-              component={Analytics} 
-              options={{
-                headerShown: false,
-              }} 
-            />
-            <Stack.Screen 
-              name="Team" 
-              component={Team} 
-              options={{
-                headerShown: false,
-              }} 
-            />
-            <Stack.Screen 
-              name="Logistics" 
-              component={Logistics} 
-              options={{
-                headerShown: false,
-              }} 
-            />
-            <Stack.Screen 
-              name="Security" 
-              component={Security} 
-              options={{
-                headerShown: false,
-              }} 
-            />
-            <Stack.Screen 
-              name="Notifications" 
-              component={Notifications}
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen 
-              name="SendOrder" 
-              component={SendOrder}
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen 
-              name="SendWaybill" 
-              component={SendWaybill}
-              options={{
-                headerShown: false,
-              }}
-            />
-          </Stack.Navigator>
+            <Stack.Navigator initialRouteName='Home'>
+              <Stack.Screen 
+                name="Home" 
+                component={Home}
+                options={{
+                  headerShown: false,
+                }} 
+              />
+              <Stack.Screen 
+                name="Orders" 
+                component={Orders} 
+                options={{
+                  headerShown: false,
+                }} 
+              />
+              <Stack.Screen 
+                name="Waybill" 
+                component={Waybill} 
+                options={{
+                  headerShown: false,
+                }} 
+              />
+              <Stack.Screen 
+                name="Chat" 
+                component={Chat} 
+                options={{
+                  headerShown: false,
+                }} 
+              />
+              <Stack.Screen 
+                name="Inventory" 
+                component={Inventory} 
+                options={{
+                  headerShown: false,
+                }} 
+              />
+              <Stack.Screen 
+                name="Account" 
+                component={Account} 
+                options={{
+                  headerShown: false,
+                }} 
+              />
+              <Stack.Screen 
+                name="Profile" 
+                component={Profile} 
+                options={{
+                  headerShown: false,
+                }} 
+              />
+              <Stack.Screen 
+                name="Analytics" 
+                component={Analytics} 
+                options={{
+                  headerShown: false,
+                }} 
+              />
+              <Stack.Screen 
+                name="Team" 
+                component={Team} 
+                options={{
+                  headerShown: false,
+                }} 
+              />
+              <Stack.Screen 
+                name="Logistics" 
+                component={Logistics} 
+                options={{
+                  headerShown: false,
+                }} 
+              />
+              <Stack.Screen 
+                name="Security" 
+                component={Security} 
+                options={{
+                  headerShown: false,
+                }} 
+              />
+              <Stack.Screen 
+                name="Notifications" 
+                component={Notifications}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen 
+                name="SendOrder" 
+                component={SendOrder}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen 
+                name="SendWaybill" 
+                component={SendWaybill}
+                options={{
+                  headerShown: false,
+                }}
+              />
+            </Stack.Navigator>
           <BottomNavigation />
         </BottomSheetModalProvider>
       </GestureHandlerRootView>

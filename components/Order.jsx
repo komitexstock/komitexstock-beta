@@ -1,7 +1,7 @@
 import { TouchableOpacity, Image, View, Text, StyleSheet } from 'react-native';
 import Status from './Status';
 
-const Orders = ({item, index, length}) => {
+const Order = ({item, index, length}) => {
     return (
         <TouchableOpacity 
             style={[
@@ -87,4 +87,4 @@ const style = StyleSheet.create({
     },
 })
  
-export default Orders;
+export default Order;
