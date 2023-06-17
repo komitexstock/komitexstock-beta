@@ -20,6 +20,7 @@ import Team from './stacks/Team';
 import Logistics from './stacks/Logistics';
 import Security from './stacks/Security';
 import Chat from './stacks/Chat';
+import Products from './stacks/Products';
 
 // components
 import BottomNavigation from './components/BottomNavigation';
@@ -29,7 +30,6 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StatusBar } from 'react-native';
 import { AppRegistry } from 'react-native';
 
-import { SafeAreaView } from 'react-native-safe-area-context';
 export default function App() {
 
   const [fontsLoaded] = useFonts({
@@ -90,6 +90,13 @@ export default function App() {
               <Stack.Screen 
                 name="Inventory" 
                 component={Inventory} 
+                options={{
+                  headerShown: false,
+                }} 
+              />
+              <Stack.Screen 
+                name="Products" 
+                component={Products} 
                 options={{
                   headerShown: false,
                 }} 
