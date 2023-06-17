@@ -153,105 +153,107 @@ const Notifications = ({navigation}) => {
       setShowOverlay(true);
     }
 
-    const statusFilter = {
-      title: "Status",
-      buttons: [
-        {
-          id: 1,
-          text: "All",
-          selected: true,
-        },
-        {
-          id: 2,
-          text: "Pending",
-          selected: false,
-        },
-        {
-          id: 3,
-          text: "Delivered",
-          selected: false,
-        },
-        {
-          id: 4,
-          text: "Cancelled",
-          selected: false,
-        },
-      ]
-    }
-
-    const sortFilter = {
-      title: "Sort by",
-      buttons: [
-        {
-          id: 1,
-          text: "Time",
-          selected: true,
-        },
-        {
-          id: 2,
-          text: "Logistics",
-          selected: false,
-        },
-        {
-          id: 3,
-          text: "Customer Name",
-          selected: false,
-        },
-      ]
-    }
+    const filterButtons = [
+      {
+        id: 1,
+        title: "Status",
+        buttons: [
+          {
+            id: 1,
+            text: "All",
+            selected: true,
+          },
+          {
+            id: 2,
+            text: "Pending",
+            selected: false,
+          },
+          {
+            id: 3,
+            text: "Delivered",
+            selected: false,
+          },
+          {
+            id: 4,
+            text: "Cancelled",
+            selected: false,
+          },
+        ]
+      },
+      {
+        id: 2,
+        title: "Sort by",
+        buttons: [
+          {
+            id: 1,
+            text: "Time",
+            selected: true,
+          },
+          {
+            id: 2,
+            text: "Logistics",
+            selected: false,
+          },
+          {
+            id: 3,
+            text: "Customer Name",
+            selected: false,
+          },
+        ]
+      }
+    ]
 
     return (
         <ScrollView>
-          <View style={globalStyleSheet.main}>
-              <Header 
-                navigation={navigation} 
-                stackName={"Notifications"} 
-                iconFunction={handlePresentModal} 
-                icon={<FilterIcon />} 
-                iconExist={true} 
-              />
-              <View style={style.dateWrapper}>
-                <Text style={style.date}>Today</Text>
-              </View>
-              <View style={style.notificationWrapper}>
-                {orders.map((item, index) => (
-                    <Order item={item} index={index} key={index} length={orders.length} />
-                ))}
-              </View>
-              <View style={style.dateWrapper}>
-                <Text style={style.date}>Tues, May 09, 2023</Text>
-              </View>
-              <View style={style.notificationWrapper}>
-                {orders1.map((item, index) => (
-                    <Order item={item} index={index} key={index} length={orders.length} />
-                ))}
-              </View>
-          </View>
-          <CustomBottomSheet 
-            bottomSheetModalRef={bottomSheetModalRef}
-            setShowOverlay={setShowOverlay}
-            showOverlay={showOverlay}
-            closeModal={closeModal}
-            snapPointsArray={["40%"]}
-            autoSnapAt={0}
-            sheetTitle={"Filter by"}
-          >
-            <View style={style.modalContent}>
-                <FilterButtonGroup 
-                  buttons={statusFilter.buttons} 
-                  title={statusFilter.title} 
+            <View style={globalStyleSheet.main}>
+                <Header 
+                    navigation={navigation} 
+                    stackName={"Notifications"} 
+                    iconFunction={handlePresentModal} 
+                    icon={<FilterIcon />} 
+                    iconExist={true} 
                 />
-                <FilterButtonGroup 
-                  buttons={sortFilter.buttons} 
-                  title={sortFilter.title} 
-                />
-                <View style={style.footerButtonWrapper}>
-                  <TouchableOpacity style={style.footerButton}>
-                      <Text style={style.footerButtonText}>Apply</Text>
-                  </TouchableOpacity>
+                <View style={style.dateWrapper}>
+                    <Text style={style.date}>Today</Text>
+                </View>
+                <View style={style.notificationWrapper}>
+                    {orders.map((item, index) => (
+                        <Order item={item} index={index} key={index} length={orders.length} />
+                    ))}
+                </View>
+                <View style={style.dateWrapper}>
+                    <Text style={style.date}>Tues, May 09, 2023</Text>
+                </View>
+                <View style={style.notificationWrapper}>
+                    {orders1.map((item, index) => (
+                        <Order item={item} index={index} key={index} length={orders.length} />
+                    ))}
                 </View>
             </View>
-          </CustomBottomSheet>
+            <CustomBottomSheet 
+                bottomSheetModalRef={bottomSheetModalRef}
+                setShowOverlay={setShowOverlay}
+                showOverlay={showOverlay}
+                closeModal={closeModal}
+                snapPointsArray={["40%"]}
+                autoSnapAt={0}
+                sheetTitle={"Filter by"}
+            >
+                <View style={style.modalContent}>
+                    {filterButtons.map(item => (
+                        <FilterButtonGroup
+                        buttons={item.buttons}
+                        title={item.title}
+                        key={item.id}
+                        />
+                    ))}
+                    <View style={style.footerButtonWrapper}>
+                    <TouchableOpacity style={style.footerButton}>
+                        <Text style={style.footerButtonText}>Apply</Text>
+                    </TouchableOpacity>
+                    </View>
+                </View>
+            </CustomBottomSheet>
         </ScrollView>
     );
 }

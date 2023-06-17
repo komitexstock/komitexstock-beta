@@ -308,7 +308,6 @@ const SendOrder = ({navigation}) => {
                 onPress={() => {
                     Keyboard.dismiss();
                 }}
-                style={{backgroundColor: "pink"}}
             >
                 <ScrollView
                     showsVerticalScrollIndicator={false}

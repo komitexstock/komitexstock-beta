@@ -10,47 +10,16 @@ import MenuIcon from "../assets/icons/MenuIcon";
 import { primaryColor } from "../style/globalStyleSheet";
 import StatWrapper from "../components/StatWrapper";
 import StatCard from "../components/StatCard";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import SearchIcon from '../assets/icons/SearchIcon'
 import FilterIcon from '../assets/icons/FilterIcon';
 import Order from "../components/Order";
+import CustomBottomSheet from "../components/CustomBottomSheet";
+import FilterButtonGroup from "../components/FilterButtonGroup";
+import SearchBar from "../components/SearchBar";
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 
 const Orders = ({navigation}) => {
-
-    const [stats, setStats] = useState([
-        {
-            id: 1,
-            title: "Total Earnings",
-            presentValue: 200000,
-            oldValue: 185500,
-            decimal: true,
-            reversedLogic: false
-        },
-        {
-            id: 2,
-            title: "Total Orders",
-            presentValue: 40,
-            oldValue: 36,
-            decimal: false,
-            reversedLogic: false
-        },
-        {
-            id: 3,
-            title: "Total Delivered",
-            presentValue: 29,
-            oldValue: 33,
-            decimal: false,
-            reversedLogic: false
-        },
-        {
-            id: 4,
-            title: "Total Cancelled",
-            presentValue: 1,
-            oldValue: 3,
-            decimal: false,
-            reversedLogic: true
-        },
-    ]);
 
     const orderList = [
         {
@@ -480,10 +449,301 @@ const Orders = ({navigation}) => {
         },
     ];
 
+    const ordersListSearched = [
+        {
+            name: "Emily Wilson",
+            location: "Paris",
+            products: [
+                { product_name: "Dress", quantity: 1 },
+                { product_name: "Scarf", quantity: 2 },
+            ],
+            datetime: "2023-05-03 10:20",
+            id: "stu901",
+            price: 25000,
+            status: "Delivered",
+            imageUrl: require('../assets/images/komitex.png'),
+            navigateToChat: () => {
+                navigation.navigate("Chat", {
+                    id: "stu901",
+                    type: "order",
+                    order: "Chat Message",
+                    name: "Komitex",
+                    imageUrl: require('../assets/images/komitex.png'),
+                })
+            },
+        },
+        {
+            name: "David Johnson",
+            location: "New York",
+            products: [
+                { product_name: "Pants", quantity: 2 },
+            ],
+            datetime: "2023-04-01 09:45",
+            id: "vwx234",
+            price: 18000,
+            status: "Pending",
+            imageUrl: require('../assets/images/fedex.png'),
+            navigateToChat: () => {
+                navigation.navigate("Chat", {
+                    id: "vwx234",
+                    type: "order",
+                    order: "Chat Message",
+                    name: "Fedex",
+                    imageUrl: require('../assets/images/fedex.png'),
+                })
+            },
+        },
+        {
+            name: "Amelia Taylor",
+            location: "London",
+            products: [
+                { product_name: "Shirt", quantity: 1 },
+            ],
+            datetime: "2023-05-26 16:40",
+            id: "bcd456",
+            price: 27000,
+            status: "Dispatched",
+            imageUrl: require('../assets/images/komitex.png'),
+            navigateToChat: () => {
+                navigation.navigate("Chat", {
+                    id: "bcd456",
+                    type: "order",
+                    order: "Chat Message",
+                    name: "Komitex",
+                    imageUrl: require('../assets/images/komitex.png'),
+                })
+            },
+        },
+        {
+            name: "Benjamin Davis",
+            location: "Los Angeles",
+            products: [
+                { product_name: "Socks", quantity: 2 },
+            ],
+            datetime: "2023-04-15 11:55",
+            id: "efg789",
+            price: 30000,
+            status: "Cancelled",
+            imageUrl: require('../assets/images/dhl.png'),
+            navigateToChat: () => {
+                navigation.navigate("Chat", {
+                    id: "efg789",
+                    type: "order",
+                    order: "Chat Message",
+                    name: "Dhl",
+                    imageUrl: require('../assets/images/dhl.png'),
+                })
+            },
+        },
+    ]
+
+    const stats = [
+        {
+            id: 1,
+            title: "Total Earnings",
+            presentValue: 200000,
+            oldValue: 185500,
+            decimal: true,
+        },
+        {
+            id: 2,
+            title: "Total Orders",
+            presentValue: 40,
+            oldValue: 36,
+            decimal: false,
+        },
+        {
+            id: 3,
+            title: "Total Delivered",
+            presentValue: 29,
+            oldValue: 33,
+            decimal: false,
+        },
+        {
+            id: 4,
+            title: "Total Cancelled",
+            presentValue: 1,
+            oldValue: 3,
+            decimal: false,
+        },
+    ];
+
+    const filterButtons = [
+        {
+            id: 1,
+            title: "Status",
+            buttons: [
+                {
+                id: 1,
+                text: "All",
+                selected: true,
+                },
+                {
+                id: 2,
+                text: "Pending",
+                selected: false,
+                },
+                {
+                id: 3,
+                text: "Delivered",
+                selected: false,
+                },
+                {
+                id: 4,
+                text: "Cancelled",
+                selected: false,
+                },
+            ]
+        },
+        {
+            id: 2,
+            title: "Logistics",
+            buttons: [
+                {
+                id: 1,
+                text: "All",
+                selected: true,
+                },
+                {
+                id: 2,
+                text: "Komitex",
+                selected: false,
+                },
+                {
+                id: 3,
+                text: "Fedex",
+                selected: false,
+                },
+                {
+                id: 4,
+                text: "DHL",
+                selected: false,
+                },
+            ]
+        },
+        {
+            id: 3,
+            title: "Date",
+            buttons: [
+                {
+                id: 1,
+                text: "Today",
+                selected: true,
+                },
+                {
+                id: 2,
+                text: "Yesterday",
+                selected: false,
+                },
+                {
+                id: 3,
+                text: "Manual Selection",
+                selected: false,
+                },
+            ]
+        }
+    ]
+
+    const [searchQuery, setSearchQuery] = useState("");
+
+    // filter modal reference
+    const filterModalRef = useRef(null);
+
+    // search modal refernce
+    const searchModalRef = useRef(null);
+
+    // filter modal state
+    const [filterModal, setFilterModal] = useState({
+        snapPointsArray: ["50%"],
+        autoSnapAt: 0,
+        sheetTitle: "Filter by",
+        overlay: false,
+        modalContent: <>
+            <View style={style.modalContent}>
+                {filterButtons.map(item => (
+                    <FilterButtonGroup
+                    buttons={item.buttons}
+                    title={item.title}
+                    key={item.id}
+                    />
+                ))}
+                <View style={style.footerButtonWrapper}>
+                    <TouchableOpacity style={style.footerButton}>
+                        <Text style={style.footerButtonText}>Apply</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+        </>
+    })
+
+    // search modal state
+    const [searchModal, setSearchModal] = useState({
+        snapPointsArray: ["50%", "90%"],
+        autoSnapAt: 1,
+        sheetTitle: "",
+        overlay: false,
+        modalContent: <>
+            <SearchBar 
+                placeholder={"Search orders"}
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+            />
+            <BottomSheetScrollView style={style.orderSearchResults}>
+                {ordersListSearched.map((order, index) => (
+                    <Order 
+                        key={order.id} 
+                        item={order} 
+                        index={index} 
+                        length={ordersListSearched.length} 
+                    />
+                ))}
+            </BottomSheetScrollView>
+        </>
+    })
+
+    const closeModal = (type) => {
+        if (type === "filter") {
+            setFilterModal(prevModal => {
+                return {
+                    ...prevModal,
+                    overlay: false,
+                }
+            });
+            filterModalRef.current?.close();
+        } else {
+            setSearchModal(prevModal => {
+                return {
+                    ...prevModal,
+                    overlay: false,
+                }
+            });
+            searchModalRef.current?.close();
+        }
+    };
+
+    const openModal = (type) => {
+        if (type === "filter") {
+            setFilterModal(prevModal => {
+                return {
+                    ...prevModal,
+                    overlay: true,
+                }
+            });
+            filterModalRef.current?.present();
+        } else {
+            setSearchModal(prevModal => {
+                return {
+                    ...prevModal,
+                    overlay: true,
+                }
+            });
+            searchModalRef.current?.present();
+        }
+    }
 
     return (
-        <TouchableWithoutFeedback style={{flex: 1}}>
-            <View style={style.main}>
+        <>
+            <TouchableWithoutFeedback style={{flex: 1, width: "100%", height: "100%"}}>
                 <FlatList 
                     showsVerticalScrollIndicator={false}
                     ListHeaderComponent={
@@ -514,16 +774,23 @@ const Orders = ({navigation}) => {
                             <View style={style.recentOrderHeading}>
                                 <Text style={style.recentOrderHeadingText}>Recent Orders</Text>
                                 <View style={style.actionWrapper}>
-                                    <TouchableOpacity style={style.menuIcon}>
+                                    <TouchableOpacity 
+                                        style={style.menuIcon}
+                                        onPress={() => openModal("search")}
+                                    >
                                         <SearchIcon />
                                     </TouchableOpacity>
-                                    <TouchableOpacity style={style.menuIcon}>
+                                    <TouchableOpacity
+                                        style={style.menuIcon}
+                                        onPress={() => openModal("filter")}
+                                    >
                                         <FilterIcon />
                                     </TouchableOpacity>
                                 </View>
                             </View>
                         </View>
                     }
+                    contentContainerStyle={{paddingBottom: 90}}
                     style={style.listWrapper}
                     keyExtractor={item => item.id}
                     data={orderList}
@@ -531,27 +798,37 @@ const Orders = ({navigation}) => {
                         <Order item={item} index={index} length={orderList.length} />
                     )}
                 />
-            </View>
-        </TouchableWithoutFeedback>
+            </TouchableWithoutFeedback>
+            <CustomBottomSheet 
+                bottomSheetModalRef={filterModalRef}
+                showOverlay={filterModal.overlay}
+                closeModal={() => closeModal("filter")}
+                snapPointsArray={filterModal.snapPointsArray}
+                autoSnapAt={filterModal.autoSnapAt}
+                sheetTitle={filterModal.sheetTitle}
+            >
+                {filterModal.modalContent}
+            </CustomBottomSheet>
+
+            <CustomBottomSheet 
+                bottomSheetModalRef={searchModalRef}
+                showOverlay={searchModal.overlay}
+                closeModal={() => closeModal("search")}
+                snapPointsArray={searchModal.snapPointsArray}
+                autoSnapAt={searchModal.autoSnapAt}
+                sheetTitle={searchModal.sheetTitle}
+            >
+                {searchModal.modalContent}
+            </CustomBottomSheet>
+        </>
     );
 }
 
 const style = StyleSheet.create({
-    main: {
-        flex: 1,
-        paddingHorizontal: 20,
-        backgroundColor: "#f8f8f8",
-        minheight: "100%",
-        alignItems: 'center',
-        display: 'flex',
-        flexDirection:  'column',
-        justifyContent: 'flex-start',
-        width: "100%",
-        paddingBottom: 90
-    },
     listWrapper: {
         width: "100%",
         height: "100%",
+        paddingHorizontal: 20,
     },
     headerWrapper: {
         width: "100%",
@@ -613,6 +890,34 @@ const style = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         gap: 10,
+    },
+    modalContent: {
+        display: "flex",
+        flexDirection: 'column',
+        alignItems: "center",
+        justifyContent: "flex-start",
+        width: "100%",
+        // backgroundColor: "pink",
+        flex: 1,
+    },
+    footerButtonWrapper: {
+      width: "100%",
+      position: "absolute",
+      bottom: 0,
+    },
+    footerButton: {
+      width: "100%",
+      height: 44,
+      backgroundColor: primaryColor,
+      borderRadius: 12,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center", 
+    },
+    footerButtonText: {
+      color: "white",
+      fontSize: 16,
+      fontFamily: 'mulish-semibold',
     }
 })
  

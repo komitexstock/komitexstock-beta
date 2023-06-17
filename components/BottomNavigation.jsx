@@ -19,7 +19,7 @@ const BottomNavigation = () => {
     const currentStack = useStack();
 
     // stack where navigation should be visible
-    const visibleNavigation = ["Home", "Orders", "Waybill", "Inventory", "Account"]; 
+    const visibleNavigation = ["Home", "Orders", "Waybill", "Inventory", "Products", "Account"]; 
 
     if (!visibleNavigation.includes(currentStack)) return (<></>);
     else return (
@@ -61,7 +61,7 @@ const BottomNavigation = () => {
                 style={style.navButton}
                 onPress={() => {navigation.navigate("Inventory")}}
             >                
-                {currentStack === "Inventory" ? (<InventoryActiveIcon />) : (<InventoryIcon />)}
+                {["Inventory", "Products"].includes(currentStack) ? (<InventoryActiveIcon />) : (<InventoryIcon />)}
                 <Text 
                     style={currentStack === "Inventory" ? style.activeText : style.inactiveText}
                 >

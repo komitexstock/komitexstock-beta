@@ -3,9 +3,9 @@ import PercentageIncreaseIcon from '../assets/icons/PercentageIncreaseIcon';
 import PercentageDecreaseIcon from '../assets/icons/PercentageDecreaseIcon';
 import { useState } from 'react';
 
-const StatCard = ({title, presentValue, oldValue, decimal, reversedLogic}) => {
+const StatCard = ({title, presentValue, oldValue, decimal}) => {
 
-    const [percentageDifference, setPercentageDifference] = useState(() => {
+    const percentageDifference = () => {
         let result = 100 * ((presentValue - oldValue)/oldValue);
         result = result.toFixed(2);
 
@@ -14,11 +14,11 @@ const StatCard = ({title, presentValue, oldValue, decimal, reversedLogic}) => {
         } else {
             return result;
         }
-    })
+    }
 
     const handleStatIcon = () => {
-        if (percentageDifference !== 'N/A') {
-            if (percentageDifference < 0) {
+        if (percentageDifference() !== 'N/A') {
+            if (percentageDifference() < 0) {
                 return <PercentageDecreaseIcon />;
             } else {
                 return <PercentageIncreaseIcon />;
@@ -28,26 +28,36 @@ const StatCard = ({title, presentValue, oldValue, decimal, reversedLogic}) => {
         }
     }
 
+    const handlePercentageWrapper = () => {
+        if (percentageDifference() === "N/A") return style.neutralPercentage;
+        if (percentageDifference() < 0) return style.negativePercentage;
+        return style.positivePercentage;
+    }
+    
+    const handlePercentageText = () => {
+        if (percentageDifference() === "N/A") return style.neutralText;
+        if (percentageDifference() < 0) return style.negativeText;
+        return style.positiveText;
+    }
+
     return (
         <View style={style.statCard}>
             <View style={style.statHeading}>
                 <Text style={style.statTitle}>{title}</Text>
                 <View 
                     style={[
-                        style.percentageWrapper, 
-                        percentageDifference !== "N/A" && percentageDifference > 0 ? style.positivePercentage : style.negativePercentage,
-                        percentageDifference === "N/A" && style.neutralPercentage
+                        style.percentageWrapper,
+                        handlePercentageWrapper(),
                     ]}
                 >
                     {handleStatIcon()}
                     <Text 
                         style={[
                             style.percentagetext, 
-                            percentageDifference !== "N/A" && percentageDifference > 0 ? style.positiveText : style.negativeText,
-                            percentageDifference === "N/A" && style.neutralText
+                            handlePercentageText(),
                         ]}
                     >
-                        {percentageDifference === "N/A" ? "N/A" : Math.abs(percentageDifference) + "%"}
+                        {percentageDifference() === "N/A" ? "N/A" : Math.abs(percentageDifference()) + "%"}
                     </Text>
                 </View>
             </View>

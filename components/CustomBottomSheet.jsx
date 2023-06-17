@@ -17,7 +17,7 @@ const CustomBottomSheet = ({bottomSheetModalRef, showOverlay, closeModal, snapPo
         <>
             {showOverlay && (
                 <View
-                style={styles.overlay}
+                    style={styles.overlay}
                 >
                     <TouchableOpacity
                         style={styles.closeOverlay}
@@ -74,6 +74,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         width: "100%",
         height: "100%",
+        backgroundColor: "transparent",
     },
     overlay: {
         position: 'absolute',
