@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import SearchBar from "./SearchBar";
 import { useState } from "react";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import VerifiedIcon from "../assets/icons/VerifiedIcon";
 
 const AddLogisticsModalContent = ({handleSelectedLogistics}) => {
 
@@ -12,22 +13,26 @@ const AddLogisticsModalContent = ({handleSelectedLogistics}) => {
         {
             company_id: "E3F7J1g4X6r9L2Y",
             business_name: "Komitex Logistics",
-            imageUrl: require("../assets/images/komitex.png")
+            imageUrl: require("../assets/images/komitex.png"),
+            verified: true,
         },
         {
             company_id: "H9i2L4t6R3d7K1w",
             business_name: "Fedex",
-            imageUrl: require("../assets/images/fedex.png")
+            imageUrl: require("../assets/images/fedex.png"),
+            verified: true,
         },
         {
             company_id: "X7y2G4z9Q1a3w6J",
             business_name: "UPS",
-            imageUrl: require("../assets/images/ups.png")
+            imageUrl: require("../assets/images/ups.png"),
+            verified: false,
         },
         {
             company_id: "N5o8V2s6W3D1r4E",
             business_name: "DHL",
-            imageUrl: require("../assets/images/dhl.png")
+            imageUrl: require("../assets/images/dhl.png"),
+            verified: true,
         },
     ];
 
@@ -59,6 +64,7 @@ const AddLogisticsModalContent = ({handleSelectedLogistics}) => {
                             source={data.imageUrl}
                         />
                         <Text style={style.listText}>{data.business_name}</Text>
+                        { data.verified && <VerifiedIcon />}
                     </TouchableOpacity>
                 ))}
             </BottomSheetScrollView>

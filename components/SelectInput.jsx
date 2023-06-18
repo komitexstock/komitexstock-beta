@@ -30,7 +30,7 @@ const SelectInput = ({label, labelIcon, placeholder, onPress, icon, value, activ
                         </>
                     )}
 
-                    { inputFor == "Logistics" && (
+                    { inputFor !== "Location" && (
                         <>
                             {value ? value.business_name : placeholder} 
                         </>

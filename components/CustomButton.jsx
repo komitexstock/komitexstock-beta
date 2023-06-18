@@ -54,7 +54,7 @@ const style = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         paddingHorizontal: 20,
-        zIndex: 1000,
+        zIndex: 1,
     },
     fixed: {
         width: "100%",

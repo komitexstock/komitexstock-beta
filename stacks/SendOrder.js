@@ -106,8 +106,8 @@ const SendOrder = ({navigation}) => {
     }
 
     const emptyLogisticsAndOrderDetails = [
-            logistics, 
-            orderDetails
+        logistics, 
+        orderDetails
         ].some(
             (item) => item === null || item === ''
     );
