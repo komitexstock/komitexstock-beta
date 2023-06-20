@@ -2,7 +2,7 @@ import { TouchableOpacity, StyleSheet, View, Text } from "react-native";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useMemo } from "react";
 import ModalHandle from "./ModalHandle";
-import Add from "../assets/icons/Add";
+import CloseIcon from "../assets/icons/CloseIcon";
 
 const CustomBottomSheet = ({bottomSheetModalRef, showOverlay, closeModal, snapPointsArray, autoSnapAt, children, sheetTitle, sheetSubtitle}) => {
 
@@ -45,7 +45,7 @@ const CustomBottomSheet = ({bottomSheetModalRef, showOverlay, closeModal, snapPo
                             style={styles.closeButtonWrapper} 
                             onPress={closeModal}
                         >
-                            <Add />
+                            <CloseIcon />
                         </TouchableOpacity>
                         {!sheetSubtitle ? (
                             <Text style={styles.sheetTitleText}>

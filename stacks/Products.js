@@ -10,7 +10,7 @@ import MenuIcon from "../assets/icons/MenuIcon";
 import { primaryColor } from "../style/globalStyleSheet";
 import StatWrapper from "../components/StatWrapper";
 import StatCard from "../components/StatCard";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import SearchIcon from '../assets/icons/SearchIcon'
 import FilterIcon from '../assets/icons/FilterIcon';
 import ArrowLeft from "../assets/icons/ArrowLeft";
@@ -19,9 +19,11 @@ import FilterButtonGroup from "../components/FilterButtonGroup";
 import SearchBar from "../components/SearchBar";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import ProductCard from "../components/ProductCard";
+import AlertNotice from "../components/AlertNotice";
+// import { BackHandler } from 'react-native';
 
 
-const Products = ({navigation}) => {
+const Products = ({navigation, route}) => {
 
     const stats = [
         {
@@ -53,6 +55,35 @@ const Products = ({navigation}) => {
             decimal: false,
         },
     ];
+
+    const [successAlert, setSuccessAlert] = useState(null);
+    console.table(successAlert);
+
+    useEffect(() => {
+        // if success is true, set success as false after 3 seconds
+        if (route.params.success && route.params) {
+            setSuccessAlert(route.params.success);
+        }
+        setTimeout(() => {
+            setSuccessAlert(false);
+        }, 3000);
+
+    }, [route.params]);
+
+    // useEffect(() => {
+    //     const backAction = () => {
+    //       // Run your function here
+    //       console.log('Back button pressed!');
+    //       return true;
+    //     };
+    
+    //     const backHandler = BackHandler.addEventListener(
+    //       'hardwareBackPress',
+    //       backAction
+    //     );
+    
+    //     return () => backHandler.remove();
+    // }, []);
 
     const filterButtons = [
         {
@@ -270,7 +301,7 @@ const Products = ({navigation}) => {
             imageUrl: require('../assets/images/perfectly-useless-mornig-watch.png'),
             lowStock: false,
         },
-    ]
+    ];
 
     return (
         <>
@@ -368,6 +399,14 @@ const Products = ({navigation}) => {
             >
                 {searchModal.modalContent}
             </CustomBottomSheet>
+
+            { successAlert && (
+                <AlertNotice 
+                    type={"success"}
+                    text={"Product successfully created and saved!"}
+                    closeAlert={setSuccessAlert}
+                />
+            )}
         </>
     );
 }

@@ -26,7 +26,9 @@ const Products = ({navigation}) => {
             totalStock: 25,
             lowStock: true,
             onPress: () => {
-                navigation.navigate("Products");
+                navigation.navigate("Products", {
+                    success: false
+                });
             }
         },
         {
@@ -37,7 +39,9 @@ const Products = ({navigation}) => {
             totalStock: 17,
             lowStock: false,
             onPress: () => {
-                navigation.navigate("Products");
+                navigation.navigate("Products", {
+                    success: false
+                });
             }
         },
         {
@@ -48,7 +52,9 @@ const Products = ({navigation}) => {
             totalStock: 9,
             lowStock: false,
             onPress: () => {
-                navigation.navigate("Products");
+                navigation.navigate("Products", {
+                    success: false
+                });
             }
         },
         {
@@ -59,7 +65,9 @@ const Products = ({navigation}) => {
             totalStock: 7,
             lowStock: false,
             onPress: () => {
-                navigation.navigate("Products");
+                navigation.navigate("Products", {
+                    success: false
+                });
             }
         },
     ]
