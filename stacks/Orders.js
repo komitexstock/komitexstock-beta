@@ -544,6 +544,8 @@ const Orders = ({navigation}) => {
             presentValue: 200000,
             oldValue: 185500,
             decimal: true,
+            unit: "₦",
+            unitPosition: "start",
         },
         {
             id: 2,
@@ -551,6 +553,8 @@ const Orders = ({navigation}) => {
             presentValue: 40,
             oldValue: 36,
             decimal: false,
+            unit: "",
+            unitPosition: "end",
         },
         {
             id: 3,
@@ -558,6 +562,8 @@ const Orders = ({navigation}) => {
             presentValue: 29,
             oldValue: 33,
             decimal: false,
+            unit: "",
+            unitPosition: "end",
         },
         {
             id: 4,
@@ -565,6 +571,8 @@ const Orders = ({navigation}) => {
             presentValue: 1,
             oldValue: 3,
             decimal: false,
+            unit: "",
+            unitPosition: "end",
         },
     ];
 
@@ -687,6 +695,7 @@ const Orders = ({navigation}) => {
                 placeholder={"Search orders"}
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
+                backgroundColor={"#f8f8f8"}
             />
             <BottomSheetScrollView style={style.orderSearchResults}>
                 {ordersListSearched.map((order, index) => (
@@ -762,6 +771,8 @@ const Orders = ({navigation}) => {
                                         presentValue={stat.presentValue}
                                         oldValue={stat.oldValue}
                                         decimal={stat.decimal}
+                                        unit={stat.unit}
+                                        unitPosition={stat.unitPosition}
                                     />
                                 ))}
                             </StatWrapper>

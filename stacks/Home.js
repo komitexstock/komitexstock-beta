@@ -260,6 +260,7 @@ const Home = ({navigation}) => {
                             placeholder={"Search Komitex Stocks"}
                             searchQuery={searchQuery}
                             setSearchQuery={setSearchQuery}
+                            backgroundColor={"#f8f8f8"}
                         />
                         <BottomSheetScrollView style={style.orderSearchResults}>
                             {orders.map((order, index) => (

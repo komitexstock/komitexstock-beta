@@ -48,6 +48,7 @@ const AddLogisticsModalContent = ({handleSelectedLogistics}) => {
                 placeholder={"Search for a logistics"} 
                 searchQuery={searchQuery} 
                 setSearchQuery={setSearchQuery} 
+                backgroundColor={"#f8f8f8"}
             />
             <View>
                 <Text style={style.modalHeading}>Available Logistics</Text>

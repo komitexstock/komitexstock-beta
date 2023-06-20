@@ -8,7 +8,12 @@ const CustomButton = ({name, onPress, backgroundColor, fixed, inactive}) => {
     // console.log(inactive);
 
     return (
-        <View style={[ fixed ? style.fixed : style.buttonWrapper, {backgroundColor: backgroundColor}]}>
+        <View 
+            style={[ 
+                fixed ? style.fixed : style.buttonWrapper, 
+                {backgroundColor: backgroundColor}, 
+            ]}
+        >
             <TouchableOpacity 
                 style={inactive ? style.inactive : style.button}
                 onPress={inactive ? () => {} : onPress}

@@ -3,7 +3,7 @@ import PercentageIncreaseIcon from '../assets/icons/PercentageIncreaseIcon';
 import PercentageDecreaseIcon from '../assets/icons/PercentageDecreaseIcon';
 import { useState } from 'react';
 
-const StatCard = ({title, presentValue, oldValue, decimal}) => {
+const StatCard = ({title, presentValue, oldValue, decimal, unit, unitPosition, backgroundColor}) => {
 
     const percentageDifference = () => {
         let result = 100 * ((presentValue - oldValue)/oldValue);
@@ -20,8 +20,10 @@ const StatCard = ({title, presentValue, oldValue, decimal}) => {
         if (percentageDifference() !== 'N/A') {
             if (percentageDifference() < 0) {
                 return <PercentageDecreaseIcon />;
-            } else {
+            } else if (percentageDifference() > 0) {
                 return <PercentageIncreaseIcon />;
+            } else {
+                return <></>;
             }
         } else {
             return <></>;
@@ -30,18 +32,20 @@ const StatCard = ({title, presentValue, oldValue, decimal}) => {
 
     const handlePercentageWrapper = () => {
         if (percentageDifference() === "N/A") return style.neutralPercentage;
+        if (percentageDifference() > 0) return style.positivePercentage;
         if (percentageDifference() < 0) return style.negativePercentage;
-        return style.positivePercentage;
+        return style.neutralPercentage;
     }
     
     const handlePercentageText = () => {
         if (percentageDifference() === "N/A") return style.neutralText;
+        if (percentageDifference() > 0) return style.positiveText;
         if (percentageDifference() < 0) return style.negativeText;
-        return style.positiveText;
+        return style.neutralText;
     }
 
     return (
-        <View style={style.statCard}>
+        <View style={[style.statCard, backgroundColor && {backgroundColor: backgroundColor}]}>
             <View style={style.statHeading}>
                 <Text style={style.statTitle}>{title}</Text>
                 <View 
@@ -63,9 +67,11 @@ const StatCard = ({title, presentValue, oldValue, decimal}) => {
             </View>
             <View style={style.statValueWrapper}>
                 <Text style={style.statValue}>
+                    { unitPosition === "start" && <>{unit}</> }
                     {presentValue.toLocaleString()}{decimal && <Text style={style.statValueDecimal}>
                         .00
                     </Text>}
+                    { unitPosition === "end" && <>{unit}</> }
                 </Text>
             </View>
         </View>

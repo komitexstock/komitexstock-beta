@@ -1,19 +1,26 @@
+import { 
+    View, 
+    Text, 
+    FlatList, 
+    TouchableWithoutFeedback,
+    StyleSheet,
+    Image,
+    TouchableOpacity
+} from "react-native";
 import Header from "../components/Header";
-import { View, Text, ScrollView, Dimensions, StyleSheet } from "react-native";
-import SelectInput from "../components/SelectInput";
-import ArrowDown from "../assets/icons/ArrowDown";
-import CustomButton from "../components/CustomButton";
-import CustomBottomSheet from "../components/CustomBottomSheet";
-import AddLogisticsModalContent from "../components/AddLogisticsModalContent";
 import { useState, useRef } from "react";
+import SelectLogisticsCard from "../components/SelectLogisticsCard";
+import SearchBar from "../components/SearchBar";
+import CustomBottomSheet from "../components/CustomBottomSheet";
+import LogisticsLocation from "../components/LogisticsLocations";
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import StatCard from "../components/StatCard";
+import StatWrapper from "../components/StatWrapper";
+import ModalButton from "../components/ModalButton";
 
-const AddLogistics = ({navigation}) => {
+const Products = ({navigation}) => {
 
-    // state to store the selected logistics
-    const [logistics, setLogistics] = useState(null);
-
-    // state to indicate if select logistics input is active
-    const [selectLogisticsActive, setSelectLogisticsActive] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
 
     // state to control modal overlay
     const [showOverlay, setShowOverlay] = useState(false);
@@ -24,22 +31,55 @@ const AddLogistics = ({navigation}) => {
     const closeModal = () => {
         bottomSheetModalRef.current?.close();
         setShowOverlay(false);
-        setSelectLogisticsActive(false);
     };
 
     // function to open bottom sheet modal
     const openModal = () => {
         bottomSheetModalRef.current?.present();
         setShowOverlay(true);
-        setSelectLogisticsActive(true);
     }
 
-    const handleSelectedLogistics = (data) => {
-        closeModal();
-        setLogistics(data);
-    }
 
-    const locations = [
+    const logisticsList = [
+        {
+            id: 1,
+            logistics: "Komitex Logistics",
+            imageUrl: require('../assets/images/komitex.png'),
+            verified: true,
+            destinations: 14,
+            inventories: 57,
+            onPress: openModal
+        },
+        {
+            id: 2,
+            logistics: "DHL",
+            imageUrl: require('../assets/images/dhl.png'),
+            verified: true,
+            destinations: 28,
+            inventories: 65,
+            onPress: openModal
+        },
+        {
+            id: 3,
+            logistics: "Fedex",
+            imageUrl: require('../assets/images/fedex.png'),
+            verified: true,
+            destinations: 33,
+            inventories: 49,
+            onPress: openModal
+        },
+        {
+            id: 4,
+            logistics: "UPS",
+            imageUrl: require('../assets/images/ups.png'),
+            verified: false,
+            destinations: 14,
+            inventories: 31,
+            onPress: openModal
+        },
+    ];
+
+    const locationsList = [
         {
             id: 1,
             location: "Asaba",
@@ -110,172 +150,184 @@ const AddLogistics = ({navigation}) => {
             location: "Eku",
             charge: 4000,
         }
+    ];
+
+    const stats = [
+        {
+            id: 1,
+            title: "Total Deliveries",
+            presentValue: 500,
+            oldValue: 495,
+            decimal: false,
+            unit: "",
+            unitPosition: "end",
+        },
+        {
+            id: 2,
+            title: "Delivery Success Rate",
+            presentValue: 80,
+            oldValue: 82,
+            decimal: false,
+            unit: "%",
+            unitPosition: "end",
+        },
     ]
 
     return (
         <>
-            <ScrollView
-                showsVerticalScrollIndicator={false}
-                style={style.container}
+            <TouchableWithoutFeedback 
+                style={{
+                    flex: 1, 
+                    width: "100%", 
+                    height: "100%"
+                }}
             >
-                <View style={style.main}>
-                    <View style={style.mainContent}>
-                        <Header 
-                            navigation={navigation} 
-                            stackName={"Add Logistics"} 
-                            iconFunction={null} 
-                            icon={null} 
+                <FlatList 
+                    showsVerticalScrollIndicator={false}
+                    ListHeaderComponent={
+                        <View style={style.headerWrapper}>
+                            <Header 
+                                navigation={navigation} 
+                                stackName={"Add Logistics"} 
+                                iconFunction={null} 
+                                icon={null} 
+                            />
+                            <Text style={style.headingText}>
+                                Select a preferred logistics partner for efficient inventory management and timely order fulfillment.
+                            </Text>
+                            <SearchBar
+                                placeholder={"Search for a logistics or location"}
+                                searchQuery={searchQuery}
+                                setSearchQuery={setSearchQuery}
+                                backgroundColor={"#ffffff"}
+                            />
+                        </View>
+                    }
+                    columnWrapperStyle={style.listContainer}
+                    style={style.listWrapper}
+                    keyExtractor={item => item.id}
+                    data={logisticsList}
+                    numColumns={2}
+                    renderItem={({ item, index }) => (
+                        <SelectLogisticsCard
+                            logistics={item.logistics}
+                            imageUrl={item.imageUrl}
+                            destinations={item.destinations}
+                            inventories={item.inventories}
+                            verified={item.verified}
+                            onPress={item.onPress}
                         />
-                        <Text style={style.headingText}>
-                            Select a preferred logistics partner for efficient inventory management and timely order fulfillment.
-                        </Text>
-                        <SelectInput
-                            label={"Select Logistics"}
-                            labelIcon={false}
-                            placeholder={"Select a preferred logistics partner"}
-                            onPress={openModal}
-                            icon={<ArrowDown />}
-                            value={logistics}
-                            active={selectLogisticsActive}
-                            inputFor={"Logistics"}
-                        />
-                        { logistics && (
-                            <View style={style.locationsContainer}>
-                                <Text style={style.locationsHeading}>Available Locations</Text>
-                                <Text style={style.locationsParagraph}>
-                                    Find all available locations and the associated fees Komitex offers
-                                </Text>
-                                <View style={style.locationsList}>
-                                    {locations.map((location) => (
-                                        <View key={location.id} style={style.locationsItems}>
-                                            <Text style={style.locationsText}>{location.location}</Text>
-                                            <Text style={style.locationsPrice}>
-                                                ₦{location.charge.toLocaleString()}
-                                                <Text style={style.decimal}>.00</Text>    
-                                            </Text>
-                                        </View>
-                                    ))}
-                                </View>
-                            </View>
-                        )}
-                    </View>
-                    <CustomButton
-                        name={logistics ? "Add Komitex" : "continue"}
-                        onPress={() => {}}
-                        backgroundColor={"#f8f8f8"}
-                        fixed={false}
-                        inactive={logistics ? false : true}
-                    />
-                </View>
-            </ScrollView>
+                    )}
+                />
+            </TouchableWithoutFeedback>
             <CustomBottomSheet
                 bottomSheetModalRef={bottomSheetModalRef}
                 showOverlay={showOverlay}
                 closeModal={closeModal}
-                snapPointsArray={["40%", "60%", "80%"]}
-                autoSnapAt={0}
-                sheetTitle={"Select Logistics"}
+                snapPointsArray={["40%", "60%", "90%", "100%"]}
+                autoSnapAt={2}
+                sheetTitle={""}
                 sheetSubtitle={""}
             >   
-                <AddLogisticsModalContent 
-                    handleSelectedLogistics={handleSelectedLogistics}
+                <BottomSheetScrollView
+                    showsVerticalScrollIndicator={false}
+                >
+                    <View
+                        style={style.bottomSheetContainer}
+                    >
+                        <View style={style.logisticsMainInfo}>
+                            <Image 
+                                source={require('../assets/images/komitex.png')}
+                                style={style.logisticsImage}
+                            />
+                            <Text style={style.logisticsName}>
+                                Komitex Logistics
+                            </Text>
+                            <Text style={style.logisticsLocations}>17 Locations</Text>
+                        </View>
+                        <StatWrapper>
+                            {stats.map(stat => (
+                                <StatCard
+                                    key={stat.id}
+                                    title={stat.title}
+                                    presentValue={stat.presentValue}
+                                    oldValue={stat.oldValue}
+                                    decimal={stat.decimal}
+                                    unit={stat.unit}
+                                    unitPosition={stat.unitPosition}
+                                    backgroundColor={"#f8f8f8"}
+                                />
+                            ))}
+                        </StatWrapper>
+                        <LogisticsLocation
+                            locations={locationsList}
+                            backgroundColor={"#f8f8f8"}
+                        />
+                    </View>
+                </BottomSheetScrollView>
+                <ModalButton
+                    name={"Add Komitex"}
+                    onPress={() => {}}
                 />
             </CustomBottomSheet>
-            
         </>
     );
 }
 
-const screenHeight = Dimensions.get('window').height;
-const desiredHeight = screenHeight - 100; 
-
 const style = StyleSheet.create({
-    container: {
-        flex: 1,
+    listWrapper: {
         width: "100%",
-        backgroundColor: "#f8f8f8",
-        // padding: 20,
-        display: "flex",
-        minHeight: "100%",
+        height: "100%",
+        paddingHorizontal: 20,
+        marginBottom: 70,
     },
-    main: {
-        display: 'flex',
-        flexDirection: "column",
-        width: "100%",
+    listContainer: {
+        display: "flex",
+        flexDirection: "row",
+        gap: 16,
+        alignItems: "center",
         justifyContent: "space-between",
-        alignItems: "center",
-        flex: 1,
-    },
-    mainContent: {
-        padding: 20,
-        paddingBottom: 0,
-        display: "flex",
-        flexDirection: "column",
-        width: "100%",
-        justifyContent: "flex-start",
-        alignItems: "center",
-        minHeight: desiredHeight,
+        marginBottom: 16,
     },
     headingText: {
-        fontFamily: 'mulish-regular',
-        color: 'rgba(34, 34, 34, 0.6)',
+        fontFamily: "mulish-regular",
         fontSize: 12,
-        width: "100%",
+        color: "rgba(34, 34, 34, 0.6)",
         marginBottom: 24
     },
-    locationsContainer: {
+    bottomSheetContainer: {
         display: "flex",
         flexDirection: "column",
-        width: "100%",
-        justifyContent: "flex-start",
-        alignItems: "flex-start",
-        backgroundColor: "#ffffff",
-        padding: 20,
-        borderRadius: 12,
-        gap: 8,
-        marginTop: 20,
-    },
-    locationsHeading: {
-        fontFamily: 'mulish-bold',
-        color: 'rgba(34, 34, 34, 1)',
-        fontSize: 14,
-        width: "100%",
-    },
-    locationsParagraph: {
-        fontFamily: 'mulish-regular',
-        color: 'rgba(34, 34, 34, 0.6)',
-        fontSize: 12,
-        width: "100%",
-    },
-    locationsList: {
-        display: "flex",
         justifyContent: "flex-start",
         alignItems: "center",
+        width: "100%",
+        height: "100%",
+    },
+    logisticsMainInfo: {
+        display: "flex",
         flexDirection: "column",
-        gap: 20,
+        alignItems: "flex-start",
+        justifyContent: "flex-start",
+        marginBottom: 20,
         width: "100%",
     },
-    locationsItems: {
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        width: "100%",
+    logisticsImage: {
+        width: 40,
+        height: 40,
+        borderRadius: 8,
+        marginBottom: 12
     },
-    locationsText: {
-        fontFamily: 'mulish-regular',
-        color: 'rgba(34, 34, 34, 0.6)',
+    logisticsName: {
+        fontFamily: "mulish-semibold",
         fontSize: 12,
+        color: "rgba(34, 34, 34, 1)",
+        marginBottom: 4,
     },
-    locationsPrice: {
-        fontFamily: 'mulish-regular',
-        color: 'rgba(34, 34, 34, 1)',
-        fontSize: 12,
+    logisticsLocations: {
+        fontFamily: "mulish-regular",
+        fontSize: 10,
+        color: "rgba(34, 34, 34, 0.6)",
     },
-    decimal: {
-        color: 'rgba(34, 34, 34, 0.6)',
-        fontSize: 12,
-    }
 })
  
-export default AddLogistics;
+export default Products;

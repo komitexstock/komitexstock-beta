@@ -1,15 +1,16 @@
 import SearchIcon from "../assets/icons/SearchIcon";
 import ClearSearch from "../assets/icons/ClearSearch";
 import { View, TextInput, StyleSheet, TouchableOpacity } from "react-native";
+import { useState } from "react";
 
-const SearchBar = ({placeholder, searchQuery, setSearchQuery}) => {
+const SearchBar = ({placeholder, searchQuery, setSearchQuery, backgroundColor}) => {
 
     const handleSearchQuery = (text) => {
         setSearchQuery(text);
     }
 
     return (
-        <View style={style.searchBar}>
+        <View style={[style.searchBar, {backgroundColor: backgroundColor}]}>
             <SearchIcon />
             <TextInput 
                 style={style.searchInput}
@@ -19,12 +20,14 @@ const SearchBar = ({placeholder, searchQuery, setSearchQuery}) => {
                 onChangeText={handleSearchQuery}
                 placeholderTextColor={"#837f7f"}
             />
-            <TouchableOpacity
-                style={style.clearSearch}
-                onPress={() => setSearchQuery("")}
-            >
-                <ClearSearch />
-            </TouchableOpacity>
+            { searchQuery !== '' && (
+                <TouchableOpacity
+                    style={style.clearSearch}
+                    onPress={() => setSearchQuery("")}
+                >
+                    <ClearSearch />
+                </TouchableOpacity>
+            )}
         </View>
     );
 }

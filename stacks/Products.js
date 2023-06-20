@@ -42,14 +42,14 @@ const Products = ({navigation}) => {
             id: 3,
             title: "Items out of Stock",
             presentValue: 1,
-            oldValue: 0,
+            oldValue: 1,
             decimal: false,
         },
         {
             id: 4,
             title: "Items with Low Stock",
-            presentValue: 0,
-            oldValue: 0,
+            presentValue: 3,
+            oldValue: 4,
             decimal: false,
         },
     ];
@@ -173,6 +173,7 @@ const Products = ({navigation}) => {
                 placeholder={"Search orders"}
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
+                backgroundColor={"#f8f8f8"}
             />
             <BottomSheetScrollView style={style.orderSearchResults}>
                 

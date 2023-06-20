@@ -11,6 +11,7 @@ import { primaryColor } from "../style/globalStyleSheet";
 import { useState, useRef } from "react";
 import SearchIcon from '../assets/icons/SearchIcon'
 import LogisticsCard from "../components/LogisticsCard";
+import SearchBar from "../components/SearchBar";
 
 const Products = ({navigation}) => {
 
@@ -65,7 +66,13 @@ const Products = ({navigation}) => {
 
     return (
         <>
-            <TouchableWithoutFeedback style={{flex: 1, width: "100%", height: "100%"}}>
+            <TouchableWithoutFeedback 
+                style={{
+                    flex: 1, 
+                    width: "100%", 
+                    height: "100%"
+                }}
+            >
                 <FlatList 
                     showsVerticalScrollIndicator={false}
                     ListHeaderComponent={
@@ -78,15 +85,12 @@ const Products = ({navigation}) => {
                                     <MenuIcon />
                                 </TouchableOpacity>
                             </View>
-                            <View style={style.searchWrapper}>
-                                <SearchIcon />
-                                <TouchableOpacity 
-                                    style={style.searchInput}
-                                    // onPress={openModal}
-                                >
-                                    <Text style={style.searchPlaceholder}>Search Inventory</Text>
-                                </TouchableOpacity>
-                            </View>
+                            <SearchBar
+                                placeholder={"Search Inventory"}
+                                searchQuery={searchQuery}
+                                setSearchQuery={setSearchQuery}
+                                backgroundColor={"#ffffff"}
+                            />
                             <TouchableOpacity 
                                 style={style.sendOrderButton}
                                 onPress={() => navigation.navigate("AddLogistics")}
@@ -163,30 +167,6 @@ const style = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
     },
-    searchWrapper: {
-        height: 40,
-        width: "100%",
-        backgroundColor: '#ffffff',
-        borderRadius: 10,
-        paddingHorizontal: 12,
-        paddingVertical: 10,
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 10,
-        justifyContent: 'flex-start',
-    },
-    searchInput: {
-        flexGrow: 1,
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-    },  
-    searchPlaceholder: {
-        fontFamily: 'mulish-regular',
-        fontSize: 12,  
-        color: "rgba(34, 34, 34, 0.6)",
-    },
     sendOrderButton: {
         height: 44,
         width: "100%",
@@ -195,7 +175,7 @@ const style = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: "rgba(7, 66, 124, 0.05)",
         borderRadius: 12,
-        marginVertical: 22,
+        marginBottom: 22,
     },
     orderButtonText: {
         fontFamily: "mulish-semibold",
