@@ -42,9 +42,10 @@ const style = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         width: "100%",
-        height: 70,
+        minHeight: 70,
         gap: 10,
         backgroundColor: '#ffffff',
+        paddingVertical: 15,
     },
     firstOrderWrapper: {
         borderTopStartRadius: 12,

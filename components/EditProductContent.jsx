@@ -3,6 +3,7 @@ import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { primaryColor } from "../style/globalStyleSheet";
 import Input from "../components/Input";
 import { useState } from "react";
+import * as ImagePicker from 'expo-image-picker';
 
 const EditProductContent = ({product}) => {
 
@@ -33,6 +34,19 @@ const EditProductContent = ({product}) => {
         
     }
 
+    const pickImageAsync = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            allowsEditing: true,
+            quality: 1,
+        });
+
+        if (!result.canceled) {
+            setSelectedImage(result.assets[0].uri);
+        } else {
+            alert('You did not select any image.');
+        }
+    };
+
     return (
         <TouchableWithoutFeedback style={{height: "100%"}}>
             <BottomSheetScrollView
@@ -44,6 +58,8 @@ const EditProductContent = ({product}) => {
                             style={style.productImage}
                             source={require('../assets/images/maybach-sunglasses.png')}
                         />
+                        <TouchableOpacity style={style.editImageButton}>
+                        </TouchableOpacity>
                         <View style={style.productTextWrapper}>
                             <View>
                                 <Text style={style.productName}>
@@ -90,6 +106,7 @@ const EditProductContent = ({product}) => {
                                 error={errorPrice}
                                 setError={setErrorPrice}
                             />
+
                         </View>
                     </View>
                     <View style={style.actionButtonsWrapper}>
@@ -122,6 +139,16 @@ const style = StyleSheet.create({
         width: '100%',
         gap: 20,
         marginBottom: 20,
+    },
+    editImageButton: {
+        width: 40,
+        height: 24,
+        position: "absolute",
+        top: 12,
+        right: 12,
+        backgroundColor: "red",
+        borderRadius: 6,
+        zIndex: 10,
     },
     productImage: {
         width: '100%',
