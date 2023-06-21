@@ -7,12 +7,12 @@ import {
 } from "react-native";
 import { primaryColor } from "../style/globalStyleSheet";
 
-const ProductCard = ({product_name, quantity, price, imageUrl, lowStock}) => {
+const ProductCard = ({product_name, quantity, price, imageUrl, lowStock, onPress}) => {
 
     // console.log(index);
 
     return (
-        <View style={style.productCard}>
+        <TouchableOpacity style={style.productCard} onPress={onPress}>
             { quantity === 0 && <View style={style.emptyStockIndicator}>
                 <Text style={style.emptyStock}>Empty Stock</Text>
             </View>}
@@ -33,7 +33,7 @@ const ProductCard = ({product_name, quantity, price, imageUrl, lowStock}) => {
                 </View>
                 <Text style={style.price}>₦{price.toLocaleString()}</Text>
             </View>
-        </View>
+        </TouchableOpacity>
     );
 }
 

@@ -20,6 +20,7 @@ import SearchBar from "../components/SearchBar";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import ProductCard from "../components/ProductCard";
 import AlertNotice from "../components/AlertNotice";
+import EditProductContent from "../components/EditProductContent";
 // import { BackHandler } from 'react-native';
 
 
@@ -58,6 +59,8 @@ const Products = ({navigation, route}) => {
 
     const [successAlert, setSuccessAlert] = useState(null);
     console.table(successAlert);
+
+    const [editProduct, setEditProduct] = useState(false);
 
     useEffect(() => {
         // if success is true, set success as false after 3 seconds
@@ -232,7 +235,8 @@ const Products = ({navigation, route}) => {
         }
     };
 
-    const openModal = (type) => {
+
+    const openModal = (type, editProduct) => {
         if (type === "filter") {
             setFilterModal(prevModal => {
                 return {
@@ -241,6 +245,7 @@ const Products = ({navigation, route}) => {
                 }
             });
             filterModalRef.current?.present();
+            // if product is selected, set it
         } else {
             setSearchModal(prevModal => {
                 return {
@@ -250,6 +255,7 @@ const Products = ({navigation, route}) => {
             });
             searchModalRef.current?.present();
         }
+        setEditProduct(editProduct);
     }
 
     const products = [
@@ -260,6 +266,7 @@ const Products = ({navigation, route}) => {
             price: 20000,
             imageUrl: require('../assets/images/maybach-sunglasses.png'),
             lowStock: false,
+            onPress: () => openModal("search", true),
         },
         {
             id: 2,
@@ -268,6 +275,7 @@ const Products = ({navigation, route}) => {
             price: 33000,
             imageUrl: require('../assets/images/accurate-watch.png'),
             lowStock: false,
+            onPress: () => openModal("search", true),
         },
         {
             id: 3,
@@ -276,6 +284,7 @@ const Products = ({navigation, route}) => {
             price: 35000,
             imageUrl: require('../assets/images/black-sketchers.png'),
             lowStock: true,
+            onPress: () => openModal("search", true),
         },
         {
             id: 4,
@@ -284,6 +293,7 @@ const Products = ({navigation, route}) => {
             price: 40000,
             imageUrl: require('../assets/images/brown-clarks.png'),
             lowStock: false,
+            onPress: () => openModal("search", true),
         },
         {
             id: 5,
@@ -292,6 +302,7 @@ const Products = ({navigation, route}) => {
             price: 25000,
             imageUrl: require('../assets/images/sneakers.png'),
             lowStock: true,
+            onPress: () => openModal("search", true),
         },
         {
             id: 6,
@@ -300,6 +311,7 @@ const Products = ({navigation, route}) => {
             price: 32000,
             imageUrl: require('../assets/images/perfectly-useless-mornig-watch.png'),
             lowStock: false,
+            onPress: () => openModal("search", true),
         },
     ];
 
@@ -347,13 +359,13 @@ const Products = ({navigation, route}) => {
                                 <View style={style.actionWrapper}>
                                     <TouchableOpacity 
                                         style={style.menuIcon}
-                                        onPress={() => openModal("search")}
+                                        onPress={() => openModal("search", false)}
                                     >
                                         <SearchIcon />
                                     </TouchableOpacity>
                                     <TouchableOpacity
                                         style={style.menuIcon}
-                                        onPress={() => openModal("filter")}
+                                        onPress={() => openModal("filter", false)}
                                     >
                                         <FilterIcon />
                                     </TouchableOpacity>
@@ -374,6 +386,7 @@ const Products = ({navigation, route}) => {
                             imageUrl={item.imageUrl}
                             lowStock={item.lowStock}
                             index={index}
+                            onPress={item.onPress}
                         />
                     )}
                 />
@@ -384,9 +397,9 @@ const Products = ({navigation, route}) => {
                 closeModal={() => closeModal("filter")}
                 snapPointsArray={filterModal.snapPointsArray}
                 autoSnapAt={filterModal.autoSnapAt}
-                sheetTitle={filterModal.sheetTitle}
+                sheetTitle={ filterModal.sheetTitle }
             >
-                {filterModal.modalContent}
+                { filterModal.modalContent }
             </CustomBottomSheet>
 
             <CustomBottomSheet 
@@ -395,9 +408,13 @@ const Products = ({navigation, route}) => {
                 closeModal={() => closeModal("search")}
                 snapPointsArray={searchModal.snapPointsArray}
                 autoSnapAt={searchModal.autoSnapAt}
-                sheetTitle={searchModal.sheetTitle}
+                sheetTitle={ !editProduct ? searchModal.sheetTitle: "Edit Product"}
             >
-                {searchModal.modalContent}
+                { !editProduct ? searchModal.modalContent : (
+                    <EditProductContent
+                        // product={product}
+                    />
+                )}
             </CustomBottomSheet>
 
             { successAlert && (
