@@ -7,7 +7,7 @@ import {
     TouchableOpacity
 } from "react-native";
 import { primaryColor } from '../style/globalStyleSheet';
-import CameraIcon from "../assets/icons/Camera";
+import CameraIcon from "../assets/icons/CameraIcon";
 import AccountButtons from "../components/AccountButtons";
 import EditUserIcon from "../assets/icons/EditUserIcon";
 import AnalyticsIcon from "../assets/icons/AnalyticsIcon";

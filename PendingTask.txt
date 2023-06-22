@@ -1,0 +1,70 @@
+Onboarding
+- Onboarding Images
+- Login page
+
+Home
+- No pending task
+
+Orders
+- No pending task
+
+Chat
+- Replied message variant 
+- Sent Picture mesaage variant 
+- Sent doc message variant e.g pdf
+- Sent video message variant
+- What is supposed to show when you click on the attach button in the chat text input
+
+Waybill
+- Include location to Send Waybill form 
+- update waybill bottom sheet with waybill details
+- Remove customer information from Waybill summary bottom sheet
+- Different design for waybill list because it is different from orders 
+
+Inventory
+- We have to include the flow for importing products from one logistics to another
+- Upload or Take Product Image with camera flow
+
+Accounts
+- Upload or Take picture with camera flow
+
+Analytics
+- Pretty much this entire page
+
+Tips on the analytics
+- Merchant
+You know there is 3 types of analytics to view
+Daily, Weekly and Monthly
+(Users should be able to select the week they  want to view fro weekly, the date for daily, and the month for monthly)
+
+The heading before the stat shows should be the logistics company the stats are coming from
+For weekly you can see
+Total number of deliveries
+Total POD (Payment on Delivery, this is the actually amount in the order)
+Total Remittance
+Total Charges
+Total locations
+Total deliveries in each location
+eg Warri 10, Asabs 6, Benin 7 e.t.c
+If they have multiple logistics, the above stat should repeat for the other logistics
+
+For monthly you repeat the same thing
+
+While for daily the view would be very different, the analytics page would always be set at daily by default
+
+Firstly the heading showing the name of the logsitics its pulling the stats from
+Then a table
+Customer name, POD, Charge, Remit
+
+Then at the table base, theres a total Remittance
+
+Then something like a button to view receipt and maybe somekind of UI to element to indicate if the receipt has been sent or not
+
+The stats from weekly can repeat it self like Total deliveries in each location
+eg Warri 2, Asaba 1, Benin 2 e.t.c (the daily deliveries are usually small)
+If they have multiple logistics, the above stats should repeat for the other logistics
+
+I know you might be worries this data would be plenty and users might need to scroll too much, I don't know how youre gonna make this work 😐
+
+Not to mention you might need to use graphs or charts to represent some things
+

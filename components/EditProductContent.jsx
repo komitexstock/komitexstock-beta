@@ -4,6 +4,7 @@ import { primaryColor } from "../style/globalStyleSheet";
 import Input from "../components/Input";
 import { useState } from "react";
 import * as ImagePicker from 'expo-image-picker';
+import CameraBlackIcon from "../assets/icons/CameraBlackIcon";
 
 const EditProductContent = ({product}) => {
 
@@ -59,6 +60,7 @@ const EditProductContent = ({product}) => {
                             source={require('../assets/images/maybach-sunglasses.png')}
                         />
                         <TouchableOpacity style={style.editImageButton}>
+                            <CameraBlackIcon />
                         </TouchableOpacity>
                         <View style={style.productTextWrapper}>
                             <View>
@@ -146,9 +148,12 @@ const style = StyleSheet.create({
         position: "absolute",
         top: 12,
         right: 12,
-        backgroundColor: "red",
         borderRadius: 6,
         zIndex: 10,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#ffffff",
     },
     productImage: {
         width: '100%',

@@ -10,11 +10,16 @@ import {
 } from "react-native";
 import Input from "../components/Input";
 import { useState } from "react";
-import GalleryIcon from "../assets/icons/GalleryIcon";
+import CameraPrimaryIcon from '../assets/icons/CameraPrimaryIcon';
 import * as ImagePicker from "expo-image-picker";
+import { Camera, CameraType } from 'expo-camera';
 import CustomButton from "../components/CustomButton";
 
 const AddProduct = ({navigation}) => {
+
+    
+    const [type, setType] = useState(CameraType.back);
+    const [permission, requestPermission] = Camera.useCameraPermissions();
 
     // state to store product name
     const [productName, setProductName] = useState("");
@@ -43,6 +48,10 @@ const AddProduct = ({navigation}) => {
         
     }
 
+    const toggleCameraType = () => {
+        setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));
+    }
+
     const pickImageAsync = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
           allowsEditing: true,
@@ -55,6 +64,41 @@ const AddProduct = ({navigation}) => {
         alert('You did not select any image.');
         }
     };
+
+    // const pickImageAsync = async () => {
+    //     const permissionResult = await ImagePicker.requestCameraRollPermissionsAsync();
+    
+    //     if (permissionResult.granted === false) {
+    //       alert('Permission to access camera roll is required!');
+    //       return;
+    //     }
+    
+    //     const options = {
+    //       allowsEditing: true,
+    //       aspect: [4, 3],
+    //       quality: 1,
+    //       mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    //     };
+    
+    //     const imageResult = await ImagePicker.launchImageLibraryAsync(options);
+    
+    //     if (!imageResult.cancelled) {
+    //       setSelectedImage(imageResult.uri);
+    //     } else {
+    //       const cameraPermissionResult = await ImagePicker.requestCameraPermissionsAsync();
+    
+    //       if (cameraPermissionResult.granted === false) {
+    //         alert('Permission to access camera is required!');
+    //         return;
+    //       }
+    
+    //       const cameraResult = await ImagePicker.launchCameraAsync(options);
+    
+    //       if (!cameraResult.cancelled) {
+    //         setSelectedImage(cameraResult.uri);
+    //       }
+    //     }
+    //   }
 
     const navigateToProducts = () => {
         navigation.navigate("Products", {
@@ -135,10 +179,9 @@ const AddProduct = ({navigation}) => {
                                         onPress={pickImageAsync}
                                     >
                                         { !selectedImage ? 
-                                            <GalleryIcon /> : 
+                                            <CameraPrimaryIcon /> : 
                                             <Image 
                                                 source={{uri: selectedImage}}
-                                                // source={require('../assets/images/komitex.png')}
                                                 style={style.productImage}
                                             /> 
                                         }
@@ -160,6 +203,13 @@ const AddProduct = ({navigation}) => {
                 fixed={false}
                 inactive={emptyFields}
             />
+            {/* <Camera style={style.camera} type={type}>
+                <View style={style.buttonContainer}>
+                    <TouchableOpacity style={style.button} onPress={toggleCameraType}>
+                        <Text style={style.text}>Flip Camera</Text>
+                    </TouchableOpacity>
+                </View>
+            </Camera> */}
         </>
     );
 }
@@ -239,6 +289,11 @@ const style = StyleSheet.create({
         width: 40,
         height: 40,
         borderRadius: 20,
+    },
+    camera: {
+        width: "100%",
+        height: "100%",
+        position: "absolute",
     }
 })
  
