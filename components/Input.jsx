@@ -1,8 +1,10 @@
-import { Text, View, StyleSheet, TextInput } from "react-native";
+import { Text, View, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import { useState } from "react";
 import { primaryColor } from "../style/globalStyleSheet";
+import EyeIcon from "../assets/icons/EyeIcon";
+import EyeSlashIcon from "../assets/icons/EyeSlashIcon";
 
-const Input = ({label, placeholder, onChange, value, multiline, editable, minRows, textAlign, height, keyboardType, adornment, helperText, error, setError}) => {
+const Input = ({label, placeholder, onChange, value, multiline, editable, minRows, textAlign, height, keyboardType, adornment, helperText, error, setError, isPasswordInput}) => {
 
     const handleTextChange = (text) => {
         onChange(text);
@@ -20,6 +22,8 @@ const Input = ({label, placeholder, onChange, value, multiline, editable, minRow
 
     const [inputInFocus, setInputInFocus] = useState(false);
 
+    const [hidePassword, setHidePassword] = useState(true);
+
     return (
         <View style={style.inputWrapper}>
             <Text style={style.label}>{label}</Text>
@@ -29,7 +33,7 @@ const Input = ({label, placeholder, onChange, value, multiline, editable, minRow
                         style.input, 
                         style.adornmentWrapper, 
                         {
-                            height: height,
+                            height: height ? height : 44,
                             borderColor: `${error ? "rgba(180, 35, 24, 1)" : "#E7E5E5"}`
                         }
                     ] : [
@@ -37,25 +41,31 @@ const Input = ({label, placeholder, onChange, value, multiline, editable, minRow
                         style.adornmentWrapper, 
                         style.focusedInput, 
                         {
-                            height: height,
+                            height: height ? height : 44,
                         }
                     ]}
                 >   
                     <Text style={style.adornment}>{adornment}</Text>
                     <TextInput
                         onChangeText={handleTextChange}
-                        keyboardType={keyboardType}
+                        keyboardType={keyboardType ? keyboardType : "default"}
                         placeholder={placeholder}
                         style={style.adornedInput}
                         onFocus={handleFocus}
                         onBlur={handleBlur}
                         placeholderTextColor="#B1B2B2"
                         defaultValue={!Array.isArray(value) ? value : value.join(", ")}
-                        multiline={multiline}
-                        numberOfLines={minRows}
-                        textAlignVertical={textAlign}
-                        editable={editable}
+                        multiline={multiline ? multiline : false}
+                        numberOfLines={minRows ? minRows : 1}
+                        textAlignVertical={textAlign ? textAlign : "center"}
+                        editable={editable ? editable : true}
+                        secureTextEntry={isPasswordInput ?  hidePassword : false}
                     />
+                    { isPasswordInput && (
+                        <TouchableOpacity onPress={() => setHidePassword(prevState => !prevState)}>
+                                { hidePassword ? <EyeIcon /> : <EyeSlashIcon /> }
+                        </TouchableOpacity>
+                    )}
                 </View>                
             ) : (
                 <TextInput
@@ -63,26 +73,26 @@ const Input = ({label, placeholder, onChange, value, multiline, editable, minRow
                     style={!inputInFocus ? [
                         style.input, 
                         {
-                            height: height,
+                            height: height ? height : 44,
                             borderColor: `${error ? "rgba(180, 35, 24, 1)" : "#E7E5E5"}`
                         }
                     ] : [
                         style.input, 
                         style.focusedInput, 
                         {
-                            height: height
+                            height: height ? height : 44
                         }
                     ]}
-                    keyboardType={keyboardType}
+                    keyboardType={keyboardType ? keyboardType : "default"}
                     placeholder={placeholder}
                     onFocus={handleFocus}
                     onBlur={handleBlur}
                     placeholderTextColor="#B1B2B2"
                     defaultValue={!Array.isArray(value) ? value : value.join(", ")}
-                    multiline={multiline}
-                    numberOfLines={minRows}
-                    textAlignVertical={textAlign}
-                    editable={editable}
+                    multiline={multiline ? multiline : false}
+                    numberOfLines={minRows ? minRows : 1}
+                    textAlignVertical={textAlign ? textAlign : "center"}
+                    editable={editable ? editable : true}
                 />
             )}
             { helperText && (
@@ -124,7 +134,7 @@ const style = StyleSheet.create({
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'flex-start',
+        justifyContent: 'space-between',
     },  
     adornedInput: {
         flex: 1,

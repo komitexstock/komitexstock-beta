@@ -50,8 +50,8 @@ const EditProductContent = ({product}) => {
 
     return (
         <TouchableWithoutFeedback style={{height: "100%"}}>
-            <BottomSheetScrollView
-                contentContainerStyle={style.main} 
+            <View
+                style={style.main} 
             >
                 <View style={style.main}>
                     <View style={style.productOldDetails}>
@@ -120,7 +120,7 @@ const EditProductContent = ({product}) => {
                         </TouchableOpacity>
                     </View>
                 </View>
-            </BottomSheetScrollView>
+            </View>
         </TouchableWithoutFeedback>
     );
 }

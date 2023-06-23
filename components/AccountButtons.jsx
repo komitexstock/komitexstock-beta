@@ -1,7 +1,8 @@
-import { Text, View, TouchableOpacity, StyleSheet } from "react-native";
+import { Text, View, TouchableOpacity, StyleSheet, Switch } from "react-native";
 import RightArrowIcon from "../assets/icons/RightArrowIcon";
 
-const AccountButtons = ({title, subtitle, icon, length, index, onPress}) => {
+const AccountButtons = ({title, subtitle, icon, length, index, onPress, toggle, isEnabled, handleToggle, unpadded}) => {
+    
     return (
         <TouchableOpacity 
             onPress={onPress}
@@ -9,6 +10,7 @@ const AccountButtons = ({title, subtitle, icon, length, index, onPress}) => {
                 style.accountButtonWrapper, 
                 index === 0 && style.topBorderRadius,
                 length === index && style.bottomBorderRadius,
+                unpadded ? style.unpadded : style.padded,
             ]}
         >
             {icon}
@@ -16,7 +18,15 @@ const AccountButtons = ({title, subtitle, icon, length, index, onPress}) => {
                 <Text style={style.accountButtonPrimaryText}>{title}</Text>
                 {subtitle && <Text style={style.accountButtonSecondaryText}>{subtitle}</Text>}
             </View>
-            <RightArrowIcon />
+            { !toggle ? <RightArrowIcon /> : (
+                <Switch 
+                    trackColor={{ false: "#E6E6E6", true: "#07427C0D" }}
+                    thumbColor={isEnabled ? "#07427C" : "#AFAFAF"}
+                    ios_backgroundColor="#07427C0D"
+                    onValueChange={handleToggle}
+                    value={isEnabled}     
+                />
+            )}
         </TouchableOpacity>
     );
 }
@@ -30,8 +40,14 @@ const style = StyleSheet.create({
         alignItems: "center",
         backgroundColor: "#ffffff",
         height: 60,
-        padding: 10,
+        paddingVertical: 10,
         gap: 10,
+    },
+    padded: {
+        paddingHorizontal: 10,
+    },
+    unpadded: {
+        paddingHorizontal: 0,
     },
     accountButtonContent: {
         flex: 1,

@@ -268,6 +268,7 @@ const Products = ({navigation}) => {
                 <ModalButton
                     name={"Add Komitex"}
                     onPress={() => {}}
+                    emptyFeilds={false}
                 />
             </CustomBottomSheet>
         </>

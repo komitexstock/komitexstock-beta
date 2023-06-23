@@ -4,7 +4,8 @@ import {
     StyleSheet, 
     ScrollView,
     Image,
-    TouchableOpacity
+    TouchableOpacity,
+    Linking
 } from "react-native";
 import { primaryColor } from '../style/globalStyleSheet';
 import CameraIcon from "../assets/icons/CameraIcon";
@@ -17,9 +18,14 @@ import SecurityIcon from "../assets/icons/SecurityIcon";
 import NotificationBlackIcon from "../assets/icons/NotificationBlackIcon";
 import HelpIcon from "../assets/icons/HelpIcon";
 import LogoutIcon from "../assets/icons/LogoutIcon";
+import CustomBottomSheet from "../components/CustomBottomSheet";
+import { useState, useRef } from "react";
+import SmsIcon from "../assets/icons/SmsIcon";
+import EmailIcon from "../assets/icons/EmailIcon";
+import CallIcon from "../assets/icons/CallIcon";
 
 const Account = ({navigation}) => {
-
+    
     const accountButtons = {
         profile: {
             title: "Profile",
@@ -63,94 +69,180 @@ const Account = ({navigation}) => {
                 title: "Notification",
                 subtitle: false,
                 icon: <NotificationBlackIcon />,
-                onPress: () => {},
+                onPress: () => openModal("Notifications"),
             },
             {
                 id: 3,
                 title: "Help & Support",
                 subtitle: false,
                 icon: <HelpIcon />,
-                onPress: () => {},
+                onPress: () => openModal("Help & Support"),
             },
         ],
     }
 
+    const [modal, setModal] = useState("")
+
+    // modal overlay
+    const [showOverlay, setShowOverlay] = useState(false);
+   
+    // bottom sheet ref
+    const bottomSheetModalRef = useRef(null);
+
+    // close modal function
+    const closeModal = () => {
+        bottomSheetModalRef.current?.close();
+        setShowOverlay(false);
+    };
+
+    // enable notification state 
+    const [enableNotifications, setEnableNotifications] = useState(false);
+
+    const handleToggle = () => {
+        setEnableNotifications(!enableNotifications);
+    }
+
+    // open modal function
+    const openModal = (type) => {
+        setModal(type);
+        bottomSheetModalRef.current?.present();
+        setShowOverlay(true);
+    }
+
+    const supportButtons = [
+        {
+            id: 1,
+            title: "Call Us on +234 811 632 0575",
+            icon: <CallIcon />,
+            onPress: () => Linking.openURL('tel:+2348116320575'),
+        },
+        {
+            id: 2,
+            title: "Chat with us",
+            icon: <EmailIcon />,
+            onPress: () => Linking.openURL('https://wa.me/+2348116320575'),
+        },
+        {
+            id: 3,
+            title: "Contact us via email",
+            icon: <SmsIcon />,
+            onPress: () => Linking.openURL('mailto:komitexstock@gmail.com'),
+        },
+    ];
+
     return (
-        <ScrollView
-            showsVerticalScrollIndicator={false}
-            style={style.container}
-        >
-            <View style={style.main}>
-                <View style={style.header}>
-                    <Text style={style.stackName}>Account</Text>
-                    <View style={style.accountTypeWrapper}>
-                        <Text style={style.accountTypeText}>
-                            Manager
-                        </Text>
+        <>
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                style={style.container}
+            >
+                <View style={style.main}>
+                    <View style={style.header}>
+                        <Text style={style.stackName}>Account</Text>
+                        <View style={style.accountTypeWrapper}>
+                            <Text style={style.accountTypeText}>
+                                Manager
+                            </Text>
+                        </View>
                     </View>
-                </View>
-                <View style={style.profileWrapper}>
-                    <View style={style.imageContainer}>
-                        <Image 
-                            style={style.profileImage}
-                            source={require('../assets/profile/profile.jpg')}
+                    <View style={style.profileWrapper}>
+                        <View style={style.imageContainer}>
+                            <Image 
+                                style={style.profileImage}
+                                source={require('../assets/profile/profile.jpg')}
+                            />
+                            <TouchableOpacity style={style.camera}>
+                                <CameraIcon />
+                            </TouchableOpacity>
+                        </View>
+                        <Text style={style.fullname}>Raymond Reddington</Text>
+                        <Text style={style.businessName}>Mega Enterprise Ltd</Text>
+                    </View>
+                    <View style={style.infoWrapper}>
+                        <Text style={style.infoHeading}>Person Info</Text>
+                        <AccountButtons 
+                            title={accountButtons.profile.title}
+                            subtitle={accountButtons.profile.subtitle}
+                            icon={accountButtons.profile.icon}
+                            length={0}
+                            index={0}
+                            onPress={accountButtons.profile.onPress}
                         />
-                        <TouchableOpacity style={style.camera}>
-                            <CameraIcon />
-                        </TouchableOpacity>
                     </View>
-                    <Text style={style.fullname}>Raymond Reddington</Text>
-                    <Text style={style.businessName}>Mega Enterprise Ltd</Text>
+                    <View style={style.infoWrapper}>
+                        <Text style={style.infoHeading}>Business</Text>
+                        {accountButtons.business.map((item, index) => {
+                            return (
+                                <AccountButtons 
+                                    key={item.id}
+                                    title={item.title}
+                                    subtitle={item.subtitle}
+                                    icon={item.icon}
+                                    length={accountButtons.business.length - 1}
+                                    index={index}
+                                    onPress={item.onPress}
+                                />
+                            )
+                        })}
+                    </View>
+                    <View style={style.infoWrapper}>
+                        <Text style={style.infoHeading}>Security & Support</Text>
+                        {accountButtons.security.map((item, index) => {
+                            return (
+                                <AccountButtons 
+                                    key={item.id}
+                                    title={item.title}
+                                    subtitle={item.subtitle}
+                                    icon={item.icon}
+                                    length={accountButtons.security.length - 1}
+                                    index={index}
+                                    onPress={item.onPress}
+                                />
+                            )
+                        })}
+                    </View>
+                    <TouchableOpacity style={style.logoutButton}>
+                        <LogoutIcon />
+                        <Text style={style.logoutText}>Log Out</Text>
+                    </TouchableOpacity>
                 </View>
-                <View style={style.infoWrapper}>
-                    <Text style={style.infoHeading}>Person Info</Text>
-                    <AccountButtons 
-                        title={accountButtons.profile.title}
-                        subtitle={accountButtons.profile.subtitle}
-                        icon={accountButtons.profile.icon}
+            </ScrollView>
+            <CustomBottomSheet 
+                bottomSheetModalRef={bottomSheetModalRef}
+                setShowOverlay={setShowOverlay}
+                showOverlay={showOverlay}
+                closeModal={closeModal}
+                snapPointsArray={["50%"]}
+                autoSnapAt={0}
+                sheetTitle={modal}
+            >
+                {modal === "Notifications" ? (
+                    <AccountButtons
+                        title="Allow Push Notifications"
+                        subtitle={false}
+                        icon={<NotificationBlackIcon />}
                         length={0}
                         index={0}
-                        onPress={accountButtons.profile.onPress}
+                        onPress={() => {}}
+                        toggle={true}
+                        isEnabled={enableNotifications}
+                        handleToggle={handleToggle}
+                        unpadded={true}
                     />
-                </View>
-                <View style={style.infoWrapper}>
-                    <Text style={style.infoHeading}>Business</Text>
-                    {accountButtons.business.map((item, index) => {
-                        return (
-                            <AccountButtons 
-                                key={item.id}
-                                title={item.title}
-                                subtitle={item.subtitle}
-                                icon={item.icon}
-                                length={accountButtons.business.length - 1}
-                                index={index}
-                                onPress={item.onPress}
-                            />
-                        )
-                    })}
-                </View>
-                <View style={style.infoWrapper}>
-                    <Text style={style.infoHeading}>Security & Support</Text>
-                    {accountButtons.security.map((item, index) => {
-                        return (
-                            <AccountButtons 
-                                key={item.id}
-                                title={item.title}
-                                subtitle={item.subtitle}
-                                icon={item.icon}
-                                length={accountButtons.security.length - 1}
-                                index={index}
-                                onPress={item.onPress}
-                            />
-                        )
-                    })}
-                </View>
-                <TouchableOpacity style={style.logoutButton}>
-                    <LogoutIcon />
-                    <Text style={style.logoutText}>Log Out</Text>
-                </TouchableOpacity>
-            </View>
-        </ScrollView>
+                ) : supportButtons.map((item, index) => (
+                    <AccountButtons
+                        key={item.id}
+                        title={item.title}
+                        subtitle={false}
+                        icon={item.icon}
+                        length={supportButtons.length - 1}
+                        index={index}
+                        onPress={item.onPress}
+                        unpadded={true}
+                    />
+                ))}
+            </CustomBottomSheet>
+        </>
     );
 }
 

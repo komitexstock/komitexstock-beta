@@ -1,11 +1,11 @@
 import { primaryColor } from "../style/globalStyleSheet";
 import { Text, TouchableOpacity, StyleSheet, View } from "react-native";
 
-const ModalButton = ({onPress, name}) => {
+const ModalButton = ({onPress, name, emptyFeilds}) => {
     return (
         <View style={style.wrapper}>
             <TouchableOpacity 
-                style={style.button}
+                style={[style.button, {backgroundColor: !emptyFeilds ? primaryColor : "rgba(7, 66, 124, 0.30)"}]}
                 onPress={onPress}
             >
                 <Text style={style.buttonText}>{name}</Text>
