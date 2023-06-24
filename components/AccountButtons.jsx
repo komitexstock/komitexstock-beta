@@ -1,22 +1,28 @@
 import { Text, View, TouchableOpacity, StyleSheet, Switch } from "react-native";
 import RightArrowIcon from "../assets/icons/RightArrowIcon";
 
-const AccountButtons = ({title, subtitle, icon, length, index, onPress, toggle, isEnabled, handleToggle, unpadded}) => {
+const AccountButtons = ({title, subtitle, mainInfoText, icon, length, index, onPress, toggle, isEnabled, handleToggle, unpadded, disabled}) => {
     
     return (
         <TouchableOpacity 
-            onPress={onPress}
+            onPress={disabled ? () => {} : onPress}
             style={[
                 style.accountButtonWrapper, 
                 index === 0 && style.topBorderRadius,
                 length === index && style.bottomBorderRadius,
                 unpadded ? style.unpadded : style.padded,
             ]}
-        >
+            >
             {icon}
-            <View style={style.accountButtonContent}>
+            <View 
+                style={[
+                    style.accountButtonContent, 
+                    disabled && style.disabled
+                ]}
+            >
                 <Text style={style.accountButtonPrimaryText}>{title}</Text>
                 {subtitle && <Text style={style.accountButtonSecondaryText}>{subtitle}</Text>}
+                {mainInfoText && <Text style={style.accountButtonText}>{mainInfoText}</Text>}
             </View>
             { !toggle ? <RightArrowIcon /> : (
                 <Switch 
@@ -43,6 +49,9 @@ const style = StyleSheet.create({
         paddingVertical: 10,
         gap: 10,
     },
+    disabled: {
+        opacity: 0.5,
+    },
     padded: {
         paddingHorizontal: 10,
     },
@@ -59,6 +68,11 @@ const style = StyleSheet.create({
     accountButtonPrimaryText: {
         fontFamily: "mulish-semibold",
         fontSize: 14,
+    },
+    accountButtonText: {
+        fontFamily: "mulish-regular",
+        fontSize: 12,
+        color: "rgba(34, 34, 34, 0.60)",
     },
     accountButtonSecondaryText: {
         fontFamily: "mulish-regular",
