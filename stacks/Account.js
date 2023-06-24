@@ -95,18 +95,19 @@ const Account = ({navigation}) => {
         setShowOverlay(false);
     };
 
-    // enable notification state 
-    const [enableNotifications, setEnableNotifications] = useState(false);
-
-    const handleToggle = () => {
-        setEnableNotifications(!enableNotifications);
-    }
-
     // open modal function
     const openModal = (type) => {
         setModal(type);
         bottomSheetModalRef.current?.present();
         setShowOverlay(true);
+    }
+
+    // enable notification state 
+    const [enableNotifications, setEnableNotifications] = useState(false);
+
+    // toggle notification
+    const handleToggle = () => {
+        setEnableNotifications(!enableNotifications);
     }
 
     const supportButtons = [
@@ -129,6 +130,7 @@ const Account = ({navigation}) => {
             onPress: () => Linking.openURL('mailto:komitexstock@gmail.com'),
         },
     ];
+
 
     return (
         <>
