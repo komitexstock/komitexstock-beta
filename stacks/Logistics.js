@@ -1,5 +1,5 @@
 import Header from "../components/Header";
-import { View, Text, FlatList, StyleSheet, TouchableOpacity } from "react-native";
+import { FlatList, StyleSheet } from "react-native";
 import LogisticsCard from "../components/LogisticsCard";
 import { useState, useRef } from "react";
 import CustomBottomSheet from "../components/CustomBottomSheet";
