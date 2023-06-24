@@ -3,41 +3,55 @@ import {
     Text, 
     TouchableOpacity, 
     Image,
-    StyleSheet
+    StyleSheet,
+    Dimensions
 } 
 from "react-native";
+import AddIcon from '../assets/icons/AddIcon'
 
-const LogisticsCard = ({logistics, imageUrl, totalLocations, totalStock, lowStock, onPress }) => {
+const maxCardWidth = Dimensions.get("window").width/2 - 28;
+const LogisticsCard = ({logistics, imageUrl, totalLocations, totalStock, lowStock, onPress, addNew}) => {
     return (
-        <TouchableOpacity 
-            style={style.logisticsCard}
-            onPress={onPress}
-        >   
-            <View style={style.primaryWrapper}>
-                <View style={style.imageContainer}>
-                    <Image 
-                        source={imageUrl} 
-                        style={style.image} 
-                    />
-                    {   lowStock && <View style={style.lowStockIndicator}>
-                            <Text style={style.lowStock}>Low Stock</Text>
+        <>   
+            { !addNew ? (
+                <TouchableOpacity 
+                    style={style.logisticsCard}
+                    onPress={onPress}
+                >   
+                    <View style={style.primaryWrapper}>
+                        <View style={style.imageContainer}>
+                            <Image 
+                                source={imageUrl} 
+                                style={style.image} 
+                            />
+                            {   lowStock && <View style={style.lowStockIndicator}>
+                                    <Text style={style.lowStock}>Low Stock</Text>
+                                </View>
+                            }
                         </View>
-                    }
-                </View>
-                <Text style={style.logistics}>{logistics}</Text>
-                <Text style={style.location}>{totalLocations} Locations</Text>
-            </View>
-            <View style={style.secondaryWrapper}>
-                <Text style={style.items}>{totalStock} items <Text style={style.faintText}>in stock</Text></Text>
-            </View>
-        </TouchableOpacity>
+                        <Text style={style.logistics}>{logistics}</Text>
+                        <Text style={style.location}>{totalLocations} Locations</Text>
+                    </View>
+                    <View style={style.secondaryWrapper}>
+                        <Text style={style.items}>{totalStock} items <Text style={style.faintText}>in stock</Text></Text>
+                    </View>
+                </TouchableOpacity>
+            ) : (
+                <View style={style.addNewCardWrapper}>
+                    <TouchableOpacity style={style.addNewButton} onPress={onPress}>
+                        <AddIcon />
+                    </TouchableOpacity>
+                    <Text style={style.addNewText}>Add New Logistics</Text>
+                </View>   
+            )}
+        </>
     );
 }
 
 const style = StyleSheet.create({
     logisticsCard: {
         minWidth: "40%",
-        maxWidth: "50%",
+        maxWidth: maxCardWidth,
         height: 180,
         backgroundColor: "#ffffff",
         borderRadius: 12,
@@ -95,6 +109,38 @@ const style = StyleSheet.create({
         fontFamily: "mulish-semibold",
         color: "rgba(34, 34, 34, 0.6)",
         fontSize: 10,
+    },
+    addNewCardWrapper: {
+        height: "100%",
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+        minWidth: "40%",
+        maxWidth: maxCardWidth,
+        height: 180,
+        backgroundColor: "#ffffff",
+        borderRadius: 12,
+        flex: 1,
+        padding: 12,
+    },
+    addNewButton: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: 40,
+        width: 40,
+        borderRadius: 20,
+        backgroundColor: 'rgba(7, 66, 124, 0.05)',
+        
+    },
+    addNewText: {
+        marginBottom: 26,
+        fontSize: 12,
+        fontFamily: 'mulish-semibold',
+        width: "100%",
+        textAlign: 'left',
+        color: "#222222"
     }
 })
  

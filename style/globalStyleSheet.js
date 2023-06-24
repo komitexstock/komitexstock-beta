@@ -1,6 +1,7 @@
 import { StyleSheet } from "react-native";
 
 export const primaryColor = "#07427C";
+export const secondaryColor = "#07427C0D";
 export const globalStyleSheet = StyleSheet.create({
     main: {
         minHeight: "100%",
