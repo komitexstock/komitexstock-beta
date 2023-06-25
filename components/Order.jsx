@@ -1,5 +1,5 @@
 import { TouchableOpacity, Image, View, Text, StyleSheet } from 'react-native';
-import Status from './Status';
+import Indicator from './Indicator';
 
 const Order = ({item, index, length}) => {
     return (
@@ -28,7 +28,7 @@ const Order = ({item, index, length}) => {
                 <Text style={style.orderPrice}>
                     ₦{item.price}.<Text style={style.decimal}>00</Text>
                 </Text>
-                <Status status={item.status} />
+                <Indicator type={item.status} text={item.status} />
             </View>
         </TouchableOpacity>
     );

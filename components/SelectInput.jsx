@@ -1,5 +1,7 @@
 import { TouchableOpacity, Text, View, StyleSheet } from "react-native";
 import { primaryColor } from "../style/globalStyleSheet";
+import ArrowDown from "../assets/icons/ArrowDown";
+
 const SelectInput = ({label, labelIcon, placeholder, onPress, icon, value, active, inputFor}) => {
     return (
         <View style={style.inputWrapper}>
@@ -30,16 +32,20 @@ const SelectInput = ({label, labelIcon, placeholder, onPress, icon, value, activ
                         </>
                     )}
 
-                    { inputFor !== "Location" && (
+                    { inputFor === "Logistics" && (
                         <>
                             {value ? value.business_name : placeholder} 
                         </>
                     )}
+
+                    { inputFor === "String" && (
+                        <>
+                            {value ? value : placeholder} 
+                        </>
+                    )}
                     {/* if value is present show value, else show placeholder */}
                 </Text>
-                {icon && (
-                    <>{icon}</>
-                )}
+                {icon ? icon : <ArrowDown />}
             </TouchableOpacity>
         </View>
     );

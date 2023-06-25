@@ -1,29 +1,29 @@
 import { View, Text, StyleSheet } from "react-native";
 
-const Status = ({status}) => {
-    if (status === "Delivered") return (
+const Indicator = ({type, text}) => {
+    if (type === "Delivered") return (
         <View style={style.deliveredContainer}>
-            <Text style={style.deliveredStatus}>Delivered</Text>
+            <Text style={style.deliveredStatus}>{text}</Text>
         </View>
     );
-    else if (status === "Cancelled") return (
+    else if (type === "Cancelled") return (
         <View style={style.canceledContainer}>
-            <Text style={style.canceledStatus}>Cancelled</Text>
+            <Text style={style.canceledStatus}>{text}</Text>
         </View>
     );
-    else if (status === "Rescheduled") return (
+    else if (type === "Rescheduled") return (
         <View style={style.rescheduledContainer}>
-            <Text style={style.rescheduledStatus}>Rescheduled</Text>
+            <Text style={style.rescheduledStatus}>{text}</Text>
         </View>
     );
-    else if (status === "Dispatched") return (
+    else if (type === "Dispatched") return (
         <View style={style.dispatchedContainer}>
-            <Text style={style.dispatchedStatus}>Dispatched</Text>
+            <Text style={style.dispatchedStatus}>{text}</Text>
         </View>
     );
     else return (
         <View style={style.pendingContainer}>
-            <Text style={style.pendingStatus}>Pending</Text>
+            <Text style={style.pendingStatus}>{text}</Text>
         </View>
     );
 }
@@ -103,4 +103,4 @@ const style = StyleSheet.create({
     },
 })
 
-export default Status;
+export default Indicator;

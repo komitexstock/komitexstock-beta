@@ -9,6 +9,7 @@ import {
 from "react-native";
 import AddIcon from '../assets/icons/AddIcon';
 import { primaryColor, secondaryColor } from "../style/globalStyleSheet";
+import Indicator from "./Indicator";
 
 const maxCardWidth = Dimensions.get("window").width/2 - 28;
 const TeamMemberCard = ({ imageUrl, admin, fullname, role, onPress, addNew}) => {
@@ -35,9 +36,10 @@ const TeamMemberCard = ({ imageUrl, admin, fullname, role, onPress, addNew}) => 
                     </View>
                     <View style={style.secondaryWrapper}>
                         {admin && (
-                            <View style={style.adminWrapper}>
-                                <Text style={style.adminText}>Admin</Text>
-                            </View>
+                            <Indicator
+                                type={"Dispatched"}
+                                text={"Admin"}
+                            />
                         )}
                         { fullname && <Text style={style.fullname}>{fullname}</Text>}
                         { role && <Text style={style.role}>{role}</Text>}
@@ -103,21 +105,6 @@ const style = StyleSheet.create({
         width: "100%",
         flex: 1,
         gap: 4,
-    },
-    adminWrapper: {
-        minWidth: 60,
-        minHeight: 16,
-        borderRadius: 20,
-        backgroundColor: secondaryColor,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginBottom: 4,
-    },
-    adminText: {
-        color: primaryColor,
-        fontSize: 8,
-        fontFamily: 'mulish-regular',
     },
     fullname: {
         color: "#222222",
