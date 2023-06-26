@@ -4,20 +4,17 @@ import {
     FlatList, 
     TouchableWithoutFeedback,
     StyleSheet,
-    Image,
-    TouchableOpacity
 } from "react-native";
 import Header from "../components/Header";
 import { useState, useRef } from "react";
 import SelectLogisticsCard from "../components/SelectLogisticsCard";
 import SearchBar from "../components/SearchBar";
 import CustomBottomSheet from "../components/CustomBottomSheet";
-import LogisticsLocation from "../components/LogisticsLocations";
-import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import StatCard from "../components/StatCard";
-import StatWrapper from "../components/StatWrapper";
 import ModalButton from "../components/ModalButton";
 import LogisticsInfo from "../components/LogisticsInfo";
+import PopUpBottomSheet from "../components/PopUpBottomSheet";
+import { secondaryColor } from "../style/globalStyleSheet";
+import MarkIcon from "../assets/icons/MarkIcon";
 
 const Products = ({navigation}) => {
 
@@ -26,8 +23,14 @@ const Products = ({navigation}) => {
     // state to control modal overlay
     const [showOverlay, setShowOverlay] = useState(false);
 
+    // state to control rounded modal overlay
+    const [showPopUpOverlay, setShowPopUpOverlay] = useState(false);
+
     // modal ref
     const bottomSheetModalRef = useRef(null);
+    
+    // popUp modal ref
+    const popUpBottomSheetModalRef = useRef(null);
 
     const closeModal = () => {
         bottomSheetModalRef.current?.close();
@@ -38,6 +41,17 @@ const Products = ({navigation}) => {
     const openModal = () => {
         bottomSheetModalRef.current?.present();
         setShowOverlay(true);
+    }
+
+    const closePopUpModal = () => {
+        popUpBottomSheetModalRef.current?.close();
+        setShowPopUpOverlay(false);
+    };
+
+    // function to open bottom sheet modal
+    const openPopUpModal = () => {
+        popUpBottomSheetModalRef.current?.present();
+        setShowPopUpOverlay(true);
     }
 
     const logisticsList = [
@@ -236,10 +250,35 @@ const Products = ({navigation}) => {
                 />
                 <ModalButton
                     name={"Add Komitex"}
-                    onPress={() => {}}
+                    onPress={openPopUpModal}
                     emptyFeilds={false}
                 />
             </CustomBottomSheet>
+            <PopUpBottomSheet
+                bottomSheetModalRef={popUpBottomSheetModalRef}
+                showOverlay={showPopUpOverlay}
+                closeModal={closePopUpModal}
+                snapPointsArray={["40%"]}
+                autoSnapAt={0}
+                sheetTitle={false}
+                sheetSubtitle={false}
+            >   
+                <View style={style.popUpContent}>
+                    <View style={style.markBackground}>
+                        <MarkIcon />
+                    </View>
+                    <Text style={style.popUpHeading}>
+                        Komitex Succesfully Added
+                    </Text>
+                    <Text style={style.popUpParagraph}>
+                        Hi Raymond, You have successfully linked your store to Komitex Logistics
+                    </Text>
+                    <ModalButton
+                        name={"Done"}
+                        onPress={() => {navigation.navigate("Inventory")}}
+                    />
+                </View>
+            </PopUpBottomSheet>
         </>
     );
 }
@@ -264,6 +303,37 @@ const style = StyleSheet.create({
         fontSize: 12,
         color: "rgba(34, 34, 34, 0.6)",
         marginBottom: 24
+    },
+    popUpContent: {
+        flex: 1,
+        height: "100%",
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: 20,
+        paddingBottom: 20,
+    },
+    markBackground: {
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        backgroundColor: secondaryColor,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    popUpHeading: {
+        fontSize: 16,
+        fontFamily: 'mulish-bold',
+        textAlign: 'center',
+        color: 'rgba(34, 34, 34, 1)',
+    },
+    popUpParagraph: {
+        fontSize: 12,
+        fontFamily: 'mulish-regular',
+        textAlign: 'center',
+        color: 'rgba(34, 34, 34, 0.8)',
     },
 })
  

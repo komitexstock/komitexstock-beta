@@ -36,9 +36,11 @@ const CustomBottomSheet = ({bottomSheetModalRef, showOverlay, closeModal, snapPo
                     backgroundStyle={{
                         borderRadius: 32,
                     }}
+                    style={{zIndex: 999}}
                     handleComponent={() => (
                         <ModalHandle />
                     )}
+                    
                 >
                     <View style={styles.sheetTitle}>
                         <TouchableOpacity 
@@ -75,6 +77,7 @@ const styles = StyleSheet.create({
         width: "100%",
         height: "100%",
         backgroundColor: "transparent",
+        zIndex: 999,
     },
     overlay: {
         position: 'absolute',

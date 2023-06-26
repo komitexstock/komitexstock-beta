@@ -24,6 +24,8 @@ const AddSummaryModalContent = ({logistics, products, customerName, location, ph
                             <Text style={style.detail}>{"20 Dec, 2023 10.04am"}</Text>
                             <Text style={style.detailDescription}>Phone Number</Text>
                             <Text style={style.detail}>{phoneNumber.join(", ")}</Text>
+                            <Text style={style.detailDescription}>Merchant</Text>
+                            <Text style={style.detail}>{"Mega Enterprise Ltd"}</Text>
                         </View>
                     </>}
                     {type === "waybill" && <>
