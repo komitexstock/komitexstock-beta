@@ -4,7 +4,7 @@ import { useMemo, useCallback } from "react";
 import ModalHandle from "./ModalHandle";
 import CloseIcon from "../assets/icons/CloseIcon";
 
-const PopUpBottomSheet = ({bottomSheetModalRef, showOverlay, closeModal, snapPointsArray, autoSnapAt, children, sheetTitle, sheetSubtitle}) => {
+const PopUpBottomSheet = ({bottomSheetModalRef, hideCloseButton, closeModal, snapPointsArray, autoSnapAt, children, sheetTitle, sheetSubtitle}) => {
 
     const snapPoints = useMemo(() => snapPointsArray, []);
 
@@ -48,12 +48,14 @@ const PopUpBottomSheet = ({bottomSheetModalRef, showOverlay, closeModal, snapPoi
                 backdropComponent={renderBackdrop}
             >
                 <View style={styles.sheetTitle}>
-                    <TouchableOpacity 
-                        style={styles.closeButtonWrapper} 
-                        onPress={closeModal}
-                    >
-                        <CloseIcon />
-                    </TouchableOpacity>
+                    { !hideCloseButton && 
+                        <TouchableOpacity 
+                            style={styles.closeButtonWrapper} 
+                            onPress={closeModal}
+                        >
+                            <CloseIcon />
+                        </TouchableOpacity>
+                    }
                     {!sheetSubtitle ? (
                         sheetTitle && <Text style={styles.sheetTitleText}>
                             {sheetTitle}
@@ -127,6 +129,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         flexDirection: "column",
         flex: 1,
+        width: "100%",
     }
 });
 

@@ -23,9 +23,6 @@ const Products = ({navigation}) => {
     // state to control modal overlay
     const [showOverlay, setShowOverlay] = useState(false);
 
-    // state to control rounded modal overlay
-    const [showPopUpOverlay, setShowPopUpOverlay] = useState(false);
-
     // modal ref
     const bottomSheetModalRef = useRef(null);
     
@@ -45,13 +42,11 @@ const Products = ({navigation}) => {
 
     const closePopUpModal = () => {
         popUpBottomSheetModalRef.current?.close();
-        setShowPopUpOverlay(false);
     };
 
     // function to open bottom sheet modal
     const openPopUpModal = () => {
         popUpBottomSheetModalRef.current?.present();
-        setShowPopUpOverlay(true);
     }
 
     const logisticsList = [
@@ -256,7 +251,6 @@ const Products = ({navigation}) => {
             </CustomBottomSheet>
             <PopUpBottomSheet
                 bottomSheetModalRef={popUpBottomSheetModalRef}
-                showOverlay={showPopUpOverlay}
                 closeModal={closePopUpModal}
                 snapPointsArray={["40%"]}
                 autoSnapAt={0}

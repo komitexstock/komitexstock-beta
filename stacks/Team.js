@@ -1,6 +1,6 @@
 import Header from "../components/Header";
-import { View, Text, FlatList, StyleSheet } from "react-native";
-import { useState, useRef, useSyncExternalStore } from "react";
+import { View, Text, FlatList, StyleSheet, TouchableWithoutFeedback, Keyboard } from "react-native";
+import { useState, useRef } from "react";
 import CustomBottomSheet from "../components/CustomBottomSheet";
 import ModalButton from "../components/ModalButton";
 import TeamMemberCard from "../components/TeamMemberCard";
@@ -8,6 +8,8 @@ import Input from "../components/Input";
 import SelectInput from "../components/SelectInput";
 import Avatar from "../components/Avatar";
 import Indicator from "../components/Indicator";
+import PopUpBottomSheet from "../components/PopUpBottomSheet";
+import SelectRolePopUpContent from "../components/SelectRolePopUpContent";
 
 const Team = ({navigation}) => {
 
@@ -19,6 +21,9 @@ const Team = ({navigation}) => {
 
     // modal ref
     const bottomSheetModalRef = useRef(null);
+
+    // popUp modal ref
+    const popUpBottomSheetModalRef = useRef(null);
 
     // function to close modal
     const closeModal = () => {
@@ -32,6 +37,17 @@ const Team = ({navigation}) => {
         setShowOverlay(true);
         setModal(type);
     }
+
+    
+    const closePopUpModal = () => {
+        popUpBottomSheetModalRef.current?.close();
+    };
+
+    // function to open bottom sheet popup
+    const openPopUpModal = () => {
+        popUpBottomSheetModalRef.current?.present();
+    }
+
 
     // list of members
     const memberList = [
@@ -107,16 +123,20 @@ const Team = ({navigation}) => {
 
     // state to store role select input value
     const [role, setRole] = useState("");
-    
-    // if role select input is open
-    const [activeRoleInput, setActiveRoleInput] = useState(false);
+
+    const hanldeRoleSelect = (text) => {
+        setRole(text);
+        closePopUpModal();
+    }
+
+    const hanldeRoleUpdate = (text) => {
+        setEditRole(text);
+        closePopUpModal();
+    }
     
     // state to store role select input value
     const [editRole, setEditRole] = useState("Sales Rep");
     
-    // if role select input is open
-    const [activeEditRoleInput, setActiveEditRoleInput] = useState(false);
-
     // member inputs
     const newMemberInputs = [
         {
@@ -196,35 +216,39 @@ const Team = ({navigation}) => {
                 sheetSubtitle={""}
             >   
                 {modal === "Add" && (
-                    <View style={style.modalWrapper}>
-                        <View style={style.modalContent}>
-                            <Text style={style.modalText}>We will email your team member an invite</Text>
-                            {newMemberInputs.map(input => (
-                                <Input
-                                    key={input.id}
-                                    placeholder={input.placeholder}
-                                    label={input.label}
-                                    value={input.value}
-                                    onChange={input.onChange}
-                                    error={input.error}
-                                    setError={input.setError}
+                    <TouchableWithoutFeedback
+                        onPress={() => Keyboard.dismiss()}
+                    >
+                        <View style={style.modalWrapper}>
+                            <View style={style.modalContent}>
+                                <Text style={style.modalText}>We will email your team member an invite</Text>
+                                {newMemberInputs.map(input => (
+                                    <Input
+                                        key={input.id}
+                                        placeholder={input.placeholder}
+                                        label={input.label}
+                                        value={input.value}
+                                        onChange={input.onChange}
+                                        error={input.error}
+                                        setError={input.setError}
+                                    />
+                                ))}
+                                <SelectInput 
+                                    label={"Role"}
+                                    placeholder={"Role"}
+                                    onPress={openPopUpModal}
+                                    value={role}
+                                    active={false}
+                                    inputFor={"String"}
                                 />
-                            ))}
-                            <SelectInput 
-                                label={"Role"}
-                                placeholder={"Role"}
+                            </View>
+                            <ModalButton
+                                name={"Add New Team Member"}
                                 onPress={() => {}}
-                                value={role}
-                                active={activeRoleInput}
-                                inputFor={"String"}
+                                emptyFeilds={emptyFields}
                             />
                         </View>
-                        <ModalButton
-                            name={"Add New Team Member"}
-                            onPress={() => {}}
-                            emptyFeilds={emptyFields}
-                        />
-                    </View>
+                    </TouchableWithoutFeedback>
                 )}
 
                 {modal === "Edit" && (
@@ -244,9 +268,9 @@ const Team = ({navigation}) => {
                             <SelectInput 
                                 label={"Role"}
                                 placeholder={"Role"}
-                                onPress={() => {}}
+                                onPress={openPopUpModal}
                                 value={editRole}
-                                active={activeEditRoleInput}
+                                active={false}
                                 inputFor={"String"}
                             />
                         </View>
@@ -265,6 +289,26 @@ const Team = ({navigation}) => {
                     </View>
                 )}
             </CustomBottomSheet>
+            <PopUpBottomSheet
+                bottomSheetModalRef={popUpBottomSheetModalRef}
+                hideCloseButton={true}
+                closeModal={closePopUpModal}
+                snapPointsArray={["35%"]}
+                autoSnapAt={0}
+                sheetTitle={"Select Role"}
+            >   
+                { modal === "Edit" && 
+                    <SelectRolePopUpContent
+                        hanldeRoleSelect={hanldeRoleUpdate}
+                    />
+                }
+
+                { modal === "Add" && 
+                    <SelectRolePopUpContent
+                        hanldeRoleSelect={hanldeRoleSelect}
+                    />
+                }
+            </PopUpBottomSheet>
         </>
     );
 }
@@ -347,7 +391,7 @@ const style = StyleSheet.create({
         fontSize: 12,
         color: "#22222299",
         marginBottom: 4,
-    }
+    },
 })
  
 export default Team;
