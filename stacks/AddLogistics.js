@@ -13,8 +13,7 @@ import CustomBottomSheet from "../components/CustomBottomSheet";
 import ModalButton from "../components/ModalButton";
 import LogisticsInfo from "../components/LogisticsInfo";
 import PopUpBottomSheet from "../components/PopUpBottomSheet";
-import { secondaryColor } from "../style/globalStyleSheet";
-import MarkIcon from "../assets/icons/MarkIcon";
+import SuccessPrompt from "../components/SuccessPrompt";
 
 const Products = ({navigation}) => {
 
@@ -258,9 +257,7 @@ const Products = ({navigation}) => {
                 sheetSubtitle={false}
             >   
                 <View style={style.popUpContent}>
-                    <View style={style.markBackground}>
-                        <MarkIcon />
-                    </View>
+                    <SuccessPrompt />
                     <Text style={style.popUpHeading}>
                         Komitex Succesfully Added
                     </Text>
@@ -307,15 +304,6 @@ const style = StyleSheet.create({
         justifyContent: 'space-between',
         paddingHorizontal: 20,
         paddingBottom: 20,
-    },
-    markBackground: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
-        backgroundColor: secondaryColor,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
     },
     popUpHeading: {
         fontSize: 16,

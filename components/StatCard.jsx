@@ -1,7 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native';
 import PercentageIncreaseIcon from '../assets/icons/PercentageIncreaseIcon';
 import PercentageDecreaseIcon from '../assets/icons/PercentageDecreaseIcon';
-import { useState } from 'react';
 
 const StatCard = ({title, presentValue, oldValue, decimal, unit, unitPosition, backgroundColor}) => {
 
