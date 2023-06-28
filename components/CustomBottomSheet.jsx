@@ -6,7 +6,7 @@ import CloseIcon from "../assets/icons/CloseIcon";
 
 const CustomBottomSheet = ({bottomSheetModalRef, showOverlay, closeModal, snapPointsArray, autoSnapAt, children, sheetTitle, sheetSubtitle}) => {
 
-    const snapPoints = useMemo(() => snapPointsArray, []);
+    const snapPoints = useMemo(() => snapPointsArray, [snapPointsArray]);
 
     const handleGestureEnd = (event) => {
         // console.log(event);

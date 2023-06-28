@@ -1,18 +1,29 @@
 import Header from "../components/Header";
-import { FlatList, StyleSheet } from "react-native";
+import { FlatList, StyleSheet, View, Text } from "react-native";
 import LogisticsCard from "../components/LogisticsCard";
 import { useState, useRef } from "react";
 import CustomBottomSheet from "../components/CustomBottomSheet";
 import LogisticsInfo from "../components/LogisticsInfo";
 import ModalButton from "../components/ModalButton";
+import PopUpBottomSheet from "../components/PopUpBottomSheet";
+import SuccessPrompt from "../components/SuccessPrompt";
+import CautionPrompt from "../components/CautionPrompt";
 
 const Logistics = ({navigation}) => {
+
+    const [confirmDeactivation, setConfirmDeactivation] = useState(false);
 
     // state to control modal overlay
     const [showOverlay, setShowOverlay] = useState(false);
 
     // modal ref
     const bottomSheetModalRef = useRef(null);
+
+    // popUp modal ref
+    const popUpBottomSheetModalRef = useRef(null);
+
+    // state to control popupModal snap points array
+    const [snapPointsArray, setSnapPointsArray] = useState(["45%"])
 
     const closeModal = () => {
         bottomSheetModalRef.current?.close();
@@ -23,6 +34,18 @@ const Logistics = ({navigation}) => {
     const openModal = () => {
         bottomSheetModalRef.current?.present();
         setShowOverlay(true);
+    }
+
+    // function to open bottom sheet popup
+    const closePopUpModal = () => {
+        popUpBottomSheetModalRef.current?.close();
+        setConfirmDeactivation(false);
+        setSnapPointsArray(["45%"])
+    };
+    
+    // function to close bottom sheet popup
+    const openPopUpModal = () => {
+        popUpBottomSheetModalRef.current?.present();
     }
 
     const logisticsList = [
@@ -173,12 +196,17 @@ const Logistics = ({navigation}) => {
             unitPosition: "end",
         },
     ]
+
+    const handleDeactivation = () => {
+        setSnapPointsArray(["38%"])
+        setConfirmDeactivation(true);
+    }
     
     return (
         <>
             <FlatList 
-            showsVerticalScrollIndicator={false}
-            ListHeaderComponent={
+                showsVerticalScrollIndicator={false}
+                ListHeaderComponent={
                     <Header 
                         navigation={navigation} 
                         stackName={"Logistics"} 
@@ -219,11 +247,59 @@ const Logistics = ({navigation}) => {
                 />
                 <ModalButton
                     name={"Deactivate Logistics"}
-                    onPress={() => {}}
+                    onPress={openPopUpModal}
                     emptyFeilds={false}
                     secondaryButton={true}
                 />
             </CustomBottomSheet>
+            <PopUpBottomSheet
+                bottomSheetModalRef={popUpBottomSheetModalRef}
+                closeModal={closePopUpModal}
+                snapPointsArray={snapPointsArray}
+                autoSnapAt={0}
+                sheetTitle={false}
+                sheetSubtitle={false}
+            >   
+                { !confirmDeactivation ? (
+                    <View style={style.popUpContent}>
+                        <CautionPrompt />
+                        <Text style={style.popUpHeading}>
+                            Deactivate Logistics
+                        </Text>
+                        <Text style={style.popUpParagraph}>
+                            Are you sure you want to deactivate Komitex Logistics
+                        </Text>
+                        <View style={style.popUpButtonWrapper}>
+                            <ModalButton
+                                name={"Yes, deactivate"}
+                                onPress={handleDeactivation}
+                            />
+                            <ModalButton
+                                name={"No, cancel"}
+                                onPress={closePopUpModal}
+                                secondaryButton={true}
+                            />
+                        </View>
+                    </View>
+                ) : (
+                    <View style={style.popUpContent}>
+                        <SuccessPrompt />
+                        <Text style={style.popUpHeading}>
+                            Komitex Succesfully Deactivated
+                        </Text>
+                        <Text style={style.popUpParagraph}>
+                            You have successfully deactivated Komitex Logistics
+                        </Text>
+                        <ModalButton
+                            name={"Done"}
+                            onPress={() => {
+                                closeModal();
+                                closePopUpModal();
+                            }}
+                        />
+                    </View>
+                )}
+            </PopUpBottomSheet>
         </>
     );
 }
@@ -255,6 +331,36 @@ const style = StyleSheet.create({
         flexDirection: "column",
         justifyContent: "space-between",
         alignItems: "flex-start",
+    },
+    
+    popUpContent: {
+        flex: 1,
+        height: "100%",
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: 20,
+        paddingBottom: 20,
+    },
+    popUpHeading: {
+        fontSize: 16,
+        fontFamily: 'mulish-bold',
+        textAlign: 'center',
+        color: 'rgba(34, 34, 34, 1)',
+    },
+    popUpParagraph: {
+        fontSize: 12,
+        fontFamily: 'mulish-regular',
+        textAlign: 'center',
+        color: 'rgba(34, 34, 34, 0.8)',
+    },
+    popUpButtonWrapper: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        width: '100%',
     }
 })
  

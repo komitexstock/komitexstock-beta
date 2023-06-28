@@ -26,7 +26,7 @@ const ModalButton = ({onPress, name, emptyFeilds, secondaryButton}) => {
 const style = StyleSheet.create({
     wrapper: {
         width: "100%",
-        height: 64,
+        height: 60,
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'center',

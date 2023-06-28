@@ -6,7 +6,8 @@ import CloseIcon from "../assets/icons/CloseIcon";
 
 const PopUpBottomSheet = ({bottomSheetModalRef, hideCloseButton, closeModal, snapPointsArray, autoSnapAt, children, sheetTitle, sheetSubtitle}) => {
 
-    const snapPoints = useMemo(() => snapPointsArray, []);
+    const snapPoints = useMemo(() => snapPointsArray, [snapPointsArray]);
+    // const snapPoints = snapPointsArray;
 
     const handleGestureEnd = (event) => {
         // console.log(event);
@@ -130,7 +131,7 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         flex: 1,
         width: "100%",
-    }
+    },
 });
 
 export default PopUpBottomSheet;
