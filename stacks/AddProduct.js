@@ -150,13 +150,6 @@ const AddProduct = ({navigation}) => {
                 fixed={false}
                 inactive={emptyFields}
             />
-            {/* <Camera style={style.camera} type={type}>
-                <View style={style.buttonContainer}>
-                    <TouchableOpacity style={style.button} onPress={toggleCameraType}>
-                        <Text style={style.text}>Flip Camera</Text>
-                    </TouchableOpacity>
-                </View>
-            </Camera> */}
         </>
     );
 }

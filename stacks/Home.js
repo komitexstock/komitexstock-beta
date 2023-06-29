@@ -6,6 +6,7 @@ import {
     TouchableWithoutFeedback, 
     Keyboard, 
     ScrollView,
+    BackHandler
 } from "react-native";
 import NotificationIcon from "../assets/icons/NotificationIcon";
 // icons
@@ -17,7 +18,7 @@ import QuickWaybiillIcon from "../assets/icons/QuickWaybillIcon";
 import Order from "../components/Order";
 import CustomBottomSheet from "../components/CustomBottomSheet";
 import SearchBar from "../components/SearchBar";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 
 
@@ -135,6 +136,7 @@ const Home = ({navigation}) => {
 
     // state to control overlay
     const [showOverlay, setShowOverlay] = useState(false);
+
     // state to hold search query
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -153,6 +155,31 @@ const Home = ({navigation}) => {
         setShowOverlay(true);
         Keyboard.dismiss();
     }
+
+    // use effect to close modal
+    useEffect(() => {
+        // function to run if back button is pressed
+        const backAction = () => {
+            // Run your function here
+            if (showOverlay) {
+                // if modal is open, close modal
+                closeModal();
+                return true;
+            } else {
+                // if modal isnt open simply navigate back
+                return false;
+            }
+        };
+    
+        // listen for onPress back button
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction
+        );
+    
+        return () => backHandler.remove();
+
+    }, [showOverlay]);
 
     return (
         <TouchableWithoutFeedback 

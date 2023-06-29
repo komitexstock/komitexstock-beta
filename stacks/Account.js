@@ -5,7 +5,8 @@ import {
     ScrollView,
     Image,
     TouchableOpacity,
-    Linking
+    Linking,
+    BackHandler
 } from "react-native";
 import { primaryColor } from '../style/globalStyleSheet';
 import CameraIcon from "../assets/icons/CameraIcon";
@@ -19,7 +20,7 @@ import NotificationBlackIcon from "../assets/icons/NotificationBlackIcon";
 import HelpIcon from "../assets/icons/HelpIcon";
 import LogoutIcon from "../assets/icons/LogoutIcon";
 import CustomBottomSheet from "../components/CustomBottomSheet";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import SmsIcon from "../assets/icons/SmsIcon";
 import EmailIcon from "../assets/icons/EmailIcon";
 import CallIcon from "../assets/icons/CallIcon";
@@ -81,13 +82,39 @@ const Account = ({navigation}) => {
         ],
     }
 
+    // modal overlay
+    const [showOverlay, setShowOverlay] = useState(false);
+
+    // modal state
     const [modal, setModal] = useState({
         type: "Notifications",
         snapPoints: ["35%"],
-    })
+    });
 
-    // modal overlay
-    const [showOverlay, setShowOverlay] = useState(false);
+    // use effect to close modal
+    useEffect(() => {
+        // function to run if back button is pressed
+        const backAction = () => {
+            // Run your function here
+            if (showOverlay) {
+                // if modal is open, close modal
+                closeModal();
+                return true;
+            } else {
+                // if modal isnt open simply navigate back
+                return false;
+            }
+        };
+    
+        // listen for onPress back button
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction
+        );
+    
+        return () => backHandler.remove();
+
+    }, [showOverlay]);
    
     // bottom sheet ref
     const bottomSheetModalRef = useRef(null);

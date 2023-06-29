@@ -4,13 +4,14 @@ import {
     FlatList, 
     TouchableOpacity, 
     TouchableWithoutFeedback,
-    StyleSheet
+    StyleSheet,
+    BackHandler
 } from "react-native";
 import MenuIcon from "../assets/icons/MenuIcon";
 import { primaryColor } from "../style/globalStyleSheet";
 import StatWrapper from "../components/StatWrapper";
 import StatCard from "../components/StatCard";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import SearchIcon from '../assets/icons/SearchIcon'
 import FilterIcon from '../assets/icons/FilterIcon';
 import Order from "../components/Order";
@@ -654,18 +655,48 @@ const Orders = ({navigation}) => {
 
     const [searchQuery, setSearchQuery] = useState("");
 
-    // filter modal reference
-    const filterModalRef = useRef(null);
-
     // search modal refernce
-    const searchModalRef = useRef(null);
+    const modalRef = useRef(null);
+
+    const [modal, setModal] = useState({
+        snapPointsArray: ["50%"],
+        autoSnapAt: 0,
+        sheetTitle: "",
+        overlay: false,
+        modalContent: <></>,
+    })
+
+    // use effect to close modal
+    useEffect(() => {
+        // function to run if back button is pressed
+        const backAction = () => {
+            // Run your function here
+            if (modal.overlay) {
+                // if modal is open, close modal
+                closeModal();
+                return true;
+            } else {
+                // if modal isnt open simply navigate back
+                return false;
+            }
+        };
+    
+        // listen for onPress back button
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction
+        );
+    
+        return () => backHandler.remove();
+
+    }, [modal.overlay]);
 
     // filter modal state
-    const [filterModal, setFilterModal] = useState({
+    const filterModal = {
         snapPointsArray: ["50%"],
         autoSnapAt: 0,
         sheetTitle: "Filter by",
-        overlay: false,
+        overlay: true,
         modalContent: <>
             <View style={style.modalContent}>
                 {filterButtons.map(item => (
@@ -682,14 +713,14 @@ const Orders = ({navigation}) => {
                 </View>
             </View>
         </>
-    })
+    };
 
     // search modal state
-    const [searchModal, setSearchModal] = useState({
+    const searchModal = {
         snapPointsArray: ["50%", "90%"],
         autoSnapAt: 1,
         sheetTitle: "",
-        overlay: false,
+        overlay: true,
         modalContent: <>
             <SearchBar 
                 placeholder={"Search orders"}
@@ -708,46 +739,25 @@ const Orders = ({navigation}) => {
                 ))}
             </BottomSheetScrollView>
         </>
-    })
+    };
 
-    const closeModal = (type) => {
-        if (type === "filter") {
-            setFilterModal(prevModal => {
-                return {
-                    ...prevModal,
-                    overlay: false,
-                }
-            });
-            filterModalRef.current?.close();
-        } else {
-            setSearchModal(prevModal => {
-                return {
-                    ...prevModal,
-                    overlay: false,
-                }
-            });
-            searchModalRef.current?.close();
-        }
+    const closeModal = () => {
+        setModal(prevModal => {
+            return {
+                ...prevModal,
+                overlay: false,
+            }
+        });
+        modalRef.current?.close();
     };
 
     const openModal = (type) => {
         if (type === "filter") {
-            setFilterModal(prevModal => {
-                return {
-                    ...prevModal,
-                    overlay: true,
-                }
-            });
-            filterModalRef.current?.present();
+            setModal(filterModal);
         } else {
-            setSearchModal(prevModal => {
-                return {
-                    ...prevModal,
-                    overlay: true,
-                }
-            });
-            searchModalRef.current?.present();
+            setModal(searchModal);
         }
+        modalRef.current?.present();
     }
 
     return (
@@ -811,25 +821,14 @@ const Orders = ({navigation}) => {
                 />
             </TouchableWithoutFeedback>
             <CustomBottomSheet 
-                bottomSheetModalRef={filterModalRef}
-                showOverlay={filterModal.overlay}
+                bottomSheetModalRef={modalRef}
+                showOverlay={modal.overlay}
                 closeModal={() => closeModal("filter")}
-                snapPointsArray={filterModal.snapPointsArray}
-                autoSnapAt={filterModal.autoSnapAt}
-                sheetTitle={filterModal.sheetTitle}
+                snapPointsArray={modal.snapPointsArray}
+                autoSnapAt={modal.autoSnapAt}
+                sheetTitle={modal.sheetTitle}
             >
-                {filterModal.modalContent}
-            </CustomBottomSheet>
-
-            <CustomBottomSheet 
-                bottomSheetModalRef={searchModalRef}
-                showOverlay={searchModal.overlay}
-                closeModal={() => closeModal("search")}
-                snapPointsArray={searchModal.snapPointsArray}
-                autoSnapAt={searchModal.autoSnapAt}
-                sheetTitle={searchModal.sheetTitle}
-            >
-                {searchModal.modalContent}
+                {modal.modalContent}
             </CustomBottomSheet>
         </>
     );

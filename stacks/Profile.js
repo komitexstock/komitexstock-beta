@@ -7,10 +7,11 @@ import {
     TouchableOpacity,
     StyleSheet,
     Linking,
-    Keyboard
+    Keyboard,
+    BackHandler
 } from "react-native";
 import AccountButtons from "../components/AccountButtons";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import CallIcon from "../assets/icons/CallIcon";
 import SmsIcon from "../assets/icons/SmsIcon";
 import EmailIcon from "../assets/icons/EmailIcon";
@@ -105,6 +106,31 @@ const Profile = ({navigation}) => {
         bottomSheetModalRef.current?.present();
         setShowOverlay(true);
     }
+
+    // use effect to close modal
+    useEffect(() => {
+        // function to run if back button is pressed
+        const backAction = () => {
+            // Run your function here
+            if (showOverlay) {
+                // if modal is open, close modal
+                closeModal();
+                return true;
+            } else {
+                // if modal isnt open simply navigate back
+                return false;
+            }
+        };
+    
+        // listen for onPress back button
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction
+        );
+    
+        return () => backHandler.remove();
+
+    }, [showOverlay]);
 
     const supportButtons = [
         {

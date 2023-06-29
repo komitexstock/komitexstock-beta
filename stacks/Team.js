@@ -1,6 +1,6 @@
 import Header from "../components/Header";
-import { View, Text, FlatList, StyleSheet, TouchableWithoutFeedback, Keyboard } from "react-native";
-import { useState, useRef } from "react";
+import { View, Text, FlatList, StyleSheet, TouchableWithoutFeedback, Keyboard, BackHandler } from "react-native";
+import { useState, useRef, useEffect } from "react";
 import CustomBottomSheet from "../components/CustomBottomSheet";
 import ModalButton from "../components/ModalButton";
 import TeamMemberCard from "../components/TeamMemberCard";
@@ -28,7 +28,40 @@ const Team = ({navigation}) => {
         snapPoints: ["45%"],
         centered: false,
         closeModal: closePopUpModal,
+        popUpVisible: false,
     });
+
+    // use effect to close modal
+    useEffect(() => {
+        // function to run if back button is pressed
+        const backAction = () => {
+            // if pop up is visible
+            if(popUp.popUpVisible) {
+                // close pop up
+                closePopUpModal();
+                return true;
+            } else {
+                if (showOverlay) {
+                    // if modal is open, close modal
+                    closeModal();
+                    return true;
+                } else {
+                    // if modal isnt open simply navigate back
+                    return false;
+                }
+            }
+
+        };
+    
+        // listen for onPress back button
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction
+        );
+    
+        return () => backHandler.remove();
+
+    }, [showOverlay, popUp.popUpVisible]);
 
     // state to prompt user to confirm deactivation
     const [roleInputActive, setRoleInputActive] = useState(false);
@@ -60,6 +93,12 @@ const Team = ({navigation}) => {
     const closePopUpModal = () => {
         popUpBottomSheetModalRef.current?.close();
         setRoleInputActive(false);
+        setPopUp(prevPopUp => {
+            return {
+                ...prevPopUp,
+                popUpVisible: false
+            }
+        })
     };
 
     // function to close all bottomsheet moda;
@@ -79,6 +118,7 @@ const Team = ({navigation}) => {
                 snapPoints: ["30%"],
                 centered: true,
                 closeModal: closePopUpModal,
+                popUpVisible: true,
             });
         } else if (type === "AddSuccess" || type === "UpdateSuccess") {
             setPopUp({
@@ -87,6 +127,7 @@ const Team = ({navigation}) => {
                 snapPoints: ["38%"],
                 centered: false,
                 closeModal: closeAllModal,
+                popUpVisible: true,
             });
         } else if (type === "Deactivate") {
             setPopUp({
@@ -95,6 +136,7 @@ const Team = ({navigation}) => {
                 snapPoints: ["45%"],
                 centered: false,
                 closeModal: closePopUpModal,
+                popUpVisible: true,
             })
         }
     }
@@ -234,6 +276,7 @@ const Team = ({navigation}) => {
             centered: false,
             snapPoints: ["38%"],
             closeModal: closeAllModal,
+            popUpVisible: true
         })
     }
 

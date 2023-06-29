@@ -6,6 +6,7 @@ import {
     Keyboard,
     Text,
     TouchableOpacity,
+    BackHandler
 } from "react-native";
 import Header from "../components/Header";
 import Input from "../components/Input";
@@ -19,7 +20,7 @@ import CustomButton from "../components/CustomButton";
 import Product from "../components/Product";
 import ArrowDown from "../assets/icons/ArrowDown";
 import InfoIcon from "../assets/icons/InfoIcon";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { primaryColor } from "../style/globalStyleSheet";
 
 const SendOrder = ({navigation}) => {
@@ -29,12 +30,14 @@ const SendOrder = ({navigation}) => {
     
     // state to store selected logistics
     const [logistics, setLogistics] = useState(null);
+    
     // state to store selected location
     const [location, setLocation] = useState({
         id: Math.random(),
         location: "Warri",
         charge: 3500,
     });
+
     // response from ChatGPT after extracting order details
     const [products, setProducts] = useState([
         {
@@ -45,13 +48,16 @@ const SendOrder = ({navigation}) => {
             checked: true,
         },
     ]);
+    
     // customer name
     const [customerName, setCustomerName] = useState("Richard Idana");
+    
     // customer phone number
     const [phoneNumber, setPhoneNumber] = useState([
         "08012345678",
         "09078945612",
     ]);
+    
     // customer address
     const [address, setAddress] = useState("No 3 Izomo street Udu road Warri");
 
@@ -63,6 +69,7 @@ const SendOrder = ({navigation}) => {
 
     // state to indicate if select logistics input is active
     const [selectLogisticsActive, setSelectLogisticsActive] = useState(false);
+    
     // state to indicate if select logistics input is active
     const [selectLocationActive, setSelectLocationActive] = useState(false);
     // other input active states are handled within the components
@@ -79,6 +86,31 @@ const SendOrder = ({navigation}) => {
     
     // state to control modal overlay
     const [showOverlay, setShowOverlay] = useState(false);
+
+    // use effect to close modal
+    useEffect(() => {
+        // function to run if back button is pressed
+        const backAction = () => {
+            // Run your function here
+            if (showOverlay) {
+                // if modal is open, close modal
+                closeModal();
+                return true;
+            } else {
+                // if modal isnt open simply navigate back
+                return false;
+            }
+        };
+    
+        // listen for onPress back button
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction
+        );
+    
+        return () => backHandler.remove();
+
+    }, [showOverlay]);
     
     // modal ref
     const bottomSheetModalRef = useRef(null);

@@ -8,8 +8,7 @@ import {
 } from "react-native";
 import MenuIcon from "../assets/icons/MenuIcon";
 import { primaryColor } from "../style/globalStyleSheet";
-import { useState, useRef } from "react";
-import SearchIcon from '../assets/icons/SearchIcon'
+import { useState } from "react";
 import LogisticsCard from "../components/LogisticsCard";
 import SearchBar from "../components/SearchBar";
 

@@ -1,9 +1,8 @@
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, BackHandler } from "react-native";
 import FilterIcon from "../assets/icons/FilterIcon";
 import Order from "../components/Order";
 import CustomBottomSheet from "../components/CustomBottomSheet";
-import { useRef } from "react";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Header from "../components/Header";
 import { globalStyleSheet, primaryColor } from "../style/globalStyleSheet";
 import FilterButtonGroup from "../components/FilterButtonGroup";
@@ -12,54 +11,54 @@ const Notifications = ({navigation}) => {
 
     const orders = [
         {
-          name: "John Doe",
-          location: "New York",
-          products: [
-            { product_name: "Shirt", quantity: 2 },
-            { product_name: "Jeans", quantity: 1 },
-          ],
-          datetime: "2023-03-15 09:30",
-          id: "abc123",
-          price: 15000,
-          status: "Delivered",
-          imageUrl: require('../assets/images/fedex.png'),
+            name: "John Doe",
+            location: "New York",
+            products: [
+                { product_name: "Shirt", quantity: 2 },
+                { product_name: "Jeans", quantity: 1 },
+            ],
+            datetime: "2023-03-15 09:30",
+            id: "abc123",
+            price: 15000,
+            status: "Delivered",
+            imageUrl: require('../assets/images/fedex.png'),
         },
         {
-          name: "Jane Smith",
-          location: "London",
-          products: [
-            { product_name: "Shoes", quantity: 1 },
-            { product_name: "Socks", quantity: 3 },
-          ],
-          datetime: "2023-02-22 14:45",
-          id: "def456",
-          price: 13000,
-          status: "Pending",
-          imageUrl: require('../assets/images/komitex.png'),
+            name: "Jane Smith",
+            location: "London",
+            products: [
+                { product_name: "Shoes", quantity: 1 },
+                { product_name: "Socks", quantity: 3 },
+            ],
+            datetime: "2023-02-22 14:45",
+            id: "def456",
+            price: 13000,
+            status: "Pending",
+            imageUrl: require('../assets/images/komitex.png'),
+            },
+        {
+            name: "Michael Johnson",
+            location: "Los Angeles",
+            products: [
+                { product_name: "Hat", quantity: 1 },
+            ],
+            datetime: "2023-01-10 12:15",
+            id: "ghi789",
+            price: 14000,
+            status: "Dispatched",
+            imageUrl: require('../assets/images/dhl.png'),
         },
         {
-          name: "Michael Johnson",
-          location: "Los Angeles",
-          products: [
-            { product_name: "Hat", quantity: 1 },
-          ],
-          datetime: "2023-01-10 12:15",
-          id: "ghi789",
-          price: 14000,
-          status: "Dispatched",
-          imageUrl: require('../assets/images/dhl.png'),
-        },
-        {
-          name: "Robert Davis",
-          location: "Berlin",
-          products: [
-            { product_name: "Sunglasses", quantity: 1 },
-          ],
-          datetime: "2023-03-01 11:10",
-          id: "mno345",
-          price: 16000,
-          status: "Canceled",
-          imageUrl: require('../assets/images/komitex.png'),
+            name: "Robert Davis",
+            location: "Berlin",
+            products: [
+                { product_name: "Sunglasses", quantity: 1 },
+            ],
+            datetime: "2023-03-01 11:10",
+            id: "mno345",
+            price: 16000,
+            status: "Canceled",
+            imageUrl: require('../assets/images/komitex.png'),
         },
     ];
 
@@ -141,6 +140,31 @@ const Notifications = ({navigation}) => {
     ];
 
     const [showOverlay, setShowOverlay] = useState(false);
+
+    // use effect to close modal
+    useEffect(() => {
+        // function to run if back button is pressed
+        const backAction = () => {
+            // Run your function here
+            if (showOverlay) {
+                // if modal is open, close modal
+                closeModal();
+                return true;
+            } else {
+                // if modal isnt open simply navigate back
+                return false;
+            }
+        };
+    
+        // listen for onPress back button
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction
+        );
+    
+        return () => backHandler.remove();
+
+    }, [showOverlay]);
     
     const bottomSheetModalRef = useRef(null);
 

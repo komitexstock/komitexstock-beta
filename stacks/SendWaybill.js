@@ -6,6 +6,7 @@ import {
     Keyboard,
     Text,
     TouchableOpacity,
+    BackHandler
 } from "react-native";
 import Header from "../components/Header";
 import Input from "../components/Input";
@@ -17,8 +18,7 @@ import AddLogisticsModalContent from "../components/AddLogisticsModalContent";
 import CustomButton from "../components/CustomButton";
 import Product from "../components/Product";
 import ArrowDown from "../assets/icons/ArrowDown";
-import InfoIcon from "../assets/icons/InfoIcon";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { primaryColor } from "../style/globalStyleSheet";
 
 const SendWaybill = ({navigation}) => {
@@ -46,6 +46,31 @@ const SendWaybill = ({navigation}) => {
     
     // state to control modal overlay
     const [showOverlay, setShowOverlay] = useState(false);
+
+    // use effect to close modal
+    useEffect(() => {
+        // function to run if back button is pressed
+        const backAction = () => {
+            // Run your function here
+            if (showOverlay) {
+                // if modal is open, close modal
+                closeModal();
+                return true;
+            } else {
+                // if modal isnt open simply navigate back
+                return false;
+            }
+        };
+    
+        // listen for onPress back button
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction
+        );
+    
+        return () => backHandler.remove();
+
+    }, [showOverlay]);
     
     // modal ref
     const bottomSheetModalRef = useRef(null);

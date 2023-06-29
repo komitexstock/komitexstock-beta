@@ -1,7 +1,7 @@
 import Header from "../components/Header";
-import { FlatList, StyleSheet, View, Text } from "react-native";
+import { FlatList, StyleSheet, View, Text, BackHandler } from "react-native";
 import LogisticsCard from "../components/LogisticsCard";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import CustomBottomSheet from "../components/CustomBottomSheet";
 import LogisticsInfo from "../components/LogisticsInfo";
 import ModalButton from "../components/ModalButton";
@@ -11,10 +11,47 @@ import CautionPrompt from "../components/CautionPrompt";
 
 const Logistics = ({navigation}) => {
 
+    // state to confimr deactivation of logistics
     const [confirmDeactivation, setConfirmDeactivation] = useState(false);
+
+    // state to store if pop up is visible
+    const [popUpVisible, setPopUpVisible] = useState(false);
+
 
     // state to control modal overlay
     const [showOverlay, setShowOverlay] = useState(false);
+
+    // use effect to close modal
+    useEffect(() => {
+        // function to run if back button is pressed
+        const backAction = () => {
+            // if pop up is visible
+            if(popUpVisible) {
+                // close pop up
+                closePopUpModal();
+                return true;
+            } else {
+                if (showOverlay) {
+                    // if modal is open, close modal
+                    closeModal();
+                    return true;
+                } else {
+                    // if modal isnt open simply navigate back
+                    return false;
+                }
+            }
+
+        };
+    
+        // listen for onPress back button
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction
+        );
+    
+        return () => backHandler.remove();
+
+    }, [showOverlay, popUpVisible]);
 
     // modal ref
     const bottomSheetModalRef = useRef(null);
@@ -41,11 +78,13 @@ const Logistics = ({navigation}) => {
         popUpBottomSheetModalRef.current?.close();
         setConfirmDeactivation(false);
         setSnapPointsArray(["45%"])
+        setPopUpVisible(false);
     };
     
     // function to close bottom sheet popup
     const openPopUpModal = () => {
         popUpBottomSheetModalRef.current?.present();
+        setPopUpVisible(true);
     }
 
     const logisticsList = [
