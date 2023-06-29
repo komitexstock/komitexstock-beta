@@ -262,6 +262,7 @@ const Notifications = ({navigation}) => {
                 snapPointsArray={["40%"]}
                 autoSnapAt={0}
                 sheetTitle={"Filter by"}
+                clearFilterFunction={() => {}} 
             >
                 <View style={style.modalContent}>
                     {filterButtons.map(item => (

@@ -68,8 +68,8 @@ const Products = ({navigation, route}) => {
         autoSnapAt: 0,
         sheetTitle: "",
         overlay: false,
-        modalContent: <>
-        </>
+        clearFilterFunction: false,
+        modalContent: <></>
     });
 
     useLayoutEffect(() => {
@@ -195,6 +195,7 @@ const Products = ({navigation, route}) => {
         autoSnapAt: 0,
         sheetTitle: "Filter by",
         overlay: true,
+        clearFilterFunction: () => {},
         modalContent: <>
             <View style={style.modalContent}>
                 {filterButtons.map(item => (
@@ -219,6 +220,7 @@ const Products = ({navigation, route}) => {
         autoSnapAt: 1,
         sheetTitle: "",
         overlay: true,
+        clearFilterFunction: false,
         modalContent: <>
             <SearchBar 
                 placeholder={"Search orders"}
@@ -238,6 +240,7 @@ const Products = ({navigation, route}) => {
         autoSnapAt: 1,
         sheetTitle: "",
         overlay: true,
+        clearFilterFunction: false,
         modalContent: <>
             <EditProductContent />        
         </>
@@ -413,6 +416,7 @@ const Products = ({navigation, route}) => {
                 snapPointsArray={modal.snapPointsArray}
                 autoSnapAt={modal.autoSnapAt}
                 sheetTitle={ modal.sheetTitle }
+                clearFilterFunction={modal.clearFilterFunction}
             >
                 { modal.modalContent }
             </CustomBottomSheet>

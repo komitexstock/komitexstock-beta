@@ -3,8 +3,9 @@ import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useMemo } from "react";
 import ModalHandle from "./ModalHandle";
 import CloseIcon from "../assets/icons/CloseIcon";
+import { primaryColor } from "../style/globalStyleSheet";
 
-const CustomBottomSheet = ({bottomSheetModalRef, showOverlay, closeModal, snapPointsArray, autoSnapAt, children, sheetTitle, sheetSubtitle}) => {
+const CustomBottomSheet = ({bottomSheetModalRef, showOverlay, closeModal, snapPointsArray, autoSnapAt, children, sheetTitle, sheetSubtitle, clearFilterFunction}) => {
 
     const snapPoints = useMemo(() => snapPointsArray, [snapPointsArray]);
 
@@ -49,7 +50,15 @@ const CustomBottomSheet = ({bottomSheetModalRef, showOverlay, closeModal, snapPo
                         >
                             <CloseIcon />
                         </TouchableOpacity>
-                        {!sheetSubtitle ? (
+                        { clearFilterFunction && (
+                            <TouchableOpacity 
+                                style={styles.clearFilterButton} 
+                                onPress={clearFilterFunction}
+                            >
+                                <Text style={styles.clearFilterText}>Clear All</Text>
+                            </TouchableOpacity>
+                        )}
+                        { !sheetSubtitle ? (
                             <Text style={styles.sheetTitleText}>
                                 {sheetTitle}
                             </Text>
@@ -125,6 +134,20 @@ const styles = StyleSheet.create({
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+    },
+    clearFilterButton: {
+        position: "absolute",
+        right: 20,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    clearFilterText: {
+        color: primaryColor,
+        fontSize: 12,
+        fontFamily: 'mulish-bold',  
+        textDecorationLine: 'underline',
+        textDecorationColor: primaryColor
     },
     modalWrapper: {
         display: "flex",
