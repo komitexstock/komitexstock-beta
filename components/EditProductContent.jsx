@@ -23,6 +23,7 @@ const EditProductContent = ({product}) => {
     const emptyFields = [
         productName, 
         price,
+        selectedImage
         ].some(
             (item) => item === null || item === ''
     );
@@ -115,7 +116,7 @@ const EditProductContent = ({product}) => {
                         <TouchableOpacity style={style.delete}>
                             <Text style={style.deleteText}>Delete</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={style.save}>
+                        <TouchableOpacity style={[style.save, emptyFields && {backgroundColor: "rgba(7, 66, 124, 0.30)"}]}>
                             <Text style={style.saveText}>Save</Text>
                         </TouchableOpacity>
                     </View>

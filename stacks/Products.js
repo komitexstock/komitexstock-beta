@@ -4,13 +4,14 @@ import {
     FlatList, 
     TouchableOpacity, 
     TouchableWithoutFeedback,
-    StyleSheet
+    StyleSheet,
+    BackHandler
 } from "react-native";
 import MenuIcon from "../assets/icons/MenuIcon";
 import { primaryColor } from "../style/globalStyleSheet";
 import StatWrapper from "../components/StatWrapper";
 import StatCard from "../components/StatCard";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useLayoutEffect } from "react";
 import SearchIcon from '../assets/icons/SearchIcon'
 import FilterIcon from '../assets/icons/FilterIcon';
 import ArrowLeft from "../assets/icons/ArrowLeft";
@@ -21,7 +22,6 @@ import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import ProductCard from "../components/ProductCard";
 import AlertNotice from "../components/AlertNotice";
 import EditProductContent from "../components/EditProductContent";
-// import { BackHandler } from 'react-native';
 
 
 const Products = ({navigation, route}) => {
@@ -62,31 +62,52 @@ const Products = ({navigation, route}) => {
 
     const [editProduct, setEditProduct] = useState(false);
 
-    useEffect(() => {
+    // modal state
+    const [modal, setModal] = useState({
+        snapPointsArray: ["50%"],
+        autoSnapAt: 0,
+        sheetTitle: "",
+        overlay: false,
+        modalContent: <>
+        </>
+    });
+
+    useLayoutEffect(() => {
         // if success is true, set success as false after 3 seconds
         if (route.params.success && route.params) {
             setSuccessAlert(route.params.success);
+            
+            setTimeout(() => {
+                setSuccessAlert(false);
+            }, 3000);
         }
-        setTimeout(() => {
-            setSuccessAlert(false);
-        }, 3000);
 
     }, [route.params]);
+    
+    // use effect to close modal
+    useEffect(() => {
+        // function to run if back button is pressed
+        const backAction = () => {
+            // Run your function here
+            if (modal.overlay) {
+                // if modal is open, close modal
+                closeModal();
+                return true;
+            } else {
+                // if modal isnt open simply navigate back
+                return false;
+            }
+        };
+    
+        // listen for onPress back button
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction
+        );
+    
+        return () => backHandler.remove();
 
-    // useEffect(() => {
-    //     const backAction = () => {
-    //       // Run your function here
-    //       console.log('Back button pressed!');
-    //       return true;
-    //     };
-    
-    //     const backHandler = BackHandler.addEventListener(
-    //       'hardwareBackPress',
-    //       backAction
-    //     );
-    
-    //     return () => backHandler.remove();
-    // }, []);
+    }, [modal.overlay]);
 
     const filterButtons = [
         {
@@ -167,24 +188,20 @@ const Products = ({navigation, route}) => {
     const [searchQuery, setSearchQuery] = useState("");
 
     // filter modal reference
-    const filterModalRef = useRef(null);
+    const modalRef = useRef(null);
 
-    // search modal refernce
-    const searchModalRef = useRef(null);
-
-    // filter modal state
-    const [filterModal, setFilterModal] = useState({
+    const filterModal = {
         snapPointsArray: ["50%"],
         autoSnapAt: 0,
         sheetTitle: "Filter by",
-        overlay: false,
+        overlay: true,
         modalContent: <>
             <View style={style.modalContent}>
                 {filterButtons.map(item => (
-                    <FilterButtonGroup
-                    buttons={item.buttons}
-                    title={item.title}
-                    key={item.id}
+                        <FilterButtonGroup
+                        buttons={item.buttons}
+                        title={item.title}
+                        key={item.id}
                     />
                 ))}
                 <View style={style.footerButtonWrapper}>
@@ -194,14 +211,14 @@ const Products = ({navigation, route}) => {
                 </View>
             </View>
         </>
-    })
+    }
 
     // search modal state
-    const [searchModal, setSearchModal] = useState({
-        snapPointsArray: ["50%", "90%"],
+    const searchModal = {
+        snapPointsArray: ["50%", "100%"],
         autoSnapAt: 1,
         sheetTitle: "",
-        overlay: false,
+        overlay: true,
         modalContent: <>
             <SearchBar 
                 placeholder={"Search orders"}
@@ -213,50 +230,48 @@ const Products = ({navigation, route}) => {
                 
             </BottomSheetScrollView>
         </>
-    })
-
-    const closeModal = (type) => {
-        if (type === "filter") {
-            setFilterModal(prevModal => {
-                return {
-                    ...prevModal,
-                    overlay: false,
-                }
-            });
-            filterModalRef.current?.close();
-        } else {
-            setSearchModal(prevModal => {
-                return {
-                    ...prevModal,
-                    overlay: false,
-                }
-            });
-            searchModalRef.current?.close();
-        }
     };
 
+    // search modal state
+    const editProductModal = {
+        snapPointsArray: ["50%", "80%"],
+        autoSnapAt: 1,
+        sheetTitle: "",
+        overlay: true,
+        modalContent: <>
+            <EditProductContent />        
+        </>
+    };
 
-    const openModal = (type, editProduct) => {
+    const closeModal = () => {
+        setModal(prevModal => {
+            return {
+                ...prevModal,
+                overlay: false,
+            }
+        });
+        modalRef.current?.close();
+    };
+
+    const openModal = (type) => {
         if (type === "filter") {
-            setFilterModal(prevModal => {
-                return {
-                    ...prevModal,
-                    overlay: true,
-                }
+            setModal({
+                ...filterModal
             });
-            filterModalRef.current?.present();
             // if product is selected, set it
-        } else {
-            setSearchModal(prevModal => {
-                return {
-                    ...prevModal,
-                    overlay: true,
-                }
+        } else if (type === "search"){
+            setModal({
+                ...searchModal,
             });
-            searchModalRef.current?.present();
+        } else if (type === "editProduct"){
+            setModal({
+                ...editProductModal,
+            });
         }
-        setEditProduct(editProduct);
+        modalRef.current?.present();
     }
+
+    console.log(modalRef.current);
 
     const products = [
         {
@@ -266,7 +281,7 @@ const Products = ({navigation, route}) => {
             price: 20000,
             imageUrl: require('../assets/images/maybach-sunglasses.png'),
             lowStock: false,
-            onPress: () => openModal("search", true),
+            onPress: () => openModal("editProduct"),
         },
         {
             id: 2,
@@ -275,7 +290,7 @@ const Products = ({navigation, route}) => {
             price: 33000,
             imageUrl: require('../assets/images/accurate-watch.png'),
             lowStock: false,
-            onPress: () => openModal("search", true),
+            onPress: () => openModal("editProduct"),
         },
         {
             id: 3,
@@ -284,7 +299,7 @@ const Products = ({navigation, route}) => {
             price: 35000,
             imageUrl: require('../assets/images/black-sketchers.png'),
             lowStock: true,
-            onPress: () => openModal("search", true),
+            onPress: () => openModal("editProduct"),
         },
         {
             id: 4,
@@ -293,7 +308,7 @@ const Products = ({navigation, route}) => {
             price: 40000,
             imageUrl: require('../assets/images/brown-clarks.png'),
             lowStock: false,
-            onPress: () => openModal("search", true),
+            onPress: () => openModal("editProduct"),
         },
         {
             id: 5,
@@ -302,7 +317,7 @@ const Products = ({navigation, route}) => {
             price: 25000,
             imageUrl: require('../assets/images/sneakers.png'),
             lowStock: true,
-            onPress: () => openModal("search", true),
+            onPress: () => openModal("editProduct"),
         },
         {
             id: 6,
@@ -311,7 +326,7 @@ const Products = ({navigation, route}) => {
             price: 32000,
             imageUrl: require('../assets/images/perfectly-useless-mornig-watch.png'),
             lowStock: false,
-            onPress: () => openModal("search", true),
+            onPress: () => openModal("editProduct"),
         },
     ];
 
@@ -359,13 +374,13 @@ const Products = ({navigation, route}) => {
                                 <View style={style.actionWrapper}>
                                     <TouchableOpacity 
                                         style={style.menuIcon}
-                                        onPress={() => openModal("search", false)}
+                                        onPress={() => openModal("search")}
                                     >
                                         <SearchIcon />
                                     </TouchableOpacity>
                                     <TouchableOpacity
                                         style={style.menuIcon}
-                                        onPress={() => openModal("filter", false)}
+                                        onPress={() => openModal("filter")}
                                     >
                                         <FilterIcon />
                                     </TouchableOpacity>
@@ -392,29 +407,14 @@ const Products = ({navigation, route}) => {
                 />
             </TouchableWithoutFeedback>
             <CustomBottomSheet 
-                bottomSheetModalRef={filterModalRef}
-                showOverlay={filterModal.overlay}
+                bottomSheetModalRef={modalRef}
+                showOverlay={modal.overlay}
                 closeModal={() => closeModal("filter")}
-                snapPointsArray={filterModal.snapPointsArray}
-                autoSnapAt={filterModal.autoSnapAt}
-                sheetTitle={ filterModal.sheetTitle }
+                snapPointsArray={modal.snapPointsArray}
+                autoSnapAt={modal.autoSnapAt}
+                sheetTitle={ modal.sheetTitle }
             >
-                { filterModal.modalContent }
-            </CustomBottomSheet>
-
-            <CustomBottomSheet 
-                bottomSheetModalRef={searchModalRef}
-                showOverlay={searchModal.overlay}
-                closeModal={() => closeModal("search")}
-                snapPointsArray={searchModal.snapPointsArray}
-                autoSnapAt={searchModal.autoSnapAt}
-                sheetTitle={ !editProduct ? searchModal.sheetTitle: "Edit Product"}
-            >
-                { !editProduct ? searchModal.modalContent : (
-                    <EditProductContent
-                        // product={product}
-                    />
-                )}
+                { modal.modalContent }
             </CustomBottomSheet>
 
             { successAlert && (

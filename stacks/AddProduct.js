@@ -12,15 +12,10 @@ import Input from "../components/Input";
 import { useState } from "react";
 import CameraPrimaryIcon from '../assets/icons/CameraPrimaryIcon';
 import * as ImagePicker from "expo-image-picker";
-import { Camera, CameraType } from 'expo-camera';
 import CustomButton from "../components/CustomButton";
 
 const AddProduct = ({navigation}) => {
-
     
-    const [type, setType] = useState(CameraType.back);
-    const [permission, requestPermission] = Camera.useCameraPermissions();
-
     // state to store product name
     const [productName, setProductName] = useState("");
     // state to store price value
@@ -36,6 +31,7 @@ const AddProduct = ({navigation}) => {
     const emptyFields = [
         productName, 
         price,
+        selectedImage
         ].some(
             (item) => item === null || item === ''
     );
@@ -48,10 +44,6 @@ const AddProduct = ({navigation}) => {
         
     }
 
-    const toggleCameraType = () => {
-        setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));
-    }
-
     const pickImageAsync = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
           allowsEditing: true,
@@ -60,57 +52,12 @@ const AddProduct = ({navigation}) => {
     
         if (!result.canceled) {
             setSelectedImage(result.assets[0].uri);
-        } else {
-        alert('You did not select any image.');
         }
     };
-
-    // const pickImageAsync = async () => {
-    //     const permissionResult = await ImagePicker.requestCameraRollPermissionsAsync();
-    
-    //     if (permissionResult.granted === false) {
-    //       alert('Permission to access camera roll is required!');
-    //       return;
-    //     }
-    
-    //     const options = {
-    //       allowsEditing: true,
-    //       aspect: [4, 3],
-    //       quality: 1,
-    //       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-    //     };
-    
-    //     const imageResult = await ImagePicker.launchImageLibraryAsync(options);
-    
-    //     if (!imageResult.cancelled) {
-    //       setSelectedImage(imageResult.uri);
-    //     } else {
-    //       const cameraPermissionResult = await ImagePicker.requestCameraPermissionsAsync();
-    
-    //       if (cameraPermissionResult.granted === false) {
-    //         alert('Permission to access camera is required!');
-    //         return;
-    //       }
-    
-    //       const cameraResult = await ImagePicker.launchCameraAsync(options);
-    
-    //       if (!cameraResult.cancelled) {
-    //         setSelectedImage(cameraResult.uri);
-    //       }
-    //     }
-    //   }
 
     const navigateToProducts = () => {
         navigation.navigate("Products", {
             success: true,
-            // product: {
-            //     id: Math.random(),
-            //     product_name: productName,
-            //     quantity: 0,
-            //     price: price,
-            //     imageUrl: selectedImage,
-            //     lowStock: true,
-            // }  
         });
     }
 
