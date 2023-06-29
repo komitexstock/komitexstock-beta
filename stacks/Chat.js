@@ -90,7 +90,7 @@ const Chat = ({navigation, route}) => {
                     showsVerticalScrollIndicator={false}
                     style={style.messagesContainer}
                 >
-                    <CalendarPicker 
+                    {/* <CalendarPicker
                         textStyle={calenderStyles.textStyle}
                         selectedDayStyle={calenderStyles.selectedDayStyle}
                         selectedDayTextColor={"#ffffff"}
@@ -105,7 +105,7 @@ const Chat = ({navigation, route}) => {
                         allowBackwardRangeSelect={true}
                         // maxDate={new Date()}
                         scrollable={true}
-                    />
+                    /> */}
                 </ScrollView>
                 <View style={style.textFieldWrapper}>
                     <View style={style.actionButtonsWrapper}>

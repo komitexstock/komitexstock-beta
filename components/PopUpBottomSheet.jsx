@@ -1,10 +1,12 @@
-import { TouchableOpacity, StyleSheet, View, Text } from "react-native";
+import { TouchableOpacity, StyleSheet, View, Text, Dimensions } from "react-native";
 import { BottomSheetModal, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import { useMemo, useCallback } from "react";
 import ModalHandle from "./ModalHandle";
 import CloseIcon from "../assets/icons/CloseIcon";
 
-const PopUpBottomSheet = ({bottomSheetModalRef, hideCloseButton, closeModal, snapPointsArray, autoSnapAt, children, sheetTitle, sheetSubtitle}) => {
+const windowWidth = Dimensions.get("window").width;
+
+const PopUpBottomSheet = ({bottomSheetModalRef, hideCloseButton, closeModal, snapPointsArray, autoSnapAt, children, sheetTitle, sheetSubtitle, centered}) => {
 
     const snapPoints = useMemo(() => snapPointsArray, [snapPointsArray]);
     // const snapPoints = snapPointsArray;
@@ -41,6 +43,10 @@ const PopUpBottomSheet = ({bottomSheetModalRef, hideCloseButton, closeModal, sna
                 containerStyle={{
                     borderRadius: 24,
                     marginHorizontal: 20,
+                    marginTop: centered ? -windowWidth/1.3 : 0,
+                    marginBottom: centered ? windowWidth/1.3 : 0,
+                }}
+                style={{
                 }}
                 handleComponent={() => (
                     <ModalHandle />
@@ -77,6 +83,10 @@ const PopUpBottomSheet = ({bottomSheetModalRef, hideCloseButton, closeModal, sna
 }
  
 const styles = StyleSheet.create({
+    // centerModal: {
+    //     justifyContent: "center",
+    //     alignItems: "center",
+    // },
     container: {
         flex: 1,
         alignItems: "center",

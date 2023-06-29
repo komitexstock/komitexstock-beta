@@ -10,6 +10,8 @@ import Avatar from "../components/Avatar";
 import Indicator from "../components/Indicator";
 import PopUpBottomSheet from "../components/PopUpBottomSheet";
 import SelectRolePopUpContent from "../components/SelectRolePopUpContent";
+import SuccessPrompt from "../components/SuccessPrompt";
+import CautionPrompt from "../components/CautionPrompt";
 
 const Team = ({navigation}) => {
 
@@ -19,8 +21,23 @@ const Team = ({navigation}) => {
     // state to control modal type
     const [modal, setModal] = useState("");
 
+    // state to control popUp type
+    const [popUp, setPopUp] = useState({
+        type: "",
+        title: "",
+        snapPoints: ["45%"],
+        centered: false,
+        closeModal: closePopUpModal,
+    });
+
+    // state to prompt user to confirm deactivation
+    const [roleInputActive, setRoleInputActive] = useState(false);
+
     // modal ref
     const bottomSheetModalRef = useRef(null);
+
+    // bottomsheet snap points
+    const [bottomSheetSnapPoints, setBottomSheetSnapPoints] = useState(["60%"]);
 
     // popUp modal ref
     const popUpBottomSheetModalRef = useRef(null);
@@ -36,18 +53,51 @@ const Team = ({navigation}) => {
         bottomSheetModalRef.current?.present();
         setShowOverlay(true);
         setModal(type);
+
+        type === "Add" ? setBottomSheetSnapPoints(["75%"]) : setBottomSheetSnapPoints(["60%"]);
     }
 
-    
     const closePopUpModal = () => {
         popUpBottomSheetModalRef.current?.close();
+        setRoleInputActive(false);
     };
 
-    // function to open bottom sheet popup
-    const openPopUpModal = () => {
-        popUpBottomSheetModalRef.current?.present();
+    // function to close all bottomsheet moda;
+    const closeAllModal = () => {
+        closeModal();
+        closePopUpModal();
     }
 
+    // function to open bottom sheet popup
+    const openPopUpModal = (type) => {
+        popUpBottomSheetModalRef.current?.present();
+        if (type === "Add" || type === "Edit") {
+            setRoleInputActive(true);
+            setPopUp({
+                type: type,
+                title: "Select Role",
+                snapPoints: ["30%"],
+                centered: true,
+                closeModal: closePopUpModal,
+            });
+        } else if (type === "AddSuccess" || type === "UpdateSuccess") {
+            setPopUp({
+                type: type,
+                title: "",
+                snapPoints: ["38%"],
+                centered: false,
+                closeModal: closeAllModal,
+            });
+        } else if (type === "Deactivate") {
+            setPopUp({
+                type: type,
+                title: "",
+                snapPoints: ["45%"],
+                centered: false,
+                closeModal: closePopUpModal,
+            })
+        }
+    }
 
     // list of members
     const memberList = [
@@ -177,6 +227,16 @@ const Team = ({navigation}) => {
             (item) => item === null || item === ''
     );
 
+    const handleDeactivation = () => {
+        setPopUp({
+            type: "Confirmed",
+            title: "",
+            centered: false,
+            snapPoints: ["38%"],
+            closeModal: closeAllModal,
+        })
+    }
+
     
     return (
         <>
@@ -210,7 +270,7 @@ const Team = ({navigation}) => {
                 bottomSheetModalRef={bottomSheetModalRef}
                 showOverlay={showOverlay}
                 closeModal={closeModal}
-                snapPointsArray={["75%"]}
+                snapPointsArray={bottomSheetSnapPoints}
                 autoSnapAt={0}
                 sheetTitle={modal === "Add" ? "Add New Team Memner" : ""}
                 sheetSubtitle={""}
@@ -236,15 +296,17 @@ const Team = ({navigation}) => {
                                 <SelectInput 
                                     label={"Role"}
                                     placeholder={"Role"}
-                                    onPress={openPopUpModal}
+                                    onPress={() => openPopUpModal("Add")}
                                     value={role}
-                                    active={false}
+                                    active={roleInputActive}
                                     inputFor={"String"}
                                 />
                             </View>
                             <ModalButton
                                 name={"Add New Team Member"}
-                                onPress={() => {}}
+                                onPress={() => {
+                                    openPopUpModal("AddSuccess")
+                                }}
                                 emptyFeilds={emptyFields}
                             />
                         </View>
@@ -268,20 +330,24 @@ const Team = ({navigation}) => {
                             <SelectInput 
                                 label={"Role"}
                                 placeholder={"Role"}
-                                onPress={openPopUpModal}
+                                onPress={() => openPopUpModal("Edit")}
                                 value={editRole}
-                                active={false}
+                                active={roleInputActive}
                                 inputFor={"String"}
                             />
                         </View>
                         <View style={style.modalButtonsWrapper}>
                             <ModalButton
                                 name={"Update Role"}
-                                onPress={() => {}}
+                                onPress={() => {
+                                    openPopUpModal("UpdateSuccess")
+                                }}
                             />
                             <ModalButton
                                 name={"Deactivate User"}
-                                onPress={() => {}}
+                                onPress={() => {
+                                    openPopUpModal("Deactivate");
+                                }}
                                 secondaryButton={true}
                             />
 
@@ -291,22 +357,94 @@ const Team = ({navigation}) => {
             </CustomBottomSheet>
             <PopUpBottomSheet
                 bottomSheetModalRef={popUpBottomSheetModalRef}
-                hideCloseButton={true}
-                closeModal={closePopUpModal}
-                snapPointsArray={["35%"]}
+                hideCloseButton={false}
+                closeModal={popUp.closeModal}
+                snapPointsArray={popUp.snapPoints}
                 autoSnapAt={0}
-                sheetTitle={"Select Role"}
+                sheetTitle={popUp.title}
+                centered={popUp.centered}
             >   
-                { modal === "Edit" && 
+                { popUp.type === "Edit" && 
                     <SelectRolePopUpContent
                         hanldeRoleSelect={hanldeRoleUpdate}
                     />
                 }
 
-                { modal === "Add" && 
+                { popUp.type === "Add" && 
                     <SelectRolePopUpContent
                         hanldeRoleSelect={hanldeRoleSelect}
                     />
+                }
+
+                { popUp.type === "Deactivate" &&
+                    <View style={style.popUpContent}>
+                        <CautionPrompt />
+                        <Text style={style.popUpHeading}>
+                            Deactivate Logistics
+                        </Text>
+                        <Text style={style.popUpParagraph}>
+                            Are you sure you want to deactivate Komitex Logistics
+                        </Text>
+                        <View style={style.popUpButtonWrapper}>
+                            <ModalButton
+                                name={"Yes, deactivate"}
+                                onPress={handleDeactivation}
+                            />
+                            <ModalButton
+                                name={"No, cancel"}
+                                onPress={closePopUpModal}
+                                secondaryButton={true}
+                            />
+                        </View>
+                    </View>
+                }
+
+                { popUp.type === "Confirmed" &&  
+                    <View style={style.popUpContent}>
+                        <SuccessPrompt />
+                        <Text style={style.popUpHeading}>
+                            Komitex Succesfully Deactivated
+                        </Text>
+                        <Text style={style.popUpParagraph}>
+                            You have successfully deactivated Komitex Logistics
+                        </Text>
+                        <ModalButton
+                            name={"Done"}
+                            onPress={closeAllModal}
+                        />
+                    </View>
+                }
+
+                { popUp.type === "AddSuccess" &&  
+                    <View style={style.popUpContent}>
+                        <SuccessPrompt />
+                        <Text style={style.popUpHeading}>
+                            {firstName + ' ' + lastName } Succesfully Added
+                        </Text>
+                        <Text style={style.popUpParagraph}>
+                            Hi Raymond, you have successfully added {firstName + ' ' + lastName } to your team
+                        </Text>
+                        <ModalButton
+                            name={"Done"}
+                            onPress={closeAllModal}
+                        />
+                    </View>
+                }
+
+                { popUp.type === "UpdateSuccess" &&  
+                    <View style={style.popUpContent}>
+                        <SuccessPrompt />
+                        <Text style={style.popUpHeading}>
+                            Role Updated Succesfully
+                        </Text>
+                        <Text style={style.popUpParagraph}>
+                            You have successfully updated Felix Johnson role to a {editRole}
+                        </Text>
+                        <ModalButton
+                            name={"Done"}
+                            onPress={closeAllModal}
+                        />
+                    </View>
                 }
             </PopUpBottomSheet>
         </>
@@ -392,6 +530,35 @@ const style = StyleSheet.create({
         color: "#22222299",
         marginBottom: 4,
     },
+    popUpContent: {
+        flex: 1,
+        height: "100%",
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: 20,
+        paddingBottom: 20,
+    },
+    popUpHeading: {
+        fontSize: 16,
+        fontFamily: 'mulish-bold',
+        textAlign: 'center',
+        color: 'rgba(34, 34, 34, 1)',
+    },
+    popUpParagraph: {
+        fontSize: 12,
+        fontFamily: 'mulish-regular',
+        textAlign: 'center',
+        color: 'rgba(34, 34, 34, 0.8)',
+    },
+    popUpButtonWrapper: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        width: '100%',
+    }
 })
  
 export default Team;
