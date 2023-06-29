@@ -81,7 +81,10 @@ const Account = ({navigation}) => {
         ],
     }
 
-    const [modal, setModal] = useState("")
+    const [modal, setModal] = useState({
+        type: "Notifications",
+        snapPoints: ["35%"],
+    })
 
     // modal overlay
     const [showOverlay, setShowOverlay] = useState(false);
@@ -97,7 +100,10 @@ const Account = ({navigation}) => {
 
     // open modal function
     const openModal = (type) => {
-        setModal(type);
+        setModal({
+            type: type,
+            snapPoints: type === "Notifications" ? ["35%"] : ["45%"],
+        });
         bottomSheetModalRef.current?.present();
         setShowOverlay(true);
     }
@@ -214,11 +220,11 @@ const Account = ({navigation}) => {
                 setShowOverlay={setShowOverlay}
                 showOverlay={showOverlay}
                 closeModal={closeModal}
-                snapPointsArray={["50%"]}
+                snapPointsArray={modal.snapPoints}
                 autoSnapAt={0}
-                sheetTitle={modal}
+                sheetTitle={modal.type}
             >
-                {modal === "Notifications" ? (
+                {modal.type === "Notifications" ? (
                     <AccountButtons
                         title="Allow Push Notifications"
                         subtitle={false}
