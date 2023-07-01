@@ -35,6 +35,8 @@ import EmailIcon from "../assets/icons/EmailIcon";
 import CallIcon from "../assets/icons/CallIcon";
 import CameraPrimaryLargeIcon from "../assets/icons/CameraPrimaryLargeIcon";
 import GalleryIcon from "../assets/icons/GalleryIcon";
+// import image picker library
+import * as ImagePicker from "expo-image-picker";
 
 const Account = ({navigation}) => {
     
@@ -101,6 +103,9 @@ const Account = ({navigation}) => {
         type: "Notifications",
         snapPoints: ["35%"],
     });
+
+    // state to hold selected image
+    const [selectedImage, setSelectedImage] = useState(null);
 
     // use effect to close modal
     useEffect(() => {
@@ -189,6 +194,18 @@ const Account = ({navigation}) => {
         },
     ];
 
+    const pickImageAsync = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+          allowsEditing: true,
+          quality: 1,
+        });
+    
+        if (!result.canceled) {
+            setSelectedImage(result.assets[0].uri);
+            closeModal();
+        }
+    };
+
 
     return (
         <>
@@ -209,7 +226,10 @@ const Account = ({navigation}) => {
                         <View style={style.imageContainer}>
                             <Image 
                                 style={style.profileImage}
-                                source={require('../assets/profile/profile.jpg')}
+                                source={!selectedImage ? 
+                                    require('../assets/profile/profile.jpg') : 
+                                    {uri: selectedImage}
+                                }
                             />
                             <TouchableOpacity 
                                 style={style.camera}
@@ -320,7 +340,7 @@ const Account = ({navigation}) => {
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={style.uploadButton}
-                            onPress={() => {}}
+                            onPress={pickImageAsync}
                         >
                             <View style={style.uploadIconWrapper}>
                                 <GalleryIcon />

@@ -22,7 +22,6 @@ import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import ProductCard from "../components/ProductCard";
 import AlertNotice from "../components/AlertNotice";
 import EditProductContent from "../components/EditProductContent";
-import * as ImagePicker from "expo-image-picker";
 
 
 const Products = ({navigation, route}) => {
@@ -60,9 +59,6 @@ const Products = ({navigation, route}) => {
 
     const [successAlert, setSuccessAlert] = useState(null);
     // console.table(successAlert);
-
-    // state to hold selected image
-    const [selectedImage, setSelectedImage] = useState(null);
 
     const [editProduct, setEditProduct] = useState(false);
 
@@ -336,18 +332,6 @@ const Products = ({navigation, route}) => {
             onPress: () => openModal("editProduct"),
         },
     ];
-
-    // function to select image from gallery
-    const pickImageAsync = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-          allowsEditing: true,
-          quality: 1,
-        });
-    
-        if (!result.canceled) {
-            setSelectedImage(result.assets[0].uri);
-        }
-    };
 
     return (
         <>
