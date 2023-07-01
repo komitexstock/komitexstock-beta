@@ -1,17 +1,17 @@
-import { View, Image, Text, TouchableOpacity, TouchableWithoutFeedback, StyleSheet } from "react-native";
+import { View, Image, Text, TouchableOpacity, TouchableWithoutFeedback, StyleSheet, Keyboard } from "react-native";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { primaryColor } from "../style/globalStyleSheet";
 import Input from "../components/Input";
 import { useState } from "react";
 import * as ImagePicker from 'expo-image-picker';
-import CameraBlackIcon from "../assets/icons/CameraBlackIcon";
+import GalleryBlackIcon from "../assets/icons/GalleryBlackIcon";
 
 const EditProductContent = ({product}) => {
 
     // state to store product name
-    const [productName, setProductName] = useState("");
+    const [productName, setProductName] = useState("Maybach Sunglasses");
     // state to store price value
-    const [price, setPrice] = useState("");
+    const [price, setPrice] = useState(20000);
 
     const [errorProductName, setErrorProductName] = useState(false);
     const [errorPrice, setErrorPrice] = useState(false);
@@ -44,24 +44,33 @@ const EditProductContent = ({product}) => {
 
         if (!result.canceled) {
             setSelectedImage(result.assets[0].uri);
-        } else {
-            alert('You did not select any image.');
-        }
+        } 
     };
 
     return (
-        <TouchableWithoutFeedback style={{height: "100%"}}>
-            <View
-                style={style.main} 
+        <TouchableWithoutFeedback 
+            style={{height: "100%"}}
+            onPress={() => Keyboard.dismiss()}
+        >
+
+            <BottomSheetScrollView
+                // style={style.main} 
+                contentContainerStyle={style.main}
             >
                 <View style={style.main}>
                     <View style={style.productOldDetails}>
                         <Image 
                             style={style.productImage}
-                            source={require('../assets/images/maybach-sunglasses.png')}
+                            source={!selectedImage ? 
+                                require('../assets/images/maybach-sunglasses.png') : 
+                                {uri: selectedImage}
+                            }
                         />
-                        <TouchableOpacity style={style.editImageButton}>
-                            <CameraBlackIcon />
+                        <TouchableOpacity 
+                            style={style.editImageButton}
+                            onPress={pickImageAsync}
+                        >
+                            <GalleryBlackIcon />
                         </TouchableOpacity>
                         <View style={style.productTextWrapper}>
                             <View>
@@ -116,12 +125,12 @@ const EditProductContent = ({product}) => {
                         <TouchableOpacity style={style.delete}>
                             <Text style={style.deleteText}>Delete</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={[style.save, emptyFields && {backgroundColor: "rgba(7, 66, 124, 0.30)"}]}>
+                        <TouchableOpacity style={[style.save]}>
                             <Text style={style.saveText}>Save</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
-            </View>
+            </BottomSheetScrollView>
         </TouchableWithoutFeedback>
     );
 }

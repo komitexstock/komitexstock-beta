@@ -149,7 +149,7 @@ const style = StyleSheet.create({
     adornment: {
         fontFamily: 'mulish-regular',
         color: "#837F7F",
-        fontSize: 16,   
+        fontSize: 14,  
     },
     focusedInput: {
         borderColor: primaryColor
