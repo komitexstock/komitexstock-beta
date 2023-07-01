@@ -18,6 +18,7 @@ import CustomBottomSheet from "../components/CustomBottomSheet";
 import FilterButtonGroup from "../components/FilterButtonGroup";
 import SearchBar from "../components/SearchBar";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import WaybillCard from "../components/WaybillCard";
 
 const Waybill = ({navigation}) => {
 
@@ -245,6 +246,167 @@ const Waybill = ({navigation}) => {
         modalRef.current?.present();
     }
 
+    const outGoingWaybills = [
+        {
+            products: [
+                { product_name: "Shirt", quantity: 12 },
+                { product_name: "Jeans", quantity: 4 },
+            ],
+            datetime: "2023-03-15 09:30",
+            id: "abc123",
+            status: "Delivered",
+            imageUrl: require('../assets/images/komitex.png'),
+            newMessage: true,
+            navigateToChat: () => {
+                navigation.navigate("Chat", {
+                    id: "abc123",
+                    type: "waybill",
+                    order: "Chat Message",
+                    name: "Komitex",
+                    imageUrl: require('../assets/images/komitex.png'),
+                })
+            },
+        },
+        {
+            products: [
+                { product_name: "Shoes", quantity: 10 },
+                { product_name: "Socks", quantity: 5 },
+            ],
+            datetime: "2023-02-22 14:45",
+            id: "def456",
+            status: "Pending",
+            imageUrl: require('../assets/images/fedex.png'),
+            newMessage: false,
+            navigateToChat: () => {
+                navigation.navigate("Chat", {
+                    id: "def456",
+                    type: "waybill",
+                    order: "Chat Message",
+                    name: "Fedex",
+                    imageUrl: require('../assets/images/fedex.png'),
+                })
+            },
+        },
+        {
+            products: [
+                { product_name: "Hat", quantity: 8 },
+            ],
+            datetime: "2023-01-10 12:15",
+            id: "ghi789",
+            status: "Delivered",
+            imageUrl: require('../assets/images/komitex.png'),
+            newMessage: false,
+            navigateToChat: () => {
+                navigation.navigate("Chat", {
+                    id: "ghi789",
+                    type: "waybill",
+                    order: "Chat Message",
+                    name: "Komitex",
+                    imageUrl: require('../assets/images/komitex.png'),
+                })
+            },
+        },
+        {
+            products: [
+                { product_name: "Sunglasses", quantity: 4 },
+            ],
+            datetime: "2023-03-01 11:10",
+            id: "mno345",
+            status: "Pending",
+            imageUrl: require('../assets/images/dhl.png'),
+            newMessage: true,
+            navigateToChat: () => {
+                navigation.navigate("Chat", {
+                    id: "mno345",
+                    type: "waybill",
+                    order: "Chat Message",
+                    name: "Dhl",
+                    imageUrl: require('../assets/images/dhl.png'),
+                })
+            },
+        },
+        {
+            products: [
+                { product_name: "T-Shirt", quantity: 6 },
+            ],
+            datetime: "2023-02-14 16:55",
+            id: "pqr678",
+            status: "Pending",
+            imageUrl: require('../assets/images/ups.png'),
+            newMessage: false,
+            navigateToChat: () => {
+                navigation.navigate("Chat", {
+                    id: "pqr678",
+                    type: "waybill",
+                    order: "Chat Message",
+                    name: "Ups",
+                    imageUrl: require('../assets/images/ups.png'),
+                })
+            },
+        }
+    ];
+
+    const inComingWaybills = [
+        {
+            products: [
+                { product_name: "Dress", quantity: 3 },
+                { product_name: "Scarf", quantity: 1 },
+            ],
+            datetime: "2023-05-03 10:20",
+            id: "stu901",
+            status: "Pending",
+            imageUrl: require('../assets/images/komitex.png'),
+            newMessage: false,
+            navigateToChat: () => {
+                navigation.navigate("Chat", {
+                    id: "stu901",
+                    type: "waybill",
+                    order: "Chat Message",
+                    name: "Komitex",
+                    imageUrl: require('../assets/images/komitex.png'),
+                })
+            },
+        },
+        {
+            products: [
+                { product_name: "Pants", quantity: 2 },
+            ],
+            datetime: "2023-04-01 09:45",
+            id: "vwx234",
+            status: "Delivered",
+            imageUrl: require('../assets/images/fedex.png'),
+            newMessage: false,
+            navigateToChat: () => {
+                navigation.navigate("Chat", {
+                    id: "vwx234",
+                    type: "waybill",
+                    order: "Chat Message",
+                    name: "Fedex",
+                    imageUrl: require('../assets/images/fedex.png'),
+                })
+            },
+        },
+        {
+            products: [
+                { product_name: "Sweater", quantity: 3 },
+            ],
+            datetime: "2023-05-21 15:30",
+            id: "yz0123",
+            status: "Pending",
+            imageUrl: require('../assets/images/komitex.png'),
+            newMessage: false,
+            navigateToChat: () => {
+                navigation.navigate("Chat", {
+                    id: "yz0123",
+                    type: "waybill",
+                    order: "Chat Message",
+                    name: "Komitex",
+                    imageUrl: require('../assets/images/komitex.png'),
+                })
+            },
+        },
+    ]
+
     return (
         <>
             <TouchableWithoutFeedback style={{flex: 1, width: "100%", height: "100%"}}>
@@ -315,11 +477,11 @@ const Waybill = ({navigation}) => {
                     }
                     contentContainerStyle={{paddingBottom: 90}}
                     style={style.listWrapper}
-                    // keyExtractor={item => item.id}
-                    // data={orderList}
-                    // renderItem={({ item, index }) => (
-                    //     <Order item={item} index={index} length={orderList.length} />
-                    // )}
+                    keyExtractor={item => item.id}
+                    data={tab === "Outgoing" ? outGoingWaybills : inComingWaybills}
+                    renderItem={({ item, index }) => (
+                        <WaybillCard waybill={item} index={index} length={outGoingWaybills.length} />
+                    )}
                 />
             </TouchableWithoutFeedback>
             <CustomBottomSheet 
@@ -437,6 +599,7 @@ const style = StyleSheet.create({
         display: "flex",
         flexDirection: 'row',
         height: 32,
+        marginBottom: 20,
         alignItems: "center",
         justifyContent: "space-between",
     },
