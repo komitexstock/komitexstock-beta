@@ -1,3 +1,4 @@
+// react native components
 import { 
     View, 
     Text, 
@@ -8,9 +9,19 @@ import {
     Linking,
     BackHandler
 } from "react-native";
-import { primaryColor } from '../style/globalStyleSheet';
-import CameraIcon from "../assets/icons/CameraIcon";
+// hooks
+import { 
+    useState, 
+    useRef, 
+    useEffect 
+} from "react";
+// colors
+import { primaryColor, secondaryColor } from '../style/globalStyleSheet';
+// custom components
+import CustomBottomSheet from "../components/CustomBottomSheet";
 import AccountButtons from "../components/AccountButtons";
+// icons
+import CameraIcon from "../assets/icons/CameraIcon";
 import EditUserIcon from "../assets/icons/EditUserIcon";
 import AnalyticsIcon from "../assets/icons/AnalyticsIcon";
 import TeamIcon from "../assets/icons/TeamIcon";
@@ -19,11 +30,11 @@ import SecurityIcon from "../assets/icons/SecurityIcon";
 import NotificationBlackIcon from "../assets/icons/NotificationBlackIcon";
 import HelpIcon from "../assets/icons/HelpIcon";
 import LogoutIcon from "../assets/icons/LogoutIcon";
-import CustomBottomSheet from "../components/CustomBottomSheet";
-import { useState, useRef, useEffect } from "react";
 import SmsIcon from "../assets/icons/SmsIcon";
 import EmailIcon from "../assets/icons/EmailIcon";
 import CallIcon from "../assets/icons/CallIcon";
+import CameraPrimaryLargeIcon from "../assets/icons/CameraPrimaryLargeIcon";
+import GalleryIcon from "../assets/icons/GalleryIcon";
 
 const Account = ({navigation}) => {
     
@@ -127,12 +138,26 @@ const Account = ({navigation}) => {
 
     // open modal function
     const openModal = (type) => {
-        setModal({
-            type: type,
-            snapPoints: type === "Notifications" ? ["35%"] : ["45%"],
-        });
         bottomSheetModalRef.current?.present();
         setShowOverlay(true);
+        if (type === "Notifications") {
+            return setModal({
+                type: type,
+                snapPoints: ["35%"],
+            });
+        }
+        else if (type === "Help & Support") {
+            return setModal({
+                type: type,
+                snapPoints: ["45%"],
+            });
+        } 
+        else if (type === "Open with") {
+            return setModal({
+                type: type,
+                snapPoints: ["25%"],
+            });
+        } 
     }
 
     // enable notification state 
@@ -186,7 +211,10 @@ const Account = ({navigation}) => {
                                 style={style.profileImage}
                                 source={require('../assets/profile/profile.jpg')}
                             />
-                            <TouchableOpacity style={style.camera}>
+                            <TouchableOpacity 
+                                style={style.camera}
+                                onPress={() => {openModal("Open with")}}
+                            >
                                 <CameraIcon />
                             </TouchableOpacity>
                         </View>
@@ -251,7 +279,7 @@ const Account = ({navigation}) => {
                 autoSnapAt={0}
                 sheetTitle={modal.type}
             >
-                {modal.type === "Notifications" ? (
+                { modal.type === "Notifications" && (
                     <AccountButtons
                         title="Allow Push Notifications"
                         subtitle={false}
@@ -264,7 +292,9 @@ const Account = ({navigation}) => {
                         handleToggle={handleToggle}
                         unpadded={true}
                     />
-                ) : supportButtons.map((item, index) => (
+                )}
+                
+                { modal.type === "Help & Support" && supportButtons.map((item, index) => (
                     <AccountButtons
                         key={item.id}
                         title={item.title}
@@ -276,6 +306,29 @@ const Account = ({navigation}) => {
                         unpadded={true}
                     />
                 ))}
+
+                { modal.type === "Open with" && (
+                    <View style={style.uploadButtonsWrapper}>
+                        <TouchableOpacity
+                            style={style.uploadButton}
+                            onPress={() => {}}
+                        >
+                            <View style={style.uploadIconWrapper}>
+                                <CameraPrimaryLargeIcon />
+                            </View>
+                            <Text style={style.uploadButtonText}>Camera</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={style.uploadButton}
+                            onPress={() => {}}
+                        >
+                            <View style={style.uploadIconWrapper}>
+                                <GalleryIcon />
+                            </View>
+                            <Text style={style.uploadButtonText}>Gallery</Text>
+                        </TouchableOpacity>
+                    </View>   
+                )}
             </CustomBottomSheet>
         </>
     );
@@ -387,8 +440,38 @@ const style = StyleSheet.create({
     logoutText: {
         color: "#B42318",
         fontFamily: 'mulish-semibold'
+    },
+    uploadButtonsWrapper: {
+        display: 'flex',
+        flexDirection: 'row',
+        width: '100%',
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: 50,
+    },
+    uploadButton: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    uploadIconWrapper: {
+        width: 50,
+        height: 50,
+        backgroundColor: secondaryColor,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 25
+    },
+    uploadButtonText: {
+        fontFamily: 'mulish-semibold',
+        fontSize: 14,
+        color: "#222222CC"
     }
-
 })
  
 export default Account;
