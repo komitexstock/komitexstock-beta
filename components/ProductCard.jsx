@@ -6,6 +6,7 @@ import {
     Image 
 } from "react-native";
 import { primaryColor } from "../style/globalStyleSheet";
+import Indicator from '../components/Indicator'
 
 const ProductCard = ({product_name, quantity, price, imageUrl, lowStock, onPress}) => {
 
@@ -13,11 +14,11 @@ const ProductCard = ({product_name, quantity, price, imageUrl, lowStock, onPress
 
     return (
         <TouchableOpacity style={style.productCard} onPress={onPress}>
-            { quantity === 0 && <View style={style.emptyStockIndicator}>
-                <Text style={style.emptyStock}>Empty Stock</Text>
+            { quantity === 0 && <View style={style.indicatorWrapper}>
+                <Indicator text={"Empty Stock"} type={"Cancelled"} />
             </View>}
-            { quantity !== 0 && lowStock && <View style={style.lowStockIndicator}>
-                   <Text style={style.lowStock}>Low Stock</Text>
+            { quantity !== 0 && lowStock && <View style={style.indicatorWrapper}>
+                <Indicator text={"Low Stock"} type={"Pending"} />
                 </View>
             }
             <View style={style.imageWrapper}>
@@ -47,41 +48,14 @@ const style = StyleSheet.create({
         flex: 1,
         position: "relative",
     },
-    lowStockIndicator: {
+    indicatorWrapper: {
         position: "absolute",
         top: 8,
         right: 8,
-        minHeight: 16,
-        minWidth: 60,
-        backgroundColor: "rgba(254, 240, 199, 1)",
-        borderRadius: 20,
-        display: "flex",    
-        alignItems: "center",
-        justifyContent: "center",
-        zIndex: 1,
-    },
-    lowStock: {
-        fontFamily: "mulish-regular",
-        fontSize: 8,
-        color: "rgba(220, 104, 3, 1)",
-    },
-    emptyStockIndicator: {
-        position: "absolute",
-        top: 8,
-        right: 8,
-        minHeight: 16,
-        minWidth: 60,
-        backgroundColor: "rgba(254, 243, 242, 1)",
-        borderRadius: 20,
         display: "flex",    
         alignItems: "center",
         justifyContent: "center",
         zIndex: 3,
-    },
-    emptyStock: {
-        fontFamily: "mulish-regular",
-        fontSize: 8,
-        color: "rgba(180, 35, 24, 1)",
     },
     imageWrapper: {
         height: 70,

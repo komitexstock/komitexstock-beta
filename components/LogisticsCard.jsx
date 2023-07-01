@@ -7,7 +7,8 @@ import {
     Dimensions
 } 
 from "react-native";
-import AddIcon from '../assets/icons/AddIcon'
+import Indicator from '../components/Indicator';
+import AddIcon from '../assets/icons/AddIcon';
 
 const maxCardWidth = Dimensions.get("window").width/2 - 28;
 const LogisticsCard = ({logistics, imageUrl, totalLocations, totalStock, lowStock, onPress, addNew}) => {
@@ -24,9 +25,7 @@ const LogisticsCard = ({logistics, imageUrl, totalLocations, totalStock, lowStoc
                                 source={imageUrl} 
                                 style={style.image} 
                             />
-                            {   lowStock && <View style={style.lowStockIndicator}>
-                                    <Text style={style.lowStock}>Low Stock</Text>
-                                </View>
+                            {   lowStock && <Indicator text={"lowStock"} type={"Pending"} />
                             }
                         </View>
                         <Text style={style.logistics}>{logistics}</Text>
@@ -74,21 +73,6 @@ const style = StyleSheet.create({
         width: 40,
         height: 40,
         borderRadius: 8,
-    },
-    lowStockIndicator: {
-        minHeight: 16,
-        minWidth: 60,
-        backgroundColor: "rgba(254, 240, 199, 1)",
-        borderRadius: 20,
-        display: "flex",    
-        alignItems: "center",
-        justifyContent: "center",
-
-    },
-    lowStock: {
-        fontFamily: "mulish-regular",
-        fontSize: 8,
-        color: "rgba(220, 104, 3, 1)",
     },
     logistics: {
         fontFamily: "mulish-semibold",
