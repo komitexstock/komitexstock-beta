@@ -35,6 +35,7 @@ const Orders = ({navigation}) => {
             price: 15000,
             status: "Delivered",
             imageUrl: require('../assets/images/komitex.png'),
+            newMessage: true,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "abc123",
@@ -57,6 +58,7 @@ const Orders = ({navigation}) => {
             price: 13000,
             status: "Pending",
             imageUrl: require('../assets/images/fedex.png'),
+            newMessage: true,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "def456",
@@ -78,6 +80,7 @@ const Orders = ({navigation}) => {
             price: 14000,
             status: "Dispatched",
             imageUrl: require('../assets/images/komitex.png'),
+            newMessage: true,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "ghi789",
@@ -99,6 +102,7 @@ const Orders = ({navigation}) => {
             price: 16000,
             status: "Cancelled",
             imageUrl: require('../assets/images/dhl.png'),
+            newMessage: true,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "mno345",
@@ -120,6 +124,7 @@ const Orders = ({navigation}) => {
             price: 12000,
             status: "Rescheduled",
             imageUrl: require('../assets/images/ups.png'),
+            newMessage: false,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "pqr678",
@@ -142,6 +147,7 @@ const Orders = ({navigation}) => {
             price: 25000,
             status: "Delivered",
             imageUrl: require('../assets/images/komitex.png'),
+            newMessage: false,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "stu901",
@@ -163,6 +169,7 @@ const Orders = ({navigation}) => {
             price: 18000,
             status: "Pending",
             imageUrl: require('../assets/images/fedex.png'),
+            newMessage: false,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "vwx234",
@@ -184,6 +191,7 @@ const Orders = ({navigation}) => {
             price: 19000,
             status: "Dispatched",
             imageUrl: require('../assets/images/komitex.png'),
+            newMessage: false,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "yz0123",
@@ -205,6 +213,7 @@ const Orders = ({navigation}) => {
             price: 22000,
             status: "Cancelled",
             imageUrl: require('../assets/images/dhl.png'),
+            newMessage: false,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "bcd345",
@@ -226,6 +235,7 @@ const Orders = ({navigation}) => {
             price: 28000,
             status: "Delivered",
             imageUrl: require('../assets/images/ups.png'),
+            newMessage: false,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "efg567",
@@ -247,6 +257,7 @@ const Orders = ({navigation}) => {
             price: 20000,
             status: "Rescheduled",
             imageUrl: require('../assets/images/komitex.png'),
+            newMessage: true,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "ghi678",
@@ -269,6 +280,7 @@ const Orders = ({navigation}) => {
             price: 30000,
             status: "Pending",
             imageUrl: require('../assets/images/fedex.png'),
+            newMessage: true,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "jkl901",
@@ -290,6 +302,7 @@ const Orders = ({navigation}) => {
             price: 26000,
             status: "Dispatched",
             imageUrl: require('../assets/images/komitex.png'),
+            newMessage: false,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "mno234",
@@ -311,6 +324,7 @@ const Orders = ({navigation}) => {
             price: 23000,
             status: "Cancelled",
             imageUrl: require('../assets/images/dhl.png'),
+            newMessage: false,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "pqr345",
@@ -332,6 +346,7 @@ const Orders = ({navigation}) => {
             price: 32000,
             status: "Delivered",
             imageUrl: require('../assets/images/ups.png'),
+            newMessage: true,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "stu567",
@@ -353,6 +368,7 @@ const Orders = ({navigation}) => {
             price: 24000,
             status: "Rescheduled",
             imageUrl: require('../assets/images/komitex.png'),
+            newMessage: true,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "vwx678",
@@ -375,6 +391,7 @@ const Orders = ({navigation}) => {
             price: 35000,
             status: "Pending",
             imageUrl: require('../assets/images/fedex.png'),
+            newMessage: false,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "yz0124",
@@ -396,6 +413,7 @@ const Orders = ({navigation}) => {
             price: 27000,
             status: "Dispatched",
             imageUrl: require('../assets/images/komitex.png'),
+            newMessage: false,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "bcd456",
@@ -417,6 +435,7 @@ const Orders = ({navigation}) => {
             price: 30000,
             status: "Cancelled",
             imageUrl: require('../assets/images/dhl.png'),
+            newMessage: true,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "efg789",
@@ -438,6 +457,7 @@ const Orders = ({navigation}) => {
             price: 38000,
             status: "Delivered",
             imageUrl: require('../assets/images/ups.png'),
+            newMessage: false,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "ghi901",

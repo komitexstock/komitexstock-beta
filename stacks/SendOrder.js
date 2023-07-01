@@ -498,96 +498,6 @@ const SendOrder = ({navigation}) => {
 }
 
 const style = StyleSheet.create({
-    productsWrapper: {
-        display: "flex",
-        flexDirection: "column",
-        width: "100%",
-        justifyContent: "flex-start",
-        alignContent: "center", 
-        gap: 10,       
-    },
-    productsHeading: {
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",  
-    },
-    producPlaceholder:  {
-        fontFamily: "mulish-bold",
-        fontSize: 12,
-        color: "#222222",
-    },
-    addProduct: {
-        fontFamily: "mulish-semibold",
-        color: primaryColor,
-        textDecorationLine: "underline",
-        fontSize: 12,
-    },
-    productItem: {
-        display: "flex",
-        flexDirection: "row",
-        width: "100%",
-        justifyContent: 'space-between',
-        alignItems: "center",
-        padding: 12,
-        borderRadius: 12,
-        backgroundColor: "#ffffff",
-        gap: 10,
-    },
-    productDetailsWrapper: {
-        display: "flex",
-        flexDirection: "row",
-        width: "55%",
-        flexWrap: "nowrap",
-        alignItems: "center",
-        gap: 10,
-    },
-    productImage: {
-        width: 40,
-        height: 40,
-        borderRadius: 8,
-    },
-    productName: {
-        fontFamily: "mulish-semibold",
-        color: "#222222",
-        flexWrap: "wrap",
-    },
-    productQuantityWrapper: {
-        display: "flex",
-        flexDirection: "row",
-        width: "35%",
-        justifyContent: "flex-end",
-        alignItems: "center",
-        gap: 7.5,
-    },
-    productQuantityContainer: {
-        display: "flex",
-        flexDirection: "row",  
-        height: 30,
-        backgroundColor: "#f8f8f8",
-        width: 70,
-        justifyContent: "space-between",
-        alignItems: "center",
-        borderRadius: 5,
-
-    },
-    quantityButton: {
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        width: 20,
-        height: 20,
-    },
-    quantityButtonText: {
-        fontFamily: "mulish-bold",
-        color: "#222222",
-    },
-    quantityInput: {
-        fontFamily: "mulish-regular",
-        textAlign: "center",
-    },
-
-
     main: {
         minHeight: "100%",
         width: "100%",
@@ -621,6 +531,31 @@ const style = StyleSheet.create({
         width: "100%",
         flex: 1,
         justifyContent: 'flex-start',
+    },
+    productsWrapper: {
+        display: "flex",
+        flexDirection: "column",
+        width: "100%",
+        justifyContent: "flex-start",
+        alignContent: "center", 
+        gap: 10,       
+    },
+    productsHeading: {
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",  
+    },
+    producPlaceholder:  {
+        fontFamily: "mulish-bold",
+        fontSize: 12,
+        color: "#222222",
+    },
+    addProduct: {
+        fontFamily: "mulish-semibold",
+        color: primaryColor,
+        textDecorationLine: "underline",
+        fontSize: 12,
     },
 })
  

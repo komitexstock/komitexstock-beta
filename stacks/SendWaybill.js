@@ -26,6 +26,12 @@ const SendWaybill = ({navigation}) => {
     // state to store order details
     const [ waybillDetails, setWaybilldetails] = useState(null);
     
+    // state to store shipper location
+    const [ shipperLocation, setShipperLocation] = useState(null);
+    
+    // state to store shipper location
+    const [ receiverLocation, setReceiverLocation] = useState(null);
+    
     // state to store selected logistics
     const [logistics, setLogistics] = useState(null);
 
@@ -93,12 +99,16 @@ const SendWaybill = ({navigation}) => {
             subtitle: subtitle,
             openAtIndex: openAtIndex
         });
-        setSelectLogisticsActive(true);
+        if (type === "Logistics") {
+            setSelectLogisticsActive(true);
+        }
     }
 
     const isAnyFieldEmpty = [
             logistics, 
-            waybillDetails, 
+            waybillDetails,
+            shipperLocation,
+            receiverLocation,
             products, 
         ].some((item) => {
             return item === null || item === '' || item === undefined || item === 0 || item === NaN || (Array.isArray(item) && item.length === 0);
@@ -160,6 +170,16 @@ const SendWaybill = ({navigation}) => {
     const updateWaybillDetails = (text) => {
         setWaybilldetails(text)
     }
+    
+    // function to update shipperLocation
+    const updateShipperLocation = (text) => {
+        setShipperLocation(text)
+    }
+
+    // function to update receiverLocation
+    const updateReceiverLocation = (text) => {
+        setReceiverLocation(text)
+    }
 
     
     const handleSelectedLogistics = (data) => {
@@ -169,6 +189,12 @@ const SendWaybill = ({navigation}) => {
 
     // state to indicate error in waybill details
     const [errorWaybillDetails, setErrorWaybillDetails] = useState(false);
+
+    // state to indicate error in shipper location
+    const [errorShipperLocation, setErrorShipperLocation] = useState(false);
+
+    // state to indicate error in shipper location
+    const [errorReceiverLocation, setErrorReceiverLocation] = useState(false);
     
     return (
         <>
@@ -176,7 +202,7 @@ const SendWaybill = ({navigation}) => {
                 onPress={() => {
                     Keyboard.dismiss();
                 }}
-                style={{backgroundColor: "pink"}}
+                style={{backgroundColor: "pink",}}
             >
                 <ScrollView
                     showsVerticalScrollIndicator={false}
@@ -204,6 +230,24 @@ const SendWaybill = ({navigation}) => {
                                         icon={<ArrowDown />}
                                         active={selectLogisticsActive}
                                         inputFor={"Logistics"}
+                                    />
+
+                                    <Input 
+                                        label={"Shipper's Location"} 
+                                        placeholder={"Waybill origin e.g Jibowu"} 
+                                        onChange={updateShipperLocation}
+                                        value={shipperLocation}
+                                        error={errorShipperLocation}
+                                        setError={setErrorShipperLocation}
+                                    />
+
+                                    <Input 
+                                        label={"Receiver's Location"} 
+                                        placeholder={"Waybill destination e.g Warri"} 
+                                        onChange={updateReceiverLocation}
+                                        value={receiverLocation}
+                                        error={errorReceiverLocation}
+                                        setError={setErrorReceiverLocation}
                                     />
 
                                     <Input 
@@ -249,7 +293,7 @@ const SendWaybill = ({navigation}) => {
                 bottomSheetModalRef={bottomSheetModalRef}
                 showOverlay={showOverlay}
                 closeModal={closeModal}
-                snapPointsArray={["40%", "60%"]}
+                snapPointsArray={["40%", "80%"]}
                 autoSnapAt={modal.openAtIndex}
                 sheetTitle={modal.title}
                 sheetSubtitle={modal.subtitle}
@@ -269,6 +313,8 @@ const SendWaybill = ({navigation}) => {
                         logistics={logistics}
                         products={products}
                         waybillDetails={waybillDetails}
+                        shipperLocation={shipperLocation}
+                        receiverLocation={receiverLocation}
                         type={"waybill"}
                     />
                 )}
@@ -285,96 +331,6 @@ const SendWaybill = ({navigation}) => {
 }
 
 const style = StyleSheet.create({
-    productsWrapper: {
-        display: "flex",
-        flexDirection: "column",
-        width: "100%",
-        justifyContent: "flex-start",
-        alignContent: "center", 
-        gap: 10,       
-    },
-    productsHeading: {
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",  
-    },
-    producPlaceholder:  {
-        fontFamily: "mulish-bold",
-        fontSize: 12,
-        color: "#222222",
-    },
-    addProduct: {
-        fontFamily: "mulish-semibold",
-        color: primaryColor,
-        textDecorationLine: "underline",
-        fontSize: 12,
-    },
-    productItem: {
-        display: "flex",
-        flexDirection: "row",
-        width: "100%",
-        justifyContent: 'space-between',
-        alignItems: "center",
-        padding: 12,
-        borderRadius: 12,
-        backgroundColor: "#ffffff",
-        gap: 10,
-    },
-    productDetailsWrapper: {
-        display: "flex",
-        flexDirection: "row",
-        width: "55%",
-        flexWrap: "nowrap",
-        alignItems: "center",
-        gap: 10,
-    },
-    productImage: {
-        width: 40,
-        height: 40,
-        borderRadius: 8,
-    },
-    productName: {
-        fontFamily: "mulish-semibold",
-        color: "#222222",
-        flexWrap: "wrap",
-    },
-    productQuantityWrapper: {
-        display: "flex",
-        flexDirection: "row",
-        width: "35%",
-        justifyContent: "flex-end",
-        alignItems: "center",
-        gap: 7.5,
-    },
-    productQuantityContainer: {
-        display: "flex",
-        flexDirection: "row",  
-        height: 30,
-        backgroundColor: "#f8f8f8",
-        width: 70,
-        justifyContent: "space-between",
-        alignItems: "center",
-        borderRadius: 5,
-
-    },
-    quantityButton: {
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        width: 20,
-        height: 20,
-    },
-    quantityButtonText: {
-        fontFamily: "mulish-bold",
-        color: "#222222",
-    },
-    quantityInput: {
-        fontFamily: "mulish-regular",
-        textAlign: "center",
-    },
-
-
     main: {
         minHeight: "100%",
         width: "100%",
@@ -382,6 +338,7 @@ const style = StyleSheet.create({
         alignItems: 'center',
         flexDirection: 'column',
         justifyContent: 'flex-start',
+        marginBottom: 100,
     },
     mainContent: {
         display: 'flex',
@@ -408,6 +365,31 @@ const style = StyleSheet.create({
         width: "100%",
         flex: 1,
         justifyContent: 'flex-start',
+    },
+    productsWrapper: {
+        display: "flex",
+        flexDirection: "column",
+        width: "100%",
+        justifyContent: "flex-start",
+        alignContent: "center", 
+        gap: 10,       
+    },
+    productsHeading: {
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",  
+    },
+    producPlaceholder:  {
+        fontFamily: "mulish-bold",
+        fontSize: 12,
+        color: "#222222",
+    },
+    addProduct: {
+        fontFamily: "mulish-semibold",
+        color: primaryColor,
+        textDecorationLine: "underline",
+        fontSize: 12,
     },
 })
  

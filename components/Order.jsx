@@ -16,7 +16,14 @@ const Order = ({item, index, length}) => {
                 style={style.orderImage}
             />
             <View style={style.orderInfo}>
-                <Text style={style.orderMainText}>{item.name}, {item.location}</Text>
+                <Text 
+                    style={[
+                        style.orderMainText,
+                        {color: item.newMessage ? 'rgba(34, 34, 34, 1)' : 'rgba(34, 34, 34, 0.8)'},
+                    ]}
+                >
+                    {item.name}, {item.location}
+                    </Text>
                 <Text style={style.orderSubText}>{
                     item.products.map((product, index) => {
                         return `${index === 0 ? '' : ', '} ${product.product_name} x ${product.quantity}`
@@ -25,6 +32,7 @@ const Order = ({item, index, length}) => {
                 <Text style={style.orderSubText}>{item.datetime}</Text>
             </View>
             <View style={style.orderPriceContainer}>
+                {item.newMessage && <View style={style.newMessageIndicator} />}
                 <Text style={style.orderPrice}>
                     ₦{item.price}.<Text style={style.decimal}>00</Text>
                 </Text>
@@ -64,9 +72,8 @@ const style = StyleSheet.create({
         flexGrow: 1,
     },
     orderMainText: {
-        fontFamily: 'mulish-semibold',
+        fontFamily: 'mulish-bold',
         fontSize: 12,
-        color: 'rgba(34, 34, 34, 1)',
     },
     orderSubText: {
         fontFamily: 'mulish-regular',
@@ -84,7 +91,20 @@ const style = StyleSheet.create({
         display: 'flex',
         flexDirection: 'column',
         gap: 5,
+        alignItems: 'flex-end',
         justifyContent: 'center',
+        width: 70,
+        position: 'relative',
+    },
+    newMessageIndicator: {
+        width: 6,
+        height: 6,
+        borderRadius: 6,
+        top: -6,
+        right: 2,
+        margin: 0,
+        position: 'absolute',
+        backgroundColor: "#D92D20",
     },
 })
  

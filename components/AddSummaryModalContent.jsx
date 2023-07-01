@@ -2,16 +2,18 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { primaryColor } from "../style/globalStyleSheet";
 import InfoIconWhite from "../assets/icons/InfoIconWhite";
 
-const AddSummaryModalContent = ({logistics, products, customerName, location, phoneNumber, price, address, waybillDetails, type}) => {
+const AddSummaryModalContent = ({logistics, products, customerName, location, phoneNumber, price, address, waybillDetails, shipperLocation, receiverLocation, type}) => {
 
     const receivable = price ? price - location.charge : null;
+
+    const totalQuantity = products.reduce((accumulator, product) => accumulator + product.quantity, 0);
 
     return (
         <View style={style.mainContainer}>
             <View style={style.listContainer}>
                 <View style={style.detailsWrapper}>
                     {type === "order" && <>
-                        <View>
+                        <View style={style.leftAlignedText}>
                             <Text style={style.detailDescription}>Customer's Name</Text>
                             <Text style={style.detail}>{customerName}</Text>
                             <Text style={style.detailDescription}>Delivery Address</Text>
@@ -29,15 +31,19 @@ const AddSummaryModalContent = ({logistics, products, customerName, location, ph
                         </View>
                     </>}
                     {type === "waybill" && <>
-                        <View>
-                            <Text style={style.detailDescription}>Logistics</Text>
-                            <Text style={style.detail}>{logistics.business_name}</Text>
+                        <View style={style.leftAlignedText}>
                             <Text style={style.detailDescription}>Waybill Details</Text>
                             <Text style={style.detail}>{waybillDetails}</Text>
+                            <Text style={style.detailDescription}>Shipper's Location</Text>
+                            <Text style={style.detail}>{shipperLocation}</Text>
                         </View>
                         <View style={style.rightAlignedText}>
                             <Text style={style.detailDescription}>Date</Text>
                             <Text style={style.detail}>{"20 Dec, 2023 10.04am"}</Text>
+                            <Text style={style.detailDescription}>Logistics</Text>
+                            <Text style={style.detail}>{logistics.business_name}</Text>
+                            <Text style={style.detailDescription}>Receiver's Location</Text>
+                            <Text style={style.detail}>{receiverLocation}</Text>
                         </View>
                     </>}
                 </View>
@@ -84,6 +90,13 @@ const AddSummaryModalContent = ({logistics, products, customerName, location, ph
                             <Text style={style.priceText}>₦{price.toLocaleString() }</Text>
                             <Text style={style.priceText}>-₦{location.charge.toLocaleString()}</Text>
                             <Text style={style.priceText}>₦{receivable.toLocaleString()}</Text>
+                        </View>
+                    </>}
+
+                    {type === "waybill" && <>
+                        <View style={style.totalWrapper}>
+                            <Text style={style.totalText}>Total Quantity</Text>
+                            <Text style={style.totalText}>{totalQuantity}</Text>
                         </View>
                     </>}
                 </View>
@@ -188,7 +201,8 @@ const style = StyleSheet.create({
     },
     priceContainer: {
         width: '100%',
-        height: 86,
+        maxHeight: 90,
+        minHeight: 40,
         backgroundColor: "#E66D1C",
         borderBottomLeftRadius: 12,
         borderBottomRightRadius: 12,
@@ -212,7 +226,16 @@ const style = StyleSheet.create({
         color: "#ffffff",
         fontSize: 10,
     },
+    leftAlignedText: {
+        display: 'flex',
+        flexDirection:  'column',
+        justifyContent: 'flex-start',
+        height: '100%',
+        width: '50%',
+        alignItems: 'flex-start',
+    },
     rightAlignedText: {
+        width: '50%',
         display: 'flex',
         flexDirection:  'column',
         justifyContent: 'flex-start',
@@ -251,6 +274,18 @@ const style = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: "#ffffff",
+    },
+    totalWrapper: {
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    totalText: {
+        fontFamily: "mulish-semibold",
+        color: "#ffffff",
+        fontSize: 12,
     }
 })
  

@@ -37,6 +37,7 @@ const Home = ({navigation}) => {
             price: 15000,
             status: "Delivered",
             imageUrl: require('../assets/images/komitex.png'),
+            newMessage: true,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "abc123",
@@ -59,6 +60,7 @@ const Home = ({navigation}) => {
             price: 13000,
             status: "Pending",
             imageUrl: require('../assets/images/fedex.png'),
+            newMessage: false,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "def456",
@@ -80,6 +82,7 @@ const Home = ({navigation}) => {
             price: 14000,
             status: "Dispatched",
             imageUrl: require('../assets/images/komitex.png'),
+            newMessage: true,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "ghi789",
@@ -101,6 +104,7 @@ const Home = ({navigation}) => {
             price: 16000,
             status: "Cancelled",
             imageUrl: require('../assets/images/dhl.png'),
+            newMessage: true,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "mno345",
@@ -122,6 +126,7 @@ const Home = ({navigation}) => {
             price: 12000,
             status: "Rescheduled",
             imageUrl: require('../assets/images/ups.png'),
+            newMessage: false,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "pqr678",
@@ -132,7 +137,7 @@ const Home = ({navigation}) => {
                 })
             },
         }
-    ]
+    ];
 
     // state to control overlay
     const [showOverlay, setShowOverlay] = useState(false);
@@ -469,6 +474,7 @@ const style = StyleSheet.create({
     },
     ordersListWrapper: {
         height: "100%",
+        width: "100%",
     }
 })
  
