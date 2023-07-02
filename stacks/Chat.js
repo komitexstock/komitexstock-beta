@@ -6,7 +6,7 @@ import {
     ScrollView, 
     TouchableWithoutFeedback, 
     StyleSheet, 
-    Image
+    Image,
 } from "react-native";
 import SendIcon from '../assets/icons/SendIcon';
 import PaperClipIcon from "../assets/icons/PaperClipIcon";
@@ -227,7 +227,12 @@ const style = StyleSheet.create({
         fontSize: 8,
         fontFamily: 'mulish-regular',
         color: "rgba(34, 34, 34, 0.6)",
-    },  
+    },
+    imageBackground: {
+        flex: 1,
+        resizeMode: 'cover',
+        justifyContent: 'center',
+    },
     messagesContainer: {
         flex: 1,
         width: "100%",

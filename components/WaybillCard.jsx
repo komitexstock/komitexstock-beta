@@ -20,16 +20,16 @@ const WaybillCard = ({waybill, index, length}) => {
                     style={[
                         style.orderMainText,
                         {color: waybill.newMessage ? 'rgba(34, 34, 34, 1)' : 'rgba(34, 34, 34, 0.8)'},
+                        {fontFamily: waybill.newMessage ? 'mulish-bold' : 'mulish-semibold'},
                     ]}
                 >
                     { waybill.products.map((product, index) => {
                         return `${index === 0 ? '' : ', '} ${product.product_name} x ${product.quantity}`
                     })}
                 </Text>
-                <Text style={style.orderSubText}>{waybill.datetime}</Text>
+                <Text style={style.orderDatetime}>{waybill.datetime}</Text>
             </View>
             <View style={style.orderPriceContainer}>
-                {waybill.newMessage && <View style={style.newMessageIndicator} />}
                 <Indicator type={waybill.status} text={waybill.status} />
             </View>
         </TouchableOpacity>
@@ -79,6 +79,12 @@ const style = StyleSheet.create({
         fontSize: 12,
         color: 'rgba(34, 34, 34, 0.6)',
     },
+    orderDatetime: {
+        fontFamily: 'mulish-regular',
+        fontSize: 10,
+        color: 'rgba(134, 134, 134, 1)',    
+        lineHeight: 30,
+    },
     orderPriceContainer: {
         display: 'flex',
         flexDirection: 'column',
@@ -86,18 +92,7 @@ const style = StyleSheet.create({
         alignItems: 'flex-end',
         justifyContent: 'center',
         width: 70,
-        position: 'relative',
         height: '100%',
-    },
-    newMessageIndicator: {
-        width: 6,
-        height: 6,
-        borderRadius: 6,
-        top: 0,
-        right: 2,
-        margin: 0,
-        position: 'absolute',
-        backgroundColor: "#D92D20",
     },
 })
  
