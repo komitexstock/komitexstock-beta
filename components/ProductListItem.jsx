@@ -40,7 +40,7 @@ const style = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         width: "100%",
-        minHeight: 70,
+        minHeight: 60,
         gap: 10,
         backgroundColor: '#ffffff',
         paddingVertical: 15,
@@ -57,7 +57,7 @@ const style = StyleSheet.create({
         fontFamily: 'mulish-semibold',
         fontSize: 12,
         color: 'rgba(34, 34, 34, 1)',
-        marginBottom: 8,
+        marginBottom: 4,
     },
     orderSubText: {
         fontFamily: 'mulish-regular',
