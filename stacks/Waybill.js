@@ -208,8 +208,8 @@ const Waybill = ({navigation}) => {
 
     // search modal state
     const searchModal = {
-        snapPointsArray: ["50%", "90%"],
-        autoSnapAt: 1,
+        snapPointsArray: ["50%", "80%", "100%"],
+        autoSnapAt: 2,
         sheetTitle: "",
         overlay: true,
         clearFilterFunction: false,

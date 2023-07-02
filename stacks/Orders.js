@@ -740,9 +740,9 @@ const Orders = ({navigation}) => {
 
     // search modal state
     const searchModal = {
-        snapPointsArray: ["50%", "90%"],
-        autoSnapAt: 1,
-        sheetTitle: "",
+        snapPointsArray: ["50%", "80%", "100%"],
+        autoSnapAt: 2,
+        sheetTitle: "Orders",
         overlay: true,
         clearFilterFunction: false,
         modalContent: <>
@@ -754,7 +754,7 @@ const Orders = ({navigation}) => {
             />
             <BottomSheetScrollView style={style.orderSearchResults}>
                 {ordersListSearched.map((order, index) => (
-                    <Order 
+                    <OrderListItem
                         key={order.id} 
                         item={order} 
                         index={index} 

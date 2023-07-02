@@ -22,6 +22,7 @@ import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import ProductCard from "../components/ProductCard";
 import AlertNotice from "../components/AlertNotice";
 import EditProductContent from "../components/EditProductContent";
+import ProductListItem from "../components/ProductListItem";
 
 
 const Products = ({navigation, route}) => {
@@ -54,6 +55,64 @@ const Products = ({navigation, route}) => {
             presentValue: 3,
             oldValue: 4,
             decimal: false,
+        },
+    ];
+
+    // list of products
+    const products = [
+        {
+            id: 1,
+            product_name: "Maybach Sunglasses",
+            quantity: 7,
+            price: 20000,
+            imageUrl: require('../assets/images/maybach-sunglasses.png'),
+            lowStock: false,
+            onPress: () => openModal("editProduct"),
+        },
+        {
+            id: 2,
+            product_name: "Accurate Watch",
+            quantity: 3,
+            price: 33000,
+            imageUrl: require('../assets/images/accurate-watch.png'),
+            lowStock: false,
+            onPress: () => openModal("editProduct"),
+        },
+        {
+            id: 3,
+            product_name: "Black Sketchers",
+            quantity: 0,
+            price: 35000,
+            imageUrl: require('../assets/images/black-sketchers.png'),
+            lowStock: true,
+            onPress: () => openModal("editProduct"),
+        },
+        {
+            id: 4,
+            product_name: "Brown Clarks",
+            quantity: 11,
+            price: 40000,
+            imageUrl: require('../assets/images/brown-clarks.png'),
+            lowStock: false,
+            onPress: () => openModal("editProduct"),
+        },
+        {
+            id: 5,
+            product_name: "Pheonix Sneakers",
+            quantity: 2,
+            price: 25000,
+            imageUrl: require('../assets/images/sneakers.png'),
+            lowStock: true,
+            onPress: () => openModal("editProduct"),
+        },
+        {
+            id: 6,
+            product_name: "Perfectly Useless Morning Watch",
+            quantity: 9,
+            price: 32000,
+            imageUrl: require('../assets/images/perfectly-useless-mornig-watch.png'),
+            lowStock: false,
+            onPress: () => openModal("editProduct"),
         },
     ];
 
@@ -216,9 +275,9 @@ const Products = ({navigation, route}) => {
 
     // search modal state
     const searchModal = {
-        snapPointsArray: ["50%", "100%"],
-        autoSnapAt: 1,
-        sheetTitle: "",
+        snapPointsArray: ["50%", "80%", "100%"],
+        autoSnapAt: 2,
+        sheetTitle: "Products",
         overlay: true,
         clearFilterFunction: false,
         modalContent: <>
@@ -229,7 +288,16 @@ const Products = ({navigation, route}) => {
                 backgroundColor={"#f8f8f8"}
             />
             <BottomSheetScrollView style={style.orderSearchResults}>
-                
+                {products.map(item => (
+                    <ProductListItem 
+                        key={item.id}
+                        product_name={item.product_name}
+                        quantity={item.quantity}
+                        price={item.price}
+                        imageUrl={item.imageUrl}
+                        onPress={item.onPress}
+                    />
+                ))}
             </BottomSheetScrollView>
         </>
     };
@@ -275,63 +343,6 @@ const Products = ({navigation, route}) => {
     }
 
     // console.log(modalRef.current);
-
-    const products = [
-        {
-            id: 1,
-            product_name: "Maybach Sunglasses",
-            quantity: 7,
-            price: 20000,
-            imageUrl: require('../assets/images/maybach-sunglasses.png'),
-            lowStock: false,
-            onPress: () => openModal("editProduct"),
-        },
-        {
-            id: 2,
-            product_name: "Accurate Watch",
-            quantity: 3,
-            price: 33000,
-            imageUrl: require('../assets/images/accurate-watch.png'),
-            lowStock: false,
-            onPress: () => openModal("editProduct"),
-        },
-        {
-            id: 3,
-            product_name: "Black Sketchers",
-            quantity: 0,
-            price: 35000,
-            imageUrl: require('../assets/images/black-sketchers.png'),
-            lowStock: true,
-            onPress: () => openModal("editProduct"),
-        },
-        {
-            id: 4,
-            product_name: "Brown Clarks",
-            quantity: 11,
-            price: 40000,
-            imageUrl: require('../assets/images/brown-clarks.png'),
-            lowStock: false,
-            onPress: () => openModal("editProduct"),
-        },
-        {
-            id: 5,
-            product_name: "Pheonix Sneakers",
-            quantity: 2,
-            price: 25000,
-            imageUrl: require('../assets/images/sneakers.png'),
-            lowStock: true,
-            onPress: () => openModal("editProduct"),
-        },
-        {
-            id: 6,
-            product_name: "Perfectly Useless Morning Watch",
-            quantity: 9,
-            price: 32000,
-            imageUrl: require('../assets/images/perfectly-useless-mornig-watch.png'),
-            lowStock: false,
-            onPress: () => openModal("editProduct"),
-        },
-    ];
 
     return (
         <>
@@ -396,14 +407,13 @@ const Products = ({navigation, route}) => {
                     keyExtractor={item => item.id}
                     data={products}
                     numColumns={2}
-                    renderItem={({ item, index }) => (
+                    renderItem={({ item }) => (
                         <ProductCard 
                             product_name={item.product_name}
                             quantity={item.quantity}
                             price={item.price}
                             imageUrl={item.imageUrl}
                             lowStock={item.lowStock}
-                            index={index}
                             onPress={item.onPress}
                         />
                     )}

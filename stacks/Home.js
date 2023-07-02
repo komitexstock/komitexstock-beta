@@ -284,8 +284,8 @@ const Home = ({navigation}) => {
                         setShowOverlay={setShowOverlay}
                         showOverlay={showOverlay}
                         closeModal={closeModal}
-                        snapPointsArray={["50%", "90%"]}
-                        autoSnapAt={1}
+                        snapPointsArray={["50%", "80%", "100%"]}
+                        autoSnapAt={2}
                         sheetTitle={""}
                     >
                         <SearchBar 
@@ -296,7 +296,7 @@ const Home = ({navigation}) => {
                         />
                         <BottomSheetScrollView style={style.orderSearchResults}>
                             {orders.map((order, index) => (
-                                <Order key={order.id} item={order} index={index} length={orders.length} />
+                                <OrderListItem key={order.id} item={order} index={index} length={orders.length} />
                             ))}
                         </BottomSheetScrollView>
                     </CustomBottomSheet>

@@ -41,7 +41,7 @@ const OrderListItem = ({item, index, length}) => {
             </View>
             <View style={style.orderPriceContainer}>
                   <Text style={style.orderPrice}>
-                    ₦{item.price}.<Text style={style.decimal}>00</Text>
+                    ₦{item.price.toLocaleString()}.<Text style={style.decimal}>00</Text>
                 </Text>
                 <Indicator type={item.status} text={item.status} />
             </View>
