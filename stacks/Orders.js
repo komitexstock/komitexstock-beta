@@ -19,6 +19,7 @@ import CustomBottomSheet from "../components/CustomBottomSheet";
 import FilterButtonGroup from "../components/FilterButtonGroup";
 import SearchBar from "../components/SearchBar";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import Badge from "../components/Badge";
 
 const Orders = ({navigation}) => {
 
@@ -816,7 +817,10 @@ const Orders = ({navigation}) => {
                                 <Text style={style.orderButtonText}>Send an Order</Text>
                             </TouchableOpacity>
                             <View style={style.recentOrderHeading}>
-                                <Text style={style.recentOrderHeadingText}>Recent Orders</Text>
+                                <View style={style.recentOrderTextWrapper}>
+                                    <Text style={style.recentOrderHeadingText}>Recent Orders</Text>
+                                    <Badge number={9} />
+                                </View>
                                 <View style={style.actionWrapper}>
                                     <TouchableOpacity 
                                         style={style.menuIcon}
@@ -912,6 +916,13 @@ const style = StyleSheet.create({
         height: 24,
         marginTop: 8,
         marginBottom: 20,
+    },
+    recentOrderTextWrapper: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        gap: 4,
     },
     recentOrderHeadingText: {
         fontFamily: "mulish-bold",

@@ -19,6 +19,7 @@ import FilterButtonGroup from "../components/FilterButtonGroup";
 import SearchBar from "../components/SearchBar";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import WaybillCard from "../components/WaybillCard";
+import Badge from "../components/Badge";
 
 const Waybill = ({navigation}) => {
 
@@ -462,15 +463,14 @@ const Waybill = ({navigation}) => {
                                     onPress={() => setTab("Outgoing")}
                                     >
                                     <Text style={tab === "Outgoing" ? style.tabButtonTextSelected : style.tabButtonText} >Outgoing</Text>
+                                    <Badge number={2} />
                                 </TouchableOpacity>
                                 <TouchableOpacity 
                                     style={tab === "Incoming" ? style.tabButtonSelected : style.tabButton}
                                     onPress={() => setTab("Incoming")}
                                 >
                                     <Text style={tab === "Incoming" ? style.tabButtonTextSelected : style.tabButtonText} >Incoming</Text>
-                                    <View style={style.badge}>
-                                        <Text style={style.badgeText}>1</Text>
-                                    </View>
+                                    <Badge number={0} />
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -632,26 +632,6 @@ const style = StyleSheet.create({
         fontFamily: 'mulish-semibold',
         fontSize: 14,
         color: "rgba(34, 34, 34, 1)",
-    },
-    badge: {
-        width: 16,
-        height: 16,
-        borderRadius: 8,
-        backgroundColor: "rgba(254, 243, 242, 1)",
-        display: 'flex',
-        flexDirection: 'row',
-        textAlign: 'center',
-        justifyContent: 'center',
-    },
-    badgeText: {
-        color: "rgba(180, 35, 24, 1)",
-        fontFamily: 'mulish-regular',
-        fontSize: 10,
-        lineHeight: 16,
-        height: 16,
-        textAlign: 'center',
-        width: 16,
-        
     },
 })
  
