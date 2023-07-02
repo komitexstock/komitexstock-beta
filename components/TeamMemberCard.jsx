@@ -12,7 +12,7 @@ import { primaryColor, secondaryColor } from "../style/globalStyleSheet";
 import Indicator from "./Indicator";
 
 const maxCardWidth = Dimensions.get("window").width/2 - 28;
-const TeamMemberCard = ({ imageUrl, admin, fullname, role, onPress, addNew}) => {
+const TeamMemberCard = ({ imageUrl, admin, fullname, role, onPress, addNew, deactivated}) => {
     return (
         <>   
             { !addNew ? (
@@ -32,6 +32,7 @@ const TeamMemberCard = ({ imageUrl, admin, fullname, role, onPress, addNew}) => 
                                     <Text style={style.contactText}>FJ</Text>
                                 </View>
                             ) }
+                            { deactivated && <Indicator text={"Deactivated"} type={"Cancelled"} /> }
                         </View>
                     </View>
                     <View style={style.secondaryWrapper}>

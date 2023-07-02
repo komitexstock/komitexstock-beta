@@ -25,7 +25,7 @@ const LogisticsCard = ({logistics, imageUrl, totalLocations, totalStock, lowStoc
                                 source={imageUrl} 
                                 style={style.image} 
                             />
-                            {   lowStock && <Indicator text={"lowStock"} type={"Pending"} />
+                            {   lowStock && <Indicator text={"Low Stock"} type={"Pending"} />
                             }
                         </View>
                         <Text style={style.logistics}>{logistics}</Text>

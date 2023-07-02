@@ -18,7 +18,7 @@ import CustomBottomSheet from "../components/CustomBottomSheet";
 import FilterButtonGroup from "../components/FilterButtonGroup";
 import SearchBar from "../components/SearchBar";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import WaybillCard from "../components/WaybillCard";
+import WaybillListItem from "../components/WaybillListItem";
 import Badge from "../components/Badge";
 
 const Waybill = ({navigation}) => {
@@ -480,7 +480,7 @@ const Waybill = ({navigation}) => {
                     keyExtractor={item => item.id}
                     data={tab === "Outgoing" ? outGoingWaybills : inComingWaybills}
                     renderItem={({ item, index }) => (
-                        <WaybillCard waybill={item} index={index} length={outGoingWaybills.length} />
+                        <WaybillListItem item={item} index={index} length={outGoingWaybills.length} />
                     )}
                 />
             </TouchableWithoutFeedback>

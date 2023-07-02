@@ -105,10 +105,16 @@ const Team = ({navigation}) => {
     const closeAllModal = () => {
         closeModal();
         closePopUpModal();
+        // reset all inputs
+        setFirstName("");
+        setLastName("");
+        setWorkEmail("");
+        setRole("");
     }
 
     // function to open bottom sheet popup
     const openPopUpModal = (type) => {
+        setForceBlur(true);
         popUpBottomSheetModalRef.current?.present();
         if (type === "Add" || type === "Edit") {
             setRoleInputActive(true);
@@ -150,7 +156,8 @@ const Team = ({navigation}) => {
             fullname: "Raymond Reddington",
             role: "Manager",
             onPress: () => {openModal("Edit")},
-            addNew: false 
+            addNew: false,
+            deactivated: false,
         },
         {
             id: 2,
@@ -160,6 +167,7 @@ const Team = ({navigation}) => {
             role: "Sales Rep",
             onPress: () => {openModal("Edit")},
             addNew: false,
+            deactivated: true,
         },
         {
             id: 3,
@@ -169,6 +177,7 @@ const Team = ({navigation}) => {
             role: "Sales Rep",
             onPress: () => {openModal("Edit")},
             addNew: false,
+            deactivated: false,
         },
         {
             id: 4,
@@ -176,7 +185,8 @@ const Team = ({navigation}) => {
             admin: false,
             role: "Sales Rep",
             onPress: () => {openModal("Add")},
-            addNew: true
+            addNew: true,
+            deactivated: false,
         }
     ];
 
@@ -208,6 +218,9 @@ const Team = ({navigation}) => {
     // state to store error in work email input value
     const [errorWorkEmail, setErrorWorkEmail] = useState(false);
 
+    // const state to force all to be input out of focus when popup modal is clicked
+    const [forceBlur, setForceBlur] = useState(false);
+
     // function to update work email
     const updateWorkEmail = (text) => {
         setWorkEmail(text);
@@ -236,6 +249,7 @@ const Team = ({navigation}) => {
             placeholder: "First Name",
             label: "First Name",
             value: firstName,
+            forceBlur: forceBlur,
             onChange: updateFirstName,
             error: errorFirstName,
             setError: setErrorFirstName
@@ -245,6 +259,7 @@ const Team = ({navigation}) => {
             placeholder: "Last Name",
             label: "Last Name",
             value: lastName,
+            forceBlur: forceBlur,
             onChange: updateLastName,
             error: errorLastName,
             setError: setErrorLastName
@@ -254,6 +269,7 @@ const Team = ({navigation}) => {
             placeholder: "Work Email",
             label: "Email address",
             value: workEmail,
+            forceBlur: forceBlur,
             onChange: updateWorkEmail,
             error: errorWorkEmail,
             setError: setErrorWorkEmail
@@ -306,6 +322,7 @@ const Team = ({navigation}) => {
                         role={item.role}
                         onPress={item.onPress}
                         addNew={item.addNew}
+                        deactivated={item.deactivated}
                     />
                 )}
             />
@@ -331,6 +348,7 @@ const Team = ({navigation}) => {
                                         placeholder={input.placeholder}
                                         label={input.label}
                                         value={input.value}
+                                        forceBlur={input.forceBlur}
                                         onChange={input.onChange}
                                         error={input.error}
                                         setError={input.setError}
@@ -423,10 +441,10 @@ const Team = ({navigation}) => {
                     <View style={style.popUpContent}>
                         <CautionPrompt />
                         <Text style={style.popUpHeading}>
-                            Deactivate Logistics
+                            Deactivate User
                         </Text>
                         <Text style={style.popUpParagraph}>
-                            Are you sure you want to deactivate Komitex Logistics
+                            Are you sure you want to deactivate Felix Jones
                         </Text>
                         <View style={style.popUpButtonWrapper}>
                             <ModalButton
@@ -446,10 +464,10 @@ const Team = ({navigation}) => {
                     <View style={style.popUpContent}>
                         <SuccessPrompt />
                         <Text style={style.popUpHeading}>
-                            Komitex Succesfully Deactivated
+                            Felix Jones Succesfully Deactivated
                         </Text>
                         <Text style={style.popUpParagraph}>
-                            You have successfully deactivated Komitex Logistics
+                            You have successfully deactivated Felix Jones
                         </Text>
                         <ModalButton
                             name={"Done"}

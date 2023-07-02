@@ -15,7 +15,7 @@ import QuickOrderIcon from "../assets/icons/QuickOrderIcon";
 import QuickAnalyticsIcon from "../assets/icons/AnalyticsIcon";
 import QuickInventoryIcon from "../assets/icons/QuickInventoryIcon";
 import QuickWaybiillIcon from "../assets/icons/QuickWaybillIcon";
-import Order from "../components/Order";
+import OrderListItem from "../components/OrderListItem";
 import CustomBottomSheet from "../components/CustomBottomSheet";
 import SearchBar from "../components/SearchBar";
 import { useState, useRef, useEffect } from "react";
@@ -274,7 +274,7 @@ const Home = ({navigation}) => {
                                 style={style.ordersListWrapper}
                             >
                                 {orders.map((order, index) => (
-                                    <Order key={order.id} item={order} index={index} length={orders.length} />
+                                    <OrderListItem key={order.id} item={order} index={index} length={orders.length} />
                                 ))}
                             </View>
                         </View>

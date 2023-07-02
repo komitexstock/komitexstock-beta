@@ -1,10 +1,16 @@
 import { Text, View, StyleSheet, TextInput, TouchableOpacity } from "react-native";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { primaryColor } from "../style/globalStyleSheet";
 import EyeIcon from "../assets/icons/EyeIcon";
 import EyeSlashIcon from "../assets/icons/EyeSlashIcon";
 
-const Input = ({label, placeholder, onChange, value, multiline, editable, minRows, textAlign, height, keyboardType, adornment, helperText, error, setError, isPasswordInput}) => {
+const Input = ({label, placeholder, onChange, value, forceBlur, multiline, editable, minRows, textAlign, height, keyboardType, adornment, helperText, error, setError, isPasswordInput}) => {
+
+    // listen for change in force blur
+    useEffect(() => {
+        // if force blur is true, set input in focus as false
+        forceBlur && setInputInFocus(false);
+    }, [forceBlur])
 
     const handleTextChange = (text) => {
         onChange(text);

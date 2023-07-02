@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, BackHandler } from "react-native";
 import FilterIcon from "../assets/icons/FilterIcon";
-import Order from "../components/Order";
+import OrderListItem from "../components/OrderListItem";
 import CustomBottomSheet from "../components/CustomBottomSheet";
 import { useState, useRef, useEffect } from "react";
 import Header from "../components/Header";
@@ -64,78 +64,78 @@ const Notifications = ({navigation}) => {
 
     const orders1 = [
         {
-          name: "Sophia Brown",
-          location: "Tokyo",
-          products: [
-            { product_name: "T-Shirt", quantity: 3 },
-          ],
-          datetime: "2023-02-14 16:55",
-          id: "pqr678",
-          price: 12000,
-          status: "Rescheduled",
-          imageUrl: require('../assets/images/dhl.png'),
+			name: "Sophia Brown",
+			location: "Tokyo",
+			products: [
+				{ product_name: "T-Shirt", quantity: 3 },
+			],
+			datetime: "2023-02-14 16:55",
+			id: "pqr678",
+			price: 12000,
+			status: "Rescheduled",
+			imageUrl: require('../assets/images/dhl.png'),
         },
         {
-          name: "Sarah Johnson",
-          location: "Chicago",
-          products: [
-            { product_name: "Tennis Shoes", quantity: 1 },
-          ],
-          datetime: "2023-06-01 11:20",
-          id: "789def",
-          price: 15500,
-          status: "Delivered",
-          imageUrl: require('../assets/images/ups.png'),
+			name: "Sarah Johnson",
+			location: "Chicago",
+			products: [
+				{ product_name: "Tennis Shoes", quantity: 1 },
+			],
+			datetime: "2023-06-01 11:20",
+			id: "789def",
+			price: 15500,
+			status: "Delivered",
+			imageUrl: require('../assets/images/ups.png'),
         },
         {
-          name: "Matthew Wilson",
-          location: "Sydney",
-          products: [
-            { product_name: "Backpack", quantity: 1 },
-            { product_name: "Water Bottle", quantity: 1 },
-          ],
-          datetime: "2023-05-20 14:30",
-          id: "012ghi",
-          price: 17000,
-          status: "Pending",
-          imageUrl: require('../assets/images/komitex.png'),
+			name: "Matthew Wilson",
+			location: "Sydney",
+			products: [
+				{ product_name: "Backpack", quantity: 1 },
+				{ product_name: "Water Bottle", quantity: 1 },
+			],
+			datetime: "2023-05-20 14:30",
+			id: "012ghi",
+			price: 17000,
+			status: "Pending",
+			imageUrl: require('../assets/images/komitex.png'),
         },
         {
-          name: "Sophie Lee",
-          location: "Seoul",
-          products: [
-            { product_name: "Sneakers", quantity: 1 },
-          ],
-          datetime: "2023-06-03 16:10",
-          id: "345jkl",
-          price: 12500,
-          status: "Dispatched",
-          imageUrl: require('../assets/images/komitex.png'),
+			name: "Sophie Lee",
+			location: "Seoul",
+			products: [
+				{ product_name: "Sneakers", quantity: 1 },
+			],
+			datetime: "2023-06-03 16:10",
+			id: "345jkl",
+			price: 12500,
+			status: "Dispatched",
+			imageUrl: require('../assets/images/komitex.png'),
         },
         {
-          name: "Daniel Brown",
-          location: "London",
-          products: [
-            { product_name: "Joggers", quantity: 1 },
-            { product_name: "Hoodie", quantity: 1 },
-          ],
-          datetime: "2023-05-12 09:45",
-          id: "678mno",
-          price: 19500,
-          status: "Delivered",
-          imageUrl: require('../assets/images/komitex.png'),
+			name: "Daniel Brown",
+			location: "London",
+			products: [
+				{ product_name: "Joggers", quantity: 1 },
+				{ product_name: "Hoodie", quantity: 1 },
+			],
+			datetime: "2023-05-12 09:45",
+			id: "678mno",
+			price: 19500,
+			status: "Delivered",
+			imageUrl: require('../assets/images/komitex.png'),
         },
         {
-          name: "Emma Davis",
-          location: "Paris",
-          products: [
-            { product_name: "Skateboard", quantity: 1 },
-          ],
-          datetime: "2023-06-02 13:15",
-          id: "901pqr",
-          price: 8000,
-          status: "Canceled",
-          imageUrl: require('../assets/images/fedex.png'),
+			name: "Emma Davis",
+			location: "Paris",
+			products: [
+				{ product_name: "Skateboard", quantity: 1 },
+			],
+			datetime: "2023-06-02 13:15",
+			id: "901pqr",
+			price: 8000,
+			status: "Canceled",
+			imageUrl: require('../assets/images/fedex.png'),
         },
     ];
 
@@ -182,47 +182,47 @@ const Notifications = ({navigation}) => {
         id: 1,
         title: "Status",
         buttons: [
-          {
-            id: 1,
-            text: "All",
-            selected: true,
-          },
-          {
-            id: 2,
-            text: "Pending",
-            selected: false,
-          },
-          {
-            id: 3,
-            text: "Delivered",
-            selected: false,
-          },
-          {
-            id: 4,
-            text: "Cancelled",
-            selected: false,
-          },
+			{
+				id: 1,
+				text: "All",
+				selected: true,
+			},
+			{
+				id: 2,
+				text: "Pending",
+				selected: false,
+			},
+			{
+				id: 3,
+				text: "Delivered",
+				selected: false,
+			},
+			{
+				id: 4,
+				text: "Cancelled",
+				selected: false,
+			},
         ]
       },
       {
         id: 2,
         title: "Sort by",
         buttons: [
-          {
-            id: 1,
-            text: "Time",
-            selected: true,
-          },
-          {
-            id: 2,
-            text: "Logistics",
-            selected: false,
-          },
-          {
-            id: 3,
-            text: "Customer Name",
-            selected: false,
-          },
+			{
+				id: 1,
+				text: "Time",
+				selected: true,
+			},
+			{
+				id: 2,
+				text: "Logistics",
+				selected: false,
+			},
+			{
+				id: 3,
+				text: "Customer Name",
+				selected: false,
+			},
         ]
       }
     ]
@@ -242,7 +242,7 @@ const Notifications = ({navigation}) => {
                 </View>
                 <View style={style.notificationWrapper}>
                     {orders.map((item, index) => (
-                        <Order item={item} index={index} key={index} length={orders.length} />
+                        <OrderListItem item={item} index={index} key={index} length={orders.length} />
                     ))}
                 </View>
                 <View style={style.dateWrapper}>
@@ -250,7 +250,7 @@ const Notifications = ({navigation}) => {
                 </View>
                 <View style={style.notificationWrapper}>
                     {orders1.map((item, index) => (
-                        <Order item={item} index={index} key={index} length={orders.length} />
+                        <OrderListItem item={item} index={index} key={index} length={orders.length} />
                     ))}
                 </View>
             </View>
@@ -289,42 +289,42 @@ const style = StyleSheet.create({
         flex: 1,
     },
     date: {
-      color: 'rgba(34, 34, 34, 0.8)',
-      fontSize: 12,
-      fontFamily: 'mulish-semibold',
+		color: 'rgba(34, 34, 34, 0.8)',
+		fontSize: 12,
+		fontFamily: 'mulish-semibold',
     },
     dateWrapper: {
-      display: 'flex',
-      justifyContent: 'flex-start',
-      flexDirection: 'row',
-      width: "100%",
-      paddingVertical: 10,
+		display: 'flex',
+		justifyContent: 'flex-start',
+		flexDirection: 'row',
+		width: "100%",
+		paddingVertical: 10,
     },
     modalContent: {
-      display: "flex",
-      flexDirection: 'column',
-      alignItems: "center",
-      justifyContent: "space-between",
-      width: "100%",
-      // backgroundColor: "pink",
-      flex: 1,
+		display: "flex",
+		flexDirection: 'column',
+		alignItems: "center",
+		justifyContent: "space-between",
+		width: "100%",
+		// backgroundColor: "pink",
+		flex: 1,
     },
     footerButtonWrapper: {
-      width: "100%",
+		width: "100%",
     },
     footerButton: {
-      width: "100%",
-      height: 44,
-      backgroundColor: primaryColor,
-      borderRadius: 12,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center", 
+		width: "100%",
+		height: 44,
+		backgroundColor: primaryColor,
+		borderRadius: 12,
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center", 
     },
     footerButtonText: {
-      color: "white",
-      fontSize: 16,
-      fontFamily: 'mulish-semibold',
+		color: "white",
+		fontSize: 16,
+		fontFamily: 'mulish-semibold',
     }
 });
  

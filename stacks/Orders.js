@@ -14,7 +14,7 @@ import StatCard from "../components/StatCard";
 import { useState, useRef, useEffect } from "react";
 import SearchIcon from '../assets/icons/SearchIcon'
 import FilterIcon from '../assets/icons/FilterIcon';
-import Order from "../components/Order";
+import OrderListItem from "../components/OrderListItem";
 import CustomBottomSheet from "../components/CustomBottomSheet";
 import FilterButtonGroup from "../components/FilterButtonGroup";
 import SearchBar from "../components/SearchBar";
@@ -843,7 +843,7 @@ const Orders = ({navigation}) => {
                     keyExtractor={item => item.id}
                     data={orderList}
                     renderItem={({ item, index }) => (
-                        <Order item={item} index={index} length={orderList.length} />
+                        <OrderListItem item={item} index={index} length={orderList.length} />
                     )}
                 />
             </TouchableWithoutFeedback>
