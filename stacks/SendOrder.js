@@ -400,10 +400,15 @@ const SendOrder = ({navigation}) => {
                                                 <TouchableOpacity
                                                     onPress={() => openModal("Products", "Select Products", null, 0)}
                                                 >
-                                                    <Text style={style.addProduct}>+Add Product</Text>
+                                                    <Text style={style.addProduct}>+Select Product</Text>
+                                                </TouchableOpacity>
+                                                <TouchableOpacity
+                                                    onPress={() => navigation.navigate("AddProduct")}
+                                                >
+                                                    <Text style={style.addProduct}>+New Product</Text>
                                                 </TouchableOpacity>
                                             </View>
-                                            { products.map((product) => (
+                                            { products.length !== 0 ? products.map((product) => (
                                                 <Product 
                                                     key={product.id} 
                                                     product={product} 
@@ -411,7 +416,13 @@ const SendOrder = ({navigation}) => {
                                                     increaseQuantity={increaseQuantity}
                                                     decreaseQuantity={decreaseQuantity}
                                                 />
-                                            ))}
+                                            )) : (
+                                                <View style={style.noProductWrapper}>
+                                                    <Text style={style.noProductText}>
+                                                        No product selected. Kindly add a new product or select one from your inventory
+                                                    </Text>
+                                                </View>
+                                            )}
                                         </View>
                                         {inputs.map((input) => (
                                             <Input 
@@ -545,11 +556,13 @@ const style = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",  
+        gap: 12,
     },
     producPlaceholder:  {
         fontFamily: "mulish-bold",
         fontSize: 12,
         color: "#222222",
+        flex: 1,
     },
     addProduct: {
         fontFamily: "mulish-semibold",
@@ -557,6 +570,24 @@ const style = StyleSheet.create({
         textDecorationLine: "underline",
         fontSize: 12,
     },
+    noProductWrapper: {
+        minHeight: 50,
+        width: "100%",
+        display: "flex",
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        backgroundColor: 'rgba(230, 109, 28, 0.05)',
+        padding: 10,
+        borderRadius: 12,
+
+    },
+    noProductText: {
+        fontSize: 10,
+        fontFamily: 'mulish-regular',
+        color: "#222222",
+    }
+
 })
  
 export default SendOrder;

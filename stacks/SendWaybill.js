@@ -273,7 +273,7 @@ const SendWaybill = ({navigation}) => {
                                                     <Text style={style.addProduct}>+Add Product</Text>
                                                 </TouchableOpacity>
                                             </View>
-                                            { products.map((product) => (
+                                            { products.length !== 0 ? products.map((product) => (
                                                 <Product 
                                                     key={product.id} 
                                                     product={product} 
@@ -281,7 +281,13 @@ const SendWaybill = ({navigation}) => {
                                                     increaseQuantity={increaseQuantity}
                                                     decreaseQuantity={decreaseQuantity}
                                                 />
-                                            ))}
+                                            )) : (
+                                                <View style={style.noProductWrapper}>
+                                                    <Text style={style.noProductText}>
+                                                        No product selected. Kindly add a new product or select one from your inventory
+                                                    </Text>
+                                                </View>
+                                            )}
                                     </View>}
                                 </View>
                             </View>
@@ -391,6 +397,22 @@ const style = StyleSheet.create({
         textDecorationLine: "underline",
         fontSize: 12,
     },
+    noProductWrapper: {
+        minHeight: 50,
+        width: "100%",
+        display: "flex",
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        backgroundColor: 'rgba(230, 109, 28, 0.05)',
+        padding: 10,
+        borderRadius: 12,
+    },
+    noProductText: {
+        fontSize: 10,
+        fontFamily: 'mulish-regular',
+        color: "#222222",
+    }
 })
  
 export default SendWaybill;

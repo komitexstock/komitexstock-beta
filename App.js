@@ -41,8 +41,7 @@ export default function App() {
 
   const [fontsLoaded] = useFonts({
     'mulish-regular': require('./assets/fonts/Mulish-Regular.ttf'),
-    'mulish-italic': require('./assets/fonts/Mulish-Italic.ttf'),
-    'mulish-light': require('./assets/fonts/Mulish-Light.ttf'),
+    'mulish-medium': require('./assets/fonts/Mulish-Medium.ttf'),
     'mulish-semibold': require('./assets/fonts/Mulish-SemiBold.ttf'),
     'mulish-bold': require('./assets/fonts/Mulish-Bold.ttf'),
   });
