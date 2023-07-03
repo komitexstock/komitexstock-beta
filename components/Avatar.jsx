@@ -2,21 +2,27 @@ import { View, Text, Image, StyleSheet } from "react-native";
 import { primaryColor, secondaryColor } from "../style/globalStyleSheet";
 
 const Avatar = ({imageUrl, fullname}) => {
+    // imageUrl => string | path to image
+    // fullname => string
 
+    // get initails of fullnames e.g John Doe returns JD
     const initials = fullname
     .split(' ')
     .map(name => name.charAt(0))
     .join('')
     .toUpperCase();
 
+    // render Avatar
     return (
         <View style={style.avatarWrapper}>
+            {/* display image if its given */}
             {imageUrl ? (
                 <Image
                     source={imageUrl}
                     style={style.avatarImage}
                 />
             ):(
+                // else display initials
                 <Text style={style.initials}>{initials}</Text>  
             )}
         </View>

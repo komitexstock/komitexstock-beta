@@ -1,25 +1,46 @@
-import { View, Image, Text, TouchableOpacity, TouchableWithoutFeedback, StyleSheet, Keyboard } from "react-native";
+// react native component
+import {
+    View,
+    Image,
+    Text,
+    TouchableOpacity,
+    TouchableWithoutFeedback,
+    StyleSheet,
+    Keyboard
+} from "react-native";
+// bottomsheet component
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import { primaryColor } from "../style/globalStyleSheet";
+// color
+import { black, bodyText, primaryColor, secondaryColor, white } from "../style/globalStyleSheet";
+// components
 import Input from "../components/Input";
+// react hook
 import { useState } from "react";
+// image picker method
 import * as ImagePicker from 'expo-image-picker';
+// icon
 import GalleryBlackIcon from "../assets/icons/GalleryBlackIcon";
+import InfoIcon from "../assets/icons/InfoIcon";
 
+// Edit product modal content
 const EditProductContent = ({product}) => {
 
     // state to store product name
     const [productName, setProductName] = useState("Maybach Sunglasses");
+
     // state to store price value
     const [price, setPrice] = useState(20000);
 
+    // product name error
     const [errorProductName, setErrorProductName] = useState(false);
+    
+    // price error
     const [errorPrice, setErrorPrice] = useState(false);
 
     // state to hold selected image
     const [selectedImage, setSelectedImage] = useState(null);
-    // console.log(selectedImage)
 
+    // empty fields
     const emptyFields = [
         productName, 
         price,
@@ -28,6 +49,7 @@ const EditProductContent = ({product}) => {
             (item) => item === null || item === ''
     );
 
+    // update price function
     const updatePrice = (text) => {
         let newText = text.replace(new RegExp(',', 'g'), '');
         // remove all occurrence of the comma character ',' in text gloablly
@@ -36,6 +58,7 @@ const EditProductContent = ({product}) => {
         
     }
 
+    // upload image function
     const pickImageAsync = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
             allowsEditing: true,
@@ -47,6 +70,7 @@ const EditProductContent = ({product}) => {
         } 
     };
 
+    // return EditProductContent component
     return (
         <TouchableWithoutFeedback 
             style={{height: "100%"}}
@@ -59,6 +83,7 @@ const EditProductContent = ({product}) => {
             >
                 <View style={style.main}>
                     <View style={style.productOldDetails}>
+                        {/* product image button */}
                         <Image 
                             style={style.productImage}
                             source={!selectedImage ? 
@@ -66,12 +91,14 @@ const EditProductContent = ({product}) => {
                                 {uri: selectedImage}
                             }
                         />
+                        {/* upload image button, position absolute */}
                         <TouchableOpacity 
                             style={style.editImageButton}
                             onPress={pickImageAsync}
                         >
                             <GalleryBlackIcon />
                         </TouchableOpacity>
+                        {/* product details */}
                         <View style={style.productTextWrapper}>
                             <View>
                                 <Text style={style.productName}>
@@ -81,10 +108,20 @@ const EditProductContent = ({product}) => {
                                     7
                                     <Text style={style.faintText}> in stock</Text>
                                 </Text>
+                                <View style={style.lastDeliveryWrapper}>
+                                    <TouchableOpacity>
+                                        <InfoIcon />
+                                    </TouchableOpacity>
+                                    <Text style={style.productStock}>
+                                        <Text style={style.faintText}>Last delivery </Text>
+                                        yesterday
+                                    </Text>
+                                </View>
                             </View>
                             <Text style={style.productPrice}>₦20,000</Text>
                         </View>
                         <View style={style.inputContainer}>
+                            {/* Product name input */}
                             <Input 
                                 label={"Product Name"}
                                 placeholder={"Type the name of the product"}
@@ -102,6 +139,7 @@ const EditProductContent = ({product}) => {
                                 setError={setErrorProductName}
                             />
 
+                            {/* price input */}
                             <Input 
                                 label={"Price"}
                                 placeholder={"Price"}
@@ -118,13 +156,14 @@ const EditProductContent = ({product}) => {
                                 error={errorPrice}
                                 setError={setErrorPrice}
                             />
-
                         </View>
                     </View>
                     <View style={style.actionButtonsWrapper}>
+                        {/* delete product */}
                         <TouchableOpacity style={style.delete}>
                             <Text style={style.deleteText}>Delete</Text>
                         </TouchableOpacity>
+                        {/* save product changes */}
                         <TouchableOpacity style={[style.save]}>
                             <Text style={style.saveText}>Save</Text>
                         </TouchableOpacity>
@@ -135,6 +174,7 @@ const EditProductContent = ({product}) => {
     );
 }
 
+// stylesheet
 const style = StyleSheet.create({
     main: {
         width: '100%',
@@ -163,7 +203,7 @@ const style = StyleSheet.create({
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#ffffff",
+        backgroundColor: white,
     },
     productImage: {
         width: '100%',
@@ -180,17 +220,22 @@ const style = StyleSheet.create({
     productName: {
         fontFamily: 'mulish-semibold',
         fontSize: 14,
-        color: "rgba(34, 34, 34, 1)",
+        color: black,
     },
     productStock: {
-        fontFamily: 'mulish-regular',
+        fontFamily: 'mulish-medium',
         fontSize: 12,
-        color: "rgba(34, 34, 34, 1)",
+        color: black,
     },
     faintText: {
-        fontFamily: 'mulish-regular',
         fontSize: 12,
-        color: "rgba(34, 34, 34, 0.6)",
+        color: bodyText,
+    },
+    lastDeliveryWrapper: {
+        display: 'flex',
+        flexDirection: 'row',
+        gap: 8,
+        justifyContent: 'flex-start',
     },
     productPrice: {
         fontFamily: 'mulish-semibold',
@@ -220,7 +265,7 @@ const style = StyleSheet.create({
         flexGrow: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: "rgba(7, 66, 124, 0.05)",
+        backgroundColor: secondaryColor,
         borderRadius: 12,
     },
     deleteText: {
@@ -229,7 +274,7 @@ const style = StyleSheet.create({
     },
     saveText: {
         fontFamily: 'mulish-semibold',
-        color: "#ffffff",
+        color: white,
     },
     save: {
         height: 44,

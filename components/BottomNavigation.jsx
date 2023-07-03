@@ -11,6 +11,8 @@ import AccountIcon from "../assets/icons/AccountIcon";
 import AccountActiveIcon from "../assets/icons/AccountActiveIcon";
 import { useNavigation } from '@react-navigation/native';
 import { useStack } from "../context/AppContext";
+// colors
+import { white, neutral, primaryColor } from "../style/globalStyleSheet";
 
 const BottomNavigation = () => {
 
@@ -87,7 +89,7 @@ const style = StyleSheet.create({
     bottomNavigation: {
         display: 'flex',
         flexDirection: 'row',
-        backgroundColor: '#ffffff',
+        backgroundColor: white,
         position: 'absolute',
         justifyContent: 'space-evenly',
         alignItems: 'center',
@@ -110,12 +112,12 @@ const style = StyleSheet.create({
         justifyContent: 'center',
     },
     activeText: {
-        color: '#07427C',
+        color: primaryColor,
         fontFamily: 'mulish-bold',
         fontSize: 8,
     },
     inactiveText: {
-        color: '#B1B2B2',
+        color: neutral,
         fontFamily: 'mulish-bold',
         fontSize: 8,
     },

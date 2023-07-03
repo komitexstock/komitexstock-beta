@@ -1,17 +1,23 @@
 
+// react native components
 import { TouchableOpacity, Text, StyleSheet } from "react-native";
+// colors
+import { background, bodyText } from "../style/globalStyleSheet";
 
+// button above text input in chat
 const ActionButton = ({name, onPress}) => {
     return (
         <TouchableOpacity
             style={style.actionButton}
             onPress={onPress}
         >
+            {/* button text */}
             <Text style={style.actionButtonText}>{name}</Text>
         </TouchableOpacity>
     );
 }
 
+// stylesheet
 const style = StyleSheet.create({
     actionButton: {
         width: 70,
@@ -19,14 +25,14 @@ const style = StyleSheet.create({
         display: 'flex',
         alignItems: 'center',
         justifyContent: "center",
-        backgroundColor: "#f8f8f8",
+        backgroundColor: background,
         marginBottom: 15,
         borderRadius: 5,
     },
     actionButtonText: {
         fontFamily: 'mulish-regular',
         fontSize: 10,
-        color: "rgba(34, 34, 34, 0.6)",
+        color: bodyText,
     }
 })
  

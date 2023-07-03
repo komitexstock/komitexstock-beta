@@ -1,3 +1,4 @@
+// react native component
 import { 
     View, 
     Text, 
@@ -7,22 +8,30 @@ import {
     StyleSheet,
     BackHandler
 } from "react-native";
+// colors
+import { bodyText, primaryColor, secondaryColor, white } from "../style/globalStyleSheet";
+// icons
 import MenuIcon from "../assets/icons/MenuIcon";
-import { primaryColor } from "../style/globalStyleSheet";
-import StatWrapper from "../components/StatWrapper";
-import StatCard from "../components/StatCard";
-import { useState, useRef, useEffect } from "react";
 import SearchIcon from '../assets/icons/SearchIcon'
 import FilterIcon from '../assets/icons/FilterIcon';
+// react hooks
+import { useState, useRef, useEffect } from "react";
+// components
+import StatWrapper from "../components/StatWrapper";
+import StatCard from "../components/StatCard";
 import OrderListItem from "../components/OrderListItem";
 import CustomBottomSheet from "../components/CustomBottomSheet";
 import FilterButtonGroup from "../components/FilterButtonGroup";
 import SearchBar from "../components/SearchBar";
-import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import Badge from "../components/Badge";
+import ModalButton from "../components/ModalButton";
+import Header from "../components/Header";
+// bottomsheet components
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 
 const Orders = ({navigation}) => {
 
+    // orders list
     const orderList = [
         {
             name: "John Doe",
@@ -471,6 +480,7 @@ const Orders = ({navigation}) => {
         },
     ];
 
+    // searched order list
     const ordersListSearched = [
         {
             name: "Emily Wilson",
@@ -559,6 +569,7 @@ const Orders = ({navigation}) => {
         },
     ]
 
+    // order daily stat array
     const stats = [
         {
             id: 1,
@@ -598,6 +609,7 @@ const Orders = ({navigation}) => {
         },
     ];
 
+    // filter order button
     const filterButtons = [
         {
             id: 1,
@@ -674,11 +686,13 @@ const Orders = ({navigation}) => {
         }
     ]
 
+    // state to store search query
     const [searchQuery, setSearchQuery] = useState("");
 
     // search modal refernce
     const modalRef = useRef(null);
 
+    // state to store modal parameters
     const [modal, setModal] = useState({
         snapPointsArray: ["50%"],
         autoSnapAt: 0,
@@ -688,7 +702,7 @@ const Orders = ({navigation}) => {
         clearFilterFunction: false,
     })
 
-    // use effect to close modal
+    // use effect to close modal if back button is pressed
     useEffect(() => {
         // function to run if back button is pressed
         const backAction = () => {
@@ -713,7 +727,7 @@ const Orders = ({navigation}) => {
 
     }, [modal.overlay]);
 
-    // filter modal state
+    // filter modal parameters
     const filterModal = {
         snapPointsArray: ["50%"],
         autoSnapAt: 0,
@@ -729,16 +743,15 @@ const Orders = ({navigation}) => {
                     key={item.id}
                     />
                 ))}
-                <View style={style.footerButtonWrapper}>
-                    <TouchableOpacity style={style.footerButton}>
-                        <Text style={style.footerButtonText}>Apply</Text>
-                    </TouchableOpacity>
-                </View>
+                <ModalButton
+                    name={"Apply"}
+                    onPress={() => {}}
+                />
             </View>
         </>
     };
 
-    // search modal state
+    // search modal parameters
     const searchModal = {
         snapPointsArray: ["50%", "80%", "100%"],
         autoSnapAt: 2,
@@ -765,6 +778,7 @@ const Orders = ({navigation}) => {
         </>
     };
 
+    // close modal function
     const closeModal = () => {
         setModal(prevModal => {
             return {
@@ -775,6 +789,7 @@ const Orders = ({navigation}) => {
         modalRef.current?.close();
     };
 
+    // open modal function
     const openModal = (type) => {
         if (type === "filter") {
             setModal(filterModal);
@@ -786,17 +801,22 @@ const Orders = ({navigation}) => {
 
     return (
         <>
-            <TouchableWithoutFeedback style={{flex: 1, width: "100%", height: "100%"}}>
+            <TouchableWithoutFeedback style={{flex: 1}}>
                 <FlatList 
+                    // disable flatlist vertical scroll indicator
                     showsVerticalScrollIndicator={false}
+                    // flat list header component
                     ListHeaderComponent={
                         <View style={style.headerWrapper}>
-                            <View style={style.header}>
-                                <Text style={style.headerText}>Orders</Text>
-                                <TouchableOpacity style={style.menuIcon}>
-                                    <MenuIcon />
-                                </TouchableOpacity>
-                            </View>
+                            {/* Header component */}
+                            <Header
+                                navigation={navigation}
+                                stackName={"Orders"}
+                                removeBackArrow={true}
+                                unpadded={true}
+                                icon={<MenuIcon />}
+                                iconFunction={() => {}}
+                            />
                             <StatWrapper>
                                 {stats.map(stat => (
                                     <StatCard
@@ -810,6 +830,7 @@ const Orders = ({navigation}) => {
                                     />
                                 ))}
                             </StatWrapper>
+                            {/* onPress navigate to sendOrder page */}
                             <TouchableOpacity 
                                 style={style.sendOrderButton}
                                 onPress={() => navigation.navigate("SendOrder")}
@@ -819,15 +840,18 @@ const Orders = ({navigation}) => {
                             <View style={style.recentOrderHeading}>
                                 <View style={style.recentOrderTextWrapper}>
                                     <Text style={style.recentOrderHeadingText}>Recent Orders</Text>
+                                    {/* badge showing numbers of unread orders */}
                                     <Badge number={9} />
                                 </View>
                                 <View style={style.actionWrapper}>
+                                    {/* search button to trigger search bottomsheet */}
                                     <TouchableOpacity 
                                         style={style.menuIcon}
                                         onPress={() => openModal("search")}
-                                    >
+                                        >
                                         <SearchIcon />
                                     </TouchableOpacity>
+                                    {/* filter button to trigger filter bottomsheet */}
                                     <TouchableOpacity
                                         style={style.menuIcon}
                                         onPress={() => openModal("filter")}
@@ -838,6 +862,7 @@ const Orders = ({navigation}) => {
                             </View>
                         </View>
                     }
+                    // pad the bottom due to presence of a bottom nav
                     contentContainerStyle={{paddingBottom: 90}}
                     style={style.listWrapper}
                     keyExtractor={item => item.id}
@@ -847,6 +872,7 @@ const Orders = ({navigation}) => {
                     )}
                 />
             </TouchableWithoutFeedback>
+            {/* bottom sheet */}
             <CustomBottomSheet 
                 bottomSheetModalRef={modalRef}
                 showOverlay={modal.overlay}
@@ -856,12 +882,14 @@ const Orders = ({navigation}) => {
                 sheetTitle={modal.sheetTitle}
                 clearFilterFunction={modal.clearFilterFunction}
             >
+                {/* modal content */}
                 {modal.modalContent}
             </CustomBottomSheet>
         </>
     );
 }
 
+// stylesheet
 const style = StyleSheet.create({
     listWrapper: {
         width: "100%",
@@ -871,22 +899,10 @@ const style = StyleSheet.create({
     headerWrapper: {
         width: "100%",
     },
-    header: {
-        width: "100%",
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        height: 50,
-    },
-    headerText: {
-        fontFamily: "mulish-bold",
-        fontSize: 20,
-    },
     menuIcon: {
         width: 24,
         height: 24,
-        backgroundColor: "#ffffff",
+        backgroundColor: white,
         borderRadius: 6,
         display: "flex",
         justifyContent: "center",
@@ -898,7 +914,7 @@ const style = StyleSheet.create({
         display: "flex",
         alignItems: "center",
         justifyContent: 'center',
-        backgroundColor: "rgba(7, 66, 124, 0.05)",
+        backgroundColor: secondaryColor,
         borderRadius: 12,
         marginVertical: 22,
     },
@@ -926,7 +942,7 @@ const style = StyleSheet.create({
     },
     recentOrderHeadingText: {
         fontFamily: "mulish-bold",
-        color: "rgba(34, 34, 34, 0.6)",
+        color: bodyText,
         fontSize: 10,
     },
     actionWrapper: {
@@ -942,28 +958,8 @@ const style = StyleSheet.create({
         alignItems: "center",
         justifyContent: "flex-start",
         width: "100%",
-        // backgroundColor: "pink",
         flex: 1,
     },
-    footerButtonWrapper: {
-      width: "100%",
-      position: "absolute",
-      bottom: 0,
-    },
-    footerButton: {
-      width: "100%",
-      height: 44,
-      backgroundColor: primaryColor,
-      borderRadius: 12,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center", 
-    },
-    footerButtonText: {
-      color: "white",
-      fontSize: 16,
-      fontFamily: 'mulish-semibold',
-    }
 })
  
 export default Orders;

@@ -1,21 +1,38 @@
+// react native components
 import { TouchableOpacity, StyleSheet, View, Text, Dimensions } from "react-native";
+// bottomsheet components
 import { BottomSheetModal, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
+// react hooks
 import { useMemo, useCallback } from "react";
+// modal Handle component
 import ModalHandle from "./ModalHandle";
+// icons
 import CloseIcon from "../assets/icons/CloseIcon";
+// colors
+import { bodyText } from "../style/globalStyleSheet";
 
 const windowWidth = Dimensions.get("window").width;
 
 const PopUpBottomSheet = ({bottomSheetModalRef, hideCloseButton, closeModal, snapPointsArray, autoSnapAt, children, sheetTitle, sheetSubtitle, centered}) => {
+    // bottomsheet modal ref => useRef variable for bottomsheet modal ref
+    // hideCloseButton, centered => boolean
+    // closeModal => function
+    // snapPointsArray => array
+    // autoSnapAt => int
+    // children => jsx
+    // sheetSubtitle, sheetTitle => string
 
+    // snapPoints
     const snapPoints = useMemo(() => snapPointsArray, [snapPointsArray]);
     // const snapPoints = snapPointsArray;
 
+    // if bottomsheet is swiped down, run closeModal
     const handleGestureEnd = (event) => {
         // console.log(event);
         if (event === -1) closeModal();
     };
 
+    // render popup bottomsheet modal backdrop 
     const renderBackdrop = useCallback(
         props => (
           <BottomSheetBackdrop
@@ -28,7 +45,7 @@ const PopUpBottomSheet = ({bottomSheetModalRef, hideCloseButton, closeModal, sna
         []
     );
    
-
+    // render PopUpBottomSheet component
     return (
         <View style={styles.container}>
             <BottomSheetModal
@@ -36,6 +53,8 @@ const PopUpBottomSheet = ({bottomSheetModalRef, hideCloseButton, closeModal, sna
                 index={autoSnapAt}
                 snapPoints={snapPoints}
                 enablePanDownToClose={true}
+                // listen for change in modal snappoints
+                // useful to run closeModal function
                 onChange={event => handleGestureEnd(event)}
                 backgroundStyle={{
                     borderRadius: 24,
@@ -43,18 +62,24 @@ const PopUpBottomSheet = ({bottomSheetModalRef, hideCloseButton, closeModal, sna
                 containerStyle={{
                     borderRadius: 24,
                     marginHorizontal: 20,
+                    // styling to center modal
                     marginTop: centered ? -windowWidth/1.3 : 0,
                     marginBottom: centered ? windowWidth/1.3 : 0,
                 }}
                 style={{
                 }}
+                // change the default bottomsheet handle
                 handleComponent={() => (
                     <ModalHandle />
                 )}
+                // push stackbehaviour to allow popup modal to display
+                // over other bottomsheet
                 stackBehavior="push"
                 backdropComponent={renderBackdrop}
             >
+                {/* sheetitle */}
                 <View style={styles.sheetTitle}>
+                    {/* display close icon by default */}
                     { !hideCloseButton && 
                         <TouchableOpacity 
                             style={styles.closeButtonWrapper} 
@@ -63,6 +88,7 @@ const PopUpBottomSheet = ({bottomSheetModalRef, hideCloseButton, closeModal, sna
                             <CloseIcon />
                         </TouchableOpacity>
                     }
+                    {/* modal subtitle */}
                     {!sheetSubtitle ? (
                         sheetTitle && <Text style={styles.sheetTitleText}>
                             {sheetTitle}
@@ -75,6 +101,7 @@ const PopUpBottomSheet = ({bottomSheetModalRef, hideCloseButton, closeModal, sna
                         )}
                 </View>
                 <View style={styles.modalWrapper}>
+                    {/* render children */}
                     {children}
                 </View>
             </BottomSheetModal>
@@ -82,11 +109,8 @@ const PopUpBottomSheet = ({bottomSheetModalRef, hideCloseButton, closeModal, sna
     );
 }
  
+// stylesheet
 const styles = StyleSheet.create({
-    // centerModal: {
-    //     justifyContent: "center",
-    //     alignItems: "center",
-    // },
     container: {
         flex: 1,
         alignItems: "center",
@@ -122,7 +146,7 @@ const styles = StyleSheet.create({
     sheetSubtitleText: {
         fontFamily: "mulish-regular",
         fontSize: 12,
-        color: "rgba(34, 34, 34, 0.6)",
+        color: bodyText,
     },
     closeButtonWrapper: {
         width: 20,

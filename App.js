@@ -25,7 +25,7 @@ import AddProduct from './stacks/AddProduct';
 // account related stacks
 import Account from './stacks/Account';
 import Profile from './stacks/Profile';
-import Team from './stacks/Team';
+import TeamMembers from './stacks/TeamMembers';
 import Logistics from './stacks/Logistics';
 import Security from './stacks/Security';
 
@@ -37,160 +37,188 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StatusBar } from 'react-native';
 import { AppRegistry } from 'react-native';
 
+// colors
+import { white } from './style/globalStyleSheet';
+
 export default function App() {
 
-  const [fontsLoaded] = useFonts({
-    'mulish-regular': require('./assets/fonts/Mulish-Regular.ttf'),
-    'mulish-medium': require('./assets/fonts/Mulish-Medium.ttf'),
-    'mulish-semibold': require('./assets/fonts/Mulish-SemiBold.ttf'),
-    'mulish-bold': require('./assets/fonts/Mulish-Bold.ttf'),
-  });
+    // declare fonts 
+    const [fontsLoaded] = useFonts({
+        'mulish-regular': require('./assets/fonts/Mulish-Regular.ttf'),
+        'mulish-medium': require('./assets/fonts/Mulish-Medium.ttf'),
+        'mulish-semibold': require('./assets/fonts/Mulish-SemiBold.ttf'),
+        'mulish-bold': require('./assets/fonts/Mulish-Bold.ttf'),
+        'mulish-extrabold': require('./assets/fonts/Mulish-ExtraBold.ttf'),
+    });
 
-  const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
+    //   function to load font
+    const onLayoutRootView = useCallback(async () => {
+        if (fontsLoaded) {
+        await SplashScreen.hideAsync();
+        }
+    }, [fontsLoaded]);
+
+    if (!fontsLoaded) {
+        return null;
     }
-  }, [fontsLoaded]);
 
-  if (!fontsLoaded) {
-    return null;
-  }
+    const Stack = createNativeStackNavigator();
 
-  const Stack = createNativeStackNavigator();
-
-  return (
-    <NavigationContainer>
-        <AppProvider>
-            <GestureHandlerRootView style={{ flex: 1 }}>
-                <BottomSheetModalProvider>
-                    <StatusBar backgroundColor="#ffffff" barStyle="light-content" />
-                    <Stack.Navigator initialRouteName='Home'>
-                        <Stack.Screen 
-                            name="Home" 
-                            component={Home}
-                            options={{
-                            headerShown: false,
-                            }} 
-                        />
-                        <Stack.Screen 
-                            name="Orders" 
-                            component={Orders} 
-                            options={{
-                            headerShown: false,
-                            }} 
-                        />
-                        <Stack.Screen 
-                            name="Waybill" 
-                            component={Waybill} 
-                            options={{
-                            headerShown: false,
-                            }} 
-                        />
-                        <Stack.Screen 
-                            name="Chat" 
-                            component={Chat} 
-                            options={{
-                            headerShown: false,
-                            }} 
-                        />
-                        <Stack.Screen 
-                            name="Inventory" 
-                            component={Inventory} 
-                            options={{
-                            headerShown: false,
-                            }} 
-                        />
-                        <Stack.Screen 
-                            name="Products" 
-                            component={Products} 
-                            options={{
-                            headerShown: false,
-                            }} 
-                        />
-                        <Stack.Screen 
-                            name="AddProduct" 
-                            component={AddProduct} 
-                            options={{
-                            headerShown: false,
-                            }} 
-                        />
-                        <Stack.Screen 
-                            name="AddLogistics" 
-                            component={AddLogistics} 
-                            options={{
-                            headerShown: false,
-                            }} 
-                        />
-                        <Stack.Screen 
-                            name="Account" 
-                            component={Account} 
-                            options={{
-                            headerShown: false,
-                            }} 
-                        />
-                        <Stack.Screen 
-                            name="Profile" 
-                            component={Profile} 
-                            options={{
-                            headerShown: false,
-                            }} 
-                        />
-                        <Stack.Screen 
-                            name="Analytics" 
-                            component={Analytics} 
-                            options={{
-                            headerShown: false,
-                            }} 
-                        />
-                        <Stack.Screen 
-                            name="Team" 
-                            component={Team} 
-                            options={{
-                            headerShown: false,
-                            }} 
-                        />
-                        <Stack.Screen 
-                            name="Logistics" 
-                            component={Logistics} 
-                            options={{
-                            headerShown: false,
-                            }} 
-                        />
-                        <Stack.Screen 
-                            name="Security" 
-                            component={Security} 
-                            options={{
-                            headerShown: false,
-                            }} 
-                        />
-                        <Stack.Screen 
-                            name="Notifications" 
-                            component={Notifications}
-                            options={{
-                            headerShown: false,
-                            }}
-                        />
-                        <Stack.Screen 
-                            name="SendOrder" 
-                            component={SendOrder}
-                            options={{
-                            headerShown: false,
-                            }}
-                        />
-                        <Stack.Screen 
-                            name="SendWaybill" 
-                            component={SendWaybill}
-                            options={{
-                            headerShown: false,
-                            }}
-                        />
-                    </Stack.Navigator>
-                <BottomNavigation />
-                </BottomSheetModalProvider>
-            </GestureHandlerRootView>
-        </AppProvider>
-    </NavigationContainer>
-  );
+    return (
+        // navigation container
+        <NavigationContainer>
+            {/* AppProvider, access to global variables */}
+            <AppProvider>
+                {/* GestureHandlerRootView required to render bottomsheet */}
+                <GestureHandlerRootView style={{ flex: 1 }}>
+                    {/* BottomSheetModalProvider required to render bottomsheet */}
+                    <BottomSheetModalProvider>
+                        {/* custom status bar */}
+                        <StatusBar backgroundColor={white} barStyle="light-content" />
+                        <Stack.Navigator initialRouteName='Home'>
+                            {/* Home Stack */}
+                            <Stack.Screen 
+                                name="Home" 
+                                component={Home}
+                                options={{
+                                headerShown: false,
+                                }} 
+                            />
+                            {/* Orders Stack */}
+                            <Stack.Screen 
+                                name="Orders" 
+                                component={Orders} 
+                                options={{
+                                headerShown: false,
+                                }} 
+                            />
+                            {/* Waybill Stack */}
+                            <Stack.Screen 
+                                name="Waybill" 
+                                component={Waybill} 
+                                options={{
+                                headerShown: false,
+                                }} 
+                            />
+                            {/* Chat stack, requires chat id and chat type === order || waybill */}
+                            <Stack.Screen 
+                                name="Chat" 
+                                component={Chat} 
+                                options={{
+                                headerShown: false,
+                                }} 
+                            />
+                            {/* Inventory stack */}
+                            <Stack.Screen 
+                                name="Inventory" 
+                                component={Inventory} 
+                                options={{
+                                headerShown: false,
+                                }} 
+                            />
+                            {/* Products stack */}
+                            <Stack.Screen 
+                                name="Products" 
+                                component={Products} 
+                                options={{
+                                headerShown: false,
+                                }} 
+                            />
+                            {/* Add Products stack */}
+                            <Stack.Screen 
+                                name="AddProduct" 
+                                component={AddProduct} 
+                                options={{
+                                headerShown: false,
+                                }} 
+                            />
+                            {/* Add Logistics stack */}
+                            <Stack.Screen 
+                                name="AddLogistics" 
+                                component={AddLogistics} 
+                                options={{
+                                headerShown: false,
+                                }} 
+                            />
+                            {/* Account stack */}
+                            <Stack.Screen 
+                                name="Account" 
+                                component={Account} 
+                                options={{
+                                headerShown: false,
+                                }} 
+                            />
+                            {/* Profile stack */}
+                            <Stack.Screen 
+                                name="Profile" 
+                                component={Profile} 
+                                options={{
+                                headerShown: false,
+                                }} 
+                            />
+                            {/* Analytics stack */}
+                            <Stack.Screen 
+                                name="Analytics" 
+                                component={Analytics} 
+                                options={{
+                                headerShown: false,
+                                }} 
+                            />
+                            {/* Team stack */}
+                            <Stack.Screen 
+                                name="TeamMembers" 
+                                component={TeamMembers} 
+                                options={{
+                                headerShown: false,
+                                }} 
+                            />
+                            {/* logistics stack */}
+                            <Stack.Screen 
+                                name="Logistics" 
+                                component={Logistics} 
+                                options={{
+                                headerShown: false,
+                                }} 
+                            />
+                            {/* security stack */}
+                            <Stack.Screen 
+                                name="Security" 
+                                component={Security} 
+                                options={{
+                                headerShown: false,
+                                }} 
+                            />
+                            {/* Notifications stack */}
+                            <Stack.Screen 
+                                name="Notifications" 
+                                component={Notifications}
+                                options={{
+                                headerShown: false,
+                                }}
+                            />
+                            {/* send order stack */}
+                            <Stack.Screen 
+                                name="SendOrder" 
+                                component={SendOrder}
+                                options={{
+                                headerShown: false,
+                                }}
+                            />
+                            {/* send waybill stack */}
+                            <Stack.Screen 
+                                name="SendWaybill" 
+                                component={SendWaybill}
+                                options={{
+                                headerShown: false,
+                                }}
+                            />
+                        </Stack.Navigator>
+                    <BottomNavigation />
+                    </BottomSheetModalProvider>
+                </GestureHandlerRootView>
+            </AppProvider>
+        </NavigationContainer>
+    );
 }
 
 AppRegistry.registerComponent('MyApp', () => App);

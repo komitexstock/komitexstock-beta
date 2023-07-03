@@ -1,3 +1,4 @@
+// react native components
 import { 
     Text, 
     View, 
@@ -5,45 +6,59 @@ import {
     StyleSheet,
     Image 
 } from "react-native";
-import { primaryColor } from "../style/globalStyleSheet";
+// colors
+import { black, bodyText, primaryColor, secondaryColor, white } from "../style/globalStyleSheet";
+// components
 import Indicator from '../components/Indicator'
 
 const ProductCard = ({product_name, quantity, price, imageUrl, lowStock, onPress}) => {
+    // imageUrl => string | imagePath
+    // quantity => int
+    // price => float
+    // lowStock => boolean
+    // onPress => function
+    // product_name => string
 
-    // console.log(index);
 
+    // render ProductCard component
     return (
         <TouchableOpacity style={style.productCard} onPress={onPress}>
+            {/* empty stock indicator */}
             { quantity === 0 && <View style={style.indicatorWrapper}>
-                <Indicator text={"Empty Stock"} type={"Cancelled"} />
-            </View>}
+                    <Indicator text={"Empty Stock"} type={"Cancelled"} />
+                </View>}
+            {/* low stock indicator */}
             { quantity !== 0 && lowStock && <View style={style.indicatorWrapper}>
-                <Indicator text={"Low Stock"} type={"Pending"} />
+                    <Indicator text={"Low Stock"} type={"Pending"} />
                 </View>
             }
+            {/* product image */}
             <View style={style.imageWrapper}>
                 <Image 
                     style={style.productImage}
                     source={imageUrl}
                 />
             </View>
+            {/* product details */}
             <View style={style.textWrapper}>
                 <View style={style.productMainDetailsWrapper}>
                     <Text style={style.productName}>{product_name}</Text>
                     <Text style={style.quantity}>{quantity} <Text style={style.stock}>in stock</Text></Text>
                 </View>
+                {/* display price as a string with comma seperations */}
                 <Text style={style.price}>₦{price.toLocaleString()}</Text>
             </View>
         </TouchableOpacity>
     );
 }
 
+// stylesheet
 const style = StyleSheet.create({
     productCard: {
         minWidth: "40%",
         maxWidth: "50%",
         height: 150,
-        backgroundColor: "#ffffff",
+        backgroundColor: white,
         borderRadius: 12,
         flex: 1,
         position: "relative",
@@ -60,7 +75,7 @@ const style = StyleSheet.create({
     imageWrapper: {
         height: 70,
         width: "100%",
-        backgroundColor: "rgba(7, 66, 124, 0.05)",
+        backgroundColor: secondaryColor,
         borderTopLeftRadius: 12,
         borderTopRightRadius: 12,
     },
@@ -85,18 +100,18 @@ const style = StyleSheet.create({
     },  
     productName: {
         fontFamily: "mulish-semibold",
-        color: "#222222",
+        color: black,
         fontSize: 12,
         flexWrap: "wrap",   
         width: "100%",
     },
     quantity: {
         fontFamily: "mulish-regular",
-        color: "#222222",
+        color: black,
         fontSize: 10,
     },
     stock: {
-        color: "rgba(34, 34, 34, 0.6)",
+        color: bodyText,
     },
     price: {
         fontFamily: "mulish-semibold",

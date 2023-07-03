@@ -1,3 +1,4 @@
+// react native components
 import { 
     View, 
     Text, 
@@ -8,23 +9,27 @@ import {
     StyleSheet, 
     Image,
 } from "react-native";
+// icons
 import SendIcon from '../assets/icons/SendIcon';
 import PaperClipIcon from "../assets/icons/PaperClipIcon";
-import ActionButton from "../components/ActionButton";
-import ArrowLeft from "../assets/icons/ArrowLeft";
 import MenuIcon from "../assets/icons/MenuIcon";
-import CalendarPicker from 'react-native-calendar-picker';  
+// components
+import ActionButton from "../components/ActionButton";
+import Header from "../components/Header";
+// import react hooks
 import { useState } from "react";
-import { primaryColor, secondaryColor } from "../style/globalStyleSheet";
+// colors
+import { background, black, bodyText, primaryColor, secondaryColor, white } from "../style/globalStyleSheet";
 
 const Chat = ({navigation, route}) => {
 
-    // console.log(id, chat);
-
+    // chat rout parameters
     const {id, type, order, name, imageUrl} = route.params;
 
+    // accoutntype, retreived from global variables
     const accountType = "Merchant";
 
+    // order buttons
     const orderButtons = [
         {
             id: 1,
@@ -48,65 +53,50 @@ const Chat = ({navigation, route}) => {
         },
     ]
 
+    // waybill buttons
     const waybillButton = {
         name: "Picked Up",
         onPress: () => {}
     }
 
-    // selected date variable
-    const [selectedStartDate, setSelectedStartDate] = useState(null);
-
-    // update date variaBLE 
-    const onDateChange = (date) => {
-        setSelectedStartDate(date);
-    }
+    // chat header component
+    const ChatHeader = (
+        <View style={style.headerInfoWrapper}>
+            <Image 
+                source={imageUrl ? imageUrl : require("../assets/images/default.png")}
+                style={style.headerImage}
+            />
+            <View style={style.headerTextWrapper}>
+                <Text style={style.headerPrimaryText}>{name}</Text>
+                <Text style={style.headerSecondaryText}>Order ID: Y5lq3xgCK9rkKRD7oJ4Q</Text>
+            </View>
+        </View>
+    )
 
     return (
         <TouchableWithoutFeedback>
             <View style={style.container}>
-                <View style={style.header}>
-                    <View style={style.headerDetails}>
-                        <TouchableOpacity
-                            onPress={() => navigation.goBack()}
-                        >
-                            <ArrowLeft />
-                        </TouchableOpacity>
-                        <View style={style.headerInfoWrapper}>
-                            <Image 
-                                source={imageUrl ? imageUrl : require("../assets/images/default.png")}
-                                style={style.headerImage}
-                            />
-                            <View style={style.headerTextWrapper}>
-                                <Text style={style.headerPrimaryText}>{name}</Text>
-                                <Text style={style.headerSecondaryText}>Order ID: Y5lq3xgCK9rkKRD7oJ4Q</Text>
-                            </View>
-                        </View>
-                    </View>
-                    <TouchableOpacity>
-                        <MenuIcon />
-                    </TouchableOpacity>
+                {/* fixed header container */}
+                <View style={style.headerContainer}>
+                    {/* header component */}
+                    <Header
+                        navigation={navigation}
+                        stackName={ChatHeader}
+                        iconFunction={() => {}}
+                        icon={<MenuIcon />}
+                        removeBackArrow={true}
+                        inlineArrow={true}
+                        backgroundColor={white}
+                    />
                 </View>
+                {/* chat scroll view */}
                 <ScrollView
                     showsVerticalScrollIndicator={false}
                     style={style.messagesContainer}
                 >
-                    {/* <CalendarPicker
-                        textStyle={calenderStyles.textStyle}
-                        selectedDayStyle={calenderStyles.selectedDayStyle}
-                        selectedDayTextColor={"#ffffff"}
-                        selectedDayColor={primaryColor}
-                        todayBackgroundColor={secondaryColor}
-                        todayTextStyle={calenderStyles.todayTextStyle}
-                        dayLabelsWrapper={calenderStyles.dayLabelsWrapper}
-                        allowRangeSelection={true}
-                        startFromMonday={true}
-                        // minDate={new Date()}
-                        showDayStragglers={true}
-                        allowBackwardRangeSelect={true}
-                        // maxDate={new Date()}
-                        scrollable={true}
-                    /> */}
+
                 </ScrollView>
+                {/* text field wrapper */}
                 <View style={style.textFieldWrapper}>
                     <View style={style.actionButtonsWrapper}>
 
@@ -137,7 +127,7 @@ const Chat = ({navigation, route}) => {
                             <TextInput 
                                 style={style.textInput}
                                 placeholder="Write a message..."
-                                placeholderTextColor={"rgba(34, 34, 34, 0.6)"}
+                                placeholderTextColor={bodyText}
                                 multiline={true}
                                 numberOfLines={1}
                             />
@@ -159,52 +149,25 @@ const Chat = ({navigation, route}) => {
     );
 }
 
-export const calenderStyles = {
-    textStyle: {
-        fontFamily: "mulish-regular",
-        color: "rgba(34, 34, 34, 1)",
-    },
-    todayTextStyle: {
-        color: "rgba(34, 34, 34, 1)",  
-    },
-    selectedDayStyle: {
-        backgroundColor: primaryColor,
-        color: "#ffffff",
-    },
-    dayLabelsWrapper: {
-        borderBottomWidth: 0,
-        borderTopWidth: 0,
-    }
-}
-
 const style = StyleSheet.create({
     container: {
         flex: 1,
         width: "100%",
-        backgroundColor: "#f8f8f8",
+        backgroundColor: background,
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
         height: "100%",
     },
-    header: {
-        width: "100%",
-        height: 45,
-        backgroundColor: "#ffffff",
-        paddingHorizontal: 20,
-        display: "flex",
-        flexDirection: "row",
-        alignItems: 'center',
-        justifyContent: "space-between",
-    },
-    headerDetails: {
-        flex: 1,
-        display: 'flex',
-        flexDirection: "row",
-        alignItems: 'center',
-        justifyContent: "flex-start",
-        gap: 10,
-    },
+    headerContainer: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        borderBottomWidth: 1,
+        borderColor: background,
+        zIndex: 1,
+    }, 
     headerInfoWrapper: {
         display: 'flex',
         flexDirection: 'row',
@@ -220,13 +183,13 @@ const style = StyleSheet.create({
     },
     headerPrimaryText: {
         fontSize: 14,
-        fontFamily: 'mulish-regular',
-        color: "#222222",
+        fontFamily: 'mulish-medium',
+        color: black,
     },  
     headerSecondaryText: {
         fontSize: 8,
         fontFamily: 'mulish-regular',
-        color: "rgba(34, 34, 34, 0.6)",
+        color: bodyText,
     },
     imageBackground: {
         flex: 1,
@@ -236,17 +199,24 @@ const style = StyleSheet.create({
     messagesContainer: {
         flex: 1,
         width: "100%",
+        backgroundColor: white,
     },
     textFieldWrapper: {
         width: "100%",
         minHeight: 64,
-        backgroundColor: "#ffffff",
+        backgroundColor: white,
         paddingHorizontal: 20,
         paddingVertical: 10,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
+        borderTopWidth: 1,
+        borderColor: background,
         justifyContent: 'center',
+        position: 'absolute',
+        bottom: 0,
+        right: 0,
+        left: 0,
     },
     inputGroupWrapper: {
         width: "100%",
@@ -260,7 +230,7 @@ const style = StyleSheet.create({
         minHeight: 44,
         maxHeight: 100,
         flex: 1,
-        backgroundColor: "#f8f8f8",
+        backgroundColor: background,
         // backgroundColor: "red",
         borderRadius: 12,
         paddingHorizontal: 16,
@@ -294,7 +264,7 @@ const style = StyleSheet.create({
     sendButton: {
         width: 44,
         height: 44,
-        backgroundColor: "#f8f8f8",
+        backgroundColor: background,
         borderRadius: 12,
         display: 'flex',
         justifyContent: 'center',

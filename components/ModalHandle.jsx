@@ -1,6 +1,8 @@
+// react native component
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 
 const ModalHandle = () => {
+    // render ModalHandle component
     return (
         <View style={styles.modalHandleWrapper}>
             <TouchableOpacity style={styles.modalHandle}></TouchableOpacity>

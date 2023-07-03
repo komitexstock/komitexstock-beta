@@ -1,3 +1,4 @@
+// react native components
 import { 
     View, 
     Text, 
@@ -8,22 +9,28 @@ import {
     ScrollView,
     BackHandler
 } from "react-native";
-import NotificationIcon from "../assets/icons/NotificationIcon";
 // icons
+import NotificationIcon from "../assets/icons/NotificationIcon";
 import SearchIcon from "../assets/icons/SearchIcon";
 import QuickOrderIcon from "../assets/icons/QuickOrderIcon";
 import QuickAnalyticsIcon from "../assets/icons/AnalyticsIcon";
 import QuickInventoryIcon from "../assets/icons/QuickInventoryIcon";
 import QuickWaybiillIcon from "../assets/icons/QuickWaybillIcon";
+// components
 import OrderListItem from "../components/OrderListItem";
 import CustomBottomSheet from "../components/CustomBottomSheet";
 import SearchBar from "../components/SearchBar";
+// react hooks
 import { useState, useRef, useEffect } from "react";
+// bottomsheet component
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+// colors
+import { accentLight, background, black, bodyText, greenLight, primaryColor, secondaryColor, white, yellowLight } from "../style/globalStyleSheet";
 
 
 const Home = ({navigation}) => {
       
+    // order list
     const orders = [
         {
             name: "John Doe",
@@ -161,7 +168,7 @@ const Home = ({navigation}) => {
         Keyboard.dismiss();
     }
 
-    // use effect to close modal
+    // useEffect to listen for onPress back button and close modal
     useEffect(() => {
         // function to run if back button is pressed
         const backAction = () => {
@@ -186,6 +193,7 @@ const Home = ({navigation}) => {
 
     }, [showOverlay]);
 
+    // render Home page
     return (
         <TouchableWithoutFeedback 
             onPress={() => Keyboard.dismiss()}
@@ -201,6 +209,7 @@ const Home = ({navigation}) => {
                         <View style={style.homeWrapper}>
                             <View style={style.header}>
                                 <View style={style.headerTextContainer}>
+                                    {/* heading */}
                                     <Text style={style.paragraph}>Welcome back!</Text>
                                     <Text style={style.heading}> Abayomi Daniel</Text>
                                 </View>
@@ -212,6 +221,7 @@ const Home = ({navigation}) => {
                                     <NotificationIcon />
                                 </TouchableOpacity>
                             </View>
+                            {/* button search bar to open search modal bottomsheet */}
                             <View style={style.searchWrapper}>
                                 <SearchIcon />
                                 <TouchableOpacity 
@@ -224,7 +234,9 @@ const Home = ({navigation}) => {
                             <View>
                                 <Text style={style.callToActionText}>What do you want to do today?</Text>
                             </View>
+                            {/* quick action buttons */}
                             <View style={style.quickAccessWrapper}>
+                                {/* quick order */}
                                 <TouchableOpacity 
                                     style={style.quickOrder}
                                     onPress={() => {navigation.navigate("SendOrder")}}
@@ -233,6 +245,7 @@ const Home = ({navigation}) => {
                                     <Text style={style.quickActionHeading}>Send an Order</Text>
                                     <Text style={style.quickActionParagraph}>Make fast deliveries to your customers</Text>
                                 </TouchableOpacity>
+                                {/* quick inventory */}
                                 <TouchableOpacity 
                                     style={style.quickInventory}
                                     onPress={() => {navigation.navigate("Inventory")}}    
@@ -241,6 +254,7 @@ const Home = ({navigation}) => {
                                     <Text style={style.quickActionHeading}>Manage Inventory</Text>
                                     <Text style={style.quickActionParagraph}>Review and add to your stores inventory</Text>
                                 </TouchableOpacity>
+                                {/* quick waybill */}
                                 <TouchableOpacity 
                                     style={style.quickWaybill}
                                     onPress={() => {navigation.navigate("SendWaybill")}}
@@ -249,6 +263,7 @@ const Home = ({navigation}) => {
                                     <Text style={style.quickActionHeading}>Send Waybill</Text>
                                     <Text style={style.quickActionParagraph}>Restock your inventory with your preferred partner</Text>
                                 </TouchableOpacity>
+                                {/* quick analytics */}
                                 <TouchableOpacity 
                                     style={style.quickAnalytics}
                                     onPress={() => {navigation.navigate("Analytics")}}
@@ -258,6 +273,7 @@ const Home = ({navigation}) => {
                                     <Text style={style.quickActionParagraph}>Easily view your business growth and analytics</Text>
                                 </TouchableOpacity>
                             </View>
+                            {/* recent orders */}
                             <View style={style.homeOrders}>
                                 <View style={style.homeOrdersHeader}>
                                     <Text style={style.homeOrdersHeading}>Recent Orders</Text>
@@ -273,27 +289,31 @@ const Home = ({navigation}) => {
                             <View
                                 style={style.ordersListWrapper}
                             >
+                                {/* order list max 5 items */}
                                 {orders.map((order, index) => (
                                     <OrderListItem key={order.id} item={order} index={index} length={orders.length} />
                                 ))}
                             </View>
                         </View>
                     </View>
+                    {/* bottomsheet */}
                     <CustomBottomSheet
                         bottomSheetModalRef={bottomSheetModalRef}
                         setShowOverlay={setShowOverlay}
                         showOverlay={showOverlay}
                         closeModal={closeModal}
                         snapPointsArray={["50%", "80%", "100%"]}
-                        autoSnapAt={2}
+                        autoSnapAt={2} // search bottomsheet auto snap at fullscreen
                         sheetTitle={""}
                     >
+                        {/* text input search bar */}
                         <SearchBar 
                             placeholder={"Search Komitex Stocks"}
                             searchQuery={searchQuery}
                             setSearchQuery={setSearchQuery}
-                            backgroundColor={"#f8f8f8"}
+                            backgroundColor={background}
                         />
+                        {/* search result order list */}
                         <BottomSheetScrollView style={style.orderSearchResults}>
                             {orders.map((order, index) => (
                                 <OrderListItem key={order.id} item={order} index={index} length={orders.length} />
@@ -306,12 +326,8 @@ const Home = ({navigation}) => {
     );
 }
 
+// stylesheet
 const style = StyleSheet.create({
-    main: {
-    },
-    container: {
-        
-    },
     homeScrollView: {
         minHeight:  "100%",
         paddingHorizontal: 20,
@@ -327,7 +343,6 @@ const style = StyleSheet.create({
         display: 'flex',
         justifyContent: 'space-between',
         height: 72,
-        // backgroundColor: 'red',
         alignItems: 'center',
         width: '100%',
     },
@@ -337,18 +352,18 @@ const style = StyleSheet.create({
     },
     paragraph: {
         fontFamily: 'mulish-regular',
-        color: 'rgba(34, 34, 34, 0.6)',
+        color: bodyText,
         fontSize: 10,
     },
     heading: {
-        color: 'rgb(34, 34, 34)',
+        color: black,
         fontFamily: 'mulish-bold',
         fontSize: 12,
     },
     notificationWrapper: {
         width: 24,
         height: 24,
-        backgroundColor: '#ffffff',
+        backgroundColor: white,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -357,7 +372,7 @@ const style = StyleSheet.create({
     searchWrapper: {
         height: 40,
         width: "100%",
-        backgroundColor: '#ffffff',
+        backgroundColor: white,
         borderRadius: 10,
         paddingHorizontal: 12,
         paddingVertical: 10,
@@ -377,10 +392,10 @@ const style = StyleSheet.create({
     searchPlaceholder: {
         fontFamily: 'mulish-regular',
         fontSize: 12,  
-        color: "rgba(34, 34, 34, 0.6)",
+        color: bodyText,
     },
     callToActionText: {
-        color: 'rgba(34, 34, 34, 0.8)',
+        color: bodyText,
         fontFamily: 'mulish-bold',
         fontSize: 12,
         marginTop: 20,
@@ -399,7 +414,7 @@ const style = StyleSheet.create({
         width: '45%',
         height: 100,
         flexGrow: 1,
-        backgroundColor: 'rgba(7, 66, 124, 0.05)',
+        backgroundColor: secondaryColor,
         borderRadius: 12,
         display: 'flex',
         flexDirection: 'column',
@@ -411,7 +426,7 @@ const style = StyleSheet.create({
         width: '45%',
         height: 100,
         flexGrow: 1,
-        backgroundColor: 'rgba(230, 109, 28, 0.05)',
+        backgroundColor: accentLight,
         borderRadius: 12,
         display: 'flex',
         flexDirection: 'column',
@@ -423,7 +438,7 @@ const style = StyleSheet.create({
         width: '45%',
         flexGrow: 1,
         height: 100,
-        backgroundColor: 'rgba(255, 255, 0, 0.05)',
+        backgroundColor: yellowLight,
         borderRadius: 12,
         display: 'flex',
         flexDirection: 'column',
@@ -435,7 +450,7 @@ const style = StyleSheet.create({
         flexGrow: 1,
         width: '45%',
         height: 100,
-        backgroundColor: 'rgba(3, 152, 85, 0.05)',
+        backgroundColor: greenLight,
         borderRadius: 12,
         display: 'flex',
         flexDirection: 'column',
@@ -444,12 +459,12 @@ const style = StyleSheet.create({
         alignItems: 'flex-start',
     },
     quickActionHeading: {
-        color: 'rgba(34, 34, 34, 1)',
-        fontFamily: 'mulish-bold',
+        color: black,
+        fontFamily: 'mulish-semibold',
         fontSize: 12,
     },
     quickActionParagraph: {
-        color: 'rgba(34, 34, 34, 0.6)',
+        color: bodyText,
         fontFamily: 'mulish-regular',
         fontSize: 10,
     },
@@ -466,11 +481,11 @@ const style = StyleSheet.create({
     },
     homeOrdersHeading: {
         fontFamily: 'mulish-bold',
-        color: 'rgba(34, 34, 34, 0.8)',
+        color: bodyText,
     },
     seeMore: {
-        fontFamily: 'mulish-bold',
-        color: '#07427C',
+        fontFamily: 'mulish-medium',
+        color: primaryColor,
     },
     ordersListWrapper: {
         height: "100%",

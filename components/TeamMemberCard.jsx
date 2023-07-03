@@ -1,37 +1,42 @@
+// react native components
 import { 
     View, 
     Text, 
     TouchableOpacity, 
-    Image,
     StyleSheet,
     Dimensions
 } 
 from "react-native";
+// icons
 import AddIcon from '../assets/icons/AddIcon';
-import { primaryColor, secondaryColor } from "../style/globalStyleSheet";
+// color
+import { black, bodyText, secondaryColor, white } from "../style/globalStyleSheet";
+// components
 import Indicator from "./Indicator";
+import Avatar from "./Avatar";
 
 const maxCardWidth = Dimensions.get("window").width/2 - 28;
 const TeamMemberCard = ({ imageUrl, admin, fullname, role, onPress, addNew, deactivated}) => {
+    // imageUrl => string | path to image
+    // admin, addNew, deactivated => boolean
+    // fullname, role => string
+    // onPress => function
+
     return (
         <>   
+            {/* id addnEw is flase, render TeamMember default card */}
             { !addNew ? (
                 <TouchableOpacity 
                     style={style.teamCard}
+                    // onPress show more team member details
                     onPress={onPress}
                 >   
                     <View style={style.primaryWrapper}>
                         <View style={style.imageContainer}>
-                            { imageUrl ? (
-                                <Image 
-                                    source={imageUrl} 
-                                    style={style.image} 
-                                />
-                            ) : (
-                                <View style={style.contact}>
-                                    <Text style={style.contactText}>FJ</Text>
-                                </View>
-                            ) }
+                            <Avatar
+                                imageUrl={imageUrl}
+                                fullname={fullname}
+                            />
                             { deactivated && <Indicator text={"Deactivated"} type={"Cancelled"} /> }
                         </View>
                     </View>
@@ -47,6 +52,7 @@ const TeamMemberCard = ({ imageUrl, admin, fullname, role, onPress, addNew, deac
                     </View>
                 </TouchableOpacity>
             ) : (
+                // if addNew is true, render a special component to trigger add new member bottomsheet modal
                 <View style={style.addNewCardWrapper}>
                     <TouchableOpacity style={style.addNewButton} onPress={onPress}>
                         <AddIcon />
@@ -63,7 +69,7 @@ const style = StyleSheet.create({
         minWidth: "40%",
         maxWidth: maxCardWidth,
         height: 185,
-        backgroundColor: "#ffffff",
+        backgroundColor: white,
         borderRadius: 12,
         flex: 1,
         padding: 12,
@@ -80,24 +86,6 @@ const style = StyleSheet.create({
         justifyContent: "space-between",
         marginBottom: 10,
     },
-    image: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-    },
-    contact: {
-        width: 40,
-        height: 40,
-        backgroundColor: secondaryColor,
-        borderRadius: 20,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    contactText: {
-        fontFamily: 'mulish-bold',
-        color: primaryColor,
-    },
     secondaryWrapper: {
         display: 'flex',
         justifyContent: 'flex-end',
@@ -108,12 +96,12 @@ const style = StyleSheet.create({
         gap: 4,
     },
     fullname: {
-        color: "#222222",
-        fontFamily: 'mulish-regular',
+        color: black,
+        fontFamily: 'mulish-semibold',
         fontSize: 12,
     },
     role: {
-        color: "#22222299",
+        color: bodyText,
         fontFamily: 'mulish-regular',
         fontSize: 10,
     },
@@ -126,7 +114,7 @@ const style = StyleSheet.create({
         minWidth: "40%",
         maxWidth: maxCardWidth,
         height: 180,
-        backgroundColor: "#ffffff",
+        backgroundColor: white,
         borderRadius: 12,
         flex: 1,
         padding: 12,
@@ -138,7 +126,7 @@ const style = StyleSheet.create({
         height: 40,
         width: 40,
         borderRadius: 20,
-        backgroundColor: 'rgba(7, 66, 124, 0.05)',
+        backgroundColor: secondaryColor,
         
     },
     addNewText: {
@@ -147,7 +135,7 @@ const style = StyleSheet.create({
         fontFamily: 'mulish-semibold',
         width: "100%",
         textAlign: 'left',
-        color: "#222222",
+        color: black,
         width: "100%",
         flexWrap: "wrap",
     }

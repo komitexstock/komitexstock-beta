@@ -1,21 +1,36 @@
-import Header from "../components/Header";
-import { View, TouchableWithoutFeedback, StyleSheet, Keyboard, BackHandler } from "react-native";
+// react native components
+import {
+    View,
+    TouchableWithoutFeedback,
+    StyleSheet,
+    Keyboard,
+    BackHandler
+} from "react-native";
+// react hooks
+import { useState, useRef, useEffect } from "react";
+// icons
 import ThumbPrintIcon from "../assets/icons/ThumbPrintIcon";
 import KeyIcon from "../assets/icons/KeyIcon";
+// components
+import Header from "../components/Header";
 import AccountButtons from "../components/AccountButtons";
-import { useState, useRef, useEffect } from "react";
 import CustomBottomSheet from "../components/CustomBottomSheet";
-import  Input from "../components/Input";
+import Input from "../components/Input";
 import ModalButton from "../components/ModalButton"
+// colors
+import { background } from "../style/globalStyleSheet";
 
 const Security = ({navigation}) => {
 
+    // state to store and update if face ID unlock or thumprint unlock is enabled
     const [isEnabled, setIsEnabled] = useState(false);
 
+    // handle toggle of enable thumprint
     const handleToggle = () => {
         setIsEnabled(!isEnabled);
     }
 
+    // list of security button
     const securityButtons = [
         {
             id: 1,
@@ -112,6 +127,7 @@ const Security = ({navigation}) => {
         setRetypePassword(Password);
     }
 
+    // change password inputs
     const inputs = [
         {
             id: 1,
@@ -148,6 +164,7 @@ const Security = ({navigation}) => {
         },
     ]
 
+    // empty fields
     const emptyFields = [
         currentPassword, 
         newPassword,
@@ -156,20 +173,21 @@ const Security = ({navigation}) => {
             item => item === ''
     );
 
+    // render Security Page
     return (
         <>
             <TouchableWithoutFeedback>
-                <View
-                    showsVerticalScrollIndicator={false}
-                    style={style.container}
-                >
+                <View style={style.container}>
                     <View style={style.main}>
+                        {/* header component */}
                         <Header 
                             navigation={navigation} 
                             stackName={"Security"} 
                             iconFunction={null} 
                             icon={null} 
+                            unpadded={true}
                         />
+                        {/* list security buttons */}
                         <View>
                             {securityButtons.map((item, index) => (
                                 <AccountButtons 
@@ -189,6 +207,7 @@ const Security = ({navigation}) => {
                     </View>
                 </View>
             </TouchableWithoutFeedback>
+            {/* bottomsheet modal */}
             <CustomBottomSheet 
                 bottomSheetModalRef={bottomSheetModalRef}
                 setShowOverlay={setShowOverlay}
@@ -199,9 +218,11 @@ const Security = ({navigation}) => {
                 sheetTitle={"Change Password"}
             >
                 <TouchableWithoutFeedback
+                    // onpress dismiss keyboard
                     onPress={() => Keyboard.dismiss()}
                 >
                     <View style={style.bottomSheetContainer}>
+                        {/* list out password inputs */}
                         <View style={style.inputContainer}>
                             {inputs.map(input => (
                                 <Input
@@ -217,6 +238,7 @@ const Security = ({navigation}) => {
                                 />
                             ))}
                         </View>
+                        {/* update password */}
                         <ModalButton 
                             onPress={() => {}}
                             name={"Update Password"}
@@ -229,11 +251,12 @@ const Security = ({navigation}) => {
     );
 }
 
+// stylesheet
 const style = StyleSheet.create({
     container: {
         flex: 1,
         width: "100%",
-        backgroundColor: "#f8f8f8",
+        backgroundColor: background,
         padding: 20,
         minHeight: "100%"
     },

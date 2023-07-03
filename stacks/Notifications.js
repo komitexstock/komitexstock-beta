@@ -1,14 +1,28 @@
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, BackHandler } from "react-native";
+// react native component
+import {
+    View,
+    Text,
+    StyleSheet,
+    TouchableOpacity,
+    ScrollView,
+    BackHandler
+} from "react-native";
+// icons
 import FilterIcon from "../assets/icons/FilterIcon";
+// components
 import OrderListItem from "../components/OrderListItem";
 import CustomBottomSheet from "../components/CustomBottomSheet";
-import { useState, useRef, useEffect } from "react";
 import Header from "../components/Header";
-import { globalStyleSheet, primaryColor } from "../style/globalStyleSheet";
 import FilterButtonGroup from "../components/FilterButtonGroup";
+import ModalButton from "../components/ModalButton";
+// react hooks
+import { useState, useRef, useEffect } from "react";
+// colors and global style
+import { bodyText, globalStyleSheet } from "../style/globalStyleSheet";
 
 const Notifications = ({navigation}) => {
 
+    // order list 1
     const orders = [
         {
             name: "John Doe",
@@ -62,6 +76,7 @@ const Notifications = ({navigation}) => {
         },
     ];
 
+    // order list 2
     const orders1 = [
         {
 			name: "Sophia Brown",
@@ -139,6 +154,7 @@ const Notifications = ({navigation}) => {
         },
     ];
 
+    // bottomsheet overlay
     const [showOverlay, setShowOverlay] = useState(false);
 
     // use effect to close modal
@@ -166,17 +182,22 @@ const Notifications = ({navigation}) => {
 
     }, [showOverlay]);
     
+    // bottomsheet ref
     const bottomSheetModalRef = useRef(null);
 
+    // close bottom sheet modal function
     const closeModal = () => {
-      bottomSheetModalRef.current?.close();
-      setShowOverlay(false);
+        bottomSheetModalRef.current?.close();
+        setShowOverlay(false);
     };
-    const handlePresentModal = () => {
+
+    // open bottom sheet modal function
+    const opemModal = () => {
       bottomSheetModalRef.current?.present();
       setShowOverlay(true);
     }
 
+    // filter buttons in filter notifications bottomsheef
     const filterButtons = [
       {
         id: 1,
@@ -227,33 +248,41 @@ const Notifications = ({navigation}) => {
       }
     ]
 
+    // render Notifications page
     return (
         <ScrollView>
             <View style={globalStyleSheet.main}>
+                {/* Header */}
                 <Header 
                     navigation={navigation} 
                     stackName={"Notifications"} 
-                    iconFunction={handlePresentModal} 
+                    iconFunction={opemModal} 
                     icon={<FilterIcon />} 
                     iconExist={true} 
+                    unpadded={true}
                 />
                 <View style={style.dateWrapper}>
+                    {/* Date */}
                     <Text style={style.date}>Today</Text>
                 </View>
                 <View style={style.notificationWrapper}>
+                    {/* Order list */}
                     {orders.map((item, index) => (
                         <OrderListItem item={item} index={index} key={index} length={orders.length} />
                     ))}
                 </View>
                 <View style={style.dateWrapper}>
+                    {/* Date */}
                     <Text style={style.date}>Tues, May 09, 2023</Text>
                 </View>
                 <View style={style.notificationWrapper}>
+                    {/* Order list */}
                     {orders1.map((item, index) => (
                         <OrderListItem item={item} index={index} key={index} length={orders.length} />
                     ))}
                 </View>
             </View>
+            {/* Filter notifications bottomsheet */}
             <CustomBottomSheet 
                 bottomSheetModalRef={bottomSheetModalRef}
                 setShowOverlay={setShowOverlay}
@@ -265,31 +294,33 @@ const Notifications = ({navigation}) => {
                 clearFilterFunction={() => {}} 
             >
                 <View style={style.modalContent}>
+                    {/* filter notifications button */}
                     {filterButtons.map(item => (
                         <FilterButtonGroup
-                        buttons={item.buttons}
-                        title={item.title}
-                        key={item.id}
+                            buttons={item.buttons}
+                            title={item.title}
+                            key={item.id}
                         />
                     ))}
-                    <View style={style.footerButtonWrapper}>
-                    <TouchableOpacity style={style.footerButton}>
-                        <Text style={style.footerButtonText}>Apply</Text>
-                    </TouchableOpacity>
-                    </View>
+                    {/* modal button */}
+                    <ModalButton
+                        name={"Apply"}
+                        onPress={() => {}}
+                    />
                 </View>
             </CustomBottomSheet>
         </ScrollView>
     );
 }
 
+// style sheet
 const style = StyleSheet.create({
     notificationWrapper: {
         width: "100%",
         flex: 1,
     },
     date: {
-		color: 'rgba(34, 34, 34, 0.8)',
+		color: bodyText,
 		fontSize: 12,
 		fontFamily: 'mulish-semibold',
     },
@@ -306,26 +337,9 @@ const style = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "space-between",
 		width: "100%",
-		// backgroundColor: "pink",
 		flex: 1,
+        marginBottom: 20,
     },
-    footerButtonWrapper: {
-		width: "100%",
-    },
-    footerButton: {
-		width: "100%",
-		height: 44,
-		backgroundColor: primaryColor,
-		borderRadius: 12,
-		display: "flex",
-		alignItems: "center",
-		justifyContent: "center", 
-    },
-    footerButtonText: {
-		color: "white",
-		fontSize: 16,
-		fontFamily: 'mulish-semibold',
-    }
 });
  
 export default Notifications;

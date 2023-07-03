@@ -1,11 +1,22 @@
+// react native components
 import { TouchableOpacity, Text, View, StyleSheet } from "react-native";
-import { primaryColor } from "../style/globalStyleSheet";
+// colors
+import { inputBorder, inputLabel, neutral, primaryColor, white } from "../style/globalStyleSheet";
+// icon
 import ArrowDown from "../assets/icons/ArrowDown";
 
 const SelectInput = ({label, labelIcon, placeholder, onPress, icon, value, active, inputFor}) => {
+    // label, placeholder, value => string
+    // lableIcon, icon => jxst component
+    // active = boolean
+    // onPress => function
+    // inputFor => string | Location || Logistics || String
+
+    // render SelectInput
     return (
         <View style={style.inputWrapper}>
                 { labelIcon ? (
+                    // if labelIcon is provided, render label text with labelIcon
                     <View style={style.labelWrapper}>
                         <Text style={style.label}>
                             {label}
@@ -15,31 +26,37 @@ const SelectInput = ({label, labelIcon, placeholder, onPress, icon, value, activ
                         </TouchableOpacity>
                     </View>
                 ) : (
+                    // if labelIcon is not provided, render only label text
                     <Text style={style.label}>
                         {label}
                     </Text>
                 )}
             <TouchableOpacity 
                 onPress={onPress}
+                // if input is active, render activeinput else regular input
                 style={!active ? style.input : [style.input, style.activeInput]}
             >
+                {/* render value */}
                 <Text 
                     style={value ? style.value : style.placeholder}
                 >
                     { inputFor === "Location" && (
                         <>
+                            {/* render location specific value */}
                             {value ? `${value.location} (₦${value.charge})` : placeholder}
                         </>
                     )}
 
                     { inputFor === "Logistics" && (
                         <>
+                            {/* render logistics specific value */}
                             {value ? value.business_name : placeholder} 
                         </>
                     )}
 
                     { inputFor === "String" && (
                         <>
+                            {/* render any other String */}
                             {value ? value : placeholder} 
                         </>
                     )}
@@ -68,16 +85,16 @@ const style = StyleSheet.create({
     label: {
         fontFamily: 'mulish-semibold',
         fontSize: 10,
-        color: '#837F7F',
+        color: inputLabel,
     },
     input: {
         height: 44,
         width: "100%",
         display: 'flex',
         flexDirection: 'row',
-        backgroundColor: '#ffffff',
+        backgroundColor: white,
         borderWidth: 1,
-        borderColor: '#E7E5E5',
+        borderColor: inputBorder,
         borderRadius: 12,
         alignItems: 'center',
         paddingHorizontal: 16,
@@ -89,7 +106,7 @@ const style = StyleSheet.create({
     },
     placeholder: {
         fontFamily: 'mulish-semibold',
-        color: '#B1B2B2',
+        color: neutral,
     },
     value: {
         fontFamily: 'mulish-semibold',

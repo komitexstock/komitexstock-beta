@@ -16,10 +16,11 @@ import {
     useEffect 
 } from "react";
 // colors
-import { primaryColor, secondaryColor } from '../style/globalStyleSheet';
+import { primaryColor, secondaryColor, background, black, bodyText, white, subText } from '../style/globalStyleSheet';
 // custom components
 import CustomBottomSheet from "../components/CustomBottomSheet";
 import AccountButtons from "../components/AccountButtons";
+import Indicator from "../components/Indicator";
 // icons
 import CameraIcon from "../assets/icons/CameraIcon";
 import EditUserIcon from "../assets/icons/EditUserIcon";
@@ -39,7 +40,7 @@ import GalleryIcon from "../assets/icons/GalleryIcon";
 import * as ImagePicker from "expo-image-picker";
 
 const Account = ({navigation}) => {
-    
+    // list of buttons in Account Page
     const accountButtons = {
         profile: {
             title: "Profile",
@@ -60,7 +61,7 @@ const Account = ({navigation}) => {
                 title: "Team Members",
                 subtitle: false,
                 icon: <TeamIcon />,
-                onPress: () => {navigation.navigate("Team")},
+                onPress: () => {navigation.navigate("TeamMembers")},
             },
             {
                 id: 3,
@@ -143,8 +144,11 @@ const Account = ({navigation}) => {
 
     // open modal function
     const openModal = (type) => {
+        // open bottomsheet modal
         bottomSheetModalRef.current?.present();
+        // set overlay
         setShowOverlay(true);
+        // set modal type
         if (type === "Notifications") {
             return setModal({
                 type: type,
@@ -173,6 +177,7 @@ const Account = ({navigation}) => {
         setEnableNotifications(!enableNotifications);
     }
 
+    // buttons in support bottom sheet modal
     const supportButtons = [
         {
             id: 1,
@@ -194,6 +199,7 @@ const Account = ({navigation}) => {
         },
     ];
 
+    // function to select image for profile photo
     const pickImageAsync = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
           allowsEditing: true,
@@ -206,24 +212,24 @@ const Account = ({navigation}) => {
         }
     };
 
-
+    // render Account page
     return (
         <>
+            {/* main page content */}
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 style={style.container}
             >
+                {/* main page wrapper */}
                 <View style={style.main}>
                     <View style={style.header}>
                         <Text style={style.stackName}>Account</Text>
-                        <View style={style.accountTypeWrapper}>
-                            <Text style={style.accountTypeText}>
-                                Manager
-                            </Text>
-                        </View>
+                        {/* account type indicator */}
+                        <Indicator type={"Dispatched"} text={"Manager"}/>
                     </View>
                     <View style={style.profileWrapper}>
                         <View style={style.imageContainer}>
+                            {/* user profile photo */}
                             <Image 
                                 style={style.profileImage}
                                 source={!selectedImage ? 
@@ -231,6 +237,7 @@ const Account = ({navigation}) => {
                                     {uri: selectedImage}
                                 }
                             />
+                            {/* change profile photo button */}
                             <TouchableOpacity 
                                 style={style.camera}
                                 onPress={() => {openModal("Open with")}}
@@ -238,11 +245,13 @@ const Account = ({navigation}) => {
                                 <CameraIcon />
                             </TouchableOpacity>
                         </View>
+                        {/* Username and company/business name */}
                         <Text style={style.fullname}>Raymond Reddington</Text>
                         <Text style={style.businessName}>Mega Enterprise Ltd</Text>
                     </View>
                     <View style={style.infoWrapper}>
                         <Text style={style.infoHeading}>Person Info</Text>
+                        {/* Profile button to navigate to profile page */}
                         <AccountButtons 
                             title={accountButtons.profile.title}
                             subtitle={accountButtons.profile.subtitle}
@@ -254,6 +263,8 @@ const Account = ({navigation}) => {
                     </View>
                     <View style={style.infoWrapper}>
                         <Text style={style.infoHeading}>Business</Text>
+                        {/* Business button to navigate to business related pages like...*/}
+                        {/*  Analytics, Team Members and Logistics  */}
                         {accountButtons.business.map((item, index) => {
                             return (
                                 <AccountButtons 
@@ -270,6 +281,8 @@ const Account = ({navigation}) => {
                     </View>
                     <View style={style.infoWrapper}>
                         <Text style={style.infoHeading}>Security & Support</Text>
+                        {/* Security and Support buttons to navigate to security and page and... */}
+                        {/*  trigger other support related bottomsheet */}
                         {accountButtons.security.map((item, index) => {
                             return (
                                 <AccountButtons 
@@ -284,12 +297,14 @@ const Account = ({navigation}) => {
                             )
                         })}
                     </View>
+                    {/* logout button */}
                     <TouchableOpacity style={style.logoutButton}>
                         <LogoutIcon />
                         <Text style={style.logoutText}>Log Out</Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>
+            {/* Bottom sheet component */}
             <CustomBottomSheet 
                 bottomSheetModalRef={bottomSheetModalRef}
                 setShowOverlay={setShowOverlay}
@@ -299,6 +314,7 @@ const Account = ({navigation}) => {
                 autoSnapAt={0}
                 sheetTitle={modal.type}
             >
+                {/* Notifications bottomsheet content */}
                 { modal.type === "Notifications" && (
                     <AccountButtons
                         title="Allow Push Notifications"
@@ -313,7 +329,7 @@ const Account = ({navigation}) => {
                         unpadded={true}
                     />
                 )}
-                
+                {/* Help and support bittonsheet content */}
                 { modal.type === "Help & Support" && supportButtons.map((item, index) => (
                     <AccountButtons
                         key={item.id}
@@ -326,7 +342,7 @@ const Account = ({navigation}) => {
                         unpadded={true}
                     />
                 ))}
-
+                {/* Upload profile photo bottomsheet */}
                 { modal.type === "Open with" && (
                     <View style={style.uploadButtonsWrapper}>
                         <TouchableOpacity
@@ -354,9 +370,10 @@ const Account = ({navigation}) => {
     );
 }
 
+// stylesheet
 const style = StyleSheet.create({
     container: {
-        backgroundColor: "#f8f8f8",
+        backgroundColor: background,
     },
     main: {
         paddingBottom: 90,
@@ -378,21 +395,6 @@ const style = StyleSheet.create({
     stackName: {
         fontFamily: 'mulish-bold',
         fontSize: 16,
-    },
-    accountTypeWrapper: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: 60,
-        height: 16,
-        backgroundColor: "rgba(7, 66, 124, 0.05)",
-        borderRadius: 20,
-    },
-    accountTypeText: {
-        fontFamily: 'mulish-regular',
-        fontSize: 8,
-        color: primaryColor,
     },
     profileWrapper: {
         display: 'flex',
@@ -423,18 +425,18 @@ const style = StyleSheet.create({
         width: 30,
         borderRadius: 15,
         borderWidth: 1,
-        borderColor: "#ffffff",
+        borderColor: white,
         backgroundColor: primaryColor
     },
     fullname: {
         fontFamily: 'mulish-semibold',
-        color: "#222222",
+        color: black,
         fontSize: 14,
     },
     businessName: {
         fontSize: 12,
-        fontFamily: 'mulish-regular',
-        color: "rgba(34, 34, 34, 0.6)",
+        fontFamily: 'mulish-medium',
+        color: bodyText,
     },
     infoWrapper: {
         width: '100%',
@@ -442,12 +444,12 @@ const style = StyleSheet.create({
         flexDirection: 'column',
     },
     infoHeading: {
-        color: "rgba(34, 34, 34, 0.6)",
+        color: bodyText,
         fontFamily: 'mulish-semibold',
-        marginBottom: 10,
+        marginBottom: 12,
     },
     logoutButton: {
-        backgroundColor: "#ffffff",
+        backgroundColor: white,
         display: 'flex',
         flexDirection: 'row',
         justifyContent: "center",
@@ -459,7 +461,8 @@ const style = StyleSheet.create({
     },
     logoutText: {
         color: "#B42318",
-        fontFamily: 'mulish-semibold'
+        fontFamily: 'mulish-semibold',
+        fontSize: 14,
     },
     uploadButtonsWrapper: {
         display: 'flex',
@@ -490,7 +493,7 @@ const style = StyleSheet.create({
     uploadButtonText: {
         fontFamily: 'mulish-semibold',
         fontSize: 14,
-        color: "#222222CC"
+        color: bodyText,
     }
 })
  

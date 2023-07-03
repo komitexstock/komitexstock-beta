@@ -1,3 +1,4 @@
+// react native components
 import { 
     View, 
     Text, 
@@ -7,22 +8,30 @@ import {
     StyleSheet,
     BackHandler
 } from "react-native";
+// icons
 import MenuIcon from "../assets/icons/MenuIcon";
-import { primaryColor } from "../style/globalStyleSheet";
-import StatWrapper from "../components/StatWrapper";
-import StatCard from "../components/StatCard";
-import { useState, useRef, useEffect } from "react";
 import SearchIcon from '../assets/icons/SearchIcon'
 import FilterIcon from '../assets/icons/FilterIcon';
+// colors
+import { background, black, bodyText, neutral, primaryColor, secondaryColor, white } from "../style/globalStyleSheet";
+// react hooks
+import { useState, useRef, useEffect } from "react";
+// components
+import StatWrapper from "../components/StatWrapper";
+import StatCard from "../components/StatCard";
 import CustomBottomSheet from "../components/CustomBottomSheet";
 import FilterButtonGroup from "../components/FilterButtonGroup";
 import SearchBar from "../components/SearchBar";
-import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import WaybillListItem from "../components/WaybillListItem";
 import Badge from "../components/Badge";
+import Header from "../components/Header";
+import ModalButton from "../components/ModalButton";
+// bottomsheet component
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 
 const Waybill = ({navigation}) => {
 
+    // stata array
     const stats = [
         {
             id: 1,
@@ -62,6 +71,7 @@ const Waybill = ({navigation}) => {
         },
     ];
 
+    // tabs, default as Outgoing for Merchants
     const [tab, setTab] = useState("Outgoing");
 
     // filterButtons
@@ -139,7 +149,7 @@ const Waybill = ({navigation}) => {
                 },
             ]
         }
-    ]
+    ];
 
     // state to store searchQuery
     const [searchQuery, setSearchQuery] = useState("");
@@ -147,6 +157,7 @@ const Waybill = ({navigation}) => {
     // search modal refernce
     const modalRef = useRef(null);
 
+    // modal state
     const [modal, setModal] = useState({
         snapPointsArray: ["50%"],
         autoSnapAt: 0,
@@ -156,7 +167,8 @@ const Waybill = ({navigation}) => {
         modalContent: <></>,
     });
 
-    // use effect to close modal
+    // use effect to close modal if 
+    // back button is pressed and modal is opened
     useEffect(() => {
         // function to run if back button is pressed
         const backAction = () => {
@@ -197,11 +209,10 @@ const Waybill = ({navigation}) => {
                     key={item.id}
                     />
                 ))}
-                <View style={style.footerButtonWrapper}>
-                    <TouchableOpacity style={style.footerButton}>
-                        <Text style={style.footerButtonText}>Apply</Text>
-                    </TouchableOpacity>
-                </View>
+                <ModalButton
+                    name={"Apply"}
+                    onPress={() => {}}
+                />
             </View>
         </>
     };
@@ -218,7 +229,7 @@ const Waybill = ({navigation}) => {
                 placeholder={"Search Waybills"}
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
-                backgroundColor={"#f8f8f8"}
+                backgroundColor={background}
             />
             <BottomSheetScrollView style={style.orderSearchResults}>
                 
@@ -247,6 +258,7 @@ const Waybill = ({navigation}) => {
         modalRef.current?.present();
     }
 
+    // list of outgoing waybill
     const outGoingWaybills = [
         {
             products: [
@@ -347,6 +359,7 @@ const Waybill = ({navigation}) => {
         }
     ];
 
+    // incoming waybill
     const inComingWaybills = [
         {
             products: [
@@ -410,17 +423,21 @@ const Waybill = ({navigation}) => {
 
     return (
         <>
-            <TouchableWithoutFeedback style={{flex: 1, width: "100%", height: "100%"}}>
+            <TouchableWithoutFeedback style={{flex: 1}}>
                 <FlatList 
                     showsVerticalScrollIndicator={false}
                     ListHeaderComponent={
                         <View style={style.headerWrapper}>
-                            <View style={style.header}>
-                                <Text style={style.headerText}>Waybill</Text>
-                                <TouchableOpacity style={style.menuIcon}>
-                                    <MenuIcon />
-                                </TouchableOpacity>
-                            </View>
+                            {/* header component */}
+                            <Header
+                                navigation={navigation}
+                                stackName={"Waybill"}
+                                removeBackArrow={true}
+                                unpadded={true}
+                                icon={<MenuIcon />}
+                                iconFunction={() => {}}
+                            />
+                            {/* stats */}
                             <StatWrapper>
                                 {stats.map(stat => (
                                     <StatCard
@@ -434,6 +451,7 @@ const Waybill = ({navigation}) => {
                                     />
                                 ))}
                             </StatWrapper>
+                            {/* onPress navigate to send waybill page */}
                             <TouchableOpacity 
                                 style={style.sendOrderButton}
                                 onPress={() => navigation.navigate("SendWaybill")}
@@ -443,12 +461,14 @@ const Waybill = ({navigation}) => {
                             <View style={style.recentOrderHeading}>
                                 <Text style={style.recentOrderHeadingText}>Recent Waybills</Text>
                                 <View style={style.actionWrapper}>
+                                    {/* trigger search modal */}
                                     <TouchableOpacity 
                                         style={style.menuIcon}
                                         onPress={() => openModal("search")}
                                     >
                                         <SearchIcon />
                                     </TouchableOpacity>
+                                    {/* trigger filter modal */}
                                     <TouchableOpacity
                                         style={style.menuIcon}
                                         onPress={() => openModal("filter")}
@@ -457,6 +477,7 @@ const Waybill = ({navigation}) => {
                                     </TouchableOpacity>
                                 </View>
                             </View>
+                            {/* page tabs */}
                             <View style={style.tabContainer}>
                                 <TouchableOpacity 
                                     style={tab === "Outgoing" ? style.tabButtonSelected : style.tabButton}
@@ -480,10 +501,12 @@ const Waybill = ({navigation}) => {
                     keyExtractor={item => item.id}
                     data={tab === "Outgoing" ? outGoingWaybills : inComingWaybills}
                     renderItem={({ item, index }) => (
+                        // render waybill list
                         <WaybillListItem item={item} index={index} length={outGoingWaybills.length} />
                     )}
                 />
             </TouchableWithoutFeedback>
+            {/* bottomsheet */}
             <CustomBottomSheet 
                 bottomSheetModalRef={modalRef}
                 showOverlay={modal.overlay}
@@ -508,22 +531,10 @@ const style = StyleSheet.create({
     headerWrapper: {
         width: "100%",
     },
-    header: {
-        width: "100%",
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        height: 50,
-    },
-    headerText: {
-        fontFamily: "mulish-bold",
-        fontSize: 20,
-    },
     menuIcon: {
         width: 24,
         height: 24,
-        backgroundColor: "#ffffff",
+        backgroundColor: white,
         borderRadius: 6,
         display: "flex",
         justifyContent: "center",
@@ -535,7 +546,7 @@ const style = StyleSheet.create({
         display: "flex",
         alignItems: "center",
         justifyContent: 'center',
-        backgroundColor: "rgba(7, 66, 124, 0.05)",
+        backgroundColor: secondaryColor,
         borderRadius: 12,
         marginVertical: 22,
     },
@@ -556,7 +567,7 @@ const style = StyleSheet.create({
     },
     recentOrderHeadingText: {
         fontFamily: "mulish-bold",
-        color: "rgba(34, 34, 34, 0.6)",
+        color: bodyText,
         fontSize: 10,
     },
     actionWrapper: {
@@ -572,27 +583,7 @@ const style = StyleSheet.create({
         alignItems: "center",
         justifyContent: "flex-start",
         width: "100%",
-        // backgroundColor: "pink",
         flex: 1,
-    },
-    footerButtonWrapper: {
-      width: "100%",
-      position: "absolute",
-      bottom: 0,
-    },
-    footerButton: {
-      width: "100%",
-      height: 44,
-      backgroundColor: primaryColor,
-      borderRadius: 12,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center", 
-    },
-    footerButtonText: {
-      color: "white",
-      fontSize: 16,
-      fontFamily: 'mulish-semibold',
     },
     tabContainer: {
         width: "100%",
@@ -626,12 +617,12 @@ const style = StyleSheet.create({
     tabButtonText: {
         fontFamily: 'mulish-semibold',
         fontSize: 14,
-        color: "rgba(177, 178, 178, 1)",
+        color: neutral,
     },
     tabButtonTextSelected: {
         fontFamily: 'mulish-semibold',
         fontSize: 14,
-        color: "rgba(34, 34, 34, 1)",
+        color: black,
     },
 })
  

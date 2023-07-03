@@ -1,17 +1,33 @@
+// react native components
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
-import { primaryColor } from "../style/globalStyleSheet";
+// colors
+import { accent, background, black, bodyText, primaryColor, white } from "../style/globalStyleSheet";
+// icons
 import InfoIconWhite from "../assets/icons/InfoIconWhite";
+// components
+import ModalButton from "../components/ModalButton";
+// bottomsheet component
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 
 const AddSummaryModalContent = ({logistics, products, customerName, location, phoneNumber, price, address, waybillDetails, shipperLocation, receiverLocation, type}) => {
+    // logisitcs => object | business_name(string), company_id(string), verified(boolean), imageUrl
+    // products => array of object | product_name, quantity
+    // customerName, location, address, waybillDetails, shipperLocation, receiverLocation => string
+    // phoneNumber => array 
+    // price => float
+    // tyep => string | order or waybill
 
+    // amount receivable for merchants
     const receivable = price ? price - location.charge : null;
 
+    // total quantity
     const totalQuantity = products.reduce((accumulator, product) => accumulator + product.quantity, 0);
 
     return (
         <View style={style.mainContainer}>
             <View style={style.listContainer}>
                 <View style={style.detailsWrapper}>
+                    {/* order summary */}
                     {type === "order" && <>
                         <View style={style.leftAlignedText}>
                             <Text style={style.detailDescription}>Customer's Name</Text>
@@ -30,6 +46,7 @@ const AddSummaryModalContent = ({logistics, products, customerName, location, ph
                             <Text style={style.detail}>{"Mega Enterprise Ltd"}</Text>
                         </View>
                     </>}
+                    {/* wabill summary */}
                     {type === "waybill" && <>
                         <View style={style.leftAlignedText}>
                             <Text style={style.detailDescription}>Waybill Details</Text>
@@ -52,7 +69,8 @@ const AddSummaryModalContent = ({logistics, products, customerName, location, ph
                 </View>
                 <View 
                     style={style.listWrapper}  
-                >
+                >   
+                    {/* list of products */}
                     {products.map(data => (
                         <View 
                             key={data.id}
@@ -73,6 +91,7 @@ const AddSummaryModalContent = ({logistics, products, customerName, location, ph
                     ))}
                 </View>
                 <View style={style.priceContainer}>
+                    {/* total quantity and price */}
                     {type === "order" && <>
                         <View style={style.priceWrapper}>
                             <Text style={style.priceDescriptionText}>Price</Text>
@@ -101,19 +120,25 @@ const AddSummaryModalContent = ({logistics, products, customerName, location, ph
                     </>}
                 </View>
             </View>
-            <View style={style.fixedButton}>
-                <TouchableOpacity 
-                    style={style.button}
-                >
-                    <Text style={style.buttonText}>Done</Text>
-                </TouchableOpacity>
-            </View>
+            { type === "order" ? (
+                <ModalButton 
+                    name={"Confirm Order"}
+                    onPress={() => {}}
+                />
+            ) : (
+                <ModalButton 
+                    name={"Confirm Waybill"}
+                    onPress={() => {}}
+                />
+            )}
         </View>
     );
 }
 
+// stylesheet
 const style = StyleSheet.create({
     mainContainer: {
+        height: '100%',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
@@ -141,11 +166,11 @@ const style = StyleSheet.create({
     detailDescription: {
         fontFamily: "mulish-regular",
         fontSize: 10,
-        color: "rgba(34, 34, 34, 0.6)",
+        color: bodyText,
     },
     detail: {
         fontFamily: "mulish-semibold",
-        color: "rgba(34, 34, 34, 1)",
+        color: black,
         fontSize: 10,
         flexWrap: "wrap",
         marginBottom: 10,
@@ -160,10 +185,11 @@ const style = StyleSheet.create({
     productHeading: {
         fontFamily: "mulish-semibold",
         fontSize: 10,
+        color: bodyText,
     },
     listWrapper: {
         width: '100%',
-        backgroundColor: "#f8f8f8",
+        backgroundColor: background,
         borderTopRightRadius: 12,
         borderTopLeftRadius: 12,
         gap: 10,
@@ -191,19 +217,20 @@ const style = StyleSheet.create({
     },
     productQuantity: {
         fontSize: 10,
-        fontFamily: "mulish-regular",
-        color: "#5C5C5C",
+        fontFamily: "mulish-semibold",
+        color: black,
     },
     listText: {
         fontFamily: "mulish-regular",
         fontSize: 12,
-        flex: 1
+        flex: 1,
+        color: black,
     },
     priceContainer: {
         width: '100%',
         maxHeight: 90,
         minHeight: 40,
-        backgroundColor: "#E66D1C",
+        backgroundColor: accent,
         borderBottomLeftRadius: 12,
         borderBottomRightRadius: 12,
         display: 'flex',
@@ -223,7 +250,7 @@ const style = StyleSheet.create({
     },
     priceText: {
         fontFamily: "mulish-bold",
-        color: "#ffffff",
+        color: white,
         fontSize: 10,
     },
     leftAlignedText: {
@@ -243,8 +270,8 @@ const style = StyleSheet.create({
         alignItems: 'flex-end',
     },
     priceDescriptionText: {
-        fontFamily: "mulish-regular",
-        color: "#ffffff",
+        fontFamily: "mulish-semibold",
+        color: white,
         fontSize: 10,
     },
     deliveryFee: {
@@ -252,28 +279,6 @@ const style = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         gap: 5,
-    },
-    button: {
-        width: "100%",
-        backgroundColor: primaryColor,
-        height: 44,
-        borderRadius: 12,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 10,
-    }, 
-    buttonText: {
-        fontFamily: "mulish-semibold",
-        color: "#ffffff",
-        fontSize: 16,
-    },
-    fixedButton: {
-        width: "100%",
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: "#ffffff",
     },
     totalWrapper: {
         width: '100%',
@@ -284,7 +289,7 @@ const style = StyleSheet.create({
     },
     totalText: {
         fontFamily: "mulish-semibold",
-        color: "#ffffff",
+        color: white,
         fontSize: 12,
     }
 })

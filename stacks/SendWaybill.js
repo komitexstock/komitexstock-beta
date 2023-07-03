@@ -1,3 +1,4 @@
+// react native component
 import { 
     View, 
     StyleSheet, 
@@ -8,6 +9,7 @@ import {
     TouchableOpacity,
     BackHandler
 } from "react-native";
+// components
 import Header from "../components/Header";
 import Input from "../components/Input";
 import SelectInput from "../components/SelectInput";
@@ -17,9 +19,12 @@ import AddSummaryModalContent from "../components/AddSummaryModalContent";
 import AddLogisticsModalContent from "../components/AddLogisticsModalContent";
 import CustomButton from "../components/CustomButton";
 import Product from "../components/Product";
+// icon
 import ArrowDown from "../assets/icons/ArrowDown";
+// react hooks
 import { useState, useRef, useEffect } from "react";
-import { primaryColor } from "../style/globalStyleSheet";
+// colors
+import { accentLight, background, black, primaryColor } from "../style/globalStyleSheet";
 
 const SendWaybill = ({navigation}) => {
 
@@ -53,7 +58,7 @@ const SendWaybill = ({navigation}) => {
     // state to control modal overlay
     const [showOverlay, setShowOverlay] = useState(false);
 
-    // use effect to close modal
+    // use effect to close modal onPress of back button if modal is open
     useEffect(() => {
         // function to run if back button is pressed
         const backAction = () => {
@@ -81,6 +86,7 @@ const SendWaybill = ({navigation}) => {
     // modal ref
     const bottomSheetModalRef = useRef(null);
 
+    // close modal function
     const closeModal = () => {
       bottomSheetModalRef.current?.close();
       setShowOverlay(false);
@@ -104,6 +110,7 @@ const SendWaybill = ({navigation}) => {
         }
     }
 
+    // check if any field is empty
     const isAnyFieldEmpty = [
             logistics, 
             waybillDetails,
@@ -115,12 +122,12 @@ const SendWaybill = ({navigation}) => {
         }
     );
 
-    // console.log(products);
-    
+    // function to show waybill summary bottomsheet modal
     const showWaybillSummary = () => {
         openModal("Summary", "Waybill Summary", "Review your waybill details", 1);    
     }
 
+    // function to decrease quantity of a selected products
     const decreaseQuantity = (id) => {
         setProducts(prevProducts => {
             return prevProducts.map(product => {
@@ -139,7 +146,7 @@ const SendWaybill = ({navigation}) => {
         })
     }
 
-    // increase product quanityt
+    // increase product quantity
     const increaseQuantity = (id) => {
         setProducts(prevProducts => {
             return prevProducts.map(product => {
@@ -155,11 +162,13 @@ const SendWaybill = ({navigation}) => {
         })
     }
 
+    // function to remove products
     const removeProduct = (id) => {
         const newProduct = products.filter((product) => product.id !== id);
         setProducts(newProduct);
     }
 
+    // function to add products
     const addProducts = (productsList) => {
         setProducts(productsList);
         closeModal();
@@ -181,7 +190,7 @@ const SendWaybill = ({navigation}) => {
         setReceiverLocation(text)
     }
 
-    
+    // function to handle selected logistics
     const handleSelectedLogistics = (data) => {
         closeModal();
         setLogistics(data);
@@ -201,27 +210,30 @@ const SendWaybill = ({navigation}) => {
             <TouchableWithoutFeedback
                 onPress={() => {
                     Keyboard.dismiss();
+                    // dismiss keyboard onPress anywhere on the screen
                 }}
-                style={{backgroundColor: "pink",}}
             >
                 <ScrollView
                     showsVerticalScrollIndicator={false}
                     style={{
                         minHeight: "100%",
                         width: "100%",
-                        backgroundColor: "#f8f8f8",
+                        backgroundColor: background,
                     }}
                 >
                     <View style={style.main}>
                         <View style={style.mainContent}>
+                            {/* header component */}
                             <Header 
                                 navigation={navigation} 
                                 stackName={"Send Waybill"} 
                                 iconFunction={null} 
-                                icon={null} 
+                                icon={null}
+                                unpadded={true}
                             />
                             <View style={style.container}>
                                 <View style={style.inputWrapper}>
+                                    {/* select logistics input */}
                                     <SelectInput 
                                         label={"Select Logistics"} 
                                         placeholder={"Choose a logistics"} 
@@ -231,7 +243,7 @@ const SendWaybill = ({navigation}) => {
                                         active={selectLogisticsActive}
                                         inputFor={"Logistics"}
                                     />
-
+                                    {/* shippers location */}
                                     <Input 
                                         label={"Shipper's Location"} 
                                         placeholder={"Waybill origin e.g Jibowu"} 
@@ -240,7 +252,7 @@ const SendWaybill = ({navigation}) => {
                                         error={errorShipperLocation}
                                         setError={setErrorShipperLocation}
                                     />
-
+                                    {/* receivers location */}
                                     <Input 
                                         label={"Receiver's Location"} 
                                         placeholder={"Waybill destination e.g Warri"} 
@@ -249,7 +261,7 @@ const SendWaybill = ({navigation}) => {
                                         error={errorReceiverLocation}
                                         setError={setErrorReceiverLocation}
                                     />
-
+                                    {/* waybill details */}
                                     <Input 
                                         label={"Waybill Details"} 
                                         placeholder={"Driver's number or Waybill number"} 
@@ -264,16 +276,23 @@ const SendWaybill = ({navigation}) => {
                                         error={errorWaybillDetails}
                                         setError={setErrorWaybillDetails}
                                     />
-                                    { logistics && <View style={style.productsWrapper}>
+                                    { logistics && // if logistics has been selected, allow selection of products
+                                        <View style={style.productsWrapper}>
                                             <View style={style.productsHeading}>
                                                 <Text style={style.producPlaceholder}>Products Selected</Text>
                                                 <TouchableOpacity
                                                     onPress={() => openModal("Products", "Select Products", null, 0)}
                                                 >
-                                                    <Text style={style.addProduct}>+Add Product</Text>
+                                                    <Text style={style.addProduct}>+Selected Product</Text>
+                                                </TouchableOpacity>
+                                                <TouchableOpacity
+                                                    onPress={() => navigation.navigate("AddProduct")}
+                                                >
+                                                    <Text style={style.addProduct}>+New Product</Text>
                                                 </TouchableOpacity>
                                             </View>
                                             { products.length !== 0 ? products.map((product) => (
+                                                // map through selected products
                                                 <Product 
                                                     key={product.id} 
                                                     product={product} 
@@ -281,20 +300,24 @@ const SendWaybill = ({navigation}) => {
                                                     increaseQuantity={increaseQuantity}
                                                     decreaseQuantity={decreaseQuantity}
                                                 />
-                                            )) : (
+                                                )) : (
+                                                // indicate no products selected
                                                 <View style={style.noProductWrapper}>
                                                     <Text style={style.noProductText}>
-                                                        No product selected. Kindly add a new product or select one from your inventory
+                                                        No product selected. Kindly add a new 
+                                                        product or select one from your inventory
                                                     </Text>
                                                 </View>
                                             )}
-                                    </View>}
+                                        </View>
+                                    }
                                 </View>
                             </View>
                         </View>
                     </View>
                 </ScrollView>
             </TouchableWithoutFeedback>
+            {/* bottom sheet */}
             <CustomBottomSheet
                 bottomSheetModalRef={bottomSheetModalRef}
                 showOverlay={showOverlay}
@@ -304,16 +327,19 @@ const SendWaybill = ({navigation}) => {
                 sheetTitle={modal.title}
                 sheetSubtitle={modal.subtitle}
             >
+                {/* logistics modal content */}
                 {modal.type === "Logistics" && (
                     <AddLogisticsModalContent 
                         handleSelectedLogistics={handleSelectedLogistics}
                     />
                 )}
+                {/* products modal content */}
                 {modal.type === "Products" && (
                     <AddProductsModalContent 
                         addProducts={addProducts} selectedProducts={products}
                     />
                 )}
+                {/* waybill summary modal content */}
                 {modal.type === "Summary" && (
                     <AddSummaryModalContent 
                         logistics={logistics}
@@ -325,10 +351,11 @@ const SendWaybill = ({navigation}) => {
                     />
                 )}
             </CustomBottomSheet>
+            {/* show waybill summary */}
             <CustomButton 
                 name="Continue" 
                 onPress={showWaybillSummary}
-                backgroundColor={"#f8f8f8"}
+                backgroundColor={background}
                 inactive={isAnyFieldEmpty}
                 fixed={true}
             />
@@ -336,6 +363,7 @@ const SendWaybill = ({navigation}) => {
     );
 }
 
+// stylesheet
 const style = StyleSheet.create({
     main: {
         minHeight: "100%",
@@ -385,11 +413,13 @@ const style = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",  
+        gap: 12,
     },
     producPlaceholder:  {
         fontFamily: "mulish-bold",
         fontSize: 12,
-        color: "#222222",
+        color: black,
+        flex: 1,
     },
     addProduct: {
         fontFamily: "mulish-semibold",
@@ -404,14 +434,14 @@ const style = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'center',
-        backgroundColor: 'rgba(230, 109, 28, 0.05)',
+        backgroundColor: accentLight,
         padding: 10,
         borderRadius: 12,
     },
     noProductText: {
         fontSize: 10,
         fontFamily: 'mulish-regular',
-        color: "#222222",
+        color: black,
     }
 })
  

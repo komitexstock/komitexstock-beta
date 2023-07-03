@@ -1,26 +1,48 @@
-import { TouchableOpacity, Image, View, Text, StyleSheet } from 'react-native';
+// react native component
+import { 
+    TouchableOpacity,
+    Image,
+    View,
+    Text,
+    StyleSheet
+} from 'react-native';
+// component
 import Indicator from './Indicator';
+import { black, bodyText, white } from '../style/globalStyleSheet';
 
 const OrderListItem = ({item, index, length}) => {
+    // lenght, index => int
+    // item => object
+
+    // render OrderListItem
     return (
         <TouchableOpacity 
             style={[
                 style.orderWrapper, 
+                // unique style for first order in order list array
+                // add borderRadius to top of first order
                 index === 0 && style.firstOrderWrapper, 
+                // unique style for last order in order list array
+                // add borderRadius to bottom of last order
                 index === (length - 1) && style.lastOrderWrapper
             ]}
+            // navigate to chat on press order
             onPress={item.navigateToChat}
         >
+            {/* logistics image */}
             <Image 
                 source={item.imageUrl}
                 style={style.orderImage}
             />
+            {/* order info */}
             <View style={style.orderInfo}>
                 <Text 
                     style={[
                         style.orderMainText,
-                        {color: item.newMessage ? 'rgba(34, 34, 34, 1)' : 'rgba(34, 34, 34, 0.8)'},
-                        {fontFamily: item.newMessage ? 'mulish-bold' : 'mulish-semibold'},
+                        // if order has a new message make text have a color with higher opacity
+                        {color: item.newMessage ? black : bodyText},
+                        // if order has a new message make font have a higher weight
+                        {fontFamily: item.newMessage ? 'mulish-bold' : 'mulish-regular'},
                     ]}
                     >
                     {item.name}, {item.location}
@@ -28,10 +50,11 @@ const OrderListItem = ({item, index, length}) => {
                 <Text 
                     style={[
                         style.orderSubText,
-                        {color: item.newMessage ? 'rgba(34, 34, 34, 1)' : 'rgba(34, 34, 34, 0.8)'},
+                        {color: item.newMessage ? black : bodyText},
                     ]}
                 >
                     {item.products.map((product, index) => {
+                        // seperate list of products by commas ','
                         return `${index === 0 ? '' : ', '} ${product.product_name} x ${product.quantity}`
                     })}
                 </Text>
@@ -41,6 +64,7 @@ const OrderListItem = ({item, index, length}) => {
             </View>
             <View style={style.orderPriceContainer}>
                   <Text style={style.orderPrice}>
+                    {/* display price as a string with comma seperator using .toLocaleString function */}
                     ₦{item.price.toLocaleString()}.<Text style={style.decimal}>00</Text>
                 </Text>
                 <Indicator type={item.status} text={item.status} />
@@ -49,6 +73,7 @@ const OrderListItem = ({item, index, length}) => {
     );
 }
 
+// stylesheet
 const style = StyleSheet.create({
     orderWrapper: {
         padding: 10,
@@ -59,7 +84,7 @@ const style = StyleSheet.create({
         width: "100%",
         minHeight: 70,
         gap: 10,
-        backgroundColor: '#ffffff',
+        backgroundColor: white,
         paddingVertical: 15,
     },
     firstOrderWrapper: {
@@ -85,7 +110,6 @@ const style = StyleSheet.create({
     orderSubText: {
         fontFamily: 'mulish-regular',
         fontSize: 12,
-        color: 'rgba(34, 34, 34, 0.6)',
     },
     orderDatetime: {
         fontFamily: 'mulish-regular',
@@ -97,7 +121,7 @@ const style = StyleSheet.create({
         fontSize: 12,
     },
     decimal: {
-        color: 'rgba(34, 34, 34, 0.6)',
+        color: bodyText,
     },
     orderPriceContainer: {
         display: 'flex',

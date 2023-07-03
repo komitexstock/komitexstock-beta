@@ -3,7 +3,7 @@ import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useMemo } from "react";
 import ModalHandle from "./ModalHandle";
 import CloseIcon from "../assets/icons/CloseIcon";
-import { primaryColor } from "../style/globalStyleSheet";
+import { bodyText, primaryColor } from "../style/globalStyleSheet";
 
 const CustomBottomSheet = ({bottomSheetModalRef, showOverlay, closeModal, snapPointsArray, autoSnapAt, children, sheetTitle, sheetSubtitle, clearFilterFunction}) => {
 
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
     sheetSubtitleText: {
         fontFamily: "mulish-regular",
         fontSize: 12,
-        color: "rgba(34, 34, 34, 0.6)",
+        color: bodyText,
     },
     closeButtonWrapper: {
         width: 20,

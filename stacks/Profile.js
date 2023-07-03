@@ -1,4 +1,4 @@
-import Header from "../components/Header";
+// react native components
 import { 
     View, 
     Text, 
@@ -10,14 +10,19 @@ import {
     Keyboard,
     BackHandler
 } from "react-native";
+// compoents
 import AccountButtons from "../components/AccountButtons";
+import Header from "../components/Header";
+import Input from "../components/Input";
+import ModalButton from "../components/ModalButton";
+import CustomBottomSheet from "../components/CustomBottomSheet";
+// react hooks
 import { useState, useRef, useEffect } from "react";
+// icons
 import CallIcon from "../assets/icons/CallIcon";
 import SmsIcon from "../assets/icons/SmsIcon";
 import EmailIcon from "../assets/icons/EmailIcon";
-import CustomBottomSheet from "../components/CustomBottomSheet";
-import Input from "../components/Input";
-import ModalButton from "../components/ModalButton";
+import { background, black, bodyText } from "../style/globalStyleSheet";
 
 const Profile = ({navigation}) => {
 
@@ -86,6 +91,7 @@ const Profile = ({navigation}) => {
         },
     ];
 
+    // state to store modal parameters
     const [modal, setModal] = useState("")
 
     // modal overlay
@@ -107,7 +113,7 @@ const Profile = ({navigation}) => {
         setShowOverlay(true);
     }
 
-    // use effect to close modal
+    // use effect to close modal when back button is prressed
     useEffect(() => {
         // function to run if back button is pressed
         const backAction = () => {
@@ -132,6 +138,8 @@ const Profile = ({navigation}) => {
 
     }, [showOverlay]);
 
+
+    // support button list to populate support bottomsheet
     const supportButtons = [
         {
             id: 1,
@@ -153,6 +161,7 @@ const Profile = ({navigation}) => {
         },
     ];
 
+    // validation to check for empty input fields
     const fullNameEmptyFields = [
         firstName, 
         lastName,
@@ -160,7 +169,7 @@ const Profile = ({navigation}) => {
             (item) => item === null || item === ''
     );
 
-
+    // render Profile page/stack
     return (
         <>
             <TouchableWithoutFeedback>
@@ -174,6 +183,7 @@ const Profile = ({navigation}) => {
                             stackName={"Profile"} 
                             iconFunction={null} 
                             icon={null} 
+                            unpadded={true}
                         />
                         <Text style={style.paragraph}>
                             You can only change your full name and phone number. To change other information, please contact 
@@ -198,6 +208,7 @@ const Profile = ({navigation}) => {
                     </View>
                 </ScrollView>
             </TouchableWithoutFeedback>
+            {/* bottomsheet modal */}
             <CustomBottomSheet 
                 bottomSheetModalRef={bottomSheetModalRef}
                 setShowOverlay={setShowOverlay}
@@ -207,6 +218,7 @@ const Profile = ({navigation}) => {
                 autoSnapAt={0}
                 sheetTitle={modal}
             >   
+                {/* help and support bottomsheet content */}
                 { modal === "Help & Support" && supportButtons.map((item, index) => (
                     <AccountButtons
                         key={item.id}
@@ -219,13 +231,14 @@ const Profile = ({navigation}) => {
                         unpadded={true}
                     />
                 ))}
-
+                {/* edit full name bottomsheet modal content */}
                 { modal === "Full Name" && (
                     <TouchableWithoutFeedback
                         onPress={() => Keyboard.dismiss()}
                     >   
                         <View style={style.modalWrapper}>
                             <View style={style.inputWrapper}>
+                                {/* first name input */}
                                 <Input 
                                     label={"First Name"}
                                     placeholder={"First Name"}
@@ -234,6 +247,7 @@ const Profile = ({navigation}) => {
                                     error={errorFirstName}
                                     setError={setErrorFirstName}
                                 />
+                                {/* last name input */}
                                 <Input 
                                     label={"Last Name"}
                                     placeholder={"Last Name"}
@@ -243,6 +257,7 @@ const Profile = ({navigation}) => {
                                     setError={setErrorLastName}
                                 />
                             </View>
+                            {/* modal button to save changes */}
                             <ModalButton
                                 name={"Save Changes"}
                                 onPress={() => {}}
@@ -251,7 +266,7 @@ const Profile = ({navigation}) => {
                         </View>
                     </TouchableWithoutFeedback>
                 )}
-
+                {/* edit phone number bottomsheet modal content */}
                 { modal === "Phone Number" && (
                     <TouchableWithoutFeedback
                         onPress={() => Keyboard.dismiss()}
@@ -259,7 +274,8 @@ const Profile = ({navigation}) => {
                         <View style={style.modalWrapper}>
                             <View style={style.inputWrapper}>
                                 <Text style={style.modalText}>
-                                    Please type in your new phone number. We will send a code to the phone member to confirm you own it.
+                                    Please type in your new phone number. 
+                                    We will send a code to the phone member to confirm you own it.
                                 </Text>
                                 <Input 
                                     label={"Phone number"}
@@ -283,11 +299,12 @@ const Profile = ({navigation}) => {
     );
 }
 
+// stylesheet
 const style = StyleSheet.create({
     container: {
         flex: 1,
         width: "100%",
-        backgroundColor: "#f8f8f8",
+        backgroundColor: background,
         padding: 20,
         minHeight: "100%",
     },
@@ -303,7 +320,7 @@ const style = StyleSheet.create({
     paragraph: {
         fontSize: 12,
         fontFamily: "mulish-regular",
-        color: "rgba(34, 34, 34, 0.60)",
+        color: bodyText,
         flex: 1,
         marginBottom: 24,
     },
@@ -318,7 +335,7 @@ const style = StyleSheet.create({
     linkText: {
         marginBottom: -3,
         marginLeft: 3,
-        color: "rgba(34, 34, 34, 1)",
+        color: black,
         fontFamily: "mulish-regular",
         fontSize: 12,
         textDecorationLine: 'underline',
@@ -342,7 +359,7 @@ const style = StyleSheet.create({
     modalText: {
         fontFamily: "mulish-regular",
         fontSize: 12,
-        color: "rgba(34, 34, 34, 0.6)",
+        color: bodyText,
         width: "100%",
     }
 })

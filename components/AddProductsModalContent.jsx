@@ -1,12 +1,20 @@
+// react native components
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
+// expo checkbox components
 import CheckBox from 'expo-checkbox';
+// components
 import SearchBar from "./SearchBar";
+// react hook
 import { useState } from "react";
+// bottomsheet components
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import { primaryColor } from "../style/globalStyleSheet";
+// colors
+import { background, black, inputBorder, primaryColor, white } from "../style/globalStyleSheet";
 
 const AddProductsModalContent = ({addProducts, selectedProducts}) => {
+    // addProducts, selectedProducts => function
 
+    // products list with selected logistics
     const allProducts = [
         {
             id: 1,
@@ -49,6 +57,7 @@ const AddProductsModalContent = ({addProducts, selectedProducts}) => {
         return [...filteredProducts, ...selectedProducts];
     });
 
+    // function to handle selected products, this get called on check checkbox
     const handleSelectedProducts = (id) => {
         const newList = productList.map(prevItem => {
             if (prevItem.id === id) {
@@ -60,17 +69,20 @@ const AddProductsModalContent = ({addProducts, selectedProducts}) => {
         setProductList(newList);
     }
 
+    // function to update selected products, this gets called onclick "Done"
     const updateProductSelection = () => {
         addProducts(productList.filter(product => product.checked));
     }
 
+    // render AddProductsModalContent component
     return (
         <>
+            {/* Search bar component */}
             <SearchBar 
                 placeholder={"Search for a logistics"} 
                 searchQuery={searchQuery} 
                 setSearchQuery={setSearchQuery} 
-                backgroundColor={"#f8f8f8"}
+                backgroundColor={background}
             />
             <View>
                 <Text style={style.modalHeading}>Available Products</Text>
@@ -80,23 +92,26 @@ const AddProductsModalContent = ({addProducts, selectedProducts}) => {
                     style={style.listWrapper}  
                     contentContainerStyle={style.listContainer}
                 >
+                    {/* list of product with selected logistics */}
                     {productList.map((data) => (
                         <View 
                             key={data.id}
                             style={style.listItemWrapper}
                         >
-
+                            {/* product */}
                             <TouchableOpacity
                                 style={style.list}
                                 key={data.id}
                                 onPress={() => handleSelectedProducts(data.id)}
                             >   
+                                {/* product image */}
                                 <Image
                                     style={style.logisticsImage}
                                     source={data.imageUrl}
                                 />
                                 <Text style={style.listText}>{data.product_name}</Text>
                             </TouchableOpacity>
+                            {/* checkbox */}
                             <CheckBox 
                                 value={data.checked}
                                 color={data.checked ? primaryColor : undefined}
@@ -124,6 +139,7 @@ const style = StyleSheet.create({
         fontFamily: "mulish-semibold",
         fontSize: 12,
         marginVertical: 10,
+        color: black,
     },
     listContainer: {
         display: 'flex',
@@ -142,7 +158,7 @@ const style = StyleSheet.create({
         flexDirection: "row",
         width: '100%',
         alignItems: 'center',
-        borderBottomColor: "#E7E5E5",
+        borderBottomColor: inputBorder,
         borderBottomWidth: 1,
     },
     list: {
@@ -160,9 +176,10 @@ const style = StyleSheet.create({
         borderRadius: 6,
     },
     listText: {
-        fontFamily: "mulish-regular",
+        fontFamily: "mulish-medium",
         fontSize: 12,
-        flex: 1
+        flex: 1,
+        color: black,
     },
     checkBox: {
         width: 16,
@@ -183,7 +200,7 @@ const style = StyleSheet.create({
     }, 
     buttonText: {
         fontFamily: "mulish-semibold",
-        color: "#ffffff",
+        color: white,
         fontSize: 16,
     },
     fixedButton: {
@@ -191,7 +208,7 @@ const style = StyleSheet.create({
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: "#ffffff",
+        backgroundColor: white,
     }
 })
  

@@ -1,24 +1,34 @@
+// react native component
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+// icons
 import CloseWhiteIcon from "../assets/icons/CloseWhiteIcon";
 import SuccessIcon from "../assets/icons/SuccessIcon";
 import ErrorIcon from "../assets/icons/ErrorIcon";
+// color
+import { white } from "../style/globalStyleSheet";
 
 const AlertNotice = ({type, text, closeAlert}) => {
     return (
         <View style={style.container}>
             <View
                 style={[
-                    style.noticeWrapper, 
+                    style.noticeWrapper,
+                    // render red backround style if type === "error"
+                    // render green backround style if type === "success"
                     type === "success" ? style.success : style.error
                 ]}
             >   
                 <View>
+                    {/* render the appropriate icon */}
                     { type === "success" ? <SuccessIcon /> : <ErrorIcon />}
                 </View> 
                 <View style={style.textWrapper}>
+                    {/* render the appropriate heading */}
                     <Text style={style.noticeType}>{type === "success" ? "Success!" : "Error!"}</Text>
+                    {/* render text passed to the component as a prop */}
                     <Text style={style.noticeInfo}>{text}</Text>
                 </View>
+                {/* close alert notice button */}
                 <TouchableOpacity
                     onPress={() => closeAlert(false)}
                     style={style.closeButton}
@@ -30,6 +40,7 @@ const AlertNotice = ({type, text, closeAlert}) => {
     );
 }
 
+// stylesheet
 const style = StyleSheet.create({
     container: {
         width: "100%",
@@ -70,13 +81,13 @@ const style = StyleSheet.create({
         flex: 1,
     },
     noticeType: {
-        color: "#ffffff",
+        color: white,
         fontFamily: "mulish-bold",
         fontSize: 14,
     },
     noticeInfo: {
-        color: "#ffffff",
-        fontFamily: "mulish-regular",
+        color: white,
+        fontFamily: "mulish-medium",
         fontSize: 10,
     },
     closeButton: {

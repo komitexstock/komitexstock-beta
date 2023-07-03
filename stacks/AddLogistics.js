@@ -1,13 +1,17 @@
+// react native components
 import { 
     View, 
     Text, 
     FlatList, 
     TouchableWithoutFeedback,
     StyleSheet,
-    BackHandler
+    BackHandler,
+    Keyboard
 } from "react-native";
-import Header from "../components/Header";
+// react hooks
 import { useState, useRef, useEffect } from "react";
+// components
+import Header from "../components/Header";
 import SelectLogisticsCard from "../components/SelectLogisticsCard";
 import SearchBar from "../components/SearchBar";
 import CustomBottomSheet from "../components/CustomBottomSheet";
@@ -15,6 +19,8 @@ import ModalButton from "../components/ModalButton";
 import LogisticsInfo from "../components/LogisticsInfo";
 import PopUpBottomSheet from "../components/PopUpBottomSheet";
 import SuccessPrompt from "../components/SuccessPrompt";
+// colors
+import { bodyText, black, white, background } from "../style/globalStyleSheet";
 
 const Products = ({navigation}) => {
 
@@ -54,6 +60,7 @@ const Products = ({navigation}) => {
     // popUp modal ref
     const popUpBottomSheetModalRef = useRef(null);
 
+    // clsoe modal bottomsheet function
     const closeModal = () => {
         bottomSheetModalRef.current?.close();
         setShowOverlay(false);
@@ -65,10 +72,12 @@ const Products = ({navigation}) => {
         setShowOverlay(true);
     }
 
+    // close popup modal bottomsheet function
     const closePopUpModal = () => {
         popUpBottomSheetModalRef.current?.close();
     };
 
+    // close all bottomsheet modal function
     const closeAllModal = () => {
         closeModal();
         closePopUpModal();
@@ -79,6 +88,7 @@ const Products = ({navigation}) => {
         popUpBottomSheetModalRef.current?.present();
     }
 
+    // logistics list
     const logisticsList = [
         {
             id: 1,
@@ -118,6 +128,7 @@ const Products = ({navigation}) => {
         },
     ];
 
+    // location list
     const locationsList = [
         {
             id: 1,
@@ -191,6 +202,7 @@ const Products = ({navigation}) => {
         }
     ];
 
+    // stats array
     const stats = [
         {
             id: 1,
@@ -212,33 +224,39 @@ const Products = ({navigation}) => {
         },
     ]
 
+    // render AddLogistics page
     return (
         <>
             <TouchableWithoutFeedback 
                 style={{
                     flex: 1, 
-                    width: "100%", 
-                    height: "100%"
                 }}
+                // onclick dismiss keyboard
+                onPress={() => Keyboard.dismiss()}
             >
                 <FlatList 
+                    // remove vertical scroll indicator 
                     showsVerticalScrollIndicator={false}
                     ListHeaderComponent={
                         <View style={style.headerWrapper}>
-                            <Header 
+                            {/* header component */}
+                            <Header
                                 navigation={navigation} 
                                 stackName={"Add Logistics"} 
-                                iconFunction={null} 
-                                icon={null} 
+                                iconFunction={() => {}} 
+                                icon={null}
+                                unpadded={true}
                             />
                             <Text style={style.headingText}>
-                                Select a preferred logistics partner for efficient inventory management and timely order fulfillment.
+                                Select a preferred logistics partner for efficient 
+                                inventory management and timely order fulfillment.
                             </Text>
+                            {/* logistics search bar */}
                             <SearchBar
                                 placeholder={"Search for a logistics or location"}
                                 searchQuery={searchQuery}
                                 setSearchQuery={setSearchQuery}
-                                backgroundColor={"#ffffff"}
+                                backgroundColor={white}
                             />
                         </View>
                     }
@@ -247,7 +265,7 @@ const Products = ({navigation}) => {
                     keyExtractor={item => item.id}
                     data={logisticsList}
                     numColumns={2}
-                    renderItem={({ item, index }) => (
+                    renderItem={({ item }) => (
                         <SelectLogisticsCard
                             logistics={item.logistics}
                             imageUrl={item.imageUrl}
@@ -259,6 +277,7 @@ const Products = ({navigation}) => {
                     )}
                 />
             </TouchableWithoutFeedback>
+            {/* bottomsheet component */}
             <CustomBottomSheet
                 bottomSheetModalRef={bottomSheetModalRef}
                 showOverlay={showOverlay}
@@ -268,17 +287,20 @@ const Products = ({navigation}) => {
                 sheetTitle={""}
                 sheetSubtitle={""}
             >   
+                {/* logistics info component */}
                 <LogisticsInfo 
                     stats={stats}
                     locationsList={locationsList}
-                    backgroundColor={"#f8f8f8"}
+                    backgroundColor={background}
                 />
+                {/* bottomsheet primary button */}
                 <ModalButton
                     name={"Add Komitex"}
                     onPress={openPopUpModal}
                     emptyFeilds={false}
                 />
             </CustomBottomSheet>
+            {/* pop up modal */}
             <PopUpBottomSheet
                 bottomSheetModalRef={popUpBottomSheetModalRef}
                 closeModal={closeAllModal}
@@ -305,12 +327,13 @@ const Products = ({navigation}) => {
     );
 }
 
+// stylesheet
 const style = StyleSheet.create({
     listWrapper: {
         width: "100%",
         height: "100%",
-        paddingHorizontal: 20,
-        marginBottom: 70,
+        padding: 20,
+        backgroundColor: background,
     },
     listContainer: {
         display: "flex",
@@ -321,9 +344,9 @@ const style = StyleSheet.create({
         marginBottom: 16,
     },
     headingText: {
-        fontFamily: "mulish-regular",
+        fontFamily: "mulish-medium",
         fontSize: 12,
-        color: "rgba(34, 34, 34, 0.6)",
+        color: bodyText,
         marginBottom: 24
     },
     popUpContent: {
@@ -340,13 +363,13 @@ const style = StyleSheet.create({
         fontSize: 16,
         fontFamily: 'mulish-bold',
         textAlign: 'center',
-        color: 'rgba(34, 34, 34, 1)',
+        color: black,
     },
     popUpParagraph: {
         fontSize: 12,
         fontFamily: 'mulish-regular',
         textAlign: 'center',
-        color: 'rgba(34, 34, 34, 0.8)',
+        color: bodyText,
     },
 })
  

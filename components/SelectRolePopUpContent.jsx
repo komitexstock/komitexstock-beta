@@ -1,9 +1,17 @@
+// react native components
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+// colors
+import { accentLight, black, bodyText } from "../style/globalStyleSheet";
 
 const SelectRolePopUpContent = ({hanldeRoleSelect}) => {
+
+    // handleRoleSelect => function to update selected role state
+
+    // render SelectRolePopUpContent component
     return (
         <View style={style.popUpContent}>
             <View style={style.roleDescription}>
+                {/* roles description */}
                 <Text style={style.roleDescriptionHeading}>
                     Manager: &nbsp; {/*non breaking space */}
                     <Text style={style.roleDescriptionText}>
@@ -18,6 +26,7 @@ const SelectRolePopUpContent = ({hanldeRoleSelect}) => {
                 </Text>
             </View>
             <View style={style.popUpBottonWrapper}>
+                {/* role buttons */}
                 <TouchableOpacity 
                     style={style.popUpBotton} 
                     onPress={() => hanldeRoleSelect("Manager")}
@@ -57,18 +66,18 @@ const style = StyleSheet.create({
         alignItems: 'flex-start',
         gap: 4,
         justifyContent: 'center',
-        backgroundColor: '#E66D1C0D',
+        backgroundColor: accentLight,
         padding: 10,
         borderRadius: 12,
 
     },
     roleDescriptionHeading: {
-        fontFamily: 'mulish-regular',
+        fontFamily: 'mulish-medium',
         fontSize: 10,
-        color: "#222222"
+        color: black,
     },
     roleDescriptionText: {
-        color: "#22222299",
+        color: bodyText,
     },
     popUpBottonWrapper: {
         width: "100%",
@@ -84,7 +93,7 @@ const style = StyleSheet.create({
     popUpBottonText: {
         fontFamily: 'mulish-semibold',
         fontSize: 12,
-        color: '#222222',
+        color: black,
     }
 })
  

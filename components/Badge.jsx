@@ -1,13 +1,17 @@
+// react native components
 import { View, Text, StyleSheet } from "react-native";
 
 const Badge = ({number}) => {
+    // render Badge component
     return number !== 0 && (
         <View style={style.badge}>
+            {/* text showing number of orders/waybill with new messages */}
             <Text style={style.badgeText}>{number}</Text>
         </View>
     );
 }
 
+// stylesheets
 const style = StyleSheet.create({
     badge: {
         width: 16,

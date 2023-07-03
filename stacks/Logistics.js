@@ -1,13 +1,24 @@
+// react native
+import {
+    FlatList,
+    StyleSheet,
+    View,
+    Text,
+    BackHandler
+} from "react-native";
+// component
 import Header from "../components/Header";
-import { FlatList, StyleSheet, View, Text, BackHandler } from "react-native";
 import LogisticsCard from "../components/LogisticsCard";
-import { useState, useRef, useEffect } from "react";
-import CustomBottomSheet from "../components/CustomBottomSheet";
 import LogisticsInfo from "../components/LogisticsInfo";
 import ModalButton from "../components/ModalButton";
+import CustomBottomSheet from "../components/CustomBottomSheet";
 import PopUpBottomSheet from "../components/PopUpBottomSheet";
 import SuccessPrompt from "../components/SuccessPrompt";
 import CautionPrompt from "../components/CautionPrompt";
+// react hooks
+import { useState, useRef, useEffect } from "react";
+// color
+import { black, bodyText, white } from "../style/globalStyleSheet";
 
 const Logistics = ({navigation}) => {
 
@@ -17,11 +28,10 @@ const Logistics = ({navigation}) => {
     // state to store if pop up is visible
     const [popUpVisible, setPopUpVisible] = useState(false);
 
-
     // state to control modal overlay
     const [showOverlay, setShowOverlay] = useState(false);
 
-    // use effect to close modal
+    // use effect to close modal if back button is pressed
     useEffect(() => {
         // function to run if back button is pressed
         const backAction = () => {
@@ -87,6 +97,7 @@ const Logistics = ({navigation}) => {
         setPopUpVisible(true);
     }
 
+    // logistics list
     const logisticsList = [
         {
             id: 1,
@@ -142,6 +153,7 @@ const Logistics = ({navigation}) => {
         }
     ];
 
+    // location list
     const locationsList = [
         {
             id: 1,
@@ -215,6 +227,7 @@ const Logistics = ({navigation}) => {
         }
     ];
 
+    // stats array
     const stats = [
         {
             id: 1,
@@ -236,6 +249,7 @@ const Logistics = ({navigation}) => {
         },
     ]
 
+    // function to confirm deactivation of logistics
     const handleDeactivation = () => {
         setSnapPointsArray(["38%"])
         setConfirmDeactivation(true);
@@ -244,21 +258,27 @@ const Logistics = ({navigation}) => {
     return (
         <>
             <FlatList 
+                // disable vertical scroll indicator
                 showsVerticalScrollIndicator={false}
                 ListHeaderComponent={
-                    <Header 
-                        navigation={navigation} 
-                        stackName={"Logistics"} 
-                        iconFunction={null} 
-                        icon={null} 
-                    />
+                    <View style={style.headerWrapper}>
+                        <Header 
+                            navigation={navigation} 
+                            stackName={"Logistics"} 
+                            iconFunction={null} 
+                            icon={null} 
+                            unpadded={true}
+                        />
+                    </View>
                 }
                 columnWrapperStyle={style.listContainer}
                 style={style.listWrapper}
                 keyExtractor={item => item.id}
                 data={logisticsList}
+                // render list items in two columns
                 numColumns={2}
                 renderItem={({ item }) => (
+                    // logistics card
                     <LogisticsCard
                         logistics={item.logistics}
                         imageUrl={item.imageUrl}
@@ -270,6 +290,7 @@ const Logistics = ({navigation}) => {
                     />
                 )}
             />
+            {/* custome bottom sheet */}
             <CustomBottomSheet
                 bottomSheetModalRef={bottomSheetModalRef}
                 showOverlay={showOverlay}
@@ -279,11 +300,13 @@ const Logistics = ({navigation}) => {
                 sheetTitle={""}
                 sheetSubtitle={""}
             >   
+                {/* logistics info */}
                 <LogisticsInfo 
                     stats={stats}
                     locationsList={locationsList}
                     backgroundColor={"#f8f8f8"}
                 />
+                {/* modal button */}
                 <ModalButton
                     name={"Deactivate Logistics"}
                     onPress={openPopUpModal}
@@ -291,6 +314,7 @@ const Logistics = ({navigation}) => {
                     secondaryButton={true}
                 />
             </CustomBottomSheet>
+            {/* popup bottomsheet modal */}
             <PopUpBottomSheet
                 bottomSheetModalRef={popUpBottomSheetModalRef}
                 closeModal={closePopUpModal}
@@ -299,6 +323,7 @@ const Logistics = ({navigation}) => {
                 sheetTitle={false}
                 sheetSubtitle={false}
             >   
+                {/* modal content to confirm deactivation */}
                 { !confirmDeactivation ? (
                     <View style={style.popUpContent}>
                         <CautionPrompt />
@@ -321,6 +346,7 @@ const Logistics = ({navigation}) => {
                         </View>
                     </View>
                 ) : (
+                    // modal content to acknowledge deactivation
                     <View style={style.popUpContent}>
                         <SuccessPrompt />
                         <Text style={style.popUpHeading}>
@@ -343,7 +369,11 @@ const Logistics = ({navigation}) => {
     );
 }
 
+// stylesheet
 const style = StyleSheet.create({
+    headerWrapper: {
+        paddingVertical: 20,
+    },
     listWrapper: {
         width: "100%",
         height: "100%",
@@ -362,7 +392,7 @@ const style = StyleSheet.create({
         minWidth: "40%",
         maxWidth: "50%",
         height: 180,
-        backgroundColor: "#ffffff",
+        backgroundColor: white,
         borderRadius: 12,
         flex: 1,
         padding: 12,
@@ -386,13 +416,13 @@ const style = StyleSheet.create({
         fontSize: 16,
         fontFamily: 'mulish-bold',
         textAlign: 'center',
-        color: 'rgba(34, 34, 34, 1)',
+        color:  black,
     },
     popUpParagraph: {
         fontSize: 12,
-        fontFamily: 'mulish-regular',
+        fontFamily: 'mulish-medium',
         textAlign: 'center',
-        color: 'rgba(34, 34, 34, 0.8)',
+        color: bodyText,
     },
     popUpButtonWrapper: {
         display: 'flex',

@@ -1,13 +1,21 @@
+// react native component
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+// component
 import SearchBar from "./SearchBar";
+// react hooks
 import { useState } from "react";
+// bottomsheet component
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+// colors
+import { background, black, inputBorder } from "../style/globalStyleSheet";
 
 const AddLocationModalContent = ({handleSelectedLocation}) => {
+    // handleSelectedLocation => function
 
     // state to store search queries
     const [searchQuery, setSearchQuery] = useState(null);
 
+    // list of locations
     const locations = [
         {
             id: 1,
@@ -79,21 +87,23 @@ const AddLocationModalContent = ({handleSelectedLocation}) => {
             location: "Eku",
             charge: 4000,
         }
-    ]
+    ];
 
+    // handle selected location
     const getLocation = (id) => {
         const selectedLocation = locations.find((location) => location.id === id);
 
         return handleSelectedLocation(selectedLocation);
     }
 
+    // render AddLocationModalContent component
     return (
         <>
             <SearchBar 
                 placeholder={"Search for a logistics"} 
                 searchQuery={searchQuery} 
                 setSearchQuery={setSearchQuery} 
-                backgroundColor={"#f8f8f8"}
+                backgroundColor={background}
             />
             <View>
                 <Text style={style.modalHeading}>Available Locations</Text>
@@ -103,6 +113,7 @@ const AddLocationModalContent = ({handleSelectedLocation}) => {
                 style={style.listWrapper}
             >
                 {locations.map((data, index) => (
+                    // list of location
                     <TouchableOpacity
                         style={[style.list, locations.length - 1 === index ? { borderBottomWidth: 0 } : null]}
                         key={data.id}
@@ -121,7 +132,8 @@ const style = StyleSheet.create({
     modalHeading: {
         fontFamily: "mulish-semibold",
         fontSize: 12,
-        marginVertical: 10
+        marginVertical: 10,
+        color: black,
     },
     listWrapper: {
         display: 'flex',
@@ -135,7 +147,7 @@ const style = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         gap: 10,
-        borderBottomColor: "#E7E5E5",
+        borderBottomColor: inputBorder,
         borderBottomWidth: 1
     },
     logisticsImage: {
@@ -144,8 +156,9 @@ const style = StyleSheet.create({
         borderRadius: 6,
     },
     listText: {
-        fontFamily: "mulish-regular",
+        fontFamily: "mulish-medium",
         fontSize: 12,
+        color: black,
     },
 })
  

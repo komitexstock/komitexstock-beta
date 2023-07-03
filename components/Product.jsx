@@ -1,10 +1,26 @@
-import { View, StyleSheet, Text, TouchableOpacity, Image, TextInput } from "react-native";
+// react native component
+import {
+    View,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    Image,
+    TextInput
+} from "react-native";
+// icon
 import ClearSearch from "../assets/icons/ClearSearch";
+import { background, black, white } from "../style/globalStyleSheet";
 
 const Product = ({product, removeProduct, increaseQuantity, decreaseQuantity}) => {
+    // product => object
+    // removeProduct, increaseQuantity, decreaseQuantity => function
+
+    // render Product component, 
+    // used as product input in sending order of sending waybill
     return (
         <View style={style.productItem}>
             <View style={style.productDetailsWrapper}>
+                {/* product main detail */}
                 <Image
                     style={style.productImage}
                     source={product.imageUrl}
@@ -25,6 +41,7 @@ const Product = ({product, removeProduct, increaseQuantity, decreaseQuantity}) =
                     >
                         <Text style={style.quantityButtonText}>-</Text>
                     </TouchableOpacity>
+                    {/* input quantity */}
                     <TextInput 
                         keyboardType="numeric"
                         defaultValue={String(product.quantity)}
@@ -40,6 +57,7 @@ const Product = ({product, removeProduct, increaseQuantity, decreaseQuantity}) =
                         <Text style={style.quantityButtonText}>+</Text>
                     </TouchableOpacity>
                 </View>
+                {/* remove product */}
                 <TouchableOpacity
                     onPress={() => removeProduct(product.id)}
                 >
@@ -59,7 +77,7 @@ const style = StyleSheet.create({
         alignItems: "center",
         padding: 12,
         borderRadius: 12,
-        backgroundColor: "#ffffff",
+        backgroundColor: white,
         gap: 10,
     },
     productDetailsWrapper: {
@@ -76,8 +94,8 @@ const style = StyleSheet.create({
         borderRadius: 8,
     },
     productName: {
-        fontFamily: "mulish-semibold",
-        color: "#222222",
+        fontFamily: "mulish-medium",
+        color: black,
         flexWrap: "wrap",
     },
     productQuantityWrapper: {
@@ -92,7 +110,7 @@ const style = StyleSheet.create({
         display: "flex",
         flexDirection: "row",  
         height: 30,
-        backgroundColor: "#f8f8f8",
+        backgroundColor: background,
         width: 70,
         justifyContent: "space-between",
         alignItems: "center",
@@ -108,7 +126,7 @@ const style = StyleSheet.create({
     },
     quantityButtonText: {
         fontFamily: "mulish-bold",
-        color: "#222222",
+        color: black,
     },
     quantityInput: {
         fontFamily: "mulish-regular",

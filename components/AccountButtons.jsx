@@ -1,22 +1,44 @@
-import { Text, View, TouchableOpacity, StyleSheet, Switch } from "react-native";
+// react native components
+import { 
+    Text, 
+    View, 
+    TouchableOpacity, 
+    StyleSheet, 
+    Switch 
+} from "react-native";
+// icon
 import RightArrowIcon from "../assets/icons/RightArrowIcon";
+// colors
+import { white, primaryColor, secondaryColor, black, bodyText } from "../style/globalStyleSheet";
 
 const AccountButtons = ({title, subtitle, mainInfoText, icon, length, index, onPress, toggle, isEnabled, handleToggle, unpadded, disabled}) => {
-    
-    return (
+    // index, length => int
+    // title, subtitle, mainInfoText => string
+    // onPress, handleToggle => function
+    // isEnabled, toggle, disabled, unpadded => boolean     
+    // render account button
+    return !toggle ? (
+        // if toggle is false, make whole component a button
         <TouchableOpacity 
             onPress={disabled ? () => {} : onPress}
             style={[
                 style.accountButtonWrapper, 
+                // style to make first botton have a border radius on top
                 index === 0 && style.topBorderRadius,
+                // style to make last botton have a border radius on top
                 length === index && style.bottomBorderRadius,
+                // style to remove horizntal padding from button
+                // useful if button is already in a padded bottomsheet/container   
                 unpadded ? style.unpadded : style.padded,
             ]}
-            >
+        >
+            {/* icon */}
             {icon}
             <View 
                 style={[
                     style.accountButtonContent, 
+                    // if button is disable, apply disabled style
+                    // disbled style reduces the opacity
                     disabled && style.disabled
                 ]}
             >
@@ -24,19 +46,49 @@ const AccountButtons = ({title, subtitle, mainInfoText, icon, length, index, onP
                 {subtitle && <Text style={style.accountButtonSecondaryText}>{subtitle}</Text>}
                 {mainInfoText && <Text style={style.accountButtonText}>{mainInfoText}</Text>}
             </View>
-            { !toggle ? <RightArrowIcon /> : (
-                <Switch 
-                    trackColor={{ false: "#E6E6E6", true: "#07427C0D" }}
-                    thumbColor={isEnabled ? "#07427C" : "#AFAFAF"}
-                    ios_backgroundColor="#07427C0D"
-                    onValueChange={handleToggle}
-                    value={isEnabled}     
-                />
-            )}
+            <RightArrowIcon />
         </TouchableOpacity>
+    ) : (
+        // if toggle is false, make whole component a basic container
+        <View 
+            style={[
+                style.accountButtonWrapper, 
+                // style to make first botton have a border radius on top
+                index === 0 && style.topBorderRadius,
+                // style to make last botton have a border radius on top
+                length === index && style.bottomBorderRadius,
+                // style to remove horizntal padding from button
+                // useful if button is already in a padded bottomsheet/container   
+                unpadded ? style.unpadded : style.padded,
+            ]}
+        >
+            {/* icon */}
+            {icon}
+            <View 
+                style={[
+                    style.accountButtonContent, 
+                    // if button is disable, apply disabled style
+                    // disbled style reduces the opacity
+                    disabled && style.disabled
+                ]}
+            >
+                <Text style={style.accountButtonPrimaryText}>{title}</Text>
+                {subtitle && <Text style={style.accountButtonSecondaryText}>{subtitle}</Text>}
+                {mainInfoText && <Text style={style.accountButtonText}>{mainInfoText}</Text>}
+            </View>
+            <Switch 
+                trackColor={{ false: "#E6E6E6", true: {secondaryColor} }}
+                thumbColor={isEnabled ? primaryColor : "#AFAFAF"}
+                ios_backgroundColor={secondaryColor}
+                onValueChange={handleToggle}
+                value={isEnabled}     
+            />
+        </View>
+        
     );
 }
 
+// stylesheet
 const style = StyleSheet.create({
     accountButtonWrapper: {
         width: "100%",
@@ -44,7 +96,7 @@ const style = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        backgroundColor: "#ffffff",
+        backgroundColor: white,
         height: 60,
         paddingVertical: 10,
         gap: 10,
@@ -68,15 +120,17 @@ const style = StyleSheet.create({
     accountButtonPrimaryText: {
         fontFamily: "mulish-semibold",
         fontSize: 14,
+        color: black,
     },
     accountButtonText: {
         fontFamily: "mulish-regular",
         fontSize: 12,
-        color: "rgba(34, 34, 34, 0.60)",
+        color: bodyText,
     },
     accountButtonSecondaryText: {
         fontFamily: "mulish-regular",
         fontSize: 10,
+        color: bodyText,
     },
     topBorderRadius: {
         borderTopLeftRadius: 12,

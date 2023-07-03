@@ -1,3 +1,4 @@
+// react native components
 import { 
     View, 
     Text, 
@@ -6,16 +7,23 @@ import {
     TouchableWithoutFeedback,
     StyleSheet
 } from "react-native";
+// icons
 import MenuIcon from "../assets/icons/MenuIcon";
-import { primaryColor } from "../style/globalStyleSheet";
+// colors
+import { primaryColor, secondaryColor, white } from "../style/globalStyleSheet";
+// react hooks
 import { useState } from "react";
+// components
 import LogisticsCard from "../components/LogisticsCard";
 import SearchBar from "../components/SearchBar";
+import Header from "../components/Header";
 
 const Products = ({navigation}) => {
 
+    // state to store search query
     const [searchQuery, setSearchQuery] = useState("");
 
+    // logistics list array
     const logisticsList = [
         {
             id: 1,
@@ -69,35 +77,38 @@ const Products = ({navigation}) => {
                 });
             }
         },
-    ]
+    ];
 
+    // render Inventory page
     return (
         <>
             <TouchableWithoutFeedback 
                 style={{
                     flex: 1, 
-                    width: "100%", 
-                    height: "100%"
                 }}
             >
                 <FlatList 
                     showsVerticalScrollIndicator={false}
                     ListHeaderComponent={
                         <View style={style.headerWrapper}>
-                            <View style={style.header}>
-                                <View style={style.navWrapper}>
-                                    <Text style={style.headerText}>Inventory</Text>
-                                </View>
-                                <TouchableOpacity style={style.menuIcon}>
-                                    <MenuIcon />
-                                </TouchableOpacity>
-                            </View>
+                            <Header
+                                navigation={navigation}
+                                stackName={"Inventory"}
+                                iconFunction={() => {}}
+                                icon={<MenuIcon />}
+                                removeBackArrow={true}
+                                inlineArrow={false}
+                                unpadded={true}
+                            />
+
+                            {/* search bar */}
                             <SearchBar
                                 placeholder={"Search Inventory"}
                                 searchQuery={searchQuery}
                                 setSearchQuery={setSearchQuery}
-                                backgroundColor={"#ffffff"}
+                                backgroundColor={white}
                             />
+                            {/* navigate to AddLogistics page/stack */}
                             <TouchableOpacity 
                                 style={style.sendOrderButton}
                                 onPress={() => navigation.navigate("AddLogistics")}
@@ -110,7 +121,9 @@ const Products = ({navigation}) => {
                     style={style.listWrapper}
                     keyExtractor={item => item.id}
                     data={logisticsList}
+                    // allows flatlist to render list in two columns
                     numColumns={2}
+                    // render logistics card
                     renderItem={({ item, index }) => (
                         <LogisticsCard
                             logistics={item.logistics}
@@ -127,6 +140,7 @@ const Products = ({navigation}) => {
     );
 }
 
+// stylesheet
 const style = StyleSheet.create({
     listWrapper: {
         width: "100%",
@@ -144,35 +158,9 @@ const style = StyleSheet.create({
     },
     headerWrapper: {
         width: "100%",
-    },
-    header: {
-        width: "100%",
         display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        height: 50,
-        marginBottom: 10,
-    },
-    navWrapper: {
-        display: 'flex',
-        justifyContent: "flex-start",
-        alignItems: 'center',
-        flexDirection: 'row',
-        gap: 10,
-    },
-    headerText: {
-        fontFamily: "mulish-bold",
-        fontSize: 20,
-    },
-    menuIcon: {
-        width: 24,
-        height: 24,
-        backgroundColor: "#ffffff",
-        borderRadius: 6,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
     },
     sendOrderButton: {
         height: 44,
@@ -180,7 +168,7 @@ const style = StyleSheet.create({
         display: "flex",
         alignItems: "center",
         justifyContent: 'center',
-        backgroundColor: "rgba(7, 66, 124, 0.05)",
+        backgroundColor: secondaryColor,
         borderRadius: 12,
         marginBottom: 22,
     },

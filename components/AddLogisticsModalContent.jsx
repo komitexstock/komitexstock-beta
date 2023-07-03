@@ -1,14 +1,23 @@
+// recat native component
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
+// searchbar
 import SearchBar from "./SearchBar";
+// react hooks
 import { useState } from "react";
+// bottomsheet component
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+// color
 import VerifiedIcon from "../assets/icons/VerifiedIcon";
+// color
+import { background, inputBorder, black } from "../style/globalStyleSheet";
 
 const AddLogisticsModalContent = ({handleSelectedLogistics}) => {
+    // handleSelectedLogistics => function
 
     // state to store search queries
     const [searchQuery, setSearchQuery] = useState(null);
 
+    // logistics list
     const logisticsData = [
         {
             company_id: "E3F7J1g4X6r9L2Y",
@@ -36,24 +45,27 @@ const AddLogisticsModalContent = ({handleSelectedLogistics}) => {
         },
     ];
 
+    // select logistics by company_id
     const getLogistics = (company_id) => {
         const selectedLogistics = logisticsData.find((logistics) => logistics.company_id === company_id);
 
         return handleSelectedLogistics(selectedLogistics);
     }
 
+    // render AddLogisticsModalContent component
     return (
         <>
             <SearchBar 
                 placeholder={"Search for a logistics"} 
                 searchQuery={searchQuery} 
                 setSearchQuery={setSearchQuery} 
-                backgroundColor={"#f8f8f8"}
+                backgroundColor={background}
             />
             <View>
                 <Text style={style.modalHeading}>Available Logistics</Text>
             </View>
             <BottomSheetScrollView style={style.listWrapper}>
+                {/* list of available logistics */}
                 {logisticsData.map((data) => (
                     <TouchableOpacity
                         style={style.list}
@@ -73,11 +85,13 @@ const AddLogisticsModalContent = ({handleSelectedLogistics}) => {
     );
 }
 
+// stylesheet
 const style = StyleSheet.create({
     modalHeading: {
         fontFamily: "mulish-semibold",
         fontSize: 12,
-        marginVertical: 10
+        marginVertical: 10,
+        color: black,
     },
     listWrapper: {
         display: 'flex',
@@ -91,8 +105,8 @@ const style = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'flex-start',
         gap: 10,
-        borderBottomColor: "#E7E5E5",
-        borderBottomWidth: 1
+        borderBottomColor: inputBorder,
+        borderBottomWidth: 1,
     },
     logisticsImage: {
         width: 30,
@@ -100,8 +114,9 @@ const style = StyleSheet.create({
         borderRadius: 6,
     },
     listText: {
-        fontFamily: "mulish-regular",
+        fontFamily: "mulish-medium",
         fontSize: 12,
+        color: black,
     },
 })
  

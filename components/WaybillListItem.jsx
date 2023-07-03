@@ -1,16 +1,27 @@
+// react native components
 import { TouchableOpacity, Image, View, Text, StyleSheet } from 'react-native';
+// components
 import Indicator from './Indicator';
+// colors
+import { black, bodyText, white } from '../style/globalStyleSheet';
 
 const WaybillListItem = ({item, index, length}) => {
+    // item => object
+    // index, length => int
+
+    // render WaybillListItem component
     return (
         <TouchableOpacity 
             style={[
                 style.orderWrapper, 
+                // add top border radius to first waybill in the list
                 index === 0 && style.firstOrderWrapper, 
+                // add bottom border radius to last waybill in the list
                 index === (length - 1) && style.lastOrderWrapper
             ]}
             onPress={item.navigateToChat}
         >
+            {/* waybill image */}
             <Image 
                 source={item.imageUrl}
                 style={style.orderImage}
@@ -19,16 +30,20 @@ const WaybillListItem = ({item, index, length}) => {
                 <Text 
                     style={[
                         style.orderMainText,
-                        {color: item.newMessage ? 'rgba(34, 34, 34, 1)' : 'rgba(34, 34, 34, 0.8)'},
-                        {fontFamily: item.newMessage ? 'mulish-bold' : 'mulish-semibold'},
+                        // if theres a newMessage in the waybill chat, make text color darker
+                        {color: item.newMessage ? black : bodyText},
+                        // if theres a newMessage in the waybill chat, use diffrent font weight
+                        {fontFamily: item.newMessage ? 'mulish-bold' : 'mulish-regular'},
                     ]}
                 >
+                    {/* map through product array */}
                     { item.products.map((product, index) => {
                         return `${index === 0 ? '' : ', '} ${product.product_name} x ${product.quantity}`
                     })}
                 </Text>
                 <Text style={style.orderDatetime}>{item.datetime}</Text>
             </View>
+            {/* indicate waybill status */}
             <View style={style.orderPriceContainer}>
                 <Indicator type={item.status} text={item.status} />
             </View>
@@ -36,6 +51,7 @@ const WaybillListItem = ({item, index, length}) => {
     );
 }
 
+// stylesheet
 const style = StyleSheet.create({
     orderWrapper: {
         padding: 10,
@@ -47,7 +63,7 @@ const style = StyleSheet.create({
         minHeight: 70,
         maxHeight: 75,
         gap: 10,
-        backgroundColor: '#ffffff',
+        backgroundColor: white,
         paddingVertical: 15,
     },
     firstOrderWrapper: {
@@ -73,16 +89,12 @@ const style = StyleSheet.create({
     orderMainText: {
         fontFamily: 'mulish-bold',
         fontSize: 12,
-    },
-    orderSubText: {
-        fontFamily: 'mulish-regular',
-        fontSize: 12,
-        color: 'rgba(34, 34, 34, 0.6)',
+        // color set in component
     },
     orderDatetime: {
         fontFamily: 'mulish-regular',
         fontSize: 10,
-        color: 'rgba(134, 134, 134, 1)',    
+        color: "#868686",    
         lineHeight: 30,
     },
     orderPriceContainer: {

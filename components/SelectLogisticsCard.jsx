@@ -1,3 +1,4 @@
+// react native components
 import { 
     View, 
     Text, 
@@ -6,9 +7,20 @@ import {
     StyleSheet
 } 
 from "react-native";
+// icons
 import VerifiedIcon from "../assets/icons/VerifiedIcon";
+// colors
+import { black, subText, white } from "../style/globalStyleSheet";
 
 const SelectLogisticsCard = ({logistics, imageUrl, inventories, destinations, verified, onPress }) => {
+    // logistics => string
+    // image => string, image path
+    // inventories => int
+    // destinations => int
+    // verified => boolean
+    // onPress => function
+
+    // render SelectLogisticsCard component
     return (
         <TouchableOpacity 
             style={style.logisticsCard}
@@ -30,12 +42,13 @@ const SelectLogisticsCard = ({logistics, imageUrl, inventories, destinations, ve
     );
 }
 
+// stylesheet
 const style = StyleSheet.create({
     logisticsCard: {
         minWidth: "40%",
         maxWidth: "50%",
         minHeight: 120,
-        backgroundColor: "#ffffff",
+        backgroundColor: white,
         borderRadius: 12,
         flex: 1,
         padding: 12,
@@ -57,29 +70,14 @@ const style = StyleSheet.create({
         height: 40,
         borderRadius: 8,
     },
-    lowStockIndicator: {
-        minHeight: 16,
-        minWidth: 60,
-        backgroundColor: "rgba(254, 240, 199, 1)",
-        borderRadius: 20,
-        display: "flex",    
-        alignItems: "center",
-        justifyContent: "center",
-
-    },
-    lowStock: {
-        fontFamily: "mulish-regular",
-        fontSize: 8,
-        color: "rgba(220, 104, 3, 1)",
-    },
     logistics: {
         fontFamily: "mulish-semibold",
-        color: "#222222",
+        color: black,
         fontSize: 14,
     },
     location: {
         fontFamily: "mulish-regular",
-        color: "rgba(34, 34, 34, 0.4)",
+        color: subText,
         fontSize: 10,
     }
 })

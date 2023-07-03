@@ -1,37 +1,64 @@
+// react components
 import { Text, View, TouchableOpacity, StyleSheet } from "react-native";
+// icons
 import ArrowLeft from "../assets/icons/ArrowLeft";
+// colors
+import { black, white } from "../style/globalStyleSheet";
 
 
-const Header = ({navigation, stackName, iconFunction, icon}) => {
+const Header = ({navigation, stackName, iconFunction, icon, removeBackArrow, inlineArrow, backgroundColor, unpadded}) => {
+    // stack name => string
+    // iconfunction => function
+    // icon => jsx component
+    // inlineArrow, removeBackArrow => boolean
+
+    // render header component
     return (
-        <>
-            <View style={style.header}>
+        <View style={[style.header, {backgroundColor: backgroundColor ? backgroundColor : 'transparent'}]}>
+            {/* elevated back arrow, visible by default */}
+            { !removeBackArrow && (
                 <TouchableOpacity
                     onPress={() => {
                         navigation.goBack();
                     }}
                 >
+                    
                     <ArrowLeft />
                 </TouchableOpacity>
-                <View style={style.headerBar}>
-                    <Text style={style.headerText}>{stackName}</Text>
-                    { icon && (
-                        <TouchableOpacity
-                            style={style.filter}
-                            onPress={iconFunction}
-                        >
-                            {icon}
-                        </TouchableOpacity>
-                    )}
-                </View>
+            )}
+            <View style={[style.headerBar, {paddingHorizontal: unpadded ? 0 : 20}]}>
+                {/* inline back arrow, disabled by default */}
+                { inlineArrow && (
+                    <TouchableOpacity
+                        onPress={() => {
+                            navigation.goBack();
+                        }}
+                    >
+                        
+                        <ArrowLeft />
+                    </TouchableOpacity>
+                )}
+                {/* Stack name */}
+                <Text style={style.headerText}>{stackName}</Text>
+                {/* right aligned icon usually a menu icon */}
+                { icon && (
+                    <TouchableOpacity
+                        style={style.filter}
+                        onPress={iconFunction}
+                    >
+                        {icon}
+                    </TouchableOpacity>
+                )}
             </View>
-        </>
+        </View>
     );
 }
 
+// stylesheet
 const style = StyleSheet.create({
     header: {
-        height: 100,
+        maxHeight: 100,
+        minHeight: 45,
         width: "100%",
         display: 'flex',
         gap: 25,
@@ -40,16 +67,19 @@ const style = StyleSheet.create({
         alignItems: 'flex-start',
     },
     headerBar: {
-        display: 'flex',
-        flexDirection: 'row',
+        gap: 12,
+        width: "100%",
+        height: 45,
+        display: "flex",
+        flexDirection: "row",
         alignItems: 'center',
-        justifyContent: 'space-between', 
-        width: "100%",       
+        justifyContent: "space-between",
     },
     headerText: {
         fontFamily: 'mulish-bold',
         fontSize: 20,
-        color: '#222222',
+        color: black,
+        flex: 1,
     },
     filter: {
         width: 24,
@@ -57,7 +87,7 @@ const style = StyleSheet.create({
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#ffffff',
+        backgroundColor: white,
         borderRadius: 5
     }
 })

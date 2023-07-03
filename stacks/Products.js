@@ -1,3 +1,4 @@
+// react native components
 import { 
     View, 
     Text, 
@@ -7,26 +8,33 @@ import {
     StyleSheet,
     BackHandler
 } from "react-native";
-import MenuIcon from "../assets/icons/MenuIcon";
-import { primaryColor } from "../style/globalStyleSheet";
-import StatWrapper from "../components/StatWrapper";
-import StatCard from "../components/StatCard";
+// react hooks
 import { useState, useRef, useEffect, useLayoutEffect } from "react";
+// icons
+import MenuIcon from "../assets/icons/MenuIcon";
 import SearchIcon from '../assets/icons/SearchIcon'
 import FilterIcon from '../assets/icons/FilterIcon';
-import ArrowLeft from "../assets/icons/ArrowLeft";
+// colors
+import { bodyText, primaryColor, secondaryColor, white } from "../style/globalStyleSheet";
+// components
+import StatWrapper from "../components/StatWrapper";
+import StatCard from "../components/StatCard";
 import CustomBottomSheet from "../components/CustomBottomSheet";
 import FilterButtonGroup from "../components/FilterButtonGroup";
 import SearchBar from "../components/SearchBar";
-import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import ProductCard from "../components/ProductCard";
 import AlertNotice from "../components/AlertNotice";
 import EditProductContent from "../components/EditProductContent";
 import ProductListItem from "../components/ProductListItem";
+import Header from "../components/Header";
+import ModalButton from "../components/ModalButton";
+// bottomsheet component
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 
 
 const Products = ({navigation, route}) => {
 
+    // stats array
     const stats = [
         {
             id: 1,
@@ -116,9 +124,11 @@ const Products = ({navigation, route}) => {
         },
     ];
 
+    // state to control success alert
     const [successAlert, setSuccessAlert] = useState(null);
     // console.table(successAlert);
 
+    // state to store edited products= parameter
     const [editProduct, setEditProduct] = useState(false);
 
     // modal state
@@ -131,6 +141,7 @@ const Products = ({navigation, route}) => {
         modalContent: <></>
     });
 
+    // use effect to remove add product or edit product success propmt after 3 seconds
     useLayoutEffect(() => {
         // if success is true, set success as false after 3 seconds
         if (route.params.success && route.params) {
@@ -143,7 +154,7 @@ const Products = ({navigation, route}) => {
 
     }, [route.params]);
     
-    // use effect to close modal
+    // use effect to close modal on press of back button
     useEffect(() => {
         // function to run if back button is pressed
         const backAction = () => {
@@ -168,6 +179,7 @@ const Products = ({navigation, route}) => {
 
     }, [modal.overlay]);
 
+    // filter buttons
     const filterButtons = [
         {
             id: 1,
@@ -242,13 +254,15 @@ const Products = ({navigation, route}) => {
                 },
             ]
         }
-    ]
+    ];
 
+    // state to store search query
     const [searchQuery, setSearchQuery] = useState("");
 
     // filter modal reference
     const modalRef = useRef(null);
 
+    // filter modal parameter
     const filterModal = {
         snapPointsArray: ["50%"],
         autoSnapAt: 0,
@@ -264,16 +278,15 @@ const Products = ({navigation, route}) => {
                         key={item.id}
                     />
                 ))}
-                <View style={style.footerButtonWrapper}>
-                    <TouchableOpacity style={style.footerButton}>
-                        <Text style={style.footerButtonText}>Apply</Text>
-                    </TouchableOpacity>
-                </View>
+                <ModalButton
+                    name={"Apply"}
+                    onPress={() => {}}
+                />
             </View>
         </>
-    }
+    };
 
-    // search modal state
+    // search modal parameter
     const searchModal = {
         snapPointsArray: ["50%", "80%", "100%"],
         autoSnapAt: 2,
@@ -314,6 +327,7 @@ const Products = ({navigation, route}) => {
         </>
     };
 
+    // close modal function
     const closeModal = () => {
         setModal(prevModal => {
             return {
@@ -324,6 +338,7 @@ const Products = ({navigation, route}) => {
         modalRef.current?.close();
     };
 
+    // open modal function
     const openModal = (type) => {
         if (type === "filter") {
             setModal({
@@ -342,30 +357,26 @@ const Products = ({navigation, route}) => {
         modalRef.current?.present();
     }
 
-    // console.log(modalRef.current);
-
+    // render Products page
     return (
         <>
-            <TouchableWithoutFeedback style={{flex: 1, width: "100%", height: "100%"}}>
+            <TouchableWithoutFeedback style={{flex: 1}}>
                 <FlatList 
                     showsVerticalScrollIndicator={false}
+                    // list header component
                     ListHeaderComponent={
                         <View style={style.headerWrapper}>
-                            <View style={style.header}>
-                                <View style={style.navWrapper}>
-                                    <TouchableOpacity
-                                        onPress={() => {
-                                            navigation.goBack();
-                                        }}
-                                    >
-                                        <ArrowLeft />
-                                    </TouchableOpacity>
-                                    <Text style={style.headerText}>Komitex</Text>
-                                </View>
-                                <TouchableOpacity style={style.menuIcon}>
-                                    <MenuIcon />
-                                </TouchableOpacity>
-                            </View>
+                            {/* header */}
+                            <Header
+                                navigation={navigation}
+                                stackName={"Komitex"}
+                                removeBackArrow={true}
+                                inlineArrow={true}
+                                unpadded={true}
+                                icon={<MenuIcon />}
+                                iconFunction={() => {}}
+                            />
+                            {/* stats */}
                             <StatWrapper>
                                 {stats.map(stat => (
                                     <StatCard
@@ -377,6 +388,7 @@ const Products = ({navigation, route}) => {
                                     />
                                 ))}
                             </StatWrapper>
+                            {/* Navigate to addproducts page/stack */}
                             <TouchableOpacity 
                                 style={style.sendOrderButton}
                                 onPress={() => navigation.navigate("AddProduct")}
@@ -386,12 +398,14 @@ const Products = ({navigation, route}) => {
                             <View style={style.recentOrderHeading}>
                                 <Text style={style.recentOrderHeadingText}>Products</Text>
                                 <View style={style.actionWrapper}>
+                                    {/* open bottomsheet search modal */}
                                     <TouchableOpacity 
                                         style={style.menuIcon}
                                         onPress={() => openModal("search")}
                                     >
                                         <SearchIcon />
                                     </TouchableOpacity>
+                                    {/* open bottomsheet filter modal */}
                                     <TouchableOpacity
                                         style={style.menuIcon}
                                         onPress={() => openModal("filter")}
@@ -406,8 +420,10 @@ const Products = ({navigation, route}) => {
                     style={style.listWrapper}
                     keyExtractor={item => item.id}
                     data={products}
+                    // render items in two rows
                     numColumns={2}
                     renderItem={({ item }) => (
+                        // product card
                         <ProductCard 
                             product_name={item.product_name}
                             quantity={item.quantity}
@@ -419,6 +435,7 @@ const Products = ({navigation, route}) => {
                     )}
                 />
             </TouchableWithoutFeedback>
+            {/* custom bottomsheet modal */}
             <CustomBottomSheet 
                 bottomSheetModalRef={modalRef}
                 showOverlay={modal.overlay}
@@ -431,6 +448,7 @@ const Products = ({navigation, route}) => {
                 { modal.modalContent }
             </CustomBottomSheet>
 
+            {/* success alert to display on addproduct or edit product */}
             { successAlert && (
                 <AlertNotice 
                     type={"success"}
@@ -442,6 +460,7 @@ const Products = ({navigation, route}) => {
     );
 }
 
+// stylesheet
 const style = StyleSheet.create({
     listWrapper: {
         width: "100%",
@@ -460,29 +479,10 @@ const style = StyleSheet.create({
     headerWrapper: {
         width: "100%",
     },
-    header: {
-        width: "100%",
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        height: 50,
-    },
-    navWrapper: {
-        display: 'flex',
-        justifyContent: "flex-start",
-        alignItems: 'center',
-        flexDirection: 'row',
-        gap: 10,
-    },
-    headerText: {
-        fontFamily: "mulish-bold",
-        fontSize: 20,
-    },
     menuIcon: {
         width: 24,
         height: 24,
-        backgroundColor: "#ffffff",
+        backgroundColor: white,
         borderRadius: 6,
         display: "flex",
         justifyContent: "center",
@@ -494,7 +494,7 @@ const style = StyleSheet.create({
         display: "flex",
         alignItems: "center",
         justifyContent: 'center',
-        backgroundColor: "rgba(7, 66, 124, 0.05)",
+        backgroundColor: secondaryColor,
         borderRadius: 12,
         marginVertical: 22,
     },
@@ -515,7 +515,7 @@ const style = StyleSheet.create({
     },
     recentOrderHeadingText: {
         fontFamily: "mulish-bold",
-        color: "rgba(34, 34, 34, 0.6)",
+        color: bodyText,
         fontSize: 10,
     },
     actionWrapper: {
@@ -531,28 +531,8 @@ const style = StyleSheet.create({
         alignItems: "center",
         justifyContent: "flex-start",
         width: "100%",
-        // backgroundColor: "pink",
         flex: 1,
     },
-    footerButtonWrapper: {
-      width: "100%",
-      position: "absolute",
-      bottom: 0,
-    },
-    footerButton: {
-      width: "100%",
-      height: 44,
-      backgroundColor: primaryColor,
-      borderRadius: 12,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center", 
-    },
-    footerButtonText: {
-      color: "white",
-      fontSize: 16,
-      fontFamily: 'mulish-semibold',
-    }
 })
  
 export default Products;

@@ -1,12 +1,27 @@
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { primaryColor } from "../style/globalStyleSheet";
+// react native components
+import {
+    View,
+    Text,
+    StyleSheet,
+    TouchableOpacity
+} from "react-native";
+// colors
+import { background, black, bodyText, primaryColor, secondaryColor } from "../style/globalStyleSheet";
+
 
 const FilterButtonGroup = ({buttons, title}) => {
+    // buttons => array of objects
+    // title => string
+
+    // render FilterButtonGroup component
     return (
         <View style={style.filterButtonGroup}>
+            {/* filter button group title */}
             <Text style={style.filterHeading}>{title}</Text>
             <View style={style.buttonWrapper}>
+                {/* filter button list */}
                 {buttons.map(button => (
+                    // filter button
                     <TouchableOpacity 
                         key={button.id} 
                         style={button.selected ? style.selectedButton : style.filterButton}
@@ -14,6 +29,7 @@ const FilterButtonGroup = ({buttons, title}) => {
                         <Text 
                             style={button.selected ? style.selectedButtonText : style.filterButtonText}
                         >
+                            {/* button text */}
                             {button.text}
                         </Text>
                     </TouchableOpacity>
@@ -23,6 +39,7 @@ const FilterButtonGroup = ({buttons, title}) => {
     );
 }
 
+// stylesheet
 const style =  StyleSheet.create({
     filterButtonGroup: {
         display: 'flex',
@@ -30,7 +47,6 @@ const style =  StyleSheet.create({
         width: "100%",
         height: 80,
         gap: 10,
-        // backgroundColor: "teal",
     },
     filterHeading: {
         fontFamily: 'mulish-semibold',
@@ -44,33 +60,33 @@ const style =  StyleSheet.create({
     filterButton: {
         height: 28,
         borderRadius: 5,
-        backgroundColor: "#F8F8F8",
+        backgroundColor: background,
         display: 'flex',
         alignContent: 'center',
         justifyContent: 'center',
         padding: 8,
     },
     filterButtonText: {
-        fontFamily: 'mulish-regular',
+        fontFamily: 'mulish-medium',
         fontSize: 10,
-        color: "rgba(34, 34, 34, 0.6)"
+        color: bodyText,
     },
     selectedButton: {
         height: 28,
         borderRadius: 5,
-        backgroundColor: "#F8F8F8",
+        backgroundColor: background,
         display: 'flex',
         alignContent: 'center',
         justifyContent: 'center',
         padding: 8,
         borderWidth: 1,
         borderColor: primaryColor,
-        backgroundColor: "rgba(7, 66, 124, 0.05)",
+        backgroundColor: secondaryColor,
     },
     selectedButtonText: {
-        fontFamily: 'mulish-regular',
+        fontFamily: 'mulish-medium',
         fontSize: 10,
-        color: "#222222",
+        color: black,
     }
 })
  

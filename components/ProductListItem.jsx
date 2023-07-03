@@ -1,17 +1,31 @@
+// react native components
 import { TouchableOpacity, Image, View, Text, StyleSheet } from 'react-native';
+// colors
+import { black, bodyText, white } from '../style/globalStyleSheet';
 
+// product list item that shows up in search results
 const ProductListItem = ({product_name, quantity, price, imageUrl, onPress}) => {
+    // product_name => string
+    // quantity => int
+    // price => float
+    // imageUrl => string | pathToImage
+    // onPress => function
+
+    // render ProductListItem component
     return (
         <TouchableOpacity 
             style={[
                 style.orderWrapper, 
             ]}
+            // on press open edit product bottomsheet
             onPress={onPress}
         >
+            {/* product image */}
             <Image 
                 source={imageUrl}
                 style={style.orderImage}
             />
+            {/* product information */}
             <View style={style.orderInfo}>
                 <Text style={style.orderMainText}>
                     {product_name}
@@ -32,6 +46,7 @@ const ProductListItem = ({product_name, quantity, price, imageUrl, onPress}) => 
     );
 }
 
+// stylesheet
 const style = StyleSheet.create({
     orderWrapper: {
         padding: 10,
@@ -42,7 +57,7 @@ const style = StyleSheet.create({
         width: "100%",
         minHeight: 60,
         gap: 10,
-        backgroundColor: '#ffffff',
+        backgroundColor: white,
         paddingVertical: 15,
     },
     orderImage: {
@@ -56,20 +71,20 @@ const style = StyleSheet.create({
     orderMainText: {
         fontFamily: 'mulish-semibold',
         fontSize: 12,
-        color: 'rgba(34, 34, 34, 1)',
+        color: black,
         marginBottom: 4,
     },
     orderSubText: {
         fontFamily: 'mulish-regular',
         fontSize: 10,
-        color: 'rgba(34, 34, 34, 1)',
+        color: black,
     },
     orderPrice: {
         fontFamily: 'mulish-semibold',
         fontSize: 12,
     },
     decimal: {
-        color: 'rgba(34, 34, 34, 0.6)',
+        color: bodyText,
     },
     orderPriceContainer: {
         display: 'flex',

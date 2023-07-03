@@ -1,33 +1,44 @@
+// react native components
 import { View, Text, StyleSheet } from "react-native";
+import { black, primaryColor, secondaryColor } from "../style/globalStyleSheet";
 
 const Indicator = ({type, text}) => {
+    // type => string of "Pending", "Delivered", "Cancelled", "Rescheduled", "Dispatched"
+    // text => string of text
+
     if (type === "Delivered") return (
+        // render green indicator
         <View style={style.deliveredContainer}>
             <Text style={style.deliveredStatus}>{text}</Text>
         </View>
     );
     else if (type === "Cancelled") return (
+        // render red indicator
         <View style={style.canceledContainer}>
             <Text style={style.canceledStatus}>{text}</Text>
         </View>
     );
     else if (type === "Rescheduled") return (
+        // render grey indicator
         <View style={style.rescheduledContainer}>
             <Text style={style.rescheduledStatus}>{text}</Text>
         </View>
     );
     else if (type === "Dispatched") return (
+        // render blue indicator
         <View style={style.dispatchedContainer}>
             <Text style={style.dispatchedStatus}>{text}</Text>
         </View>
     );
     else return (
+        // render yellowish orange indicator
         <View style={style.pendingContainer}>
             <Text style={style.pendingStatus}>{text}</Text>
         </View>
     );
 }
 
+// stylesheet
 const style = StyleSheet.create({
     deliveredContainer: {
         display: 'flex',
@@ -55,7 +66,7 @@ const style = StyleSheet.create({
     rescheduledStatus: {
         fontFamily: 'mulish-regular',
         fontSize: 8,
-        color: "rgba(34, 34, 34, 1)"
+        color: black,
     },
     canceledContainer: {
         display: 'flex',
@@ -78,14 +89,12 @@ const style = StyleSheet.create({
         height: 16,
         width: 60,
         borderRadius: 20,
-        // backgroundColor: "rgba(7, 66, 2187, 0.05)",
-        backgroundColor: "rgba(7, 66, 124, 0.05)",
+        backgroundColor: secondaryColor,
     },  
     dispatchedStatus: {
         fontSize: 8,
         fontFamily: 'mulish-regular',
-        // color: "rgba(7, 66, 124, 1)", 
-        color: "rgba(7, 66, 124, 1)", 
+        color: primaryColor, 
     },
     pendingContainer: {
         display: 'flex',

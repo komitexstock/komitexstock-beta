@@ -1,12 +1,15 @@
+// react native components
 import { TouchableOpacity, Text, StyleSheet, View } from "react-native";
-import { primaryColor } from "../style/globalStyleSheet";
+// colors
+import { inactivePrimaryColor, primaryColor, white } from "../style/globalStyleSheet";
 
 const CustomButton = ({name, onPress, backgroundColor, fixed, inactive}) => {
+    // name => string
+    // onPress => function
+    // backgroundColor => string
+    // inactive, fixed => boolean
 
-    // const inactive = true;
-
-    // console.log(inactive);
-
+    // render CustomButtom component
     return (
         <View 
             style={[ 
@@ -24,8 +27,7 @@ const CustomButton = ({name, onPress, backgroundColor, fixed, inactive}) => {
     );
 }
 
-// console.log(inactive);
-
+// stylesheet
 const style = StyleSheet.create({
     button: {
         width: "100%",
@@ -39,7 +41,7 @@ const style = StyleSheet.create({
     }, 
     inactive: {
         width: "100%",
-        backgroundColor: "rgba(7, 66, 124, 0.3)",
+        backgroundColor: inactivePrimaryColor,
         height: 44,
         borderRadius: 12,
         display: 'flex',
@@ -49,7 +51,7 @@ const style = StyleSheet.create({
     }, 
     buttonText: {
         fontFamily: "mulish-semibold",
-        color: "#ffffff",
+        color: white,
         fontSize: 16,
     },
     buttonWrapper: {

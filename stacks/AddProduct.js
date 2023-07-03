@@ -1,4 +1,4 @@
-import Header from "../components/Header";
+// react native component
 import { 
     View, 
     Text, 
@@ -8,26 +8,36 @@ import {
     TouchableOpacity,
     Image
 } from "react-native";
+// components
 import Input from "../components/Input";
-import { useState } from "react";
-import CameraPrimaryIcon from '../assets/icons/CameraPrimaryIcon';
-import * as ImagePicker from "expo-image-picker";
+import Header from "../components/Header";
 import CustomButton from "../components/CustomButton";
+// react hooks
+import { useState } from "react";
+// icon
+import CameraPrimaryIcon from '../assets/icons/CameraPrimaryIcon';
+// expo image picker method
+import * as ImagePicker from "expo-image-picker";
+import { background, bodyText, inputBorder, inputLabel, secondaryColor, white } from "../style/globalStyleSheet";
 
 const AddProduct = ({navigation}) => {
     
     // state to store product name
     const [productName, setProductName] = useState("");
+    
     // state to store price value
     const [price, setPrice] = useState("");
 
+    // state to store error in product name
     const [errorProductName, setErrorProductName] = useState(false);
+    
+    // state to store error in price
     const [errorPrice, setErrorPrice] = useState(false);
 
     // state to hold selected image
     const [selectedImage, setSelectedImage] = useState(null);
-    // console.log(selectedImage)
 
+    // variable to check for empty fields
     const emptyFields = [
         productName, 
         price,
@@ -36,14 +46,18 @@ const AddProduct = ({navigation}) => {
             (item) => item === null || item === ''
     );
 
+    // variable to update price
     const updatePrice = (text) => {
+        // remove commas from price
         let newText = text.replace(new RegExp(',', 'g'), '');
         // remove all occurrence of the comma character ',' in text gloablly
         if (newText) setPrice(parseFloat(newText));
+        // set price to 0 if empty
         else setPrice(0);
         
     }
 
+    // pick image from gallery function
     const pickImageAsync = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
           allowsEditing: true,
@@ -55,12 +69,15 @@ const AddProduct = ({navigation}) => {
         }
     };
 
+    // navigate to products with success parammeter
+    // success parameter triggers a success prompt
     const navigateToProducts = () => {
         navigation.navigate("Products", {
             success: true,
         });
     }
 
+    // render AddProduct page
     return (
         <>
             <TouchableWithoutFeedback>
@@ -69,16 +86,20 @@ const AddProduct = ({navigation}) => {
                     style={style.container}
                 >
                     <View style={style.main}>
+                        {/* header component */}
                         <Header 
                             navigation={navigation} 
                             stackName={"Add Product"} 
                             iconFunction={null} 
                             icon={null} 
+                            unpadded={true}
                         />
                         <Text style={style.headingText}>
-                            Create a new product that will be added to your inventory with Komitex.
+                            Create a new product that will 
+                            be added to your inventory with Komitex.
                         </Text>
                         <View style={style.inputContainer}>
+                            {/* product name input */}
                             <Input 
                                 label={"Product Name"}
                                 placeholder={"Type the name of the product"}
@@ -95,7 +116,7 @@ const AddProduct = ({navigation}) => {
                                 error={errorProductName}
                                 setError={setErrorProductName}
                             />
-
+                            {/* price input */}
                             <Input 
                                 label={"Price"}
                                 placeholder={"Price"}
@@ -112,7 +133,7 @@ const AddProduct = ({navigation}) => {
                                 error={errorPrice}
                                 setError={setErrorPrice}
                             />
-
+                            {/* select product image */}
                             <TouchableOpacity 
                                 style={style.selectImageWrapper}
                                 onPress={pickImageAsync}
@@ -143,10 +164,11 @@ const AddProduct = ({navigation}) => {
                     </View>
                 </ScrollView>
             </TouchableWithoutFeedback>
+            {/* Add Product button, disables on empty fields */}
             <CustomButton 
                 name={"Add Product"}
                 onPress={navigateToProducts}
-                backgroundColor={"#f8f8f8"}
+                backgroundColor={background}
                 fixed={false}
                 inactive={emptyFields}
             />
@@ -154,11 +176,12 @@ const AddProduct = ({navigation}) => {
     );
 }
 
+// stylesheet
 const style = StyleSheet.create({
     container: {
         flex: 1,
         width: "100%",
-        backgroundColor: "#f8f8f8",
+        backgroundColor: background,
         padding: 20,
         height: "100%",
     },
@@ -173,7 +196,7 @@ const style = StyleSheet.create({
     headingText: {
         fontFamily: "mulish-regular",
         fontSize: 12,
-        color: "rgba(34, 34, 34, 0.6)",
+        color: bodyText,
         width: "100%",
         marginBottom: 24,
     },
@@ -196,15 +219,15 @@ const style = StyleSheet.create({
     selectImageLabel: {
         fontFamily: "mulish-semibold",
         fontSize: 10,
-        color: "rgba(131, 127, 127, 1)"
+        color: inputLabel
     },
     imageContainer: {
         width: "100%",
         height: 103,
-        backgroundColor: "#ffffff",
+        backgroundColor: white,
         borderRadius: 12,
         borderWidth: 1,
-        borderColor: "rgba(231, 229, 229, 1)",
+        borderColor: inputBorder,
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -214,12 +237,12 @@ const style = StyleSheet.create({
     imagePlaceholder: {
         fontFamily: "mulish-regular",
         fontSize: 10,
-        color: "rgba(131, 127, 127, 1)",
+        color: inputLabel,
     },
     uploadButton: {
         width: 40,
         height: 40,
-        backgroundColor: "rgba(7, 66, 124, 0.05)",
+        backgroundColor: secondaryColor,
         borderRadius: 20,
         display: "flex",
         justifyContent: "center",

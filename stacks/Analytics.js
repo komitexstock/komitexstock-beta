@@ -14,6 +14,7 @@ const Analytics = ({navigation}) => {
                         stackName={"Analytics"} 
                         iconFunction={null} 
                         icon={null} 
+                        unpadded={true}
                     />
                 </View>
             </ScrollView>

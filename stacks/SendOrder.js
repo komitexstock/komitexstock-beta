@@ -1,3 +1,4 @@
+// react native components
 import { 
     View, 
     StyleSheet, 
@@ -8,6 +9,7 @@ import {
     TouchableOpacity,
     BackHandler
 } from "react-native";
+// components
 import Header from "../components/Header";
 import Input from "../components/Input";
 import SelectInput from "../components/SelectInput";
@@ -18,10 +20,13 @@ import AddProductsModalContent from "../components/AddProductsModalContent";
 import AddSummaryModalContent from "../components/AddSummaryModalContent";
 import CustomButton from "../components/CustomButton";
 import Product from "../components/Product";
+// icon
 import ArrowDown from "../assets/icons/ArrowDown";
 import InfoIcon from "../assets/icons/InfoIcon";
+// react hooks
 import { useState, useRef, useEffect } from "react";
-import { primaryColor } from "../style/globalStyleSheet";
+// colors
+import { accentLight, background, black, primaryColor, white } from "../style/globalStyleSheet";
 
 const SendOrder = ({navigation}) => {
 
@@ -87,7 +92,7 @@ const SendOrder = ({navigation}) => {
     // state to control modal overlay
     const [showOverlay, setShowOverlay] = useState(false);
 
-    // use effect to close modal
+    // use effect to close modal when back button is pressed and modal is open
     useEffect(() => {
         // function to run if back button is pressed
         const backAction = () => {
@@ -115,6 +120,7 @@ const SendOrder = ({navigation}) => {
     // modal ref
     const bottomSheetModalRef = useRef(null);
 
+    // close modal function
     const closeModal = () => {
       bottomSheetModalRef.current?.close();
       setShowOverlay(false);
@@ -137,6 +143,7 @@ const SendOrder = ({navigation}) => {
         else if (type === "Location") setSelectLocationActive(true);   
     }
 
+    // function to check if logistics or orderdetails are empty
     const emptyLogisticsAndOrderDetails = [
         logistics, 
         orderDetails
@@ -144,6 +151,7 @@ const SendOrder = ({navigation}) => {
             (item) => item === null || item === ''
     );
 
+    // variable to check for empty fields
     const isAnyFieldEmpty = [
             logistics, 
             orderDetails, 
@@ -157,27 +165,29 @@ const SendOrder = ({navigation}) => {
         }
     );
 
-    // console.log(products);
-    
+    // function to process order, would send a request to ChatGPT 3.5
     const processOrderDetails = async () => {
         setProcessOrderResponse("Response from ChatGPT");
     }
 
+    // function to show order summary
     const showOrderSummary = () => {
         openModal("Summary", "Order Summary", "Review your order details", 2);    
     }
 
-
+    // function to select logistics
     const handleSelectedLogistics = (data) => {
         closeModal();
         setLogistics(data);
     }
 
+    // function to select location
     const handleSelectedLocation = (data) => {
         closeModal();
         setLocation(data);
     }
 
+    // decrease product quantity
     const decreaseQuantity = (id) => {
         setProducts(prevProducts => {
             return prevProducts.map(product => {
@@ -196,7 +206,7 @@ const SendOrder = ({navigation}) => {
         })
     }
 
-    // increase product quanityt
+    // increase product quantity
     const increaseQuantity = (id) => {
         setProducts(prevProducts => {
             return prevProducts.map(product => {
@@ -212,11 +222,13 @@ const SendOrder = ({navigation}) => {
         })
     }
 
+    // function to remove product
     const removeProduct = (id) => {
         const newProduct = products.filter((product) => product.id !== id);
         setProducts(newProduct);
     }
 
+    // function to addProducts, the function is called in the select product modal
     const addProducts = (productsList) => {
         setProducts(productsList);
         closeModal();
@@ -254,14 +266,19 @@ const SendOrder = ({navigation}) => {
         
     }
 
-    // console.log(price)
-
+    // state to highlight error in customer name
     const [errorCustomerName, setErrorCustomerName] = useState(false);
+
+    // state to highlight error in phone number
     const [errorPhoneNumber, setErrorPhoneNumber] = useState(false);
+    
+    // state to highlight error in address
     const [errorAddress, setErrorAddress] = useState(false);
+    
+    // state to highlight error in price
     const [errorPrice, setErrorPrice] = useState(false);
 
-    // inputs
+    // order inputs
     const inputs = [
         {
             id: 1,
@@ -334,11 +351,13 @@ const SendOrder = ({navigation}) => {
         },
     ];
     
+    // render send order page
     return (
         <>
             <TouchableWithoutFeedback
                 onPress={() => {
                     Keyboard.dismiss();
+                    // onclick dismiss keyboard
                 }}
             >
                 <ScrollView
@@ -346,19 +365,22 @@ const SendOrder = ({navigation}) => {
                     style={{
                         minHeight: "100%",
                         width: "100%",
-                        backgroundColor: "#f8f8f8",
+                        backgroundColor: background,
                     }}
                 >
                     <View style={style.main}>
                         <View style={style.mainContent}>
+                            {/* Header component */}
                             <Header 
                                 navigation={navigation} 
                                 stackName={"Send an Order"} 
                                 iconFunction={null} 
                                 icon={null} 
+                                unpadded={true}
                             />
                             <View style={style.container}>
                                 <View style={style.inputWrapper}>
+                                    {/* Select Logistics */}
                                     <SelectInput 
                                         label={"Select Logistics"} 
                                         placeholder={"Choose a logistics"} 
@@ -369,6 +391,7 @@ const SendOrder = ({navigation}) => {
                                         inputFor={"Logistics"}
                                     />
 
+                                    {/* Order Details */}
                                     <Input 
                                         label={"Order Details"} 
                                         placeholder={"Paste order details here..."} 
@@ -383,7 +406,9 @@ const SendOrder = ({navigation}) => {
                                         error={false}
                                         setError={() => {}}
                                     />
+
                                     {processOrderResponse && (<>
+                                        {/* select location */}
                                         <SelectInput 
                                             label={"Delivery Location"}
                                             labelIcon={<InfoIcon />}
@@ -394,6 +419,7 @@ const SendOrder = ({navigation}) => {
                                             active={selectLocationActive}
                                             inputFor={"Location"}
                                         />
+                                        {/* Selected Products Container */}
                                         <View style={style.productsWrapper}>
                                             <View style={style.productsHeading}>
                                                 <Text style={style.producPlaceholder}>Products Selected</Text>
@@ -409,6 +435,7 @@ const SendOrder = ({navigation}) => {
                                                 </TouchableOpacity>
                                             </View>
                                             { products.length !== 0 ? products.map((product) => (
+                                                // map through selected products
                                                 <Product 
                                                     key={product.id} 
                                                     product={product} 
@@ -417,14 +444,17 @@ const SendOrder = ({navigation}) => {
                                                     decreaseQuantity={decreaseQuantity}
                                                 />
                                             )) : (
+                                                // show no product selected component
                                                 <View style={style.noProductWrapper}>
                                                     <Text style={style.noProductText}>
-                                                        No product selected. Kindly add a new product or select one from your inventory
+                                                        No product selected. Kindly add a new product 
+                                                        or select one from your inventory
                                                     </Text>
                                                 </View>
                                             )}
                                         </View>
                                         {inputs.map((input) => (
+                                            // map through other relevant inputs
                                             <Input 
                                                 key={input.id}
                                                 label={input.label} 
@@ -448,16 +478,18 @@ const SendOrder = ({navigation}) => {
                             </View>
                         </View>
                         { processOrderResponse && (
+                            // action button to send order
                             <CustomButton 
                                 name="Continue" 
                                 onPress={showOrderSummary}
-                                backgroundColor={"#ffffff"}
+                                backgroundColor={white}
                                 inactive={isAnyFieldEmpty}
                             />
                         )}
                     </View>
                 </ScrollView>
             </TouchableWithoutFeedback>
+            {/* bottom sheet  */}
             <CustomBottomSheet
                 bottomSheetModalRef={bottomSheetModalRef}
                 showOverlay={showOverlay}
@@ -467,21 +499,25 @@ const SendOrder = ({navigation}) => {
                 sheetTitle={modal.title}
                 sheetSubtitle={modal.subtitle}
             >   
+                {/* if modal type is logistics, render logistics modal content */}
                 {modal.type === "Logistics" && (
                     <AddLogisticsModalContent 
-                        handleSelectedLogistics={handleSelectedLogistics}
+                    handleSelectedLogistics={handleSelectedLogistics}
                     />
                 )}
+                {/* if modal type is location, render location modal content */}
                 {modal.type === "Location" && (
                     <AddLocationModalContent 
                         handleSelectedLocation={handleSelectedLocation}
                     />
                 )}
+                {/* if modal type is products, render products modal content */}
                 {modal.type === "Products" && (
                     <AddProductsModalContent 
                         addProducts={addProducts} selectedProducts={products}
                     />
                 )}
+                {/* if modal type is summary, render summary modal content */}
                 {modal.type === "Summary" && (
                     <AddSummaryModalContent 
                         logistics={logistics}
@@ -495,11 +531,12 @@ const SendOrder = ({navigation}) => {
                     />
                 )}
             </CustomBottomSheet>
+            {/* button to process order */}
             { !processOrderResponse && (
                 <CustomButton 
                     name="Process Order" 
                     onPress={processOrderDetails}
-                    backgroundColor={"#f8f8f8"}
+                    backgroundColor={background}
                     inactive={emptyLogisticsAndOrderDetails}
                     fixed={true}
                 />
@@ -508,6 +545,7 @@ const SendOrder = ({navigation}) => {
     );
 }
 
+// stylesheet
 const style = StyleSheet.create({
     main: {
         minHeight: "100%",
@@ -561,7 +599,7 @@ const style = StyleSheet.create({
     producPlaceholder:  {
         fontFamily: "mulish-bold",
         fontSize: 12,
-        color: "#222222",
+        color: black,
         flex: 1,
     },
     addProduct: {
@@ -577,15 +615,15 @@ const style = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'center',
-        backgroundColor: 'rgba(230, 109, 28, 0.05)',
+        backgroundColor: accentLight,
         padding: 10,
         borderRadius: 12,
 
     },
     noProductText: {
         fontSize: 10,
-        fontFamily: 'mulish-regular',
-        color: "#222222",
+        fontFamily: 'mulish-medium',
+        color: black,
     }
 
 })

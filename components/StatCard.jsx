@@ -1,9 +1,14 @@
+// react native components
 import { View, Text, StyleSheet } from 'react-native';
+// icons
 import PercentageIncreaseIcon from '../assets/icons/PercentageIncreaseIcon';
 import PercentageDecreaseIcon from '../assets/icons/PercentageDecreaseIcon';
+import { background, black, bodyText, white } from '../style/globalStyleSheet';
+
 
 const StatCard = ({title, presentValue, oldValue, decimal, unit, unitPosition, backgroundColor}) => {
 
+    // function calculate percentage difference between old value and new value
     const percentageDifference = () => {
         let result = 100 * ((presentValue - oldValue)/oldValue);
         result = result.toFixed(2);
@@ -15,6 +20,7 @@ const StatCard = ({title, presentValue, oldValue, decimal, unit, unitPosition, b
         }
     }
 
+    // function to render the right icon to reflect either increase or decrease from oldValue
     const handleStatIcon = () => {
         if (percentageDifference() !== 'N/A') {
             if (percentageDifference() < 0) {
@@ -29,6 +35,7 @@ const StatCard = ({title, presentValue, oldValue, decimal, unit, unitPosition, b
         }
     }
 
+    // function to render the right icon wrapper to reflect either increase or decrease from oldValue
     const handlePercentageWrapper = () => {
         if (percentageDifference() === "N/A") return style.neutralPercentage;
         if (percentageDifference() > 0) return style.positivePercentage;
@@ -36,6 +43,7 @@ const StatCard = ({title, presentValue, oldValue, decimal, unit, unitPosition, b
         return style.neutralPercentage;
     }
     
+    // function to render the right text color to reflect either increase or decrease from oldValue
     const handlePercentageText = () => {
         if (percentageDifference() === "N/A") return style.neutralText;
         if (percentageDifference() > 0) return style.positiveText;
@@ -43,33 +51,44 @@ const StatCard = ({title, presentValue, oldValue, decimal, unit, unitPosition, b
         return style.neutralText;
     }
 
+    // return StatCard component
     return (
+        // if backgroud color is provide, use that
         <View style={[style.statCard, backgroundColor && {backgroundColor: backgroundColor}]}>
             <View style={style.statHeading}>
                 <Text style={style.statTitle}>{title}</Text>
                 <View 
                     style={[
                         style.percentageWrapper,
+                        // assign the appropriate percentageWrapper color
                         handlePercentageWrapper(),
                     ]}
                 >
+                    {/* assign the appropriate stat icon */}
                     {handleStatIcon()}
                     <Text 
                         style={[
                             style.percentagetext, 
+                            // assign the appropriate percentage text color
                             handlePercentageText(),
                         ]}
                     >
+                        {/* display calculated percentage */}
                         {percentageDifference() === "N/A" ? "N/A" : Math.abs(percentageDifference()) + "%"}
                     </Text>
                 </View>
             </View>
             <View style={style.statValueWrapper}>
                 <Text style={style.statValue}>
+                    {/* if unit is provided and unit location is set at start, render at the beginning */}
                     { unitPosition === "start" && <>{unit}</> }
-                    {presentValue.toLocaleString()}{decimal && <Text style={style.statValueDecimal}>
+                    {/* render value as string */}
+                    {presentValue.toLocaleString()}
+                    {/* if value requires decimal, render decimal, with a different fontColor */}
+                    {decimal && <Text style={style.statValueDecimal}>
                         .00
                     </Text>}
+                    {/* if unit is provided and unit location is set at end, render at the end */}
                     { unitPosition === "end" && <>{unit}</> }
                 </Text>
             </View>
@@ -77,12 +96,13 @@ const StatCard = ({title, presentValue, oldValue, decimal, unit, unitPosition, b
     );
 }
 
+// stylesheet
 const style = StyleSheet.create({
     statCard: {
         flex: 1,
         height: 62,
         minWidth: "40%",
-        backgroundColor: "#ffffff",
+        backgroundColor: white,
         borderRadius: 12,
         display: "flex",
         flexDirection: "column",
@@ -110,11 +130,11 @@ const style = StyleSheet.create({
         borderRadius: 18,
     },
     neutralPercentage: {
-        backgroundColor: "#f8f8f8",
+        backgroundColor: background,
     },
     percentagetext: {
         fontFamily: "mulish-regular",
-        color:  "#222222",
+        color:  black,
         fontSize: 8,
     },
     positivePercentage: {
@@ -130,7 +150,7 @@ const style = StyleSheet.create({
         color: "rgba(180, 35, 24, 1)",
     },
     neutralText: {
-        color: "#222222",
+        color: bodyText,
     },
     statValueWrapper: {
         display: "flex",
@@ -139,12 +159,12 @@ const style = StyleSheet.create({
         justifyContent: "flex-start",
     },
     statValue: {
-        fontFamily: "mulish-bold",
+        fontFamily: "mulish-extrabold",
         fontSize: 16,
-        color: "rgba(34, 34, 34, 1)"
+        color: black,
     },
     statValueDecimal: {
-        color: "rgba(34, 34, 34, 0.6)",
+        color: bodyText,
     }
 
 })
