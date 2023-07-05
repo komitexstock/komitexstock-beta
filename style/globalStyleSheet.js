@@ -15,6 +15,7 @@ export const greenLight = "#0398550D";
 export const neutral = "#B1B2B2"; // mostly uses for inactive bottom navigation text
 export const inputLabel = "#837F7F";
 export const inputBorder = "#E7E5E5";
+export const toolTipBackground = "#333333";
 
 export const globalStyleSheet = StyleSheet.create({
     main: {
