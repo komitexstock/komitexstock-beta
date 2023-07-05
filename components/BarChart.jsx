@@ -7,13 +7,17 @@ import {
     LayoutAnimation
 } from "react-native";
 // react hooks
-import { useRef, useState, useLayoutEffect, useEffect } from "react";
+import { useState, useLayoutEffect, useEffect } from "react";
 // colors
-import { black, bodyText, primaryColor, secondaryColor, toolTipBackground, white } from "../style/globalStyleSheet";
+import { background, black, bodyText, primaryColor, secondaryColor, toolTipBackground, white } from "../style/globalStyleSheet";
+// components
+import PercentageChange from "./PercentageChange";
 
-const BarChart = ({chartTitle, chartWidth, chartHeight, backgroundColor, data, labels, unit, fullbar, rotateXAxisLabel}) => {
-
-    const barChartRef = useRef(null);
+const BarChart = ({chartTitle, chartWidth, chartHeight, backgroundColor, data, labels, unit, fullbar, enableGrid,rotateXAxisLabel}) => {
+    // chartTitle, backgroundColor => string
+    // chartWidth, chartHeight => number or string with % e.g "100%"
+    // data => array
+    
 
     const maxValue = Math.max(...data);
 
@@ -45,7 +49,7 @@ const BarChart = ({chartTitle, chartWidth, chartHeight, backgroundColor, data, l
 
             return {
                 value: dataValue,
-                barHeight: (dataValue / maxYAxisScale) * ((chartHeight - 20) * 0.65),
+                barHeight: (dataValue / maxYAxisScale) * ((chartHeight - 20) * 0.60),
                 selected: index === maxIndex ? true : false,
                 label: labels[index],
             }
@@ -95,7 +99,6 @@ const BarChart = ({chartTitle, chartWidth, chartHeight, backgroundColor, data, l
 
     return (
         <View 
-            ref={barChartRef} 
             style={[
                 style.chartContainer, 
                 {
@@ -108,6 +111,10 @@ const BarChart = ({chartTitle, chartWidth, chartHeight, backgroundColor, data, l
             <View style={style.chartTitleWrapper}>
                 <View style={style.chartTitle}>
                     <Text style={style.chartTitleText}>{chartTitle}</Text>
+                    <PercentageChange
+                        presentValue={115000}
+                        oldValue={100000}
+                    />
                 </View>
                 <Text style={style.total}>
                     ₦{total.toLocaleString()}
@@ -135,7 +142,7 @@ const BarChart = ({chartTitle, chartWidth, chartHeight, backgroundColor, data, l
                                 style={[
                                     style.bar,
                                     { width: !fullbar ? "60%" : "100%" },
-                                    { backgroundColor: bar.selected ? primaryColor : secondaryColor },
+                                    { backgroundColor: bar.selected ? primaryColor : primaryColor },
                                 ]}
                                 onPress = {() => handleSelectedBar(index)}
                             >     
@@ -158,7 +165,7 @@ const BarChart = ({chartTitle, chartWidth, chartHeight, backgroundColor, data, l
                             </TouchableOpacity>
                         </View>
                     ))}
-                    { bars.map((bar, index) => (
+                    { enableGrid && bars.map((bar, index) => (
                         <View 
                             key={index} 
                             style={{
@@ -192,10 +199,17 @@ const style = StyleSheet.create({
         height: "25%",
         width: '100%',
     },
+    chartTitle: {
+        display: 'flex',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        flexDirection: 'row'
+    },
     chartTitleText: {
         fontFamily: 'mulish-medium',
         fontSize: 10,
         color: bodyText,
+        marginRight: 15,
     },
     total: {
         fontFamily: 'mulish-extrabold',
@@ -206,7 +220,7 @@ const style = StyleSheet.create({
         color: bodyText
     },
     mainChartWrapper: {
-        height: "65%",
+        height: "60%",
         width: '100%',
         display: 'flex',
         flexDirection: 'row',
@@ -238,8 +252,6 @@ const style = StyleSheet.create({
         alignItems: 'flex-end',
         borderBottomWidth: 1,
         borderBottomColor: secondaryColor,
-        borderLeftWidth: 1,
-        borderLeftColor: secondaryColor,
         position: 'relative',
     },
     barContainer: {
@@ -261,6 +273,9 @@ const style = StyleSheet.create({
         justifyContent: 'flex-start',
         alignItems: 'center',
         overflow: 'visible',
+        // borderWidth: 1,
+        // borderBottomColor: 0,
+        // borderColor: background,
     },
     toolTipWrapper: {
         position: 'absolute',
@@ -310,8 +325,10 @@ const style = StyleSheet.create({
         top: "100%",
         marginTop: 6,
         color: bodyText,
-        width: "167%",
+        minWidth: "167%",
         textAlign: 'center',
+        // maxWidth: "200%",
+
     }
 })
  
