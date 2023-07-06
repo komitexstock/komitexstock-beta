@@ -40,36 +40,36 @@ const Analytics = ({navigation}) => {
     const stats = [
         {
             id: 1,
-            title: "Total Earnings",
-            presentValue: 200000,
-            oldValue: 185500,
+            title: "Total POD",
+            presentValue: 463000,
+            oldValue: 500000,
             decimal: true,
             unit: "₦",
             unitPosition: "start",
         },
         {
             id: 2,
-            title: "Total Orders",
-            presentValue: 40,
-            oldValue: 36,
-            decimal: false,
-            unit: "",
-            unitPosition: "end",
+            title: "Total Charges",
+            presentValue: 20000,
+            oldValue: 18000,
+            decimal: true,
+            unit: "₦",
+            unitPosition: "start",
         },
         {
             id: 3,
-            title: "Total Delivered",
-            presentValue: 29,
-            oldValue: 33,
+            title: "Total Order",
+            presentValue: 50,
+            oldValue: 49,
             decimal: false,
             unit: "",
             unitPosition: "end",
         },
         {
             id: 4,
-            title: "Total Cancelled",
-            presentValue: 1,
-            oldValue: 3,
+            title: "Total Delivered",
+            presentValue: 41,
+            oldValue: 37,
             decimal: false,
             unit: "",
             unitPosition: "end",
@@ -85,7 +85,7 @@ const Analytics = ({navigation}) => {
             totalPrice: 72500,
             oldTotalPrice: 67000,
             imageUrl: require('../assets/images/komitex.png'),
-            onPress: () => {}
+            onPress: () => {navigation.navigate("LogisticsAnalytics")}
         },
         {
             id: 2,
@@ -94,7 +94,7 @@ const Analytics = ({navigation}) => {
             totalPrice: 49500,
             oldTotalPrice: 67000,
             imageUrl: require('../assets/images/dhl.png'),
-            onPress: () => {}
+            onPress: () => {navigation.navigate("LogisticsAnalytics")}
         },
         {
             id: 3,
@@ -103,7 +103,7 @@ const Analytics = ({navigation}) => {
             totalPrice: 70000,
             oldTotalPrice: 67000,
             imageUrl: require('../assets/images/fedex.png'),
-            onPress: () => {}
+            onPress: () => {navigation.navigate("LogisticsAnalytics")}
         },
     ];
 
@@ -231,6 +231,7 @@ const Analytics = ({navigation}) => {
                 <View style={style.topStatsWrapper}>
                     <Text style={style.topStatHeading}>Top Stats</Text>
                     <View style={style.tabsContainer}>
+                        {/* Tab buttons container */}
                         <View style={style.tabButtonContainer}>
                             <TouchableOpacity
                                 style={
@@ -319,6 +320,7 @@ const Analytics = ({navigation}) => {
     );
 }
 
+// stylesheet
 const style = StyleSheet.create({
     container: {
         flex: 1,

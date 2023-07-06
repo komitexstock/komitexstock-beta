@@ -9,7 +9,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 // Home related stacks 
 import Home from './stacks/Home';
 import Notifications from './stacks/Notifications';
+// Analytics related stacks
 import Analytics from './stacks/Analytics';
+import LogisticsAnalytics from './stacks/LogisticsAnalytics';
 // orders related stacks
 import Orders from './stacks/Orders';
 import SendOrder from './stacks/SendOrder';
@@ -160,6 +162,14 @@ export default function App() {
                             <Stack.Screen 
                                 name="Analytics" 
                                 component={Analytics} 
+                                options={{
+                                headerShown: false,
+                                }} 
+                            />
+                            {/* LogisticsAnalytics stack */}
+                            <Stack.Screen 
+                                name="LogisticsAnalytics" 
+                                component={LogisticsAnalytics} 
                                 options={{
                                 headerShown: false,
                                 }} 

@@ -15,7 +15,6 @@ const StatWrapper = ({children}) => {
 const style = StyleSheet.create({
     statsWrapper: {
         minHeight: 62,
-        maxHeight: 160,
         width: "100%",
         display: "flex",
         flexDirection: "row",
