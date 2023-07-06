@@ -19,7 +19,7 @@ import Header from "../components/Header";
 // import react hooks
 import { useState } from "react";
 // colors
-import { background, black, bodyText, primaryColor, secondaryColor, white } from "../style/globalStyleSheet";
+import { background, black, bodyText, primaryColor, secondaryColor, white } from "../style/colors";
 
 const Chat = ({navigation, route}) => {
 

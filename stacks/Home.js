@@ -25,7 +25,7 @@ import { useState, useRef, useEffect } from "react";
 // bottomsheet component
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 // colors
-import { accentLight, background, black, bodyText, greenLight, primaryColor, secondaryColor, white, yellowLight } from "../style/globalStyleSheet";
+import { accentLight, background, black, bodyText, greenLight, primaryColor, secondaryColor, white, yellowLight } from "../style/colors";
 
 
 const Home = ({navigation}) => {

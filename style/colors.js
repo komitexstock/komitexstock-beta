@@ -1,5 +1,3 @@
-import { StyleSheet } from "react-native";
-
 export const primaryColor = "#07427C"; // primary color
 export const inactivePrimaryColor = "#07427C4D"; // primary color
 export const secondaryColor = "#07427C0D";
@@ -16,18 +14,3 @@ export const neutral = "#B1B2B2"; // mostly uses for inactive bottom navigation 
 export const inputLabel = "#837F7F";
 export const inputBorder = "#E7E5E5";
 export const toolTipBackground = "#333333";
-
-export const globalStyleSheet = StyleSheet.create({
-    main: {
-        minHeight: "100%",
-        display: 'flex',
-        alignItems: 'center',
-        backgroundColor: background,
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'flex-start',
-        padding: 20,
-        flex: 1,
-    },
-
-})

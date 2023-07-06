@@ -24,7 +24,7 @@ import ArrowDown from "../assets/icons/ArrowDown";
 // react hooks
 import { useState, useRef, useEffect } from "react";
 // colors
-import { accentLight, background, black, primaryColor } from "../style/globalStyleSheet";
+import { accentLight, background, black, primaryColor } from "../style/colors";
 
 const SendWaybill = ({navigation}) => {
 
@@ -383,6 +383,7 @@ const style = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'flex-start',
         padding: 20,
+        paddingTop: 0,
     },
     container: {
         flex: 1,
@@ -391,6 +392,7 @@ const style = StyleSheet.create({
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
+        marginTop: 24,
     },  
     inputWrapper: {
         display: 'flex',

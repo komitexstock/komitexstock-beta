@@ -22,7 +22,7 @@ import { useState, useRef, useEffect } from "react";
 import CallIcon from "../assets/icons/CallIcon";
 import SmsIcon from "../assets/icons/SmsIcon";
 import EmailIcon from "../assets/icons/EmailIcon";
-import { background, black, bodyText } from "../style/globalStyleSheet";
+import { background, black, bodyText } from "../style/colors";
 
 const Profile = ({navigation}) => {
 
@@ -306,6 +306,7 @@ const style = StyleSheet.create({
         width: "100%",
         backgroundColor: background,
         padding: 20,
+        paddingTop: 0,
         minHeight: "100%",
     },
     main: {
@@ -323,6 +324,8 @@ const style = StyleSheet.create({
         color: bodyText,
         flex: 1,
         marginBottom: 24,
+        marginTop: 4,
+        width: "100%",
     },
     link: {
         display: 'flex',

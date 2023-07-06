@@ -9,7 +9,7 @@ import ModalHandle from "./ModalHandle";
 // icons
 import CloseIcon from "../assets/icons/CloseIcon";
 // colors
-import { bodyText } from "../style/globalStyleSheet";
+import { bodyText } from "../style/colors";
 
 const windowWidth = Dimensions.get("window").width;
 

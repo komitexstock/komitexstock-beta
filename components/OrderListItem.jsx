@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 // component
 import Indicator from './Indicator';
-import { black, bodyText, white } from '../style/globalStyleSheet';
+import { black, bodyText, white } from '../style/colors';
 
 const OrderListItem = ({item, index, length}) => {
     // lenght, index => int

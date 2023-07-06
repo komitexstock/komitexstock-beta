@@ -15,7 +15,7 @@ import MenuIcon from "../assets/icons/MenuIcon";
 import SearchIcon from '../assets/icons/SearchIcon'
 import FilterIcon from '../assets/icons/FilterIcon';
 // colors
-import { bodyText, primaryColor, secondaryColor, white } from "../style/globalStyleSheet";
+import { bodyText, primaryColor, secondaryColor, white } from "../style/colors";
 // components
 import StatWrapper from "../components/StatWrapper";
 import StatCard from "../components/StatCard";

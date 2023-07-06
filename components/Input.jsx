@@ -9,7 +9,7 @@ import {
 // react hooks
 import { useState, useEffect } from "react";
 // colors
-import { black, inputBorder, inputLabel, neutral, primaryColor, white } from "../style/globalStyleSheet";
+import { black, inputBorder, inputLabel, neutral, primaryColor, white } from "../style/colors";
 // icons
 import EyeIcon from "../assets/icons/EyeIcon";
 import EyeSlashIcon from "../assets/icons/EyeSlashIcon";

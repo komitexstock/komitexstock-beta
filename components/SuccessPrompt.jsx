@@ -3,7 +3,7 @@ import { View, StyleSheet } from "react-native";
 // icon
 import MarkIcon from "../assets/icons/MarkIcon";
 // color
-import { secondaryColor } from "../style/globalStyleSheet";
+import { secondaryColor } from "../style/colors";
 
 const SuccessPrompt = () => {
     // render SuccessPrompt component

@@ -7,7 +7,7 @@ import { useState } from "react";
 // bottomsheet component
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 // colors
-import { background, black, inputBorder } from "../style/globalStyleSheet";
+import { background, black, inputBorder } from "../style/colors";
 
 const AddLocationModalContent = ({handleSelectedLocation}) => {
     // handleSelectedLocation => function

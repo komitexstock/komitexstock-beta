@@ -2,7 +2,7 @@
 // react native components
 import { TouchableOpacity, Text, StyleSheet } from "react-native";
 // colors
-import { background, bodyText } from "../style/globalStyleSheet";
+import { background, bodyText } from "../style/colors";
 
 // button above text input in chat
 const ActionButton = ({name, onPress}) => {

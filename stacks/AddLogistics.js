@@ -20,7 +20,7 @@ import LogisticsInfo from "../components/LogisticsInfo";
 import PopUpBottomSheet from "../components/PopUpBottomSheet";
 import SuccessPrompt from "../components/SuccessPrompt";
 // colors
-import { bodyText, black, white, background } from "../style/globalStyleSheet";
+import { bodyText, black, white, background } from "../style/colors";
 
 const Products = ({navigation}) => {
 
@@ -333,6 +333,7 @@ const style = StyleSheet.create({
         width: "100%",
         height: "100%",
         padding: 20,
+        paddingTop: 0,
         backgroundColor: background,
     },
     listContainer: {
@@ -347,7 +348,8 @@ const style = StyleSheet.create({
         fontFamily: "mulish-medium",
         fontSize: 12,
         color: bodyText,
-        marginBottom: 24
+        marginBottom: 24,
+        marginTop: 8,
     },
     popUpContent: {
         flex: 1,

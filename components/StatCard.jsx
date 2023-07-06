@@ -1,7 +1,7 @@
 // react native components
 import { View, Text, StyleSheet } from 'react-native';
 // colors
-import { background, black, bodyText, white } from '../style/globalStyleSheet';
+import { background, black, bodyText, white } from '../style/colors';
 // components
 import PercentageChange from './PercentageChange';
 

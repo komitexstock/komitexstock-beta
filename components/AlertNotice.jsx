@@ -5,7 +5,7 @@ import CloseWhiteIcon from "../assets/icons/CloseWhiteIcon";
 import SuccessIcon from "../assets/icons/SuccessIcon";
 import ErrorIcon from "../assets/icons/ErrorIcon";
 // color
-import { white } from "../style/globalStyleSheet";
+import { white } from "../style/colors";
 
 const AlertNotice = ({type, text, closeAlert}) => {
     return (

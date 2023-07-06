@@ -6,7 +6,7 @@ import {
     TouchableOpacity
 } from "react-native";
 // colors
-import { background, black, bodyText, primaryColor, secondaryColor } from "../style/globalStyleSheet";
+import { background, black, bodyText, primaryColor, secondaryColor } from "../style/colors";
 
 
 const FilterButtonGroup = ({buttons, title}) => {

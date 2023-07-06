@@ -16,7 +16,7 @@ import {
     useEffect 
 } from "react";
 // colors
-import { primaryColor, secondaryColor, background, black, bodyText, white, subText } from '../style/globalStyleSheet';
+import { primaryColor, secondaryColor, background, black, bodyText, white } from '../style/colors';
 // custom components
 import CustomBottomSheet from "../components/CustomBottomSheet";
 import AccountButtons from "../components/AccountButtons";

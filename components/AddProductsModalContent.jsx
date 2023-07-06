@@ -9,7 +9,7 @@ import { useState } from "react";
 // bottomsheet components
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 // colors
-import { background, black, inputBorder, primaryColor, white } from "../style/globalStyleSheet";
+import { background, black, inputBorder, primaryColor, white } from "../style/colors";
 
 const AddProductsModalContent = ({addProducts, selectedProducts}) => {
     // addProducts, selectedProducts => function

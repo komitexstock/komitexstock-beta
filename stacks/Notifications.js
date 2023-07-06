@@ -18,7 +18,7 @@ import ModalButton from "../components/ModalButton";
 // react hooks
 import { useState, useRef, useEffect } from "react";
 // colors and global style
-import { bodyText, globalStyleSheet } from "../style/globalStyleSheet";
+import { background, bodyText, globalStyleSheet } from "../style/colors";
 
 const Notifications = ({navigation}) => {
 
@@ -251,7 +251,7 @@ const Notifications = ({navigation}) => {
     // render Notifications page
     return (
         <ScrollView>
-            <View style={globalStyleSheet.main}>
+            <View style={style.main}>
                 {/* Header */}
                 <Header 
                     navigation={navigation} 
@@ -315,6 +315,18 @@ const Notifications = ({navigation}) => {
 
 // style sheet
 const style = StyleSheet.create({
+    main: {
+        minHeight: "100%",
+        display: 'flex',
+        alignItems: 'center',
+        backgroundColor: background,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        padding: 20,
+        paddingTop: 0,
+        flex: 1,
+    },
     notificationWrapper: {
         width: "100%",
         flex: 1,

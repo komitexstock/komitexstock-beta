@@ -3,7 +3,7 @@ import { TouchableOpacity, Image, View, Text, StyleSheet } from 'react-native';
 // components
 import Indicator from './Indicator';
 // colors
-import { black, bodyText, white } from '../style/globalStyleSheet';
+import { black, bodyText, white } from '../style/colors';
 
 const WaybillListItem = ({item, index, length}) => {
     // item => object

@@ -1,7 +1,7 @@
 // react native components
 import { TouchableOpacity, Text, StyleSheet, View } from "react-native";
 // colors
-import { inactivePrimaryColor, primaryColor, white } from "../style/globalStyleSheet";
+import { inactivePrimaryColor, primaryColor, white } from "../style/colors";
 
 const CustomButton = ({name, onPress, backgroundColor, fixed, inactive}) => {
     // name => string

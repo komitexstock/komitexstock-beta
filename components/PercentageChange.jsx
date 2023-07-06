@@ -4,7 +4,7 @@ import { Text, View, StyleSheet } from "react-native";
 import PercentageIncreaseIcon from '../assets/icons/PercentageIncreaseIcon';
 import PercentageDecreaseIcon from '../assets/icons/PercentageDecreaseIcon';
 // colors
-import { background, bodyText, black } from "../style/globalStyleSheet";
+import { background, bodyText, black } from "../style/colors";
 
 const PercentageChange = ({presentValue, oldValue}) => {
     // presentValue, oldValue => float

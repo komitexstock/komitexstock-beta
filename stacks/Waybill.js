@@ -13,7 +13,7 @@ import MenuIcon from "../assets/icons/MenuIcon";
 import SearchIcon from '../assets/icons/SearchIcon'
 import FilterIcon from '../assets/icons/FilterIcon';
 // colors
-import { background, black, bodyText, neutral, primaryColor, secondaryColor, white } from "../style/globalStyleSheet";
+import { background, black, bodyText, neutral, primaryColor, secondaryColor, white } from "../style/colors";
 // react hooks
 import { useState, useRef, useEffect } from "react";
 // components

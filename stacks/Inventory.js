@@ -10,7 +10,7 @@ import {
 // icons
 import MenuIcon from "../assets/icons/MenuIcon";
 // colors
-import { primaryColor, secondaryColor, white } from "../style/globalStyleSheet";
+import { primaryColor, secondaryColor, white } from "../style/colors";
 // react hooks
 import { useState } from "react";
 // components

@@ -12,7 +12,7 @@ import AccountActiveIcon from "../assets/icons/AccountActiveIcon";
 import { useNavigation } from '@react-navigation/native';
 import { useStack } from "../context/AppContext";
 // colors
-import { white, neutral, primaryColor } from "../style/globalStyleSheet";
+import { white, neutral, primaryColor } from "../style/colors";
 
 const BottomNavigation = () => {
 

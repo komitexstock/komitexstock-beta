@@ -18,7 +18,7 @@ import CautionPrompt from "../components/CautionPrompt";
 // react hooks
 import { useState, useRef, useEffect } from "react";
 // color
-import { black, bodyText, white } from "../style/globalStyleSheet";
+import { black, bodyText, white } from "../style/colors";
 
 const Logistics = ({navigation}) => {
 
@@ -372,7 +372,7 @@ const Logistics = ({navigation}) => {
 // stylesheet
 const style = StyleSheet.create({
     headerWrapper: {
-        paddingVertical: 20,
+        paddingBottom: 20,
     },
     listWrapper: {
         width: "100%",

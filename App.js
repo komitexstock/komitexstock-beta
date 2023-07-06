@@ -38,7 +38,7 @@ import { StatusBar } from 'react-native';
 import { AppRegistry } from 'react-native';
 
 // colors
-import { white } from './style/globalStyleSheet';
+import { white } from './style/colors';
 
 export default function App() {
 

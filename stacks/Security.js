@@ -18,7 +18,7 @@ import CustomBottomSheet from "../components/CustomBottomSheet";
 import Input from "../components/Input";
 import ModalButton from "../components/ModalButton"
 // colors
-import { background } from "../style/globalStyleSheet";
+import { background } from "../style/colors";
 
 const Security = ({navigation}) => {
 
@@ -258,10 +258,10 @@ const style = StyleSheet.create({
         width: "100%",
         backgroundColor: background,
         padding: 20,
+        paddingTop: 0,
         minHeight: "100%"
     },
     main: {
-        paddingBottom: 90,
         display: 'flex',
         flexDirection: "column",
         alignItems: "center",

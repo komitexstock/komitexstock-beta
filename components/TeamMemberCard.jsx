@@ -10,7 +10,7 @@ from "react-native";
 // icons
 import AddIcon from '../assets/icons/AddIcon';
 // color
-import { black, bodyText, secondaryColor, white } from "../style/globalStyleSheet";
+import { black, bodyText, secondaryColor, white } from "../style/colors";
 // components
 import Indicator from "./Indicator";
 import Avatar from "./Avatar";

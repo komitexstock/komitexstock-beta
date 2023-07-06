@@ -24,7 +24,7 @@ import TeamMemberCard from "../components/TeamMemberCard";
 import SuccessPrompt from "../components/SuccessPrompt";
 import CautionPrompt from "../components/CautionPrompt";
 // colors
-import { black, bodyText, white } from "../style/globalStyleSheet";
+import { black, bodyText, white } from "../style/colors";
 
 const TeamMembers = ({navigation}) => {
 
@@ -550,14 +550,12 @@ const TeamMembers = ({navigation}) => {
 // stylesheet
 const style = StyleSheet.create({
     headerWrapper: {
-        paddingTop: 10,
         paddingBottom: 20,
     },
     listWrapper: {
         width: "100%",
         height: "100%",
         paddingHorizontal: 20,
-        marginBottom: 70,
     },
     listContainer: {
         display: "flex",

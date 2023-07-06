@@ -11,7 +11,7 @@ import {
 // bottomsheet component
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 // color
-import { black, bodyText, primaryColor, secondaryColor, white } from "../style/globalStyleSheet";
+import { black, bodyText, primaryColor, secondaryColor, white } from "../style/colors";
 // components
 import Input from "../components/Input";
 // react hook

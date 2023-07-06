@@ -1,7 +1,7 @@
 // react native components
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 // colors
-import { accentLight, black, bodyText } from "../style/globalStyleSheet";
+import { accentLight, black, bodyText } from "../style/colors";
 
 const SelectRolePopUpContent = ({hanldeRoleSelect}) => {
 

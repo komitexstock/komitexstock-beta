@@ -6,7 +6,7 @@ import ClearSearch from "../assets/icons/ClearSearch";
 // react hooks
 import { useState } from "react";
 // colors
-import { black } from "../style/globalStyleSheet";
+import { black } from "../style/colors";
 
 const SearchBar = ({placeholder, searchQuery, setSearchQuery, backgroundColor}) => {
 

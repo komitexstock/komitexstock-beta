@@ -18,7 +18,7 @@ import { useState } from "react";
 import CameraPrimaryIcon from '../assets/icons/CameraPrimaryIcon';
 // expo image picker method
 import * as ImagePicker from "expo-image-picker";
-import { background, bodyText, inputBorder, inputLabel, secondaryColor, white } from "../style/globalStyleSheet";
+import { background, bodyText, inputBorder, inputLabel, secondaryColor, white } from "../style/colors";
 
 const AddProduct = ({navigation}) => {
     
@@ -183,6 +183,7 @@ const style = StyleSheet.create({
         width: "100%",
         backgroundColor: background,
         padding: 20,
+        paddingTop: 0,
         height: "100%",
     },
     main: {
@@ -199,6 +200,7 @@ const style = StyleSheet.create({
         color: bodyText,
         width: "100%",
         marginBottom: 24,
+        marginTop: 8,
     },
     inputContainer: {
         width: "100%",

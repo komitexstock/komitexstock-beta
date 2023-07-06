@@ -6,7 +6,7 @@ import {
     View
 } from "react-native";
 // colors
-import { inactivePrimaryColor, primaryColor, secondaryColor, white } from "../style/globalStyleSheet";
+import { inactivePrimaryColor, primaryColor, secondaryColor, white } from "../style/colors";
 
 const ModalButton = ({onPress, name, emptyFeilds, secondaryButton, topMargin}) => {
     // onPress => function

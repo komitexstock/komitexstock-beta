@@ -9,7 +9,7 @@ import {
     BackHandler
 } from "react-native";
 // colors
-import { bodyText, primaryColor, secondaryColor, white } from "../style/globalStyleSheet";
+import { bodyText, primaryColor, secondaryColor, white } from "../style/colors";
 // icons
 import MenuIcon from "../assets/icons/MenuIcon";
 import SearchIcon from '../assets/icons/SearchIcon'

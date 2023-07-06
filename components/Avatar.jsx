@@ -1,5 +1,5 @@
 import { View, Text, Image, StyleSheet } from "react-native";
-import { primaryColor, secondaryColor } from "../style/globalStyleSheet";
+import { primaryColor, secondaryColor } from "../style/colors";
 
 const Avatar = ({imageUrl, fullname}) => {
     // imageUrl => string | path to image

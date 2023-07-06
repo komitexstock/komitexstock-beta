@@ -1,6 +1,6 @@
 // react native components
 import { View, Text, StyleSheet } from "react-native";
-import { black, primaryColor, secondaryColor } from "../style/globalStyleSheet";
+import { black, primaryColor, secondaryColor } from "../style/colors";
 
 const Indicator = ({type, text}) => {
     // type => string of "Pending", "Delivered", "Cancelled", "Rescheduled", "Dispatched"

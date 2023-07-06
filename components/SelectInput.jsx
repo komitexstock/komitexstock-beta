@@ -1,7 +1,7 @@
 // react native components
 import { TouchableOpacity, Text, View, StyleSheet } from "react-native";
 // colors
-import { inputBorder, inputLabel, neutral, primaryColor, white } from "../style/globalStyleSheet";
+import { inputBorder, inputLabel, neutral, primaryColor, white } from "../style/colors";
 // icon
 import ArrowDown from "../assets/icons/ArrowDown";
 

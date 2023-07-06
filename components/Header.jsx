@@ -3,7 +3,7 @@ import { Text, View, TouchableOpacity, StyleSheet } from "react-native";
 // icons
 import ArrowLeft from "../assets/icons/ArrowLeft";
 // colors
-import { black, white } from "../style/globalStyleSheet";
+import { black, white } from "../style/colors";
 
 
 const Header = ({navigation, stackName, iconFunction, icon, removeBackArrow, inlineArrow, backgroundColor, unpadded}) => {
@@ -21,12 +21,19 @@ const Header = ({navigation, stackName, iconFunction, icon, removeBackArrow, inl
                     onPress={() => {
                         navigation.goBack();
                     }}
+                    style={style.backArrow}
                 >
                     
                     <ArrowLeft />
                 </TouchableOpacity>
             )}
-            <View style={[style.headerBar, {paddingHorizontal: unpadded ? 0 : 20}]}>
+            <View 
+                style={[
+                    style.headerBar,
+                    removeBackArrow && {paddingTop: 12, paddingBottom: 20},
+                    {paddingHorizontal: unpadded ? 0 : 20}
+                ]}
+            >
                 {/* inline back arrow, disabled by default */}
                 { inlineArrow && (
                     <TouchableOpacity
@@ -57,19 +64,23 @@ const Header = ({navigation, stackName, iconFunction, icon, removeBackArrow, inl
 // stylesheet
 const style = StyleSheet.create({
     header: {
-        maxHeight: 100,
+        maxHeight: 75,
         minHeight: 45,
         width: "100%",
         display: 'flex',
-        gap: 25,
+        gap: 20,
         flexDirection: 'column',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         alignItems: 'flex-start',
+    },
+    backArrow: {
+        paddingTop: 10,
+        // backgroundColor: 'red',
     },
     headerBar: {
         gap: 12,
         width: "100%",
-        height: 45,
+        // height: 45,
         display: "flex",
         flexDirection: "row",
         alignItems: 'center',

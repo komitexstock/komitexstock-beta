@@ -9,7 +9,7 @@ import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 // color
 import VerifiedIcon from "../assets/icons/VerifiedIcon";
 // color
-import { background, inputBorder, black } from "../style/globalStyleSheet";
+import { background, inputBorder, black } from "../style/colors";
 
 const AddLogisticsModalContent = ({handleSelectedLogistics}) => {
     // handleSelectedLogistics => function

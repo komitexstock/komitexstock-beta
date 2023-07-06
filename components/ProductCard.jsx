@@ -7,7 +7,7 @@ import {
     Image 
 } from "react-native";
 // colors
-import { black, bodyText, primaryColor, secondaryColor, white } from "../style/globalStyleSheet";
+import { black, bodyText, primaryColor, secondaryColor, white } from "../style/colors";
 // components
 import Indicator from '../components/Indicator'
 

@@ -4,31 +4,33 @@ import {
     Text,
     TouchableOpacity,
     StyleSheet,
-    LayoutAnimation
 } from "react-native";
 // react hooks
-import { useState, useLayoutEffect, useEffect } from "react";
+import { useState, useEffect } from "react";
 // colors
-import { background, black, bodyText, primaryColor, secondaryColor, toolTipBackground, white } from "../style/globalStyleSheet";
+import { black, bodyText, primaryColor, secondaryColor, toolTipBackground, white } from "../style/colors";
 // components
 import PercentageChange from "./PercentageChange";
 
 const BarChart = ({chartTitle, chartWidth, chartHeight, backgroundColor, data, labels, unit, fullbar, enableGrid,rotateXAxisLabel}) => {
-    // chartTitle, backgroundColor => string
+    // chartTitle, backgroundColor, unit => string
     // chartWidth, chartHeight => number or string with % e.g "100%"
-    // data => array
+    // data, labels => array
+    // fullbar, enableGrid, rotateXAxisLabel => boolean
     
-
+    // maximun value in data array
     const maxValue = Math.max(...data);
 
+    // calculate total amount from data array
     const total = data.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
+    // calculate maximum value in y-axis scale
     const maxYAxisScale = parseFloat(maxValue.toPrecision(1));
 
+    // number of values in y-axis label
     const numberOfValuesInYAxis = 5;
 
-    const [mainChartWidth, setMainChartWidth] = useState(0);
-
+    // generate array for y-axis label function
     const generateYAxisScale = (maxValue, increment, length) => {
         const array = [];
         for (let i = 0; i < length; i++) {
@@ -38,10 +40,10 @@ const BarChart = ({chartTitle, chartWidth, chartHeight, backgroundColor, data, l
         return array.reverse();
     }
 
+    // generate y-axis scale
     const yAxis = generateYAxisScale(maxYAxisScale, maxYAxisScale / numberOfValuesInYAxis, numberOfValuesInYAxis);
 
-    // console.log(yAxis);
-
+    // generate parameters for the chart bars
     const [bars, setBars] = useState(
         data.map((dataValue, index) => {
 
@@ -56,6 +58,7 @@ const BarChart = ({chartTitle, chartWidth, chartHeight, backgroundColor, data, l
         })
     );
 
+    // function to show tooltip for selected bar
     const handleSelectedBar = (index) => {
         setBars(prevBars => {
             return prevBars.map((bar, i) => {
@@ -67,6 +70,7 @@ const BarChart = ({chartTitle, chartWidth, chartHeight, backgroundColor, data, l
         })
     }
 
+    // update chart if bar array changes
     useEffect(() => {
         setBars(() => {
             return data.map((dataValue, index) => {
@@ -82,22 +86,9 @@ const BarChart = ({chartTitle, chartWidth, chartHeight, backgroundColor, data, l
         })
     }, [data])
 
-    const onLayout = (event) => {
-      const { width } = event.nativeEvent.layout;
-      setMainChartWidth(width);
-    };
-
-    useLayoutEffect(() => {
-    
-        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-        return () => {
-          // Clean up the event listener
-        };
-    }, []);
-
-    // console.log(mainChartWidth)
-
+    // render BarChart component
     return (
+        // BArChart container
         <View 
             style={[
                 style.chartContainer, 
@@ -108,6 +99,7 @@ const BarChart = ({chartTitle, chartWidth, chartHeight, backgroundColor, data, l
                 }
             ]} 
         >
+            {/* Chart Title and Total */}
             <View style={style.chartTitleWrapper}>
                 <View style={style.chartTitle}>
                     <Text style={style.chartTitleText}>{chartTitle}</Text>
@@ -121,13 +113,15 @@ const BarChart = ({chartTitle, chartWidth, chartHeight, backgroundColor, data, l
                     <Text style={style.decimal}>.00</Text>
                 </Text>
             </View>
+            {/* Main Chart */}
             <View style={style.mainChartWrapper}>
+                {/* y axis labels */}
                 <View style={style.yAxisLabelWrapper}>
                     {yAxis.map((value, index) => (
                         <Text key={index} style={style.yAxisLabel}>₦{value.toLocaleString()}</Text>
                     ))}
                 </View>
-                <View  style={style.mainChart} onLayout={onLayout}>
+                <View  style={style.mainChart}>
                     { bars.map((bar, index) => (
                         <View
                             key={index}
@@ -138,11 +132,12 @@ const BarChart = ({chartTitle, chartWidth, chartHeight, backgroundColor, data, l
                                 }
                             ]}
                         >
+                            {/* bars */}
                             <TouchableOpacity
                                 style={[
                                     style.bar,
                                     { width: !fullbar ? "60%" : "100%" },
-                                    { backgroundColor: bar.selected ? primaryColor : primaryColor },
+                                    { backgroundColor: bar.selected ? primaryColor : secondaryColor },
                                 ]}
                                 onPress = {() => handleSelectedBar(index)}
                             >     
@@ -166,6 +161,7 @@ const BarChart = ({chartTitle, chartWidth, chartHeight, backgroundColor, data, l
                         </View>
                     ))}
                     { enableGrid && bars.map((bar, index) => (
+                        // grid
                         <View 
                             key={index} 
                             style={{
@@ -185,6 +181,7 @@ const BarChart = ({chartTitle, chartWidth, chartHeight, backgroundColor, data, l
     );
 }
 
+// stylesheet
 const style = StyleSheet.create({
     chartContainer: {
         backgroundColor: white,
@@ -192,7 +189,7 @@ const style = StyleSheet.create({
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'flex-start',
-        alignItems: 'center',
+        alignItems: 'flex-start',
         borderRadius: 12,
     },
     chartTitleWrapper: {

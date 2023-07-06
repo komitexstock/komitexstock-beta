@@ -9,7 +9,7 @@ import {
 } from "react-native";
 // icon
 import ClearSearch from "../assets/icons/ClearSearch";
-import { background, black, white } from "../style/globalStyleSheet";
+import { background, black, white } from "../style/colors";
 
 const Product = ({product, removeProduct, increaseQuantity, decreaseQuantity}) => {
     // product => object

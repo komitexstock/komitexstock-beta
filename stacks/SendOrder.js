@@ -26,7 +26,7 @@ import InfoIcon from "../assets/icons/InfoIcon";
 // react hooks
 import { useState, useRef, useEffect } from "react";
 // colors
-import { accentLight, background, black, primaryColor, white } from "../style/globalStyleSheet";
+import { accentLight, background, black, primaryColor, white } from "../style/colors";
 
 const SendOrder = ({navigation}) => {
 
@@ -564,6 +564,7 @@ const style = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'flex-start',
         padding: 20,
+        paddingTop: 0,
     },
     container: {
         flex: 1,
@@ -571,6 +572,7 @@ const style = StyleSheet.create({
         alignItems: 'center',
         display: 'flex',
         flexDirection: 'column',
+        marginTop: 24,
         justifyContent: 'space-between',
     },  
     inputWrapper: {

@@ -1,7 +1,7 @@
 // react native components
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 // colors
-import { accent, background, black, bodyText, primaryColor, white } from "../style/globalStyleSheet";
+import { accent, background, black, bodyText, primaryColor, white } from "../style/colors";
 // icons
 import InfoIconWhite from "../assets/icons/InfoIconWhite";
 // components

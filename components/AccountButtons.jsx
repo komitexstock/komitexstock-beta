@@ -9,7 +9,7 @@ import {
 // icon
 import RightArrowIcon from "../assets/icons/RightArrowIcon";
 // colors
-import { white, primaryColor, secondaryColor, black, bodyText } from "../style/globalStyleSheet";
+import { white, primaryColor, secondaryColor, black, bodyText } from "../style/colors";
 
 const AccountButtons = ({title, subtitle, mainInfoText, icon, length, index, onPress, toggle, isEnabled, handleToggle, unpadded, disabled}) => {
     // index, length => int

@@ -10,7 +10,7 @@ from "react-native";
 // icons
 import VerifiedIcon from "../assets/icons/VerifiedIcon";
 // colors
-import { black, subText, white } from "../style/globalStyleSheet";
+import { black, subText, white } from "../style/colors";
 
 const SelectLogisticsCard = ({logistics, imageUrl, inventories, destinations, verified, onPress }) => {
     // logistics => string
