@@ -20,6 +20,7 @@ import QuickWaybiillIcon from "../assets/icons/QuickWaybillIcon";
 import OrderListItem from "../components/OrderListItem";
 import CustomBottomSheet from "../components/CustomBottomSheet";
 import SearchBar from "../components/SearchBar";
+import Header from "../components/Header";
 // react hooks
 import { useState, useRef, useEffect } from "react";
 // bottomsheet component
@@ -207,20 +208,20 @@ const Home = ({navigation}) => {
                         style={style.homeScrollView}
                     >
                         <View style={style.homeWrapper}>
-                            <View style={style.header}>
-                                <View style={style.headerTextContainer}>
-                                    {/* heading */}
-                                    <Text style={style.paragraph}>Welcome back!</Text>
-                                    <Text style={style.heading}> Abayomi Daniel</Text>
-                                </View>
-                                {/* navigate to notification stack */}
-                                <TouchableOpacity 
-                                    style={style.notificationWrapper}
-                                    onPress={() => {navigation.navigate("Notifications")}}
-                                >
-                                    <NotificationIcon />
-                                </TouchableOpacity>
-                            </View>
+                            {/* Header Component */}
+                            <Header
+                                navigation={navigation}
+                                stackName={
+                                    <View style={style.headerTextContainer}>
+                                        <Text style={style.paragraph}>Welcome back!</Text>
+                                        <Text style={style.heading}> Abayomi Daniel</Text>
+                                    </View>
+                                }
+                                removeBackArrow={true}
+                                unpadded={true}
+                                icon={<NotificationIcon />}
+                                iconFunction={() => {navigation.navigate("Notifications")}}
+                            />
                             {/* button search bar to open search modal bottomsheet */}
                             <View style={style.searchWrapper}>
                                 <SearchIcon />

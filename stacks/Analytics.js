@@ -3,23 +3,38 @@ import {
     View,
     Text,
     ScrollView,
-    TouchableWithoutFeedback,
     StyleSheet,
     TouchableOpacity,
 } from "react-native";
+// colors
+import {
+    background,
+    black,
+    bodyText,
+    neutral,
+    secondaryColor,
+    white
+} from "../style/colors";
 // components
 import Header from "../components/Header";
 import BarChart from "../components/BarChart";
 import StatWrapper from "../components/StatWrapper";
 import StatCard from "../components/StatCard";
+import LogisticsAnalyticsItem from "../components/LogisticsAnalyticsItem";
+import LocationAnalyticsItem from "../components/LocationAnalyticsItem";
+import ProductAnalyticsItem from "../components/ProductAnalyticsItem";
 // icons
 import ArrowDownSmall from '../assets/icons/ArrowDownSmall';
-// colors
-import { background, bodyText, secondaryColor, white } from "../style/colors";
+// react hooks
+import {useState} from "react";
+
 
 const Analytics = ({navigation}) => {
-    const data = [57000, 45500, 58000, 81500, 95000, 67000, 39000, 74000, 62500, 48000, 33000, 78000];
-    const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']; 
+    // bar chart data
+    const data = [57000, 45500, 58000, 81500, 95000, 67000, 39000];
+    
+    // bar chart x axis labels
+    const labels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']; 
 
     // order daily stat array
     const stats = [
@@ -61,60 +76,246 @@ const Analytics = ({navigation}) => {
         },
     ];
 
+    // logistic analytics list
+    const logisticsAnalyticsList = [
+        {
+            id: 1,
+            logistics: 'Komitex Logistics',
+            numberOfDeliveries: 10,
+            totalPrice: 72500,
+            oldTotalPrice: 67000,
+            imageUrl: require('../assets/images/komitex.png'),
+            onPress: () => {}
+        },
+        {
+            id: 2,
+            logistics: 'DHL',
+            numberOfDeliveries: 13,
+            totalPrice: 49500,
+            oldTotalPrice: 67000,
+            imageUrl: require('../assets/images/dhl.png'),
+            onPress: () => {}
+        },
+        {
+            id: 3,
+            logistics: 'Fedex',
+            numberOfDeliveries: 7,
+            totalPrice: 70000,
+            oldTotalPrice: 67000,
+            imageUrl: require('../assets/images/fedex.png'),
+            onPress: () => {}
+        },
+    ];
+
+    // product analytics list
+    const productAnalyticsList = [
+        {
+            id: 1,
+            product: 'Maybach Sunglasses',
+            numberOfDeliveries: 10,
+            totalPrice: 72500,
+            oldTotalPrice: 67000,
+            imageUrl: require('../assets/images/maybach-sunglasses.png'),
+            onPress: () => {}
+        },
+        {
+            id: 2,
+            product: 'Pheonix Sneakers',
+            numberOfDeliveries: 13,
+            totalPrice: 49500,
+            oldTotalPrice: 67000,
+            imageUrl: require('../assets/images/sneakers.png'),
+            onPress: () => {}
+        },
+        {
+            id: 3,
+            product: 'Black Sneakers', 
+            numberOfDeliveries: 7,
+            totalPrice: 70000,
+            oldTotalPrice: 67000,
+            imageUrl: require('../assets/images/black-sketchers.png'),
+            onPress: () => {}
+        },
+        {
+            id: 4,
+            product: 'Timberland Shoe', 
+            numberOfDeliveries: 13,
+            totalPrice: 150000,
+            oldTotalPrice: 89000,
+            imageUrl: require("../assets/images/Timberland.jpg"),
+            onPress: () => {}
+        },
+    ];
+
+    // location analytics list
+    const locationAnalyticsList = [
+        {
+            id: 1,
+            location: 'Warri',
+            numberOfDeliveries: 17,
+            totalPrice: 88500,
+            oldTotalPrice: 68000,
+            onPress: () => {}
+        },
+        {
+            id: 2,
+            location: 'Sapele',
+            numberOfDeliveries: 13,
+            totalPrice: 49500,
+            oldTotalPrice: 48000,
+            onPress: () => {}
+        },
+        {
+            id: 3,
+            location: 'Ughelli',
+            numberOfDeliveries: 5,
+            totalPrice: 35000,
+            oldTotalPrice: 40000,
+            onPress: () => {}
+        },
+    ];
+
+    // state to control tabs
+    const [tabs, setTabs] = useState("Logistics");
+
     // render Analytics page
     return (
-        <TouchableWithoutFeedback >
-            <ScrollView
-                showsVerticalScrollIndicator={false}
-                style={style.container}
-            >
-                <View style={style.main}>
-                    {/* header component */}
-                    <Header 
-                        navigation={navigation} 
-                        stackName={"Analytics"} 
-                        iconFunction={null} 
-                        icon={null} 
-                        unpadded={true}
+        <ScrollView
+            showsVerticalScrollIndicator={false}
+            style={style.container}
+        >
+            <View style={style.main}>
+                {/* header component */}
+                <Header 
+                    navigation={navigation} 
+                    stackName={"Analytics"} 
+                    iconFunction={null} 
+                    icon={null} 
+                    unpadded={true}
+                />
+                <View style={style.chartContainer}>
+                    {/* range wrapper */}
+                    <View style={style.rangeWrapper}>
+                        <TouchableOpacity style={style.rangeButton}>
+                            <Text style={style.rangeButtonText}>This Week</Text>
+                            <ArrowDownSmall />
+                        </TouchableOpacity>
+                    </View>
+                    {/* Bar Chart component */}
+                    <BarChart
+                        chartTitle={"Total Earnings"}
+                        chartWidth={"100%"}
+                        chartHeight={232}
+                        backgroundColor={white}
+                        data={data}
+                        labels={labels}
+                        unit={"₦"}
+                        fullbar={false}
+                        rotateXAxisLabel={false}
+                        enableGrid={false}
                     />
-                    <View style={style.chartContainer}>
-                        {/* range wrapper */}
-                        <View style={style.rangeWrapper}>
-                            <TouchableOpacity style={style.rangeButton}>
-                                <Text style={style.rangeButtonText}>Weekly</Text>
-                                <ArrowDownSmall />
+                </View>
+                <StatWrapper>
+                    {stats.map(stat => (
+                        <StatCard
+                            key={stat.id}
+                            title={stat.title}
+                            presentValue={stat.presentValue}
+                            oldValue={stat.oldValue}
+                            decimal={stat.decimal}
+                            unit={stat.unit}
+                            unitPosition={stat.unitPosition}
+                        />
+                    ))}
+                </StatWrapper>
+                <View style={style.topStatsWrapper}>
+                    <Text style={style.topStatHeading}>Top Stats</Text>
+                    <View style={style.tabsContainer}>
+                        <View style={style.tabButtonContainer}>
+                            <TouchableOpacity
+                                style={
+                                    tabs === "Logistics" ? style.tabButtonSelected : style.tabButton
+                                }
+                                onPress={() => setTabs("Logistics")}
+                            >
+                                <Text 
+                                    style={
+                                        tabs === "Logistics" ? style.tabButtonTextSelected : style.tabButtonText
+                                    }
+                                >
+                                    Logistics
+                                </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={
+                                    tabs === "Location" ? style.tabButtonSelected : style.tabButton
+                                }
+                                onPress={() => setTabs("Location")}
+                            >
+                                <Text 
+                                    style={
+                                        tabs === "Location" ? style.tabButtonTextSelected : style.tabButtonText
+                                    }
+                                >
+                                    Location
+                                </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={
+                                    tabs === "Product" ? style.tabButtonSelected : style.tabButton
+                                }
+                                onPress={() => setTabs("Product")}
+                            >
+                                <Text 
+                                    style={
+                                        tabs === "Product" ? style.tabButtonTextSelected : style.tabButtonText
+                                    }
+                                >
+                                    Product
+                                </Text>
                             </TouchableOpacity>
                         </View>
-                        {/* Bar Chart component */}
-                        <BarChart
-                            chartTitle={"Total Earnings"}
-                            chartWidth={"100%"}
-                            chartHeight={232}
-                            backgroundColor={white}
-                            data={data}
-                            labels={labels}
-                            unit={"₦"}
-                            fullbar={false}
-                            rotateXAxisLabel={false}
-                            enableGrid={false}
-                        />
+                        <View style={style.tabContentList}>
+                            {/* Logistics Tab content */}
+                            {tabs === "Logistics" && logisticsAnalyticsList.map(item => (
+                                <LogisticsAnalyticsItem
+                                    key={item.id}
+                                    logistics={item.logistics}
+                                    numberOfDeliveries={item.numberOfDeliveries}
+                                    totalPrice={item.totalPrice}
+                                    oldTotalPrice={item.oldTotalPrice}
+                                    imageUrl={item.imageUrl}
+                                    onPress={item.onPress}
+                                />
+                            ))}
+                            {/* Location Tab content */}
+                            {tabs === "Location" && locationAnalyticsList.map(item => (
+                                <LocationAnalyticsItem
+                                    key={item.id}
+                                    location={item.location}
+                                    numberOfDeliveries={item.numberOfDeliveries}
+                                    totalPrice={item.totalPrice}
+                                    oldTotalPrice={item.oldTotalPrice}
+                                    onPress={item.onPress}
+                                />
+                            ))}
+                            {/* Product Tab content */}
+                            {tabs === "Product" && productAnalyticsList.map(item => (
+                                <ProductAnalyticsItem
+                                    key={item.id}
+                                    product={item.product}
+                                    numberOfDeliveries={item.numberOfDeliveries}
+                                    totalPrice={item.totalPrice}
+                                    oldTotalPrice={item.oldTotalPrice}
+                                    imageUrl={item.imageUrl}
+                                    onPress={item.onPress}
+                                />
+                            ))}
+                        </View>
                     </View>
-                    <StatWrapper>
-                        {stats.map(stat => (
-                            <StatCard
-                                key={stat.id}
-                                title={stat.title}
-                                presentValue={stat.presentValue}
-                                oldValue={stat.oldValue}
-                                decimal={stat.decimal}
-                                unit={stat.unit}
-                                unitPosition={stat.unitPosition}
-                            />
-                        ))}
-                    </StatWrapper>
                 </View>
-            </ScrollView>
-        </TouchableWithoutFeedback>
+            </View>
+        </ScrollView>
     );
 }
 
@@ -132,6 +333,7 @@ const style = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         gap: 20,
+        marginBottom: 20,
     },
     rangeWrapper: {
         width: "100%",
@@ -157,6 +359,67 @@ const style = StyleSheet.create({
         color: bodyText,
         fontFamily: 'mulish-medium',
         fontSize: 10,
+    },
+    topStatsWrapper: {
+        display: 'flex',
+        width: '100%',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        gap: 12,
+        alignItems: 'flex-start',
+    },
+    topStatHeading: {
+        fontFamily: 'mulish-bold',
+        fontSize: 10,
+        color: bodyText,
+    },
+    tabsContainer: {
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
+        backgroundColor: white,
+        minHeight: 200,
+        borderRadius: 12,
+        padding: 10,
+    },
+    tabButtonContainer: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        flexDirection: 'row',
+        width: "100%",
+        backgroundColor: background,
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        borderRadius: 10,
+    },
+    tabButtonSelected: {
+        flex: 1,
+        height: 22,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: white,
+        borderRadius: 5,
+    },
+    tabButton: {
+        flex: 1,
+        height: 22,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    tabButtonText: {
+        fontFamily: 'mulish-semibold',
+        color: neutral,
+    },
+    tabButtonTextSelected: {
+        fontFamily: 'mulish-bold',
+        color: black,
+    },
+    tabContentList: {
+        paddingTop: 10,
     }
 })
  

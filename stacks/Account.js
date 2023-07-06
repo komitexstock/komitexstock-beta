@@ -383,6 +383,7 @@ const style = StyleSheet.create({
         justifyContent: 'flex-start', 
         alignItems: 'center',
         padding: 20,
+        paddingTop: 12,
         gap: 20,
     },
     header: {
@@ -395,6 +396,7 @@ const style = StyleSheet.create({
     stackName: {
         fontFamily: 'mulish-bold',
         fontSize: 16,
+        color: black,
     },
     profileWrapper: {
         display: 'flex',
