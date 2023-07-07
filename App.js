@@ -30,6 +30,7 @@ import Profile from './stacks/Profile';
 import TeamMembers from './stacks/TeamMembers';
 import Logistics from './stacks/Logistics';
 import Security from './stacks/Security';
+import LogisticsDetails from './stacks/LogisticsDetails';
 
 // components
 import BottomNavigation from './components/BottomNavigation';
@@ -138,6 +139,14 @@ export default function App() {
                             <Stack.Screen 
                                 name="AddLogistics" 
                                 component={AddLogistics} 
+                                options={{
+                                headerShown: false,
+                                }} 
+                            />
+                            {/* Logistics Details stack */}
+                            <Stack.Screen 
+                                name="LogisticsDetails" 
+                                component={LogisticsDetails} 
                                 options={{
                                 headerShown: false,
                                 }} 

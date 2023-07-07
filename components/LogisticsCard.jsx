@@ -1,3 +1,4 @@
+// react native component
 import { 
     View, 
     Text, 
@@ -7,11 +8,14 @@ import {
     Dimensions
 } 
 from "react-native";
+// component
 import Indicator from '../components/Indicator';
+// icons
 import AddIcon from '../assets/icons/AddIcon';
+import VerifiedIcon from "../assets/icons/VerifiedIcon";
 
 const maxCardWidth = Dimensions.get("window").width/2 - 28;
-const LogisticsCard = ({logistics, imageUrl, totalLocations, totalStock, lowStock, onPress, addNew}) => {
+const LogisticsCard = ({logistics, imageUrl, totalLocations, totalStock, lowStock, onPress, addNew, verified}) => {
     return (
         <>   
             { !addNew ? (
@@ -28,7 +32,10 @@ const LogisticsCard = ({logistics, imageUrl, totalLocations, totalStock, lowStoc
                             {   lowStock && <Indicator text={"Low Stock"} type={"Pending"} />
                             }
                         </View>
-                        <Text style={style.logistics}>{logistics}</Text>
+                        <View style={style.logisticsWrapper}>
+                            <Text style={style.logistics}>{logistics}</Text>
+                            { verified && <VerifiedIcon />}
+                        </View>
                         <Text style={style.location}>{totalLocations} Locations</Text>
                     </View>
                     <View style={style.secondaryWrapper}>
@@ -73,6 +80,14 @@ const style = StyleSheet.create({
         width: 40,
         height: 40,
         borderRadius: 8,
+    },
+    logisticsWrapper: {
+        display: "flex",
+        flexDirection: 'row',
+        gap: 8,
+        justifyContent: "flex-start",
+        alignItems: 'center',
+        width: '100%',
     },
     logistics: {
         fontFamily: "mulish-semibold",

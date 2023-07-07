@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet } from "react-native";
 
-const LogisticsLocation = ({locations, backgroundColor}) => {
+const LogisticsLocations = ({locations, backgroundColor}) => {
     return (
         <View style={[style.locationsContainer, {backgroundColor: backgroundColor}]}>
             <Text style={style.locationsHeading}>Available Locations</Text>
@@ -33,7 +33,6 @@ const style = StyleSheet.create({
         padding: 20,
         borderRadius: 12,
         gap: 8,
-        marginTop: 20,
     },
     locationsHeading: {
         fontFamily: 'mulish-bold',
@@ -78,4 +77,4 @@ const style = StyleSheet.create({
     }
 })
  
-export default LogisticsLocation;
+export default LogisticsLocations;

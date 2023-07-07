@@ -32,6 +32,7 @@ const Products = ({navigation}) => {
             totalLocations: 17,
             totalStock: 25,
             lowStock: true,
+            verified: true,
             onPress: () => {
                 navigation.navigate("Products", {
                     success: false
@@ -45,6 +46,7 @@ const Products = ({navigation}) => {
             totalLocations: 15,
             totalStock: 17,
             lowStock: false,
+            verified: true,
             onPress: () => {
                 navigation.navigate("Products", {
                     success: false
@@ -58,6 +60,7 @@ const Products = ({navigation}) => {
             totalLocations: 11,
             totalStock: 9,
             lowStock: false,
+            verified: true,
             onPress: () => {
                 navigation.navigate("Products", {
                     success: false
@@ -71,6 +74,7 @@ const Products = ({navigation}) => {
             totalLocations: 5,
             totalStock: 7,
             lowStock: false,
+            verified: false,
             onPress: () => {
                 navigation.navigate("Products", {
                     success: false
@@ -131,6 +135,7 @@ const Products = ({navigation}) => {
                             totalLocations={item.totalLocations}
                             totalStock={item.totalStock}
                             lowStock={item.lowStock}
+                            verified={item.verified}
                             onPress={item.onPress}
                         />
                     )}

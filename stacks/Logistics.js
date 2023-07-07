@@ -9,7 +9,6 @@ import {
 // component
 import Header from "../components/Header";
 import LogisticsCard from "../components/LogisticsCard";
-import LogisticsInfo from "../components/LogisticsInfo";
 import ModalButton from "../components/ModalButton";
 import CustomBottomSheet from "../components/CustomBottomSheet";
 import PopUpBottomSheet from "../components/PopUpBottomSheet";
@@ -300,12 +299,6 @@ const Logistics = ({navigation}) => {
                 sheetTitle={""}
                 sheetSubtitle={""}
             >   
-                {/* logistics info */}
-                <LogisticsInfo 
-                    stats={stats}
-                    locationsList={locationsList}
-                    backgroundColor={"#f8f8f8"}
-                />
                 {/* modal button */}
                 <ModalButton
                     name={"Deactivate Logistics"}

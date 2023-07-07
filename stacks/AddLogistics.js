@@ -16,7 +16,6 @@ import SelectLogisticsCard from "../components/SelectLogisticsCard";
 import SearchBar from "../components/SearchBar";
 import CustomBottomSheet from "../components/CustomBottomSheet";
 import ModalButton from "../components/ModalButton";
-import LogisticsInfo from "../components/LogisticsInfo";
 import PopUpBottomSheet from "../components/PopUpBottomSheet";
 import SuccessPrompt from "../components/SuccessPrompt";
 // colors
@@ -96,8 +95,8 @@ const Products = ({navigation}) => {
             imageUrl: require('../assets/images/komitex.png'),
             verified: true,
             destinations: 14,
-            inventories: 57,
-            onPress: openModal
+            rating: 4.9,
+            onPress: () => {navigation.navigate("LogisticsDetails")}
         },
         {
             id: 2,
@@ -105,8 +104,8 @@ const Products = ({navigation}) => {
             imageUrl: require('../assets/images/dhl.png'),
             verified: true,
             destinations: 28,
-            inventories: 65,
-            onPress: openModal
+            rating: 4.2,
+            onPress: () => {navigation.navigate("LogisticsDetails")}
         },
         {
             id: 3,
@@ -114,8 +113,8 @@ const Products = ({navigation}) => {
             imageUrl: require('../assets/images/fedex.png'),
             verified: true,
             destinations: 33,
-            inventories: 49,
-            onPress: openModal
+            rating: 4.0,
+            onPress: () => {navigation.navigate("LogisticsDetails")}
         },
         {
             id: 4,
@@ -123,8 +122,8 @@ const Products = ({navigation}) => {
             imageUrl: require('../assets/images/ups.png'),
             verified: false,
             destinations: 14,
-            inventories: 31,
-            onPress: openModal
+            rating: 3.5,
+            onPress: () => {navigation.navigate("LogisticsDetails")}
         },
     ];
 
@@ -222,7 +221,7 @@ const Products = ({navigation}) => {
             unit: "%",
             unitPosition: "end",
         },
-    ]
+    ];
 
     // render AddLogistics page
     return (
@@ -270,7 +269,7 @@ const Products = ({navigation}) => {
                             logistics={item.logistics}
                             imageUrl={item.imageUrl}
                             destinations={item.destinations}
-                            inventories={item.inventories}
+                            rating={item.rating}
                             verified={item.verified}
                             onPress={item.onPress}
                         />
@@ -287,12 +286,7 @@ const Products = ({navigation}) => {
                 sheetTitle={""}
                 sheetSubtitle={""}
             >   
-                {/* logistics info component */}
-                <LogisticsInfo 
-                    stats={stats}
-                    locationsList={locationsList}
-                    backgroundColor={background}
-                />
+                
                 {/* bottomsheet primary button */}
                 <ModalButton
                     name={"Add Komitex"}

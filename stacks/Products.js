@@ -14,8 +14,9 @@ import { useState, useRef, useEffect, useLayoutEffect } from "react";
 import MenuIcon from "../assets/icons/MenuIcon";
 import SearchIcon from '../assets/icons/SearchIcon'
 import FilterIcon from '../assets/icons/FilterIcon';
+import VerifiedIcon from "../assets/icons/VerifiedIcon";
 // colors
-import { bodyText, primaryColor, secondaryColor, white } from "../style/colors";
+import { black, bodyText, primaryColor, secondaryColor, white } from "../style/colors";
 // components
 import StatWrapper from "../components/StatWrapper";
 import StatCard from "../components/StatCard";
@@ -369,7 +370,12 @@ const Products = ({navigation, route}) => {
                             {/* header */}
                             <Header
                                 navigation={navigation}
-                                stackName={"Komitex"}
+                                stackName={
+                                    <View style={style.header}>
+                                        <Text style={style.headerText}>Komitex</Text>
+                                        <VerifiedIcon />
+                                    </View>
+                                }
                                 removeBackArrow={true}
                                 inlineArrow={true}
                                 unpadded={true}
@@ -478,6 +484,19 @@ const style = StyleSheet.create({
     },
     headerWrapper: {
         width: "100%",
+    },
+    header: {
+        display: "flex",
+        justifyContent: 'flex-start',
+        alignItems: "center",
+        flexDirection: "row",
+        width: '100%',
+    },
+    headerText: {
+        fontFamily: "mulish-bold",
+        fontSize: 20,
+        color: black,
+        marginRight: 4,
     },
     menuIcon: {
         width: 24,

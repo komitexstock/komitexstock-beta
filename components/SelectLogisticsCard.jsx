@@ -9,13 +9,14 @@ import {
 from "react-native";
 // icons
 import VerifiedIcon from "../assets/icons/VerifiedIcon";
+import StarIcon from "../assets/icons/StarIcon";
 // colors
 import { black, subText, white } from "../style/colors";
 
-const SelectLogisticsCard = ({logistics, imageUrl, inventories, destinations, verified, onPress }) => {
+const SelectLogisticsCard = ({logistics, imageUrl, rating, destinations, verified, onPress }) => {
     // logistics => string
     // image => string, image path
-    // inventories => int
+    // rating => float
     // destinations => int
     // verified => boolean
     // onPress => function
@@ -35,8 +36,11 @@ const SelectLogisticsCard = ({logistics, imageUrl, inventories, destinations, ve
                     { verified && <VerifiedIcon />}
                 </View>
                 <Text style={style.logistics}>{logistics}</Text>
-                <Text style={style.location}>{inventories} Inventories</Text>
                 <Text style={style.location}>{destinations} Destinations</Text>
+                <View style={style.ratingWrapper}>
+                    <StarIcon />
+                    <Text style={style.location}>{rating}</Text>
+                </View>
             </View>
         </TouchableOpacity>
     );
@@ -56,6 +60,13 @@ const style = StyleSheet.create({
         flexDirection: "column",
         justifyContent: "space-between",
         alignItems: "flex-start",
+    },
+    primaryWrapper: {
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        gap: 4,
     },
     imageContainer: {
         display: 'flex',
@@ -79,6 +90,13 @@ const style = StyleSheet.create({
         fontFamily: "mulish-regular",
         color: subText,
         fontSize: 10,
+    },
+    ratingWrapper: {
+        display: "flex",
+        gap: 4,
+        justifyContent: 'flex-start',
+        alignContent: 'center',
+        flexDirection: 'row',
     }
 })
  
