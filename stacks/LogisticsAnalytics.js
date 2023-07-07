@@ -146,6 +146,16 @@ const LogisticsAnalytics = ({navigation}) => {
                     unpadded={true}
                 />
                 <View style={style.chartContainer}>
+                    {/* range wrapper */}
+                    <View style={style.rangeWrapper}>
+                        <TouchableOpacity 
+                            style={style.rangeButton}
+                            onPress={() => {}}
+                        >
+                            <Text style={style.rangeButtonText}>This Week</Text>
+                            <ArrowDownSmall />
+                        </TouchableOpacity>
+                    </View>
                     {/* Bar Chart component */}
                     <BarChart
                         chartTitle={"Total Earnings"}
@@ -231,8 +241,33 @@ const style = StyleSheet.create({
         color: black,
         fontSize: 12,
     },
+    rangeWrapper: {
+        width: "100%",
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        marginBottom: 12,
+    },
+    rangeButton: {
+        hieght: 26,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: 10,
+        backgroundColor: secondaryColor,
+        paddingHorizontal: 12,
+        paddingVertical: 5,
+        borderRadius: 8,
+    },
+    rangeButtonText: {
+        color: bodyText,
+        fontFamily: 'mulish-medium',
+        fontSize: 10,
+    },
     chartContainer: {
-        marginTop: 24,
+        paddingTop: 24,
     },
     topStatsWrapper: {
         display: 'flex',

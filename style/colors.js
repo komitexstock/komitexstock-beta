@@ -1,6 +1,7 @@
 export const primaryColor = "#07427C"; // primary color
 export const inactivePrimaryColor = "#07427C4D"; // primary color
 export const secondaryColor = "#07427C0D";
+export const barChart = '#07427C33';
 export const white = "#FFFFFF";
 export const background = "#F8F8F8";
 export const black = "#222222"; // text color level 1

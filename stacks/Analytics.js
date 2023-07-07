@@ -13,7 +13,8 @@ import {
     bodyText,
     neutral,
     secondaryColor,
-    white
+    white,
+    primaryColor
 } from "../style/colors";
 // components
 import Header from "../components/Header";
@@ -23,6 +24,7 @@ import StatCard from "../components/StatCard";
 import LogisticsAnalyticsItem from "../components/LogisticsAnalyticsItem";
 import LocationAnalyticsItem from "../components/LocationAnalyticsItem";
 import ProductAnalyticsItem from "../components/ProductAnalyticsItem";
+import Calender from "../components/Calender";
 // icons
 import ArrowDownSmall from '../assets/icons/ArrowDownSmall';
 // react hooks
@@ -31,7 +33,7 @@ import {useState} from "react";
 
 const Analytics = ({navigation}) => {
     // bar chart data
-    const data = [57000, 45500, 58000, 81500, 95000, 67000, 39000];
+    const data = [57000, 99000, 58000, 81500, 95000, 67000, 39000];
     
     // bar chart x axis labels
     const labels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']; 
@@ -178,145 +180,169 @@ const Analytics = ({navigation}) => {
     // state to control tabs
     const [tabs, setTabs] = useState("Logistics");
 
+    // state to open calendar
+    const [open, setOpen] = useState(false);
+
+    const hanldeOpenCalender = () => {
+        setOpen(true);
+    }
+
+    const hanldeCloseCalender = () => {
+        setOpen(false);
+    }
+
+    const [date, setDate] = useState(null);
+
     // render Analytics page
     return (
-        <ScrollView
-            showsVerticalScrollIndicator={false}
-            style={style.container}
-        >
-            <View style={style.main}>
-                {/* header component */}
-                <Header 
-                    navigation={navigation} 
-                    stackName={"Analytics"} 
-                    iconFunction={null} 
-                    icon={null} 
-                    unpadded={true}
-                />
-                <View style={style.chartContainer}>
-                    {/* range wrapper */}
-                    <View style={style.rangeWrapper}>
-                        <TouchableOpacity style={style.rangeButton}>
-                            <Text style={style.rangeButtonText}>This Week</Text>
-                            <ArrowDownSmall />
-                        </TouchableOpacity>
-                    </View>
-                    {/* Bar Chart component */}
-                    <BarChart
-                        chartTitle={"Total Earnings"}
-                        chartWidth={"100%"}
-                        chartHeight={232}
-                        backgroundColor={white}
-                        data={data}
-                        labels={labels}
-                        unit={"₦"}
-                        fullbar={false}
-                        rotateXAxisLabel={false}
-                        enableGrid={false}
+        <>
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                style={style.container}
+            >
+                <View style={style.main}>
+                    {/* header component */}
+                    <Header 
+                        navigation={navigation} 
+                        stackName={"Analytics"} 
+                        iconFunction={null} 
+                        icon={null} 
+                        unpadded={true}
                     />
-                </View>
-                <StatWrapper>
-                    {stats.map(stat => (
-                        <StatCard
-                            key={stat.id}
-                            title={stat.title}
-                            presentValue={stat.presentValue}
-                            oldValue={stat.oldValue}
-                            decimal={stat.decimal}
-                            unit={stat.unit}
-                            unitPosition={stat.unitPosition}
-                        />
-                    ))}
-                </StatWrapper>
-                <View style={style.topStatsWrapper}>
-                    <Text style={style.topStatHeading}>Top Stats</Text>
-                    <View style={style.tabsContainer}>
-                        {/* Tab buttons container */}
-                        <View style={style.tabButtonContainer}>
-                            <TouchableOpacity
-                                style={
-                                    tabs === "Logistics" ? style.tabButtonSelected : style.tabButton
-                                }
-                                onPress={() => setTabs("Logistics")}
+                    <View style={style.chartContainer}>
+                        {/* range wrapper */}
+                        <View style={style.rangeWrapper}>
+                            <TouchableOpacity 
+                                style={style.rangeButton}
+                                onPress={hanldeOpenCalender}
                             >
-                                <Text 
-                                    style={
-                                        tabs === "Logistics" ? style.tabButtonTextSelected : style.tabButtonText
-                                    }
-                                >
-                                    Logistics
-                                </Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={
-                                    tabs === "Location" ? style.tabButtonSelected : style.tabButton
-                                }
-                                onPress={() => setTabs("Location")}
-                            >
-                                <Text 
-                                    style={
-                                        tabs === "Location" ? style.tabButtonTextSelected : style.tabButtonText
-                                    }
-                                >
-                                    Location
-                                </Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={
-                                    tabs === "Product" ? style.tabButtonSelected : style.tabButton
-                                }
-                                onPress={() => setTabs("Product")}
-                            >
-                                <Text 
-                                    style={
-                                        tabs === "Product" ? style.tabButtonTextSelected : style.tabButtonText
-                                    }
-                                >
-                                    Product
-                                </Text>
+                                <Text style={style.rangeButtonText}>This Week</Text>
+                                <ArrowDownSmall />
                             </TouchableOpacity>
                         </View>
-                        <View style={style.tabContentList}>
-                            {/* Logistics Tab content */}
-                            {tabs === "Logistics" && logisticsAnalyticsList.map(item => (
-                                <LogisticsAnalyticsItem
-                                    key={item.id}
-                                    logistics={item.logistics}
-                                    numberOfDeliveries={item.numberOfDeliveries}
-                                    totalPrice={item.totalPrice}
-                                    oldTotalPrice={item.oldTotalPrice}
-                                    imageUrl={item.imageUrl}
-                                    onPress={item.onPress}
-                                />
-                            ))}
-                            {/* Location Tab content */}
-                            {tabs === "Location" && locationAnalyticsList.map(item => (
-                                <LocationAnalyticsItem
-                                    key={item.id}
-                                    location={item.location}
-                                    numberOfDeliveries={item.numberOfDeliveries}
-                                    totalPrice={item.totalPrice}
-                                    oldTotalPrice={item.oldTotalPrice}
-                                    onPress={item.onPress}
-                                />
-                            ))}
-                            {/* Product Tab content */}
-                            {tabs === "Product" && productAnalyticsList.map(item => (
-                                <ProductAnalyticsItem
-                                    key={item.id}
-                                    product={item.product}
-                                    numberOfDeliveries={item.numberOfDeliveries}
-                                    totalPrice={item.totalPrice}
-                                    oldTotalPrice={item.oldTotalPrice}
-                                    imageUrl={item.imageUrl}
-                                    onPress={item.onPress}
-                                />
-                            ))}
+                        {/* Bar Chart component */}
+                        <BarChart
+                            chartTitle={"Total Earnings"}
+                            chartWidth={"100%"}
+                            chartHeight={232}
+                            backgroundColor={white}
+                            data={data}
+                            labels={labels}
+                            unit={"₦"}
+                            fullbar={false}
+                            rotateXAxisLabel={false}
+                            enableGrid={false}
+                        />
+                    </View>
+                    <StatWrapper>
+                        {stats.map(stat => (
+                            <StatCard
+                                key={stat.id}
+                                title={stat.title}
+                                presentValue={stat.presentValue}
+                                oldValue={stat.oldValue}
+                                decimal={stat.decimal}
+                                unit={stat.unit}
+                                unitPosition={stat.unitPosition}
+                            />
+                        ))}
+                    </StatWrapper>
+                    <View style={style.topStatsWrapper}>
+                        <Text style={style.topStatHeading}>Top Stats</Text>
+                        <View style={style.tabsContainer}>
+                            {/* Tab buttons container */}
+                            <View style={style.tabButtonContainer}>
+                                <TouchableOpacity
+                                    style={
+                                        tabs === "Logistics" ? style.tabButtonSelected : style.tabButton
+                                    }
+                                    onPress={() => setTabs("Logistics")}
+                                >
+                                    <Text 
+                                        style={
+                                            tabs === "Logistics" ? style.tabButtonTextSelected : style.tabButtonText
+                                        }
+                                    >
+                                        Logistics
+                                    </Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={
+                                        tabs === "Location" ? style.tabButtonSelected : style.tabButton
+                                    }
+                                    onPress={() => setTabs("Location")}
+                                >
+                                    <Text 
+                                        style={
+                                            tabs === "Location" ? style.tabButtonTextSelected : style.tabButtonText
+                                        }
+                                    >
+                                        Location
+                                    </Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={
+                                        tabs === "Product" ? style.tabButtonSelected : style.tabButton
+                                    }
+                                    onPress={() => setTabs("Product")}
+                                >
+                                    <Text 
+                                        style={
+                                            tabs === "Product" ? style.tabButtonTextSelected : style.tabButtonText
+                                        }
+                                    >
+                                        Product
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                            <View style={style.tabContentList}>
+                                {/* Logistics Tab content */}
+                                {tabs === "Logistics" && logisticsAnalyticsList.map(item => (
+                                    <LogisticsAnalyticsItem
+                                        key={item.id}
+                                        logistics={item.logistics}
+                                        numberOfDeliveries={item.numberOfDeliveries}
+                                        totalPrice={item.totalPrice}
+                                        oldTotalPrice={item.oldTotalPrice}
+                                        imageUrl={item.imageUrl}
+                                        onPress={item.onPress}
+                                    />
+                                ))}
+                                {/* Location Tab content */}
+                                {tabs === "Location" && locationAnalyticsList.map(item => (
+                                    <LocationAnalyticsItem
+                                        key={item.id}
+                                        location={item.location}
+                                        numberOfDeliveries={item.numberOfDeliveries}
+                                        totalPrice={item.totalPrice}
+                                        oldTotalPrice={item.oldTotalPrice}
+                                        onPress={item.onPress}
+                                    />
+                                ))}
+                                {/* Product Tab content */}
+                                {tabs === "Product" && productAnalyticsList.map(item => (
+                                    <ProductAnalyticsItem
+                                        key={item.id}
+                                        product={item.product}
+                                        numberOfDeliveries={item.numberOfDeliveries}
+                                        totalPrice={item.totalPrice}
+                                        oldTotalPrice={item.oldTotalPrice}
+                                        imageUrl={item.imageUrl}
+                                        onPress={item.onPress}
+                                    />
+                                ))}
+                            </View>
                         </View>
                     </View>
                 </View>
-            </View>
-        </ScrollView>
+            </ScrollView>
+            <Calender 
+                open={open}
+                closeCalender={hanldeCloseCalender}
+                date={date}
+                setDate={setDate}
+            />
+        </>
     );
 }
 

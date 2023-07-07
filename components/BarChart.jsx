@@ -8,7 +8,7 @@ import {
 // react hooks
 import { useState, useEffect } from "react";
 // colors
-import { black, bodyText, primaryColor, secondaryColor, toolTipBackground, white } from "../style/colors";
+import { barChart, black, bodyText, primaryColor, secondaryColor, toolTipBackground, white } from "../style/colors";
 // components
 import PercentageChange from "./PercentageChange";
 
@@ -25,10 +25,19 @@ const BarChart = ({chartTitle, chartWidth, chartHeight, backgroundColor, data, l
     const total = data.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
     // calculate maximum value in y-axis scale
-    const maxYAxisScale = parseFloat(maxValue.toPrecision(1));
+    // const maxYAxisScale = parseFloat(maxValue.toPrecision(1));
 
     // number of values in y-axis label
     const numberOfValuesInYAxis = 5;
+
+    // function to calculate 
+    const calculateMaxY = (data) => {
+        const max = Math.max(...data);
+        const buffer = max * (1 + 0.2); // buffer the maximum value by 20%
+        const power = Math.pow(10, Math.ceil(Math.log10(buffer)) - 2);
+        const roundedMax = Math.ceil(buffer / power) * power;
+        return roundedMax;
+    }
 
     // generate array for y-axis label function
     const generateYAxisScale = (maxValue, increment, length) => {
@@ -39,6 +48,8 @@ const BarChart = ({chartTitle, chartWidth, chartHeight, backgroundColor, data, l
         array.push(maxValue);
         return array.reverse();
     }
+
+    const maxYAxisScale = calculateMaxY(data);
 
     // generate y-axis scale
     const yAxis = generateYAxisScale(maxYAxisScale, maxYAxisScale / numberOfValuesInYAxis, numberOfValuesInYAxis);
@@ -137,7 +148,7 @@ const BarChart = ({chartTitle, chartWidth, chartHeight, backgroundColor, data, l
                                 style={[
                                     style.bar,
                                     { width: !fullbar ? "60%" : "100%" },
-                                    { backgroundColor: bar.selected ? primaryColor : secondaryColor },
+                                    { backgroundColor: bar.selected ? primaryColor : barChart },
                                 ]}
                                 onPress = {() => handleSelectedBar(index)}
                             >     
