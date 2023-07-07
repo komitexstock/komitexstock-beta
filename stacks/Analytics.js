@@ -33,7 +33,7 @@ import {useState} from "react";
 
 const Analytics = ({navigation}) => {
     // bar chart data
-    const data = [57000, 99000, 58000, 81500, 95000, 67000, 39000];
+    const data = [57000, 99000, 58000, 81500, 0, 67000, 39000];
     
     // bar chart x axis labels
     const labels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']; 
