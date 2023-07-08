@@ -31,9 +31,9 @@ import SecurityIcon from "../assets/icons/SecurityIcon";
 import NotificationBlackIcon from "../assets/icons/NotificationBlackIcon";
 import HelpIcon from "../assets/icons/HelpIcon";
 import LogoutIcon from "../assets/icons/LogoutIcon";
-import SmsIcon from "../assets/icons/SmsIcon";
 import EmailIcon from "../assets/icons/EmailIcon";
-import CallIcon from "../assets/icons/CallIcon";
+import SmsIcon from "../assets/icons/SmsIcon";
+import PhoneIcon from "../assets/icons/PhoneIcon";
 import CameraPrimaryLargeIcon from "../assets/icons/CameraPrimaryLargeIcon";
 import GalleryIcon from "../assets/icons/GalleryIcon";
 // import image picker library
@@ -182,19 +182,19 @@ const Account = ({navigation}) => {
         {
             id: 1,
             title: "Call Us on +234 811 632 0575",
-            icon: <CallIcon />,
+            icon: <PhoneIcon />,
             onPress: () => Linking.openURL('tel:+2348116320575'),
         },
         {
             id: 2,
             title: "Chat with us",
-            icon: <EmailIcon />,
+            icon: <SmsIcon />,
             onPress: () => Linking.openURL('https://wa.me/+2348116320575'),
         },
         {
             id: 3,
             title: "Contact us via email",
-            icon: <SmsIcon />,
+            icon: <EmailIcon />,
             onPress: () => Linking.openURL('mailto:komitexstock@gmail.com'),
         },
     ];

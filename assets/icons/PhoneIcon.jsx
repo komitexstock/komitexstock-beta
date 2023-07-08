@@ -13,6 +13,6 @@ const xml = `
     </svg>
 `;
 
-const CallIcon = () => <SvgXml xml={xml} />;
+const PhoneIcon = () => <SvgXml xml={xml} />;
 
-export default CallIcon;
+export default PhoneIcon;

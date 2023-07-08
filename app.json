@@ -4,7 +4,7 @@
     "slug": "komitexstock-beta",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/images/komitex.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -26,7 +26,7 @@
       "package": "com.komitexstock.komitexstockbeta"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/images/komitex.png"
     },
     "extra": {
       "eas": {

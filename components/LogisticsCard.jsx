@@ -86,7 +86,7 @@ const style = StyleSheet.create({
         flexDirection: 'row',
         gap: 8,
         justifyContent: "flex-start",
-        alignItems: 'center',
+        alignItems: 'flex-end',
         width: '100%',
     },
     logistics: {

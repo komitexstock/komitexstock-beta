@@ -19,7 +19,7 @@ import CustomBottomSheet from "../components/CustomBottomSheet";
 // react hooks
 import { useState, useRef, useEffect } from "react";
 // icons
-import CallIcon from "../assets/icons/CallIcon";
+import PhoneIcon from "../assets/icons/PhoneIcon";
 import SmsIcon from "../assets/icons/SmsIcon";
 import EmailIcon from "../assets/icons/EmailIcon";
 import { background, black, bodyText } from "../style/colors";
@@ -144,7 +144,7 @@ const Profile = ({navigation}) => {
         {
             id: 1,
             title: "Call Us on +234 811 632 0575",
-            icon: <CallIcon />,
+            icon: <PhoneIcon />,
             onPress: () => Linking.openURL('tel:+2348116320575'),
         },
         {
