@@ -1,7 +1,7 @@
 import { View, Text, Image, StyleSheet } from "react-native";
 import { primaryColor, secondaryColor } from "../style/colors";
 
-const Avatar = ({imageUrl, fullname}) => {
+const Avatar = ({imageUrl, fullname, smallerSize}) => {
     // imageUrl => string | path to image
     // fullname => string
 
@@ -14,7 +14,12 @@ const Avatar = ({imageUrl, fullname}) => {
 
     // render Avatar
     return (
-        <View style={style.avatarWrapper}>
+        <View 
+            style={[
+                style.avatarWrapper,
+                smallerSize && {width: 30, height: 30},
+            ]}
+        >
             {/* display image if its given */}
             {imageUrl ? (
                 <Image
@@ -40,8 +45,8 @@ const style = StyleSheet.create({
         alignItems: "center",
     },
     avatarImage: {
-        width: 40,
-        height: 40,
+        width: "100%",
+        height: "100%",
         borderRadius: 20,
     },
     initials: {

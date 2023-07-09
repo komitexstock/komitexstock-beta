@@ -10,7 +10,6 @@ import {
 // icons
 import ArrowDownSmall from '../assets/icons/ArrowDownSmall';
 import { black, bodyText, subText } from '../style/colors';
-import { State } from 'react-native-gesture-handler';
 
 // Enable LayoutAnimation for Android
 if (Platform.OS === 'android') {
