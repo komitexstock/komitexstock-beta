@@ -491,12 +491,12 @@ const style = StyleSheet.create({
         alignItems: "center",
         flexDirection: "row",
         width: '100%',
+        gap: 4,
     },
     headerText: {
         fontFamily: "mulish-bold",
         fontSize: 20,
         color: black,
-        marginRight: 4,
     },
     menuIcon: {
         width: 24,

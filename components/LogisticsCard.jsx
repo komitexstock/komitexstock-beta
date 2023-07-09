@@ -84,9 +84,9 @@ const style = StyleSheet.create({
     logisticsWrapper: {
         display: "flex",
         flexDirection: 'row',
-        gap: 8,
+        gap: 4,
         justifyContent: "flex-start",
-        alignItems: 'flex-end',
+        alignItems: 'center',
         width: '100%',
     },
     logistics: {

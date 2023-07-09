@@ -10,19 +10,26 @@ import {
 // icons
 import ArrowDownSmall from '../assets/icons/ArrowDownSmall';
 import { black, bodyText, subText } from '../style/colors';
+// import react hook
+import { useEffect } from 'react';
 
 // Enable LayoutAnimation for Android
 if (Platform.OS === 'android') {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-const Accordion = ({state, locations,}) => {
-    const [expanded, setExpanded] = useState(false);
+const Accordion = ({state, locations, opened}) => {
+    const [expanded, setExpanded] = useState(opened);
 
     const toggleAccordion = () => {
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         setExpanded(!expanded);
     };
+    
+    useEffect(() => {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        setExpanded(opened);
+    }, [opened])
 
     const accordionStyle = expanded ? style.expanded : style.collapsed;
 

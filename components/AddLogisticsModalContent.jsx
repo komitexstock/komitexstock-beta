@@ -104,7 +104,7 @@ const style = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'flex-start',
-        gap: 10,
+        gap: 4,
         borderBottomColor: inputBorder,
         borderBottomWidth: 1,
     },
@@ -117,6 +117,7 @@ const style = StyleSheet.create({
         fontFamily: "mulish-medium",
         fontSize: 12,
         color: black,
+        marginLeft: 6,
     },
 })
  

@@ -5,83 +5,31 @@ import {
     FlatList, 
     TouchableWithoutFeedback,
     StyleSheet,
-    BackHandler,
     Keyboard
 } from "react-native";
 // react hooks
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 // components
 import Header from "../components/Header";
 import SelectLogisticsCard from "../components/SelectLogisticsCard";
 import SearchBar from "../components/SearchBar";
-import CustomBottomSheet from "../components/CustomBottomSheet";
 import ModalButton from "../components/ModalButton";
 import PopUpBottomSheet from "../components/PopUpBottomSheet";
 import SuccessPrompt from "../components/SuccessPrompt";
 // colors
 import { bodyText, black, white, background } from "../style/colors";
 
-const Products = ({navigation}) => {
+const AddLogistics = ({navigation}) => {
 
     const [searchQuery, setSearchQuery] = useState("");
 
-    // state to control modal overlay
-    const [showOverlay, setShowOverlay] = useState(false);
-
-    // use effect to close modal
-    useEffect(() => {
-        // function to run if back button is pressed
-        const backAction = () => {
-            // Run your function here
-            if (showOverlay) {
-                // if modal is open, close modal
-                closeAllModal();
-                return true;
-            } else {
-                // if modal isnt open simply navigate back
-                return false;
-            }
-        };
-    
-        // listen for onPress back button
-        const backHandler = BackHandler.addEventListener(
-            'hardwareBackPress',
-            backAction
-        );
-    
-        return () => backHandler.remove();
-
-    }, [showOverlay]);
-
-    // modal ref
-    const bottomSheetModalRef = useRef(null);
-    
     // popUp modal ref
     const popUpBottomSheetModalRef = useRef(null);
-
-    // clsoe modal bottomsheet function
-    const closeModal = () => {
-        bottomSheetModalRef.current?.close();
-        setShowOverlay(false);
-    };
-
-    // function to open bottom sheet modal
-    const openModal = () => {
-        bottomSheetModalRef.current?.present();
-        setShowOverlay(true);
-    }
 
     // close popup modal bottomsheet function
     const closePopUpModal = () => {
         popUpBottomSheetModalRef.current?.close();
     };
-
-    // close all bottomsheet modal function
-    const closeAllModal = () => {
-        closeModal();
-        closePopUpModal();
-    }
-
     // function to open bottom sheet modal
     const openPopUpModal = () => {
         popUpBottomSheetModalRef.current?.present();
@@ -124,102 +72,6 @@ const Products = ({navigation}) => {
             destinations: 14,
             rating: 3.5,
             onPress: () => {navigation.navigate("LogisticsDetails")}
-        },
-    ];
-
-    // location list
-    const locationsList = [
-        {
-            id: 1,
-            location: "Asaba",
-            charge: 4000,
-        },
-        {
-            id: 2,
-            location: "Benin City",
-            charge: 5000,
-        },
-        {
-            id: 3,
-            location: "Sapele",
-            charge: 3500,
-        },
-        {
-            id: 4,
-            location: "Ughelli",
-            charge: 4000,
-        },
-        {
-            id: 5,
-            location: "Agbor",
-            charge: 3500,
-        },
-        {
-            id: 6,
-            location: "Warri",
-            charge: 4500,
-        },
-        {
-            id: 7,
-            location: "Abraka",
-            charge: 4000,
-        },
-        {
-            id: 8,
-            location: "Ibusa",
-            charge: 3500,
-        },
-        {
-            id: 9,
-            location: "Okpanam",
-            charge: 3000,
-        },
-        {
-            id: 10,
-            location: "Uromi",
-            charge: 4000,
-        },
-        {
-            id: 11,
-            location: "Ogwashi-Uku",
-            charge: 3500,
-        },
-        {
-            id: 12,
-            location: "Auchi",
-            charge: 4500,
-        },
-        {
-            id: 13,
-            location: "Agbor",
-            charge: 3500,
-        },
-        {
-            id: 14,
-            location: "Eku",
-            charge: 4000,
-        }
-    ];
-
-    // stats array
-    const stats = [
-        {
-            id: 1,
-            title: "Total Deliveries",
-            presentValue: 500,
-            oldValue: 495,
-            decimal: false,
-            unit: "",
-            unitPosition: "end",
-        },
-        {
-            id: 2,
-            title: "Delivery Success Rate",
-            presentValue: 80,
-            oldValue: 82,
-            decimal: false,
-            unit: "%",
-            unitPosition: "end",
         },
     ];
 
@@ -276,28 +128,10 @@ const Products = ({navigation}) => {
                     )}
                 />
             </TouchableWithoutFeedback>
-            {/* bottomsheet component */}
-            <CustomBottomSheet
-                bottomSheetModalRef={bottomSheetModalRef}
-                showOverlay={showOverlay}
-                closeModal={closeModal}
-                snapPointsArray={["40%", "60%", "90%", "100%"]}
-                autoSnapAt={2}
-                sheetTitle={""}
-                sheetSubtitle={""}
-            >   
-                
-                {/* bottomsheet primary button */}
-                <ModalButton
-                    name={"Add Komitex"}
-                    onPress={openPopUpModal}
-                    emptyFeilds={false}
-                />
-            </CustomBottomSheet>
             {/* pop up modal */}
             <PopUpBottomSheet
                 bottomSheetModalRef={popUpBottomSheetModalRef}
-                closeModal={closeAllModal}
+                closeModal={closePopUpModal}
                 snapPointsArray={["40%"]}
                 autoSnapAt={0}
                 sheetTitle={false}
@@ -369,4 +203,4 @@ const style = StyleSheet.create({
     },
 })
  
-export default Products;
+export default AddLogistics;

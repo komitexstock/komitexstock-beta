@@ -33,11 +33,11 @@ const SelectLogisticsCard = ({logistics, imageUrl, rating, destinations, verifie
                         source={imageUrl} 
                         style={style.image} 
                     />
-                    { verified && <VerifiedIcon />}
+                    {/* { verified && <VerifiedIcon />} */}
                 </View>
                 <View style={style.logisticsWrapper}>
                     <Text style={style.logistics}>{logistics}</Text>
-                    {/* { verified && <VerifiedIcon />} */}
+                    { verified && <VerifiedIcon />}
                 </View>
                 <Text style={style.location}>{destinations} Destinations</Text>
                 <View style={style.ratingWrapper}>
@@ -87,9 +87,9 @@ const style = StyleSheet.create({
     logisticsWrapper: {
         display: "flex",
         flexDirection: 'row',
-        gap: 8,
+        gap: 4,
         justifyContent: "flex-start",
-        alignItems: 'flex-end',
+        alignItems: 'center',
         width: '100%',
     },
     logistics: {

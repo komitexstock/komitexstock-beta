@@ -25,6 +25,7 @@ import StatWrapper from "../components/StatWrapper";
 import StatCard from "../components/StatCard";
 import Accordion from "../components/Accordion";
 import Avatar from "../components/Avatar";
+import ReviewCard from "../components/ReviewCard";
 // icons
 import VerifiedIcon from '../assets/icons/VerifiedIcon';
 import EmailIcon from "../assets/icons/EmailIcon";
@@ -48,239 +49,372 @@ const LogisticsDetails = ({navigation}) => {
     // states and delivery locations
     const states = [
         {
-          id: 1,
-          name: "Delta",
-          locations: [
-            {
-              id: 1,
-              location: "Asaba",
-              charge: 4000,
-            },
-            {
-              id: 3,
-              location: "Sapele",
-              charge: 3500,
-            },
-            {
-              id: 4,
-              location: "Ughelli",
-              charge: 4000,
-            },
-            {
-              id: 5,
-              location: "Agbor",
-              charge: 3500,
-            },
-            {
-              id: 6,
-              location: "Warri",
-              charge: 4500,
-            },
-            {
-              id: 7,
-              location: "Abraka",
-              charge: 4000,
-            },
-            {
-              id: 8,
-              location: "Ibusa",
-              charge: 3500,
-            },
-            {
-              id: 9,
-              location: "Okpanam",
-              charge: 3000,
-            },
-            {
-              id: 14,
-              location: "Eku",
-              charge: 4000,
-            }
-          ]
+            id: 1,
+            name: "Delta",
+            opened: false,
+            locations: [
+                {
+                id: 1,
+                location: "Asaba",
+                charge: 4000,
+                },
+                {
+                id: 3,
+                location: "Sapele",
+                charge: 3500,
+                },
+                {
+                id: 4,
+                location: "Ughelli",
+                charge: 4000,
+                },
+                {
+                id: 5,
+                location: "Agbor",
+                charge: 3500,
+                },
+                {
+                id: 6,
+                location: "Warri",
+                charge: 4500,
+                },
+                {
+                id: 7,
+                location: "Abraka",
+                charge: 4000,
+                },
+                {
+                id: 8,
+                location: "Ibusa",
+                charge: 3500,
+                },
+                {
+                id: 9,
+                location: "Okpanam",
+                charge: 3000,
+                },
+                {
+                id: 14,
+                location: "Eku",
+                charge: 4000,
+                }
+            ]
         },
         {
-          id: 2,
-          name: "Edo",
-          locations: [
-            {
-              id: 1,
-              location: "Benin City",
-              charge: 4000,
-            },
-            {
-              id: 2,
-              location: "Auchi",
-              charge: 3500,
-            },
-            {
-              id: 3,
-              location: "Igarra",
-              charge: 3000,
-            },
-            {
-              id: 4,
-              location: "Okpella",
-              charge: 3500,
-            },
-            {
-              id: 5,
-              location: "Ekpoma",
-              charge: 4000,
-            },
-            {
-              id: 6,
-              location: "Usen",
-              charge: 3500,
-            },
-            {
-              id: 7,
-              location: "Irrua",
-              charge: 3000,
-            },
-            {
-              id: 8,
-              location: "Sabongida-Ora",
-              charge: 4000,
-            }
-          ]
+            id: 2,
+            name: "Edo",
+            opened: false,
+            locations: [
+                {
+                id: 1,
+                location: "Benin City",
+                charge: 4000,
+                },
+                {
+                id: 2,
+                location: "Auchi",
+                charge: 3500,
+                },
+                {
+                id: 3,
+                location: "Igarra",
+                charge: 3000,
+                },
+                {
+                id: 4,
+                location: "Okpella",
+                charge: 3500,
+                },
+                {
+                id: 5,
+                location: "Ekpoma",
+                charge: 4000,
+                },
+                {
+                id: 6,
+                location: "Usen",
+                charge: 3500,
+                },
+                {
+                id: 7,
+                location: "Irrua",
+                charge: 3000,
+                },
+                {
+                id: 8,
+                location: "Sabongida-Ora",
+                charge: 4000,
+                }
+            ]
         },
         {
-          id: 3,
-          name: "Lagos",
-          locations: [
-            {
-              id: 1,
-              location: "Ikeja",
-              charge: 4000,
-            },
-            {
-              id: 2,
-              location: "Victoria Island",
-              charge: 5000,
-            },
-            {
-              id: 3,
-              location: "Surulere",
-              charge: 3500,
-            },
-            {
-              id: 4,
-              location: "Lekki",
-              charge: 4500,
-            },
-            {
-              id: 5,
-              location: "Yaba",
-              charge: 3500,
-            },
-            {
-              id: 6,
-              location: "Ikorodu",
-              charge: 4000,
-            },
-            {
-              id: 7,
-              location: "Apapa",
-              charge: 3500,
-            },
-            {
-              id: 8,
-              location: "Epe",
-              charge: 4000,
-            }
-          ]
+            id: 3,
+            name: "Lagos",
+            opened: false,
+            locations: [
+                {
+                id: 1,
+                location: "Ikeja",
+                charge: 4000,
+                },
+                {
+                id: 2,
+                location: "Victoria Island",
+                charge: 5000,
+                },
+                {
+                id: 3,
+                location: "Surulere",
+                charge: 3500,
+                },
+                {
+                id: 4,
+                location: "Lekki",
+                charge: 4500,
+                },
+                {
+                id: 5,
+                location: "Yaba",
+                charge: 3500,
+                },
+                {
+                id: 6,
+                location: "Ikorodu",
+                charge: 4000,
+                },
+                {
+                id: 7,
+                location: "Apapa",
+                charge: 3500,
+                },
+                {
+                id: 8,
+                location: "Epe",
+                charge: 4000,
+                }
+            ]
         },
         {
-          id: 4,
-          name: "Anambra",
-          locations: [
-            {
-              id: 1,
-              location: "Awka",
-              charge: 4000,
-            },
-            {
-              id: 2,
-              location: "Onitsha",
-              charge: 3500,
-            },
-            {
-              id: 3,
-              location: "Nnewi",
-              charge: 3000,
-            },
-            {
-              id: 4,
-              location: "Ekwulobia",
-              charge: 3500,
-            },
-            {
-              id: 5,
-              location: "Aguata",
-              charge: 4000,
-            },
-            {
-              id: 6,
-              location: "Orumba",
-              charge: 3500,
-            },
-            {
-              id: 7,
-              location: "Ogidi",
-              charge: 3000,
-            },
-            {
-              id: 8,
-              location: "Otuocha",
-              charge: 4000,
-            }
-          ]
+            id: 4,
+            name: "Anambra",
+            opened: false,
+            locations: [
+                {
+                id: 1,
+                location: "Awka",
+                charge: 4000,
+                },
+                {
+                id: 2,
+                location: "Onitsha",
+                charge: 3500,
+                },
+                {
+                id: 3,
+                location: "Nnewi",
+                charge: 3000,
+                },
+                {
+                id: 4,
+                location: "Ekwulobia",
+                charge: 3500,
+                },
+                {
+                id: 5,
+                location: "Aguata",
+                charge: 4000,
+                },
+                {
+                id: 6,
+                location: "Orumba",
+                charge: 3500,
+                },
+                {
+                id: 7,
+                location: "Ogidi",
+                charge: 3000,
+                },
+                {
+                id: 8,
+                location: "Otuocha",
+                charge: 4000,
+                }
+            ]
         },
         {
-          id: 5,
-          name: "Rivers",
-          locations: [
-            {
-              id: 1,
-              location: "Port Harcourt",
-              charge: 4500,
-            },
-            {
-              id: 2,
-              location: "Obio/Akpor",
-              charge: 4000,
-            },
-            {
-              id: 3,
-              location: "Eleme",
-              charge: 3500,
-            },
-            {
-              id: 4,
-              location: "Okrika",
-              charge: 4000,
-            },
-            {
-              id: 5,
-              location: "Bonny",
-              charge: 5000,
-            },
-            {
-              id: 6,
-              location: "Ahoada",
-              charge: 3500,
-            },
-            {
-              id: 7,
-              location: "Degema",
-              charge: 4000,
-            },
-            {
-              id: 8,
-              location: "Opobo",
-              charge: 3500,
-            }
-          ]
+            id: 5,
+            name: "Rivers",
+            opened: false, 
+            locations: [
+                {
+                id: 1,
+                location: "Port Harcourt",
+                charge: 4500,
+                },
+                {
+                id: 2,
+                location: "Obio/Akpor",
+                charge: 4000,
+                },
+                {
+                id: 3,
+                location: "Eleme",
+                charge: 3500,
+                },
+                {
+                id: 4,
+                location: "Okrika",
+                charge: 4000,
+                },
+                {
+                id: 5,
+                location: "Bonny",
+                charge: 5000,
+                },
+                {
+                id: 6,
+                location: "Ahoada",
+                charge: 3500,
+                },
+                {
+                id: 7,
+                location: "Degema",
+                charge: 4000,
+                },
+                {
+                id: 8,
+                location: "Opobo",
+                charge: 3500,
+                }
+            ]
+        },
+        {
+            id: 6,
+            name: "Bayelsa",
+            opened: false,
+            locations: [
+                {
+                    id: 1,
+                    location: "Yenagoa",
+                    charge: 4000,
+                },
+                {
+                    id: 2,
+                    location: "Brass",
+                    charge: 3500,
+                },
+                {
+                    id: 3,
+                    location: "Nembe",
+                    charge: 3000,
+                },
+                {
+                    id: 4,
+                    location: "Ogbia",
+                    charge: 3500,
+                },
+                {
+                    id: 5,
+                    location: "Sagbama",
+                    charge: 4000,
+                },
+            ],
+        },
+        {
+            id: 7,
+            name: "Abuja",
+            opened: false,
+            locations: [
+                {
+                    id: 1,
+                    location: "Central Area",
+                    charge: 4500,
+                },
+                {
+                    id: 2,
+                    location: "Garki",
+                    charge: 4000,
+                },
+                {
+                    id: 3,
+                    location: "Wuse",
+                    charge: 3500,
+                },
+                {
+                    id: 4,
+                    location: "Asokoro",
+                    charge: 4000,
+                },
+                {
+                    id: 5,
+                    location: "Maitama",
+                    charge: 5000,
+                },
+            ],
+        },
+        {
+            id: 8,
+            name: "Cross River",
+            opened: false,
+            locations: [
+                {
+                    id: 1,
+                    location: "Calabar",
+                    charge: 4000,
+                },
+                {
+                    id: 2,
+                    location: "Ikom",
+                    charge: 3500,
+                },
+                {
+                    id: 3,
+                    location: "Ogoja",
+                    charge: 3000,
+                },
+                {
+                    id: 4,
+                    location: "Obudu",
+                    charge: 3500,
+                },
+                {
+                    id: 5,
+                    location: "Ugep",
+                    charge: 4000,
+                },
+            ],
+        },
+        {
+            id: 9,
+            name: "Oyo",
+            opened: false,
+            locations: [
+                {
+                    id: 1,
+                    location: "Ibadan",
+                    charge: 4000,
+                },
+                {
+                    id: 2,
+                    location: "Ogbomosho",
+                    charge: 3500,
+                },
+                {
+                    id: 3,
+                    location: "Iseyin",
+                    charge: 3000,
+                },
+                {
+                    id: 4,
+                    location: "Oyo",
+                    charge: 3500,
+                },
+                {
+                    id: 5,
+                    location: "Eruwa",
+                    charge: 4000,
+                },
+            ],
         }
     ];
       
@@ -381,16 +515,6 @@ const LogisticsDetails = ({navigation}) => {
         }
     ];
 
-    const processLongReviews = (text) => {
-        if (text.length <= 200) return text;
-
-        return <>
-            {text.substring(0, 200) + "..."} &nbsp;
-            <Text style={style.readMore}>read more</Text>
-        </>;
-    }
-
-
     const scrollViewRef = useRef(null);
 
     const [reviewsContainerStyle, setReviewContainerStyle] = useState(() => {
@@ -478,11 +602,12 @@ const LogisticsDetails = ({navigation}) => {
                             <View style={style.contactDetails}>
                                 <StarIcon />
                                 <Text style={style.ratingText}>
-                                    5.0
+                                    4.5
                                 </Text>
                                 <Text style={style.bulletPoint}>{'\u2022'}</Text>
                                 <TouchableOpacity 
                                     style={style.linkButton}
+                                    onPress={() => navigation.navigate('Reviews')}
                                 >
                                     <Text style={style.linkTextUnderlined}>
                                         10 reviews
@@ -513,21 +638,26 @@ const LogisticsDetails = ({navigation}) => {
                             Find all available locations and the associated fees Komitex offers
                         </Text>
                         <View style={style.locationsList}>
-                            { states.map(state => (
-                                <Accordion
-                                    key={state.id}
-                                    state={state.name}
-                                    locations={state.locations}
-                                />
-                                
-                            ))}
+                            { states.map((state, index) => {
+                                if (index < 5) {
+                                    return (
+                                        <Accordion
+                                            key={state.id}
+                                            state={state.name}
+                                            locations={state.locations}
+                                            opened={state.opened}
+                                        />
+                                    )
+                                }
+                            })}
                         </View>
-
-                        <TouchableOpacity
-                            onPress={() => navigation.navigate('AvailableLocations')}
-                        >
-                            <Text style={style.showAll}>Show all locations</Text>
-                        </TouchableOpacity>
+                        { states.length > 5 && (
+                            <TouchableOpacity
+                                onPress={() => navigation.navigate('AvailableLocations')}
+                            >
+                                <Text style={style.showAll}>Show all locations</Text>
+                            </TouchableOpacity>
+                        )}
                     </View>
                 </View>
 
@@ -535,16 +665,12 @@ const LogisticsDetails = ({navigation}) => {
                     <View style={style.contactDetails}>
                         <StarIcon />
                         <Text style={[style.ratingHeadingText, style.ratingScore]}>
-                            5.0
+                            4.5
                         </Text>
                         <Text style={style.bulletPoint}>{'\u2022'}</Text>
-                        <TouchableOpacity 
-                            style={style.linkButton}
-                        >
-                            <Text style={style.ratingHeadingText}>
-                                10 reviews
-                            </Text>
-                        </TouchableOpacity>
+                        <Text style={style.ratingHeadingText}>
+                            10 reviews
+                        </Text>
                     </View>
                     <ScrollView 
                         horizontal={true}
@@ -552,39 +678,23 @@ const LogisticsDetails = ({navigation}) => {
                         onScroll={handleScroll}
                         scrollEventThrottle={16} // the frequency the scroll event is triggered, 16 milliseconds
                     >
-                        <TouchableOpacity style={style.reviewsWrapper} activeOpacity={1}>
+                        <TouchableOpacity 
+                            style={style.reviewsWrapper} 
+                            activeOpacity={1}
+                            onPress={() => navigation.navigate("Reviews")}
+                        >
                             {reviews.map((review, index) => (
-                                <View 
-                                    key={review.id} 
-                                    style={[
-                                        style.review,
-                                        index === reviews.length - 1 && {marginRight: 40}
-                                        // adding marginRight of 40 px to the last review
-                                        // to give room for the reduction in width of revie container
-                                        // when a user scrolls to the end 
-                                    ]}
-                                >
-                                    <View style={style.reviewHeading}>
-                                        <Avatar
-                                            imageUrl={review.imageUrl}
-                                            fullname={review.fullname}
-                                            smallerSize={true}
-                                        />
-                                        <View style={style.reviewInfo}>
-                                            <Text style={style.reviewName}>
-                                                {review.fullname}
-                                            </Text>
-                                            <Text style={style.reviewTimestamp}>
-                                                {review.timestamp}
-                                            </Text>
-                                        </View>
-                                    </View>
-                                    <View style={style.reviewTextWrapper}>
-                                        <Text style={style.reviewText}>
-                                            {processLongReviews(review.review)}
-                                        </Text>
-                                    </View>
-                                </View>
+                                <ReviewCard
+                                    key={review.id}
+                                    imageUrl={review.imageUrl}
+                                    fullname={review.fullname}
+                                    timestamp={review.timestamp}
+                                    review={review.review}
+                                    width={214}
+                                    background={background}
+                                    containerStyle={index === reviews.length - 1 && {marginRight: 40}}
+                                    navigation={navigation}
+                                />
                             ))}
                         </TouchableOpacity>
                     </ScrollView>
@@ -612,7 +722,7 @@ const style = StyleSheet.create({
         justifyContent: 'flex-start',
         alignItems: 'center',
         flexDirection: 'row',
-        gap: 8,
+        gap: 4,
     },
     main: {
         display: 'flex',
@@ -780,47 +890,6 @@ const style = StyleSheet.create({
         flexDirection: 'row',
         gap: 20,
     },
-    review: {
-        width: 214,
-        flex: 1,
-        backgroundColor: background,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 12,
-        padding: 12,
-        borderRadius: 12,
-        maxHeight: 150,
-    },
-    reviewHeading: {
-        display: 'flex',
-        flexDirection: 'row',
-        gap: 12,
-    },
-    reviewInfo: {
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-    },
-    reviewName: {
-        fontFamily: 'mulish-medium',
-        fontSize: 14,
-        color: black,
-    },
-    reviewTimestamp: {
-        fontFamily: 'mulish-regular',
-        fontSize: 10,
-        color: subText,
-    },
-    reviewText: {
-        color: bodyText,
-        fontFamily: 'mulish-regular',
-        fontSize: 12,
-    },
-    readMore: {
-        color: primaryColor,
-        textDecorationColor: primaryColor,
-        textDecorationLine: "underline",
-    }
 })
  
 export default LogisticsDetails;

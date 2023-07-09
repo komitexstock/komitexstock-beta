@@ -219,7 +219,7 @@ const style = StyleSheet.create({
         justifyContent: 'flex-start',
         alignItems: 'center',
         flexDirection: 'row',
-        gap: 8,
+        gap: 4,
     },
     main: {
         display: 'flex',

@@ -23,6 +23,7 @@ import SendWaybill from './stacks/SendWaybill';
 import Inventory from './stacks/Inventory';
 import Products from './stacks/Products';
 import AddLogistics from './stacks/AddLogistics';
+import AvailableLocations from './stacks/AvailableLocations';
 import AddProduct from './stacks/AddProduct';
 // account related stacks
 import Account from './stacks/Account';
@@ -31,6 +32,8 @@ import TeamMembers from './stacks/TeamMembers';
 import Logistics from './stacks/Logistics';
 import Security from './stacks/Security';
 import LogisticsDetails from './stacks/LogisticsDetails';
+// others
+import Reviews from './stacks/Reviews';
 
 // components
 import BottomNavigation from './components/BottomNavigation';
@@ -144,9 +147,25 @@ export default function App() {
                                 }} 
                             />
                             {/* Logistics Details stack */}
-                            <Stack.Screen 
+                            <Stack.Screen
                                 name="LogisticsDetails" 
                                 component={LogisticsDetails} 
+                                options={{
+                                headerShown: false,
+                                }} 
+                            />
+                            {/* Available Locations stack */}
+                            <Stack.Screen 
+                                name="AvailableLocations" 
+                                component={AvailableLocations} 
+                                options={{
+                                headerShown: false,
+                                }} 
+                            />
+                            {/* Available Locations stack */}
+                            <Stack.Screen 
+                                name="Reviews" 
+                                component={Reviews} 
                                 options={{
                                 headerShown: false,
                                 }} 
