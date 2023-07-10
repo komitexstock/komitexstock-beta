@@ -116,7 +116,7 @@ const Reviews = ({navigation}) => {
             name: "Affordability",
             score: 3.9
         },
-    ]
+    ];
 
     // render Security Page
     return (
@@ -132,7 +132,7 @@ const Reviews = ({navigation}) => {
                         <View style={style.headerWrapper}>
                             <StarIcon />
                             <Text style={[style.ratingHeadingText, style.ratingScore]}>
-                                4.5
+                                4.4
                             </Text>
                             <Text style={style.bulletPoint}>{'\u2022'}</Text>
                             <Text style={style.ratingHeadingText}>
@@ -169,6 +169,7 @@ const Reviews = ({navigation}) => {
                             imageUrl={review.imageUrl}
                             fullname={review.fullname}
                             timestamp={review.timestamp}
+                            fullText={true}
                             review={review.review}
                         />
                     ))}

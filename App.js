@@ -34,6 +34,7 @@ import Security from './stacks/Security';
 import LogisticsDetails from './stacks/LogisticsDetails';
 // others
 import Reviews from './stacks/Reviews';
+import CompanyPolicy from './stacks/CompanyPolicy';
 
 // components
 import BottomNavigation from './components/BottomNavigation';
@@ -162,12 +163,20 @@ export default function App() {
                                 headerShown: false,
                                 }} 
                             />
-                            {/* Available Locations stack */}
+                            {/* Reviews stack */}
                             <Stack.Screen 
                                 name="Reviews" 
                                 component={Reviews} 
                                 options={{
-                                headerShown: false,
+                                    headerShown: false,
+                                }} 
+                            />
+                            {/* Company Policy stack */}
+                            <Stack.Screen 
+                                name="CompanyPolicy" 
+                                component={CompanyPolicy} 
+                                options={{
+                                    headerShown: false,
                                 }} 
                             />
                             {/* Account stack */}

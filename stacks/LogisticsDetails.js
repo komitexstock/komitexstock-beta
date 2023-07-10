@@ -9,6 +9,7 @@ import {
     Dimensions,
     LayoutAnimation,
     UIManager,
+    Linking,
 } from "react-native";
 // colors
 import {
@@ -24,7 +25,7 @@ import Header from "../components/Header";
 import StatWrapper from "../components/StatWrapper";
 import StatCard from "../components/StatCard";
 import Accordion from "../components/Accordion";
-import Avatar from "../components/Avatar";
+import CustomButton from "../components/CustomButton";
 import ReviewCard from "../components/ReviewCard";
 // icons
 import VerifiedIcon from '../assets/icons/VerifiedIcon';
@@ -418,7 +419,6 @@ const LogisticsDetails = ({navigation}) => {
         }
     ];
       
-
     // stats array
     const stats = [
         {
@@ -575,6 +575,7 @@ const LogisticsDetails = ({navigation}) => {
                                 <EmailIcon />
                                 <TouchableOpacity 
                                     style={style.linkButton}
+                                    onPress= {() => Linking.openURL('mailto:Komitexlogistics@gmail.com')}
                                 >
                                     <Text style={style.linkText}>
                                         Komitexlogistics@gmail.com
@@ -585,6 +586,7 @@ const LogisticsDetails = ({navigation}) => {
                                 <PhoneIcon />
                                 <TouchableOpacity 
                                     style={style.linkButton}
+                                    onPress= {() => Linking.openURL('tel:+2348116320575')}
                                 >
                                     <Text style={style.linkText}>
                                         08122266618
@@ -602,7 +604,7 @@ const LogisticsDetails = ({navigation}) => {
                             <View style={style.contactDetails}>
                                 <StarIcon />
                                 <Text style={style.ratingText}>
-                                    4.5
+                                    4.4
                                 </Text>
                                 <Text style={style.bulletPoint}>{'\u2022'}</Text>
                                 <TouchableOpacity 
@@ -665,7 +667,7 @@ const LogisticsDetails = ({navigation}) => {
                     <View style={style.contactDetails}>
                         <StarIcon />
                         <Text style={[style.ratingHeadingText, style.ratingScore]}>
-                            4.5
+                            4.4
                         </Text>
                         <Text style={style.bulletPoint}>{'\u2022'}</Text>
                         <Text style={style.ratingHeadingText}>
@@ -704,6 +706,28 @@ const LogisticsDetails = ({navigation}) => {
                         <Text style={style.showAll}>Show all reviews</Text>
                     </TouchableOpacity>
                 </View>
+
+                <View style={style.policyContainer}>
+                    <View style={style.policyWrapper}>
+                        <Text style={style.locationsHeading}>Company Policy</Text>
+                        <View style={style.policyContent}>
+                            <Text style={style.policyText}>Remittance Duration: 24hrs after Delivery </Text>
+                            <Text style={style.policyText}>Cost for failed delivery: 50% of delivery charges</Text>
+                            <Text style={style.policyText}>Inactive Inventory: 3 months maximum</Text>
+                        </View>
+                        <TouchableOpacity
+                            onPress={() => navigation.navigate('CompanyPolicy')}
+                        >
+                            <Text style={style.showAll}>Show more</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+
+                <CustomButton 
+                    name="Add Komitex" 
+                    onPress={() => {}}
+                    backgroundColor={white}
+                />
             </View>
         </ScrollView>
     );
@@ -714,8 +738,6 @@ const style = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: background,
-        paddingVertical: 20,
-        paddingTop: 0,
     },
     headerWrapper: {
         display: 'flex',
@@ -730,7 +752,6 @@ const style = StyleSheet.create({
         flexDirection: 'column',
         alignItems: 'flex-start',
         justifyContent: 'flex-start',
-        marginBottom: 20,
     },
     paddedContent: {
         paddingHorizontal: 20,
@@ -890,6 +911,38 @@ const style = StyleSheet.create({
         flexDirection: 'row',
         gap: 20,
     },
+    policyContainer: {
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 20,
+    },
+    policyWrapper: {
+        width: "100%",
+        backgroundColor: white,
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        padding: 20,
+        borderRadius: 12,
+        gap: 8,
+    },
+    policyContent: {
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        marginBottom: 12,
+    },
+    policyText: {
+        fontSize: 12,
+        fontFamily: 'mulish-medium',
+        color: bodyText,
+    }
 })
  
 export default LogisticsDetails;

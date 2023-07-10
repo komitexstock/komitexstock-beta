@@ -6,9 +6,10 @@ import { useState } from "react";
 
 
 
-const ReviewCard = ({imageUrl, fullname, timestamp, review, width, containerStyle, background, navigation}) => {
+const ReviewCard = ({imageUrl, fullname, timestamp, review, width, containerStyle, background, fullText, navigation}) => {
 
     const [reviewText, setReviewText] = useState(() => {
+        if (fullText) return review;
         if (review.length <= 200) return review;
 
         return <>

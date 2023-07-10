@@ -25,6 +25,7 @@ import Indicator from "../components/Indicator";
 import CameraIcon from "../assets/icons/CameraIcon";
 import EditUserIcon from "../assets/icons/EditUserIcon";
 import AnalyticsIcon from "../assets/icons/AnalyticsIcon";
+import BusinessReportIcon from "../assets/icons/BusinessReportIcon";
 import TeamIcon from "../assets/icons/TeamIcon";
 import LogisticsIcon from "../assets/icons/LogisticsIcon";
 import SecurityIcon from "../assets/icons/SecurityIcon";
@@ -55,6 +56,13 @@ const Account = ({navigation}) => {
                 subtitle: false,
                 icon: <AnalyticsIcon />,
                 onPress: () => {navigation.navigate("Analytics")},
+            },
+            {
+                id: 4,
+                title: "Generate Business Report",
+                subtitle: false,
+                icon: <BusinessReportIcon />,
+                onPress: () => {navigation.navigate("GenerateReport")},
             },
             {
                 id: 2,
