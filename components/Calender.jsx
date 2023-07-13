@@ -16,6 +16,8 @@ import NextArrowIcon from '../assets/icons/NextArrowIcon';
 // components
 import ModalButton from '../components/ModalButton';
 import ActionButton from '../components/ActionButton';
+// react hooks
+import { useState } from 'react';
 
 // get windows width
 const windwoWidth = Dimensions.get('window').width;
@@ -28,27 +30,81 @@ const paddingHorizontal = 40;
 
 const calendatWidth = windwoWidth - paddingHorizontal;
 
-const Calender = ({open, closeCalender, date, setDate}) => {
+const Calender = ({open, closeCalender, setDate, disableActionButtons}) => {
+
+    // temporary date variable
+    const [tempDate, setTempDate] = useState("");
+
 
     // update date variable
     const onDateChange = (date) => {
-        setDate(date);
-        // console.log(date);
+        setTempDate(date);
+        // console.log(date.format("DD-MM-YYYY"));
+        // console.log(getCurrentDate());
+    }
+
+    const onRangeSelected = (date) => {
+        setTempDate(date);
     }
 
     const calendarActionButtons = [
-        {id: 1, name: "Today", selected: false, onPress: () => {}},
-        {id: 2, name: "Yesterday", selected: false, onPress: () => {}},
-        {id: 3, name: "This week", selected: true, onPress: () => {}},
-        {id: 4, name: "Last week", selected: false, onPress: () => {}},
-        {id: 5, name: "This month", selected: false, onPress: () => {}},
-        {id: 6, name: "Last month", selected: false, onPress: () => {}},
-        {id: 7, name: "This Year", selected: false, onPress: () => {}},
-        {id: 8, name: "All time", selected: false, onPress: () => {}},
+        {
+            id: 1, 
+            name: "Today", 
+            selected: false, 
+        },
+        {
+            id: 2, 
+            name: "Yesterday", 
+            selected: false, 
+        },
+        {
+            id: 3, 
+            name: "Last 7 days", 
+            selected: true, 
+        },
+        {
+            id: 4, 
+            name: "Last week", 
+            selected: false, 
+        },
+        {
+            id: 5, 
+            name: "This month", 
+            selected: false, 
+        },
+        {
+            id: 6, 
+            name: "Last month", 
+            selected: false, 
+        },
+        {
+            id: 7, 
+            name: "This Year", 
+            selected: false, 
+        },
+        {
+            id: 8, 
+            name: "All time", 
+            selected: false, 
+        },
     ];
 
     const handleSelectedDate = () => {
+        setDate(tempDate);
         closeCalender();
+    }
+
+    // get current date  in "DD-MM-YYYY" format
+    const getCurrentDate = () => {
+        const currentDate = new Date();
+        const formattedDate = currentDate.toLocaleDateString('en-GB', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+        }).replace(/\//g, '-');
+      
+        return formattedDate;
     }
 
     return open && (
@@ -62,7 +118,7 @@ const Calender = ({open, closeCalender, date, setDate}) => {
                     <CalendarPicker
                         textStyle={calenderStyles.textStyle}
                         selectedDayStyle={calenderStyles.selectedDayStyle}
-                        selectedDayTextColor={"#ffffff"}
+                        selectedDayTextColor={white}
                         selectedDayColor={primaryColor}
                         dayLabelsWrapper={calenderStyles.dayLabelsWrapper}
                         startFromMonday={true}
@@ -73,26 +129,27 @@ const Calender = ({open, closeCalender, date, setDate}) => {
                         nextComponent={<NextArrowIcon />}
                         onDateChange={onDateChange}
                         todayBackgroundColor={white}
-                        todayTextStyle={{color: bodyText}}
-                        selectedStartDate={date}
+                        todayTextStyle={{}}
                         customDayHeaderStyles={customDayHeaderStyles}
                         monthTitleStyle={calenderStyles.monthTitleStyle}
                         yearTitleStyle={calenderStyles.yearTitleStyle}
-                        // maxDate={new Date()}
+                        maxDate={new Date()}
                         // minDate={new Date()}
                     />
                     <View style={style.calendarBaseContainer}>
-                        <View style={style.actionButtonsWrapper}>
-                            { calendarActionButtons.map((button) => (
-                                <ActionButton
-                                    key={button.id}
-                                    onPress={button.onPress}
-                                    name={button.name}
-                                    removeBottomMargin={true}
-                                    selected={button.selected}
-                                />
-                            ))}
-                        </View>
+                        { !disableActionButtons && (
+                            <View style={style.actionButtonsWrapper}>
+                                { calendarActionButtons.map((button) => (
+                                    <ActionButton
+                                        key={button.id}
+                                        onPress={() => onRangeSelected(button.name)}
+                                        name={button.name}
+                                        removeBottomMargin={true}
+                                        selected={button.selected}
+                                    />
+                                ))}
+                            </View>
+                        )}
                         <ModalButton 
                             name={"Apply"}
                             onPress={handleSelectedDate}

@@ -23,18 +23,6 @@ const AddLogistics = ({navigation}) => {
 
     const [searchQuery, setSearchQuery] = useState("");
 
-    // popUp modal ref
-    const popUpBottomSheetModalRef = useRef(null);
-
-    // close popup modal bottomsheet function
-    const closePopUpModal = () => {
-        popUpBottomSheetModalRef.current?.close();
-    };
-    // function to open bottom sheet modal
-    const openPopUpModal = () => {
-        popUpBottomSheetModalRef.current?.present();
-    }
-
     // logistics list
     const logisticsList = [
         {
@@ -128,29 +116,6 @@ const AddLogistics = ({navigation}) => {
                     )}
                 />
             </TouchableWithoutFeedback>
-            {/* pop up modal */}
-            <PopUpBottomSheet
-                bottomSheetModalRef={popUpBottomSheetModalRef}
-                closeModal={closePopUpModal}
-                snapPointsArray={["40%"]}
-                autoSnapAt={0}
-                sheetTitle={false}
-                sheetSubtitle={false}
-            >   
-                <View style={style.popUpContent}>
-                    <SuccessPrompt />
-                    <Text style={style.popUpHeading}>
-                        Komitex Succesfully Added
-                    </Text>
-                    <Text style={style.popUpParagraph}>
-                        Hi Raymond, You have successfully linked your store to Komitex Logistics
-                    </Text>
-                    <ModalButton
-                        name={"Done"}
-                        onPress={() => {navigation.navigate("Inventory")}}
-                    />
-                </View>
-            </PopUpBottomSheet>
         </>
     );
 }
@@ -178,28 +143,6 @@ const style = StyleSheet.create({
         color: bodyText,
         marginBottom: 24,
         marginTop: 8,
-    },
-    popUpContent: {
-        flex: 1,
-        height: "100%",
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: 20,
-        paddingBottom: 20,
-    },
-    popUpHeading: {
-        fontSize: 16,
-        fontFamily: 'mulish-bold',
-        textAlign: 'center',
-        color: black,
-    },
-    popUpParagraph: {
-        fontSize: 12,
-        fontFamily: 'mulish-regular',
-        textAlign: 'center',
-        color: bodyText,
     },
 })
  

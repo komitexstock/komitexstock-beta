@@ -1,9 +1,9 @@
 // react native components
 import { TouchableOpacity, Text, StyleSheet, View } from "react-native";
 // colors
-import { inactivePrimaryColor, primaryColor, white } from "../style/colors";
+import { inactivePrimaryColor, primaryColor, secondaryColor, white } from "../style/colors";
 
-const CustomButton = ({name, onPress, backgroundColor, fixed, inactive}) => {
+const CustomButton = ({name, onPress, backgroundColor, fixed, inactive, secondaryButton}) => {
     // name => string
     // onPress => function
     // backgroundColor => string
@@ -18,10 +18,26 @@ const CustomButton = ({name, onPress, backgroundColor, fixed, inactive}) => {
             ]}
         >
             <TouchableOpacity 
-                style={inactive ? style.inactive : style.button}
+                style={[
+                    style.button,
+                    secondaryButton ? {
+                        backgroundColor: secondaryColor,
+                        opacity: inactive ? 0.5 : 1,
+                    } : {
+                        backgroundColor: inactive ? inactivePrimaryColor : primaryColor
+                    },
+                    
+                ]}
                 onPress={inactive ? () => {} : onPress}
             >
-                <Text style={style.buttonText}>{name}</Text>
+                <Text 
+                    style={[
+                        style.buttonText,
+                        {color: secondaryButton ? primaryColor : white}
+                    ]}
+                >
+                    {name}
+                </Text>
             </TouchableOpacity>
         </View>
     );
@@ -38,17 +54,7 @@ const style = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         padding: 10,
-    }, 
-    inactive: {
-        width: "100%",
-        backgroundColor: inactivePrimaryColor,
-        height: 44,
-        borderRadius: 12,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 10,
-    }, 
+    },
     buttonText: {
         fontFamily: "mulish-semibold",
         color: white,
@@ -58,18 +64,20 @@ const style = StyleSheet.create({
         width: "100%",
         height: 100,
         display: 'flex',
+        flexDirection: 'row',
         justifyContent: 'center',
-        alignItems: 'center',
-        paddingHorizontal: 20,
+        alignItems: 'flex-end',
+        padding: 20,
         zIndex: 1,
     },
     fixed: {
         width: "100%",
         height: 100,
         display: 'flex',
+        flexDirection: 'row',
         justifyContent: 'center',
-        alignItems: 'center',
-        paddingHorizontal: 20,
+        alignItems: 'flex-end',
+        padding: 20,
         zIndex: 1000,
         position: "absolute",
         bottom: 0,

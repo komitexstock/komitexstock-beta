@@ -13,10 +13,11 @@ import {
 import { 
     useState, 
     useRef, 
-    useEffect 
+    useEffect,
+    useLayoutEffect
 } from "react";
 // colors
-import { primaryColor, secondaryColor, background, black, bodyText, white } from '../style/colors';
+import { primaryColor, secondaryColor, background, black, bodyText, white, } from '../style/colors';
 // custom components
 import CustomBottomSheet from "../components/CustomBottomSheet";
 import AccountButtons from "../components/AccountButtons";
@@ -40,7 +41,7 @@ import GalleryIcon from "../assets/icons/GalleryIcon";
 // import image picker library
 import * as ImagePicker from "expo-image-picker";
 
-const Account = ({navigation}) => {
+const Account = ({navigation, route}) => {
     // list of buttons in Account Page
     const accountButtons = {
         profile: {
@@ -62,7 +63,7 @@ const Account = ({navigation}) => {
                 title: "Generate Business Report",
                 subtitle: false,
                 icon: <BusinessReportIcon />,
-                onPress: () => {navigation.navigate("GenerateReport")},
+                onPress: () => {navigation.navigate("GenerateBusinessReport")},
             },
             {
                 id: 2,
@@ -113,8 +114,22 @@ const Account = ({navigation}) => {
         snapPoints: ["35%"],
     });
 
-    // state to hold selected image
+    // state to hold selected image for profile
     const [selectedImage, setSelectedImage] = useState(null);
+    
+    // state to hold selected image for BANNER
+    const [selectedBanner, setSelectedBanner] = useState(null);
+
+    // state to indicate what type of image is being uploade "Banner" or "Profile"
+    const [imageType, setImageType] = useState("");
+
+    useLayoutEffect(() => {
+        if (route.params) {
+            route.params.imageType === "Profile" ? 
+            setSelectedImage(route.params.imageUri) :
+            setSelectedBanner(route.params.imageUri);
+        }
+    })
 
     // use effect to close modal
     useEffect(() => {
@@ -215,7 +230,9 @@ const Account = ({navigation}) => {
         });
     
         if (!result.canceled) {
-            setSelectedImage(result.assets[0].uri);
+            imageType === "Profile" ? 
+            setSelectedImage(result.assets[0].uri) : 
+            setSelectedBanner(result.assets[0].uri);
             closeModal();
         }
     };
@@ -231,85 +248,111 @@ const Account = ({navigation}) => {
                 {/* main page wrapper */}
                 <View style={style.main}>
                     <View style={style.header}>
-                        <Text style={style.stackName}>Account</Text>
-                        {/* account type indicator */}
-                        <Indicator type={"Dispatched"} text={"Manager"}/>
-                    </View>
-                    <View style={style.profileWrapper}>
-                        <View style={style.imageContainer}>
-                            {/* user profile photo */}
-                            <Image 
-                                style={style.profileImage}
-                                source={!selectedImage ? 
-                                    require('../assets/profile/profile.jpg') : 
-                                    {uri: selectedImage}
-                                }
-                            />
-                            {/* change profile photo button */}
+                        <View style={style.bannerWrapper}>
+                            {/* change banner photo button */}
                             <TouchableOpacity 
-                                style={style.camera}
-                                onPress={() => {openModal("Open with")}}
+                                style={style.bannerCamera}
+                                onPress={() => {
+                                    setImageType("Banner");
+                                    openModal("Open with");
+                                }}
                             >
                                 <CameraIcon />
                             </TouchableOpacity>
+                            <Image 
+                                style={style.bannerImage}
+                                source={!selectedBanner ? 
+                                    require('../assets/images/mega-enterprise.png') : 
+                                    {uri: selectedBanner}
+                                }
+                            />
                         </View>
-                        {/* Username and company/business name */}
-                        <Text style={style.fullname}>Raymond Reddington</Text>
-                        <Text style={style.businessName}>Mega Enterprise Ltd</Text>
+                        <View style={style.accountInfoWrapper}> 
+                            <Indicator type={"Dispatched"} text={"Manager"}/>
+                            <View style={style.profileWrapper}>
+                                <View style={style.imageContainer}>
+                                    {/* user profile photo */}
+                                    <Image 
+                                        style={style.profileImage}
+                                        source={!selectedImage ? 
+                                            require('../assets/profile/profile.jpg') : 
+                                            {uri: selectedImage}
+                                        }
+                                    />
+                                    {/* change profile photo button */}
+                                    <TouchableOpacity 
+                                        style={style.camera}
+                                        onPress={() => {
+                                            setImageType("Profile");
+                                            openModal("Open with")
+                                        }}
+                                    >
+                                        <CameraIcon />
+                                    </TouchableOpacity>
+                                </View>
+                                {/* Username and company/business name */}
+                                <View>
+                                    <Text style={style.fullname}>Raymond Reddington</Text>
+                                    <Text style={style.businessName}>Mega Enterprise Ltd</Text>
+                                </View>
+                            </View>
+                        </View>
                     </View>
-                    <View style={style.infoWrapper}>
-                        <Text style={style.infoHeading}>Person Info</Text>
-                        {/* Profile button to navigate to profile page */}
-                        <AccountButtons 
-                            title={accountButtons.profile.title}
-                            subtitle={accountButtons.profile.subtitle}
-                            icon={accountButtons.profile.icon}
-                            length={0}
-                            index={0}
-                            onPress={accountButtons.profile.onPress}
-                        />
+                    <View style={style.body}>
+                        <View style={style.infoWrapper}>
+                            <Text style={style.infoHeading}>Person Info</Text>
+                            {/* Profile button to navigate to profile page */}
+                            <AccountButtons 
+                                title={accountButtons.profile.title}
+                                subtitle={accountButtons.profile.subtitle}
+                                icon={accountButtons.profile.icon}
+                                length={0}
+                                index={0}
+                                onPress={accountButtons.profile.onPress}
+                            />
+                        </View>
+                        <View style={style.infoWrapper}>
+                            <Text style={style.infoHeading}>Business</Text>
+                            {/* Business button to navigate to business related pages like...*/}
+                            {/*  Analytics, Team Members and Logistics  */}
+                            {accountButtons.business.map((item, index) => {
+                                return (
+                                    <AccountButtons 
+                                        key={item.id}
+                                        title={item.title}
+                                        subtitle={item.subtitle}
+                                        icon={item.icon}
+                                        length={accountButtons.business.length - 1}
+                                        index={index}
+                                        onPress={item.onPress}
+                                    />
+                                )
+                            })}
+                        </View>
+                        <View style={style.infoWrapper}>
+                            <Text style={style.infoHeading}>Security & Support</Text>
+                            {/* Security and Support buttons to navigate to security and page and... */}
+                            {/*  trigger other support related bottomsheet */}
+                            {accountButtons.security.map((item, index) => {
+                                return (
+                                    <AccountButtons 
+                                        key={item.id}
+                                        title={item.title}
+                                        subtitle={item.subtitle}
+                                        icon={item.icon}
+                                        length={accountButtons.security.length - 1}
+                                        index={index}
+                                        onPress={item.onPress}
+                                    />
+                                )
+                            })}
+                        </View>
+                        {/* logout button */}
+                        <TouchableOpacity style={style.logoutButton}>
+                            <LogoutIcon />
+                            <Text style={style.logoutText}>Log Out</Text>
+                        </TouchableOpacity>
                     </View>
-                    <View style={style.infoWrapper}>
-                        <Text style={style.infoHeading}>Business</Text>
-                        {/* Business button to navigate to business related pages like...*/}
-                        {/*  Analytics, Team Members and Logistics  */}
-                        {accountButtons.business.map((item, index) => {
-                            return (
-                                <AccountButtons 
-                                    key={item.id}
-                                    title={item.title}
-                                    subtitle={item.subtitle}
-                                    icon={item.icon}
-                                    length={accountButtons.business.length - 1}
-                                    index={index}
-                                    onPress={item.onPress}
-                                />
-                            )
-                        })}
-                    </View>
-                    <View style={style.infoWrapper}>
-                        <Text style={style.infoHeading}>Security & Support</Text>
-                        {/* Security and Support buttons to navigate to security and page and... */}
-                        {/*  trigger other support related bottomsheet */}
-                        {accountButtons.security.map((item, index) => {
-                            return (
-                                <AccountButtons 
-                                    key={item.id}
-                                    title={item.title}
-                                    subtitle={item.subtitle}
-                                    icon={item.icon}
-                                    length={accountButtons.security.length - 1}
-                                    index={index}
-                                    onPress={item.onPress}
-                                />
-                            )
-                        })}
-                    </View>
-                    {/* logout button */}
-                    <TouchableOpacity style={style.logoutButton}>
-                        <LogoutIcon />
-                        <Text style={style.logoutText}>Log Out</Text>
-                    </TouchableOpacity>
                 </View>
             </ScrollView>
             {/* Bottom sheet component */}
@@ -355,7 +398,13 @@ const Account = ({navigation}) => {
                     <View style={style.uploadButtonsWrapper}>
                         <TouchableOpacity
                             style={style.uploadButton}
-                            onPress={() => {}}
+                            onPress={() => { 
+                                closeModal();
+                                navigation.navigate("CaptureImage", {
+                                    origin: "Account",
+                                    imageType: imageType,
+                                })
+                            }}
                         >
                             <View style={style.uploadIconWrapper}>
                                 <CameraPrimaryLargeIcon />
@@ -390,28 +439,76 @@ const style = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'flex-start', 
         alignItems: 'center',
-        padding: 20,
-        paddingTop: 12,
+        // padding: 20,
+        // paddingTop: 12,
+        gap: 20,
+    },
+    body: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start', 
+        alignItems: 'flex-start',
+        paddingHorizontal: 20,
+        width: '100%',
         gap: 20,
     },
     header: {
         display: 'flex',
-        flexDirection: 'row',
+        flexDirection: 'column',
         justifyContent: 'space-between',
         alignItems: 'center',
         width: '100%',
+        height: 189,
     },
-    stackName: {
-        fontFamily: 'mulish-bold',
-        fontSize: 16,
-        color: black,
+    bannerWrapper: {
+        width: '100%',
+        height: 100,
+        backgroundColor: secondaryColor,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'relative'
+    },
+    bannerCamera: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'absolute',
+        zIndex: 1,
+        right: 20,
+        top: 10,
+        height: 24,
+        width: 24,
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: white,
+        backgroundColor: primaryColor
+    },
+    bannerImage: {
+        width: '100%',
+        height: '100%',
+        resizeMode: 'cover',
+    },
+    accountInfoWrapper: {
+        display: 'flex',
+        flexDirection: 'row-reverse',
+        width: '100%',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+        position: 'relative',
+        padding: 20,
+        flex: 1,
     },
     profileWrapper: {
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
+        alignItems: 'flex-start',
+        justifyContent: 'space-between',
         gap: 5,
+        height: 129,
+        position: 'absolute',
+        bottom: 0,
+        right: 20,
     },
     imageContainer: {
         width: 80,
@@ -430,10 +527,10 @@ const style = StyleSheet.create({
         position: 'absolute',
         zIndex: 1,
         right: 0,
-        bottom: 10,
-        height: 30,
-        width: 30,
-        borderRadius: 15,
+        bottom: 7,
+        height: 24,
+        width: 24,
+        borderRadius: 12,
         borderWidth: 1,
         borderColor: white,
         backgroundColor: primaryColor
@@ -442,6 +539,7 @@ const style = StyleSheet.create({
         fontFamily: 'mulish-semibold',
         color: black,
         fontSize: 14,
+        marginBottom: 4,
     },
     businessName: {
         fontSize: 12,
@@ -459,14 +557,14 @@ const style = StyleSheet.create({
         marginBottom: 12,
     },
     logoutButton: {
+        width: "100%",
+        height: 42,
         backgroundColor: white,
         display: 'flex',
         flexDirection: 'row',
         justifyContent: "center",
         alignItems: "center",
         gap: 10,
-        width: "100%",
-        height: 42,
         borderRadius: 12,
     },
     logoutText: {

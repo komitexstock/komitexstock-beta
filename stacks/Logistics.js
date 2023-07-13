@@ -3,98 +3,14 @@ import {
     FlatList,
     StyleSheet,
     View,
-    Text,
-    BackHandler
 } from "react-native";
 // component
 import Header from "../components/Header";
 import LogisticsCard from "../components/LogisticsCard";
-import ModalButton from "../components/ModalButton";
-import CustomBottomSheet from "../components/CustomBottomSheet";
-import PopUpBottomSheet from "../components/PopUpBottomSheet";
-import SuccessPrompt from "../components/SuccessPrompt";
-import CautionPrompt from "../components/CautionPrompt";
-// react hooks
-import { useState, useRef, useEffect } from "react";
 // color
 import { black, bodyText, white } from "../style/colors";
 
 const Logistics = ({navigation}) => {
-
-    // state to confimr deactivation of logistics
-    const [confirmDeactivation, setConfirmDeactivation] = useState(false);
-
-    // state to store if pop up is visible
-    const [popUpVisible, setPopUpVisible] = useState(false);
-
-    // state to control modal overlay
-    const [showOverlay, setShowOverlay] = useState(false);
-
-    // use effect to close modal if back button is pressed
-    useEffect(() => {
-        // function to run if back button is pressed
-        const backAction = () => {
-            // if pop up is visible
-            if(popUpVisible) {
-                // close pop up
-                closePopUpModal();
-                return true;
-            } else {
-                if (showOverlay) {
-                    // if modal is open, close modal
-                    closeModal();
-                    return true;
-                } else {
-                    // if modal isnt open simply navigate back
-                    return false;
-                }
-            }
-
-        };
-    
-        // listen for onPress back button
-        const backHandler = BackHandler.addEventListener(
-            'hardwareBackPress',
-            backAction
-        );
-    
-        return () => backHandler.remove();
-
-    }, [showOverlay, popUpVisible]);
-
-    // modal ref
-    const bottomSheetModalRef = useRef(null);
-
-    // popUp modal ref
-    const popUpBottomSheetModalRef = useRef(null);
-
-    // state to control popupModal snap points array
-    const [snapPointsArray, setSnapPointsArray] = useState(["45%"])
-
-    const closeModal = () => {
-        bottomSheetModalRef.current?.close();
-        setShowOverlay(false);
-    };
-
-    // function to open bottom sheet modal
-    const openModal = () => {
-        bottomSheetModalRef.current?.present();
-        setShowOverlay(true);
-    }
-
-    // function to open bottom sheet popup
-    const closePopUpModal = () => {
-        popUpBottomSheetModalRef.current?.close();
-        setConfirmDeactivation(false);
-        setSnapPointsArray(["45%"])
-        setPopUpVisible(false);
-    };
-    
-    // function to close bottom sheet popup
-    const openPopUpModal = () => {
-        popUpBottomSheetModalRef.current?.present();
-        setPopUpVisible(true);
-    }
 
     // logistics list
     const logisticsList = [
@@ -105,7 +21,9 @@ const Logistics = ({navigation}) => {
             totalLocations: 17,
             totalStock: 25,
             lowStock: true,
-            onPress: openModal,
+            onPress: () => {
+                navigation.navigate("DeactivateLogistics");
+            },
             addNew: false 
         },
         {
@@ -115,7 +33,9 @@ const Logistics = ({navigation}) => {
             totalLocations: 15,
             totalStock: 17,
             lowStock: false,
-            onPress: openModal,
+            onPress: () => {
+                navigation.navigate("DeactivateLogistics");
+            },
             addNew: false,
         },
         {
@@ -125,7 +45,9 @@ const Logistics = ({navigation}) => {
             totalLocations: 11,
             totalStock: 9,
             lowStock: false,
-            onPress: openModal,
+            onPress: () => {
+                navigation.navigate("DeactivateLogistics");
+            },
             addNew: false,
         },
         {
@@ -135,7 +57,9 @@ const Logistics = ({navigation}) => {
             totalLocations: 5,
             totalStock: 7,
             lowStock: false,
-            onPress: openModal,
+            onPress: () => {
+                navigation.navigate("DeactivateLogistics");
+            },
             addNew: false,
         },
         {
@@ -152,108 +76,7 @@ const Logistics = ({navigation}) => {
         }
     ];
 
-    // location list
-    const locationsList = [
-        {
-            id: 1,
-            location: "Asaba",
-            charge: 4000,
-        },
-        {
-            id: 2,
-            location: "Benin City",
-            charge: 5000,
-        },
-        {
-            id: 3,
-            location: "Sapele",
-            charge: 3500,
-        },
-        {
-            id: 4,
-            location: "Ughelli",
-            charge: 4000,
-        },
-        {
-            id: 5,
-            location: "Agbor",
-            charge: 3500,
-        },
-        {
-            id: 6,
-            location: "Warri",
-            charge: 4500,
-        },
-        {
-            id: 7,
-            location: "Abraka",
-            charge: 4000,
-        },
-        {
-            id: 8,
-            location: "Ibusa",
-            charge: 3500,
-        },
-        {
-            id: 9,
-            location: "Okpanam",
-            charge: 3000,
-        },
-        {
-            id: 10,
-            location: "Uromi",
-            charge: 4000,
-        },
-        {
-            id: 11,
-            location: "Ogwashi-Uku",
-            charge: 3500,
-        },
-        {
-            id: 12,
-            location: "Auchi",
-            charge: 4500,
-        },
-        {
-            id: 13,
-            location: "Agbor",
-            charge: 3500,
-        },
-        {
-            id: 14,
-            location: "Eku",
-            charge: 4000,
-        }
-    ];
-
-    // stats array
-    const stats = [
-        {
-            id: 1,
-            title: "Total Deliveries",
-            presentValue: 500,
-            oldValue: 495,
-            decimal: false,
-            unit: "",
-            unitPosition: "end",
-        },
-        {
-            id: 2,
-            title: "Delivery Success Rate",
-            presentValue: 80,
-            oldValue: 82,
-            decimal: false,
-            unit: "%",
-            unitPosition: "end",
-        },
-    ]
-
-    // function to confirm deactivation of logistics
-    const handleDeactivation = () => {
-        setSnapPointsArray(["38%"])
-        setConfirmDeactivation(true);
-    }
-    
+    //  render Logistics stack
     return (
         <>
             <FlatList 
@@ -289,75 +112,6 @@ const Logistics = ({navigation}) => {
                     />
                 )}
             />
-            {/* custome bottom sheet */}
-            <CustomBottomSheet
-                bottomSheetModalRef={bottomSheetModalRef}
-                showOverlay={showOverlay}
-                closeModal={closeModal}
-                snapPointsArray={["40%", "60%", "90%", "100%"]}
-                autoSnapAt={3}
-                sheetTitle={""}
-                sheetSubtitle={""}
-            >   
-                {/* modal button */}
-                <ModalButton
-                    name={"Deactivate Logistics"}
-                    onPress={openPopUpModal}
-                    emptyFeilds={false}
-                    secondaryButton={true}
-                />
-            </CustomBottomSheet>
-            {/* popup bottomsheet modal */}
-            <PopUpBottomSheet
-                bottomSheetModalRef={popUpBottomSheetModalRef}
-                closeModal={closePopUpModal}
-                snapPointsArray={snapPointsArray}
-                autoSnapAt={0}
-                sheetTitle={false}
-                sheetSubtitle={false}
-            >   
-                {/* modal content to confirm deactivation */}
-                { !confirmDeactivation ? (
-                    <View style={style.popUpContent}>
-                        <CautionPrompt />
-                        <Text style={style.popUpHeading}>
-                            Deactivate Logistics
-                        </Text>
-                        <Text style={style.popUpParagraph}>
-                            Are you sure you want to deactivate Komitex Logistics
-                        </Text>
-                        <View style={style.popUpButtonWrapper}>
-                            <ModalButton
-                                name={"Yes, deactivate"}
-                                onPress={handleDeactivation}
-                            />
-                            <ModalButton
-                                name={"No, cancel"}
-                                onPress={closePopUpModal}
-                                secondaryButton={true}
-                            />
-                        </View>
-                    </View>
-                ) : (
-                    // modal content to acknowledge deactivation
-                    <View style={style.popUpContent}>
-                        <SuccessPrompt />
-                        <Text style={style.popUpHeading}>
-                            Komitex Succesfully Deactivated
-                        </Text>
-                        <Text style={style.popUpParagraph}>
-                            You have successfully deactivated Komitex Logistics
-                        </Text>
-                        <ModalButton
-                            name={"Done"}
-                            onPress={() => {
-                                closeModal();
-                                closePopUpModal();
-                            }}
-                        />
-                    </View>
-                )}
-            </PopUpBottomSheet>
         </>
     );
 }

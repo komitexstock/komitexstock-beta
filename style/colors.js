@@ -12,6 +12,7 @@ export const accentLight = "#E66D1C0D";
 export const yellowLight = "#FFFF000D";
 export const greenLight = "#0398550D";
 export const neutral = "#B1B2B2"; // mostly uses for inactive bottom navigation text
+export const cameraButton = "#B1B2B24D";
 export const inputLabel = "#837F7F";
 export const inputBorder = "#E7E5E5";
 export const toolTipBackground = "#333333";

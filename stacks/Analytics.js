@@ -339,7 +339,6 @@ const Analytics = ({navigation}) => {
             <Calender 
                 open={open}
                 closeCalender={hanldeCloseCalender}
-                date={date}
                 setDate={setDate}
             />
         </>

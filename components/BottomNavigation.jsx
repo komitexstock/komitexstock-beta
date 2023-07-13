@@ -1,4 +1,12 @@
-import { TouchableOpacity, View, StyleSheet, Text } from "react-native";
+// react native components
+import {
+    TouchableOpacity,
+    View,
+    StyleSheet,
+    Text,
+    StatusBar
+} from "react-native";
+// icons
 import HomeIcon from '../assets/icons/HomeIcon';
 import HomeActiveIcon from "../assets/icons/HomeActiveIcon";
 import OrdersIcon from "../assets/icons/OrdersIcon";
@@ -9,7 +17,9 @@ import InventoryIcon from "../assets/icons/InventoryIcon";
 import InventoryActiveIcon from "../assets/icons/InventoryActiveIcon";
 import AccountIcon from "../assets/icons/AccountIcon";
 import AccountActiveIcon from "../assets/icons/AccountActiveIcon";
+// react navigation
 import { useNavigation } from '@react-navigation/native';
+// app context
 import { useStack } from "../context/AppContext";
 // colors
 import { white, neutral, primaryColor } from "../style/colors";
@@ -19,6 +29,13 @@ const BottomNavigation = () => {
     const navigation = useNavigation();
 
     const currentStack = useStack();
+
+    // if user navigates to camera screen hide status bar
+    if (currentStack === "CaptureImage") {
+        StatusBar.setHidden(true);
+    } else {
+        StatusBar.setHidden(false);
+    }
 
     // stack where navigation should be visible
     const visibleNavigation = ["Home", "Orders", "Waybill", "Inventory", "Products", "Account"]; 

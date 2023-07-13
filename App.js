@@ -31,10 +31,13 @@ import Profile from './stacks/Profile';
 import TeamMembers from './stacks/TeamMembers';
 import Logistics from './stacks/Logistics';
 import Security from './stacks/Security';
+import GenerateBusinessReport from './stacks/GenerateBusinessReport';
+// others stacks
+import DeactivateLogistics from './stacks/DeactivateLogistics';
 import LogisticsDetails from './stacks/LogisticsDetails';
-// others
 import Reviews from './stacks/Reviews';
 import CompanyPolicy from './stacks/CompanyPolicy';
+import CaptureImage from './stacks/CaptureImage';
 
 // components
 import BottomNavigation from './components/BottomNavigation';
@@ -187,6 +190,14 @@ export default function App() {
                                 headerShown: false,
                                 }} 
                             />
+                            {/* Capture Image stack */}
+                            <Stack.Screen 
+                                name="CaptureImage" 
+                                component={CaptureImage} 
+                                options={{
+                                    headerShown: false,
+                                }} 
+                            />
                             {/* Profile stack */}
                             <Stack.Screen 
                                 name="Profile" 
@@ -208,7 +219,15 @@ export default function App() {
                                 name="LogisticsAnalytics" 
                                 component={LogisticsAnalytics} 
                                 options={{
-                                headerShown: false,
+                                    headerShown: false,
+                                }} 
+                            />
+                            {/* Generate Business Report Stack */}
+                            <Stack.Screen 
+                                name="GenerateBusinessReport" 
+                                component={GenerateBusinessReport} 
+                                options={{
+                                    headerShown: false,
                                 }} 
                             />
                             {/* Team stack */}
@@ -216,7 +235,7 @@ export default function App() {
                                 name="TeamMembers" 
                                 component={TeamMembers} 
                                 options={{
-                                headerShown: false,
+                                    headerShown: false,
                                 }} 
                             />
                             {/* logistics stack */}
@@ -224,7 +243,15 @@ export default function App() {
                                 name="Logistics" 
                                 component={Logistics} 
                                 options={{
-                                headerShown: false,
+                                    headerShown: false,
+                                }} 
+                            />
+                            {/* Deactivate Logistics stack */}
+                            <Stack.Screen 
+                                name="DeactivateLogistics" 
+                                component={DeactivateLogistics} 
+                                options={{
+                                    headerShown: false,
                                 }} 
                             />
                             {/* security stack */}
@@ -232,7 +259,7 @@ export default function App() {
                                 name="Security" 
                                 component={Security} 
                                 options={{
-                                headerShown: false,
+                                    headerShown: false,
                                 }} 
                             />
                             {/* Notifications stack */}

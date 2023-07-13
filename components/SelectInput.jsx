@@ -60,6 +60,13 @@ const SelectInput = ({label, labelIcon, placeholder, onPress, icon, value, activ
                             {value ? value : placeholder} 
                         </>
                     )}
+
+                    { inputFor === "Date" && (
+                        <>
+                            {/* render any other String */}
+                            {value ? value.format('DD/MM/YYYY') : placeholder} 
+                        </>
+                    )}
                     {/* if value is present show value, else show placeholder */}
                 </Text>
                 {icon ? icon : <ArrowDown />}
