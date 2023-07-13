@@ -1,4 +1,5 @@
 import 'react-native-gesture-handler'; //required import for bottomsheet to function
+// react hooks
 import { useCallback } from 'react';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
@@ -12,6 +13,9 @@ import Notifications from './stacks/Notifications';
 // Analytics related stacks
 import Analytics from './stacks/Analytics';
 import LogisticsAnalytics from './stacks/LogisticsAnalytics';
+import LocationAnalytics from './stacks/LocationAnalytics';
+import ProductAnalytics from './stacks/ProductAnalytics';
+import GenerateBusinessReport from './stacks/GenerateBusinessReport';
 // orders related stacks
 import Orders from './stacks/Orders';
 import SendOrder from './stacks/SendOrder';
@@ -31,22 +35,21 @@ import Profile from './stacks/Profile';
 import TeamMembers from './stacks/TeamMembers';
 import Logistics from './stacks/Logistics';
 import Security from './stacks/Security';
-import GenerateBusinessReport from './stacks/GenerateBusinessReport';
 // others stacks
 import DeactivateLogistics from './stacks/DeactivateLogistics';
 import LogisticsDetails from './stacks/LogisticsDetails';
 import Reviews from './stacks/Reviews';
 import CompanyPolicy from './stacks/CompanyPolicy';
 import CaptureImage from './stacks/CaptureImage';
-
 // components
 import BottomNavigation from './components/BottomNavigation';
+// App context
 import AppProvider from './context/AppContext';
+// bottom sheet components
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { StatusBar } from 'react-native';
-import { AppRegistry } from 'react-native';
-
+// react native component
+import { StatusBar, AppRegistry } from 'react-native';
 // colors
 import { white } from './style/colors';
 
@@ -73,6 +76,7 @@ export default function App() {
     }
 
     const Stack = createNativeStackNavigator();
+    
 
     return (
         // navigation container
@@ -214,10 +218,26 @@ export default function App() {
                                 headerShown: false,
                                 }} 
                             />
-                            {/* LogisticsAnalytics stack */}
+                            {/* Logistics Analytics stack */}
                             <Stack.Screen 
                                 name="LogisticsAnalytics" 
                                 component={LogisticsAnalytics} 
+                                options={{
+                                    headerShown: false,
+                                }} 
+                            />
+                            {/* Location Analytics stack */}
+                            <Stack.Screen 
+                                name="LocationAnalytics" 
+                                component={LocationAnalytics} 
+                                options={{
+                                    headerShown: false,
+                                }} 
+                            />
+                            {/* Product Analytics stack */}
+                            <Stack.Screen 
+                                name="ProductAnalytics" 
+                                component={ProductAnalytics} 
                                 options={{
                                     headerShown: false,
                                 }} 
@@ -287,7 +307,7 @@ export default function App() {
                                 }}
                             />
                         </Stack.Navigator>
-                    <BottomNavigation />
+                        <BottomNavigation />
                     </BottomSheetModalProvider>
                 </GestureHandlerRootView>
             </AppProvider>

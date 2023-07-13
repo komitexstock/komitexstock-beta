@@ -6,7 +6,7 @@ import { black, bodyText, white } from '../style/colors';
 import PercentageChange from './PercentageChange';
 
 // product list item that shows up in search results
-const LogisticsAnalyticsItem = ({logistics, numberOfDeliveries, totalPrice, oldTotalPrice, imageUrl, onPress}) => {
+const LogisticsAnalyticsItem = ({logistics, numberOfDeliveries, totalPrice, oldTotalPrice, imageUrl, onPress, disableClick}) => {
     // product_name => string
     // quantity => int
     // price => float
@@ -14,12 +14,38 @@ const LogisticsAnalyticsItem = ({logistics, numberOfDeliveries, totalPrice, oldT
     // onPress => function
 
     // render LogisticsAnalyticsItem component
+    // render unclickable componer
+    if (disableClick) return (
+        <View style={style.orderWrapper}>
+            {/* product image */}
+            <Image 
+                source={imageUrl}
+                style={style.orderImage}
+            />
+            {/* product information */}
+            <View style={style.orderInfo}>
+                <Text style={style.orderMainText}>
+                    {logistics}
+                </Text>
+                <Text style={style.orderSubText}>
+                    {numberOfDeliveries} deliveries
+                </Text>
+            </View>
+            <View style={style.orderPriceContainer}>
+                <Text style={style.orderPrice}>
+                    ₦{totalPrice.toLocaleString()}.<Text style={style.decimal}>00</Text>
+                </Text>
+                <PercentageChange
+                    presentValue={totalPrice}
+                    oldValue={oldTotalPrice}
+                />
+            </View>
+        </View>
+    );
+    // render Clickable component
     return (
         <TouchableOpacity 
-            style={[
-                style.orderWrapper, 
-            ]}
-            // on press open edit product bottomsheet
+            style={style.orderWrapper}
             onPress={onPress}
         >
             {/* product image */}

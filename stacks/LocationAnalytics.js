@@ -21,26 +21,25 @@ import Header from "../components/Header";
 import BarChart from "../components/BarChart";
 import StatWrapper from "../components/StatWrapper";
 import StatCard from "../components/StatCard";
-import LocationAnalyticsItem from "../components/LocationAnalyticsItem";
+import LogisticsAnalyticsItem from "../components/LogisticsAnalyticsItem";
 import Calender from "../components/Calender";
 // icons
 import ArrowDownSmall from '../assets/icons/ArrowDownSmall';
-import VerifiedIcon from '../assets/icons/VerifiedIcon';
 // react hooks
 import { useState } from "react";
 
-
-const LogisticsAnalytics = ({navigation}) => {
+const LocationAnalytics = ({navigation}) => {
     // bar chart data
     const data = [
-        25200,
-        19200,
-        83200,
-        61900,
-        41500,
-        28600,
-        75800
+        46800,
+        24500,
+        35800,
+        67200,
+        15400,
+        81500,
+        52900
     ];
+      
     
     // bar chart x axis labels
     const labels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']; 
@@ -103,28 +102,31 @@ const LogisticsAnalytics = ({navigation}) => {
         },
     ];
 
-    // location analytics list
-    const locationAnalyticsList = [
+    // logistic analytics list
+    const logisticsAnalyticsList = [
         {
             id: 1,
-            location: 'Warri',
-            numberOfDeliveries: 17,
-            totalPrice: 88500,
-            oldTotalPrice: 68000,
+            logistics: 'Komitex Logistics',
+            numberOfDeliveries: 10,
+            totalPrice: 72500,
+            oldTotalPrice: 67000,
+            imageUrl: require('../assets/images/komitex.png'),
         },
         {
             id: 2,
-            location: 'Sapele',
+            logistics: 'DHL',
             numberOfDeliveries: 13,
             totalPrice: 49500,
-            oldTotalPrice: 48000,
+            oldTotalPrice: 67000,
+            imageUrl: require('../assets/images/dhl.png'),
         },
         {
             id: 3,
-            location: 'Ughelli',
-            numberOfDeliveries: 5,
-            totalPrice: 35000,
-            oldTotalPrice: 40000,
+            logistics: 'Fedex',
+            numberOfDeliveries: 7,
+            totalPrice: 70000,
+            oldTotalPrice: 67000,
+            imageUrl: require('../assets/images/fedex.png'),
         },
     ];
 
@@ -141,7 +143,7 @@ const LogisticsAnalytics = ({navigation}) => {
 
     const [date, setDate] = useState(null);
 
-    // render LogisticsAnalytics page
+    // render LocationAnalytics page
     return (
         <>
             <ScrollView
@@ -152,16 +154,7 @@ const LogisticsAnalytics = ({navigation}) => {
                     {/* header component */}
                     <Header 
                         navigation={navigation} 
-                        stackName={
-                            <View style={style.headerWrapper}>
-                                <Image 
-                                    source={require('../assets/images/komitex.png')}
-                                    style={style.logisticsImage}
-                                />
-                                <Text style={style.headerText} >Komitex Logistics</Text>
-                                <VerifiedIcon />
-                            </View>
-                        } 
+                        stackName={"Warri"} 
                         iconFunction={null} 
                         icon={null} 
                         unpadded={true}
@@ -208,15 +201,16 @@ const LogisticsAnalytics = ({navigation}) => {
                         <Text style={style.topStatHeading}>Top Locations</Text>
                         <View style={style.tabsContainer}>
                             <View style={style.tabContentList}>
-                                {/* Location list */}
-                                {locationAnalyticsList.map(item => (
-                                    <LocationAnalyticsItem
+                                {/* Logistics list */}
+                                {logisticsAnalyticsList.map(item => (
+                                    <LogisticsAnalyticsItem
                                         key={item.id}
-                                        location={item.location}
+                                        logistics={item.logistics}
                                         numberOfDeliveries={item.numberOfDeliveries}
                                         totalPrice={item.totalPrice}
                                         oldTotalPrice={item.oldTotalPrice}
-                                        disableCick={true}
+                                        imageUrl={item.imageUrl}
+                                        disableClick={true}
                                     />
                                 ))}
                             </View>
@@ -276,6 +270,7 @@ const style = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'flex-start',
         marginBottom: 12,
+        marginTop: 4,
     },
     rangeButton: {
         hieght: 26,
@@ -293,9 +288,6 @@ const style = StyleSheet.create({
         color: bodyText,
         fontFamily: 'mulish-medium',
         fontSize: 10,
-    },
-    chartContainer: {
-        paddingTop: 20,
     },
     topStatsWrapper: {
         display: 'flex',
@@ -361,4 +353,4 @@ const style = StyleSheet.create({
     }
 })
  
-export default LogisticsAnalytics;
+export default LocationAnalytics;

@@ -9,7 +9,7 @@ import {
 // calenderPicker component
 import CalendarPicker from 'react-native-calendar-picker'; 
 // colors
-import { primaryColor, white, bodyText, subText } from '../style/colors';
+import { primaryColor, white, bodyText, subText, neutral } from '../style/colors';
 // import icons
 import PrevArrowIcon from '../assets/icons/PrevArrowIcon';
 import NextArrowIcon from '../assets/icons/NextArrowIcon';
@@ -18,6 +18,7 @@ import ModalButton from '../components/ModalButton';
 import ActionButton from '../components/ActionButton';
 // react hooks
 import { useState } from 'react';
+import { min } from 'moment';
 
 // get windows width
 const windwoWidth = Dimensions.get('window').width;
@@ -30,7 +31,7 @@ const paddingHorizontal = 40;
 
 const calendatWidth = windwoWidth - paddingHorizontal;
 
-const Calender = ({open, closeCalender, setDate, disableActionButtons}) => {
+const Calender = ({open, closeCalender, setDate, disableActionButtons, minDate, maxDate}) => {
 
     // temporary date variable
     const [tempDate, setTempDate] = useState("");
@@ -133,8 +134,9 @@ const Calender = ({open, closeCalender, setDate, disableActionButtons}) => {
                         customDayHeaderStyles={customDayHeaderStyles}
                         monthTitleStyle={calenderStyles.monthTitleStyle}
                         yearTitleStyle={calenderStyles.yearTitleStyle}
-                        maxDate={new Date()}
-                        // minDate={new Date()}
+                        minDate={minDate && minDate}
+                        maxDate={maxDate && maxDate}
+                        disabledDatesTextStyle={{color: neutral}}
                     />
                     <View style={style.calendarBaseContainer}>
                         { !disableActionButtons && (

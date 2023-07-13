@@ -6,7 +6,7 @@ import { black, bodyText, white } from '../style/colors';
 import PercentageChange from './PercentageChange';
 
 // product list item that shows up in search results
-const LocationAnalyticsItem = ({location, numberOfDeliveries, totalPrice, oldTotalPrice, onPress}) => {
+const LocationAnalyticsItem = ({location, numberOfDeliveries, totalPrice, oldTotalPrice, onPress, disableCick}) => {
     // product_name => string
     // quantity => int
     // price => float
@@ -14,12 +14,32 @@ const LocationAnalyticsItem = ({location, numberOfDeliveries, totalPrice, oldTot
     // onPress => function
 
     // render LocationAnalyticsItem component
+    if (disableCick) return (
+        <View style={style.orderWrapper}>
+            {/* product information */}
+            <View style={style.orderInfo}>
+                <Text style={style.orderMainText}>
+                    {location}
+                </Text>
+                <Text style={style.orderSubText}>
+                    {numberOfDeliveries} deliveries
+                </Text>
+            </View>
+            <View style={style.orderPriceContainer}>
+                <Text style={style.orderPrice}>
+                    ₦{totalPrice.toLocaleString()}.<Text style={style.decimal}>00</Text>
+                </Text>
+                <PercentageChange
+                    presentValue={totalPrice}
+                    oldValue={oldTotalPrice}
+                />
+            </View>
+        </View>
+    );
+
     return (
         <TouchableOpacity 
-            style={[
-                style.orderWrapper, 
-            ]}
-            // on press open edit product bottomsheet
+            style={style.orderWrapper}
             onPress={onPress}
         >
             {/* product information */}

@@ -14,7 +14,6 @@ import {
     neutral,
     secondaryColor,
     white,
-    primaryColor
 } from "../style/colors";
 // components
 import Header from "../components/Header";
@@ -118,7 +117,7 @@ const Analytics = ({navigation}) => {
             totalPrice: 72500,
             oldTotalPrice: 67000,
             imageUrl: require('../assets/images/maybach-sunglasses.png'),
-            onPress: () => {}
+            onPress: () => {navigation.navigate("ProductAnalytics")}
         },
         {
             id: 2,
@@ -127,7 +126,7 @@ const Analytics = ({navigation}) => {
             totalPrice: 49500,
             oldTotalPrice: 67000,
             imageUrl: require('../assets/images/sneakers.png'),
-            onPress: () => {}
+            onPress: () => {navigation.navigate("ProductAnalytics")}
         },
         {
             id: 3,
@@ -136,7 +135,7 @@ const Analytics = ({navigation}) => {
             totalPrice: 70000,
             oldTotalPrice: 67000,
             imageUrl: require('../assets/images/black-sketchers.png'),
-            onPress: () => {}
+            onPress: () => {navigation.navigate("ProductAnalytics")}
         },
         {
             id: 4,
@@ -145,7 +144,7 @@ const Analytics = ({navigation}) => {
             totalPrice: 150000,
             oldTotalPrice: 89000,
             imageUrl: require("../assets/images/Timberland.jpg"),
-            onPress: () => {}
+            onPress: () => {navigation.navigate("ProductAnalytics")}
         },
     ];
 
@@ -157,7 +156,7 @@ const Analytics = ({navigation}) => {
             numberOfDeliveries: 17,
             totalPrice: 88500,
             oldTotalPrice: 68000,
-            onPress: () => {}
+            onPress: () => {navigation.navigate("LocationAnalytics")}
         },
         {
             id: 2,
@@ -165,7 +164,7 @@ const Analytics = ({navigation}) => {
             numberOfDeliveries: 13,
             totalPrice: 49500,
             oldTotalPrice: 48000,
-            onPress: () => {}
+            onPress: () => {navigation.navigate("LocationAnalytics")}
         },
         {
             id: 3,
@@ -173,7 +172,7 @@ const Analytics = ({navigation}) => {
             numberOfDeliveries: 5,
             totalPrice: 35000,
             oldTotalPrice: 40000,
-            onPress: () => {}
+            onPress: () => {navigation.navigate("LocationAnalytics")}
         },
     ];
 
@@ -216,7 +215,7 @@ const Analytics = ({navigation}) => {
                                 style={style.rangeButton}
                                 onPress={hanldeOpenCalender}
                             >
-                                <Text style={style.rangeButtonText}>This Week</Text>
+                                <Text style={style.rangeButtonText}>Last 7 Days</Text>
                                 <ArrowDownSmall />
                             </TouchableOpacity>
                         </View>
@@ -340,6 +339,7 @@ const Analytics = ({navigation}) => {
                 open={open}
                 closeCalender={hanldeCloseCalender}
                 setDate={setDate}
+                maxDate={new Date()}
             />
         </>
     );
@@ -369,6 +369,7 @@ const style = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'flex-start',
         marginBottom: 12,
+        marginTop: 4,
     },
     rangeButton: {
         hieght: 26,

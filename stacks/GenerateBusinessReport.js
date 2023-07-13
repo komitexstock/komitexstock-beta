@@ -208,6 +208,7 @@ const GenerateBusinessReport = ({navigation}) => {
                 closeCalender={calender.close}
                 setDate={calender.setDate}
                 disableActionButtons={true}
+                maxDate={new Date()}
             />
             <CustomBottomSheet 
                 bottomSheetModalRef={bottomSheetModalRef}
