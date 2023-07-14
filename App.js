@@ -41,6 +41,7 @@ import LogisticsDetails from './stacks/LogisticsDetails';
 import Reviews from './stacks/Reviews';
 import CompanyPolicy from './stacks/CompanyPolicy';
 import CaptureImage from './stacks/CaptureImage';
+import WriteReview from './stacks/WriteReview';
 // components
 import BottomNavigation from './components/BottomNavigation';
 // App context
@@ -286,6 +287,14 @@ export default function App() {
                             <Stack.Screen 
                                 name="Notifications" 
                                 component={Notifications}
+                                options={{
+                                headerShown: false,
+                                }}
+                            />
+                            {/* Write Review stack */}
+                            <Stack.Screen 
+                                name="WriteReview" 
+                                component={WriteReview}
                                 options={{
                                 headerShown: false,
                                 }}

@@ -561,9 +561,7 @@ const LogisticsDetails = ({navigation}) => {
 
     const handleAddLogisticsSuccess = () => {
         closePopUpModal();
-        setTimeout(() => {
-            navigation.navigate("Inventory");
-        }, 1000);
+        navigation.navigate("Inventory");
     }
     
     // render LogisticsDetails page

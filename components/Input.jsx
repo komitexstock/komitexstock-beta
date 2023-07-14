@@ -14,7 +14,7 @@ import { black, inputBorder, inputLabel, neutral, primaryColor, white } from "..
 import EyeIcon from "../assets/icons/EyeIcon";
 import EyeSlashIcon from "../assets/icons/EyeSlashIcon";
 
-const Input = ({label, placeholder, onChange, value, forceBlur, multiline, editable, minRows, textAlign, height, keyboardType, adornment, helperText, error, setError, isPasswordInput}) => {
+const Input = ({label, placeholder, onChange, value, forceBlur, multiline, editable, minRows, textAlign, height, keyboardType, adornment, helperText, characterLimit, error, setError, isPasswordInput}) => {
     // label, placeholder, textAlign, keyboardType, helperText  => string
     // value => variable (string or int)
     // forceBlur, multiline, editable, adornment, error, isPasswordInput => Boolean
@@ -28,8 +28,18 @@ const Input = ({label, placeholder, onChange, value, forceBlur, multiline, edita
         forceBlur && setInputInFocus(false);
     }, [forceBlur])
 
+    const [charactersLeft, setCharactersLeft] = useState(characterLimit);
+
     // handle on text change in input
     const handleTextChange = (text) => {
+        if (characterLimit) {
+            setCharactersLeft(() => {
+                const characterDifference = characterLimit - text.length
+                if (characterDifference < 0) return 0;
+                return characterDifference;
+            });
+        }
+
         onChange(text);
         if (text === '') setError(true);
         else setError(false);
@@ -54,7 +64,7 @@ const Input = ({label, placeholder, onChange, value, forceBlur, multiline, edita
     // return input component
     return (
         <View style={style.inputWrapper}>
-            <Text style={style.label}>{label}</Text>
+            { label && <Text style={style.label}>{label}</Text>}
             { adornment ? (
                 // if it's an adornment input
                 <View
@@ -136,11 +146,15 @@ const Input = ({label, placeholder, onChange, value, forceBlur, multiline, edita
                     numberOfLines={minRows ? minRows : 1}
                     textAlignVertical={textAlign ? textAlign : "center"}
                     editable={editable ? editable : true}
+                    maxLength={characterLimit ? characterLimit : -1} 
                 />
             )}
-            { helperText && (
-                // display helper text if it's given
-                <Text style={style.label}>{helperText}</Text>
+            { helperText || characterLimit && (
+                <View style={style.helperTextWrapper}>
+                    {/* // display helper text if it's given */}
+                    <Text style={style.label}>{helperText}</Text>
+                    <Text style={style.label}>{charactersLeft} character left</Text>
+                </View>
             )}
         </View>
     );
@@ -200,6 +214,13 @@ const style = StyleSheet.create({
     focusedInput: {
         borderColor: primaryColor
     },
+    helperTextWrapper: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'flex-end',
+        justifyContent: 'space-between',
+        gap: 20,
+    }
 })
  
 export default Input;

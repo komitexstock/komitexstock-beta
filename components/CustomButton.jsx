@@ -3,7 +3,7 @@ import { TouchableOpacity, Text, StyleSheet, View } from "react-native";
 // colors
 import { inactivePrimaryColor, primaryColor, secondaryColor, white } from "../style/colors";
 
-const CustomButton = ({name, onPress, backgroundColor, fixed, inactive, secondaryButton}) => {
+const CustomButton = ({name, onPress, backgroundColor, fixed, inactive, secondaryButton, unpadded}) => {
     // name => string
     // onPress => function
     // backgroundColor => string
@@ -15,6 +15,7 @@ const CustomButton = ({name, onPress, backgroundColor, fixed, inactive, secondar
             style={[ 
                 fixed ? style.fixed : style.buttonWrapper, 
                 {backgroundColor: backgroundColor}, 
+                unpadded && {paddingHorizontal: 0}
             ]}
         >
             <TouchableOpacity 
@@ -68,6 +69,7 @@ const style = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'flex-end',
         padding: 20,
+        paddingBottom: 30,
         zIndex: 1,
     },
     fixed: {
@@ -78,6 +80,7 @@ const style = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'flex-end',
         padding: 20,
+        paddingBottom: 30,
         zIndex: 1000,
         position: "absolute",
         bottom: 0,
