@@ -125,9 +125,20 @@ const Products = ({navigation, route}) => {
         },
     ];
 
-    // state to control success alert
-    const [successAlert, setSuccessAlert] = useState(null);
-    // console.table(successAlert);
+    const [alert, setAlert] = useState({
+        show: false,
+        type: "Success",
+        text: ""
+    });
+
+    const closeAlert = () => {
+        setAlert(prevAlert => {
+            return {
+                ...prevAlert,
+                show: false
+            }
+        });
+    }
 
     // state to store edited products= parameter
     const [editProduct, setEditProduct] = useState(false);
@@ -144,14 +155,18 @@ const Products = ({navigation, route}) => {
 
     // use effect to remove add product or edit product success propmt after 3 seconds
     useLayoutEffect(() => {
-        // if success is true, set success as false after 3 seconds
-        if (route.params.success && route.params) {
-            setSuccessAlert(route.params.success);
-            
-            setTimeout(() => {
-                setSuccessAlert(false);
-            }, 3000);
+
+        if (route.params) {
+            setAlert({
+                show: true,
+                type: route.params.type,
+                text: route.params.text
+            })
         }
+        
+        setTimeout(() => {
+            closeAlert();
+        }, 4000);
 
     }, [route.params]);
     
@@ -316,18 +331,6 @@ const Products = ({navigation, route}) => {
         </>
     };
 
-    // search modal state
-    const editProductModal = {
-        snapPointsArray: ["50%", "85%", "100%"],
-        autoSnapAt: 2,
-        sheetTitle: "",
-        overlay: true,
-        clearFilterFunction: false,
-        modalContent: <>
-            <EditProductContent />        
-        </>
-    };
-
     // close modal function
     const closeModal = () => {
         setModal(prevModal => {
@@ -357,6 +360,31 @@ const Products = ({navigation, route}) => {
         }
         modalRef.current?.present();
     }
+
+    // function to update selected product
+    const handleUpdateProduct = (productId, productName, price, imageUrl) => {
+        closeModal();
+        navigation.navigate("Products", {
+            show: true,
+            type: "Success",
+            text: "Product edited successfully!"
+        });
+    }
+
+    // search modal state
+    const editProductModal = {
+        snapPointsArray: ["50%", "85%", "100%"],
+        autoSnapAt: 2,
+        sheetTitle: "",
+        overlay: true,
+        clearFilterFunction: false,
+        modalContent: <>
+            <EditProductContent 
+                handleUpdateProduct={handleUpdateProduct}
+            />        
+        </>
+    };
+
 
     // render Products page
     return (
@@ -455,11 +483,11 @@ const Products = ({navigation, route}) => {
             </CustomBottomSheet>
 
             {/* success alert to display on addproduct or edit product */}
-            { successAlert && (
+            { alert.show && (
                 <AlertNotice 
-                    type={"success"}
-                    text={"Product successfully created and saved!"}
-                    closeAlert={setSuccessAlert}
+                    type={alert.type}
+                    text={alert.text}
+                    closeAlert={closeAlert}
                 />
             )}
         </>

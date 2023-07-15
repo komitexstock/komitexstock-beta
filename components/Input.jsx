@@ -146,15 +146,13 @@ const Input = ({label, placeholder, onChange, value, forceBlur, multiline, edita
                     numberOfLines={minRows ? minRows : 1}
                     textAlignVertical={textAlign ? textAlign : "center"}
                     editable={editable ? editable : true}
-                    maxLength={characterLimit ? characterLimit : -1} 
+                    maxLength={characterLimit ? characterLimit : null} 
                 />
             )}
-            { helperText || characterLimit && (
-                <View style={style.helperTextWrapper}>
-                    {/* // display helper text if it's given */}
-                    <Text style={style.label}>{helperText}</Text>
-                    <Text style={style.label}>{charactersLeft} character left</Text>
-                </View>
+            {/* // display helper text if it's given */}
+            {helperText && <Text style={style.label}>{helperText}</Text>}
+            {characterLimit && (
+                <Text style={style.limit}>{charactersLeft} character left</Text>
             )}
         </View>
     );
@@ -167,11 +165,20 @@ const style = StyleSheet.create({
         flexDirection: 'column',
         gap: 5,
         width: "100%",
+        position: 'relative'
     },
     label: {
         fontFamily: 'mulish-semibold',
         fontSize: 10,
         color: inputLabel,
+    },
+    limit: {
+        fontFamily: 'mulish-semibold',
+        fontSize: 10,
+        color: inputLabel,
+        position: 'absolute',
+        right: 0,
+        top: "100%",
     },
     input: {
         width: "100%",
@@ -219,7 +226,6 @@ const style = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'flex-end',
         justifyContent: 'space-between',
-        gap: 20,
     }
 })
  

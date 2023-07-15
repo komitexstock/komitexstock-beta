@@ -23,7 +23,7 @@ import GalleryBlackIcon from "../assets/icons/GalleryBlackIcon";
 import InfoIcon from "../assets/icons/InfoIcon";
 
 // Edit product modal content
-const EditProductContent = ({product}) => {
+const EditProductContent = ({productId, handleUpdateProduct}) => {
 
     // state to store product name
     const [productName, setProductName] = useState("Maybach Sunglasses");
@@ -127,14 +127,6 @@ const EditProductContent = ({product}) => {
                                 placeholder={"Type the name of the product"}
                                 onChange={(text) => setProductName(text)}
                                 value={productName}
-                                multiline={false}
-                                editable={true}
-                                minRows={1}
-                                textAlign={"center"}
-                                height={44}
-                                keyboardType={"default"}
-                                adornment={false}
-                                helperText={false}
                                 error={errorProductName}
                                 setError={setErrorProductName}
                             />
@@ -145,16 +137,10 @@ const EditProductContent = ({product}) => {
                                 placeholder={"Price"}
                                 onChange={updatePrice}
                                 value={price ? price.toLocaleString() : ''}
-                                multiline={false}
-                                editable={true}
-                                minRows={1}
-                                textAlign={"center"}
-                                height={44}
-                                keyboardType={"numeric"}
                                 adornment={"₦"}
-                                helperText={false}
                                 error={errorPrice}
                                 setError={setErrorPrice}
+                                keyboardType={"numeric"}
                             />
                         </View>
                     </View>
@@ -164,7 +150,7 @@ const EditProductContent = ({product}) => {
                             <Text style={style.deleteText}>Delete</Text>
                         </TouchableOpacity>
                         {/* save product changes */}
-                        <TouchableOpacity style={[style.save]}>
+                        <TouchableOpacity style={[style.save]} onPress={handleUpdateProduct}>
                             <Text style={style.saveText}>Save</Text>
                         </TouchableOpacity>
                     </View>

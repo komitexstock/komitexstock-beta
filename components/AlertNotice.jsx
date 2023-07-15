@@ -15,16 +15,16 @@ const AlertNotice = ({type, text, closeAlert}) => {
                     style.noticeWrapper,
                     // render red backround style if type === "error"
                     // render green backround style if type === "success"
-                    type === "success" ? style.success : style.error
+                    type === "Success" ? style.success : style.error
                 ]}
             >   
                 <View>
                     {/* render the appropriate icon */}
-                    { type === "success" ? <SuccessIcon /> : <ErrorIcon />}
+                    { type === "Success" ? <SuccessIcon /> : <ErrorIcon />}
                 </View> 
                 <View style={style.textWrapper}>
                     {/* render the appropriate heading */}
-                    <Text style={style.noticeType}>{type === "success" ? "Success!" : "Error!"}</Text>
+                    <Text style={style.noticeType}>{type === "Success" ? "Success!" : "Error!"}</Text>
                     {/* render text passed to the component as a prop */}
                     <Text style={style.noticeInfo}>{text}</Text>
                 </View>

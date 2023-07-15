@@ -34,9 +34,7 @@ const Products = ({navigation}) => {
             lowStock: true,
             verified: true,
             onPress: () => {
-                navigation.navigate("Products", {
-                    success: false
-                });
+                navigation.navigate("Products");
             }
         },
         {
@@ -48,9 +46,7 @@ const Products = ({navigation}) => {
             lowStock: false,
             verified: true,
             onPress: () => {
-                navigation.navigate("Products", {
-                    success: false
-                });
+                navigation.navigate("Products");
             }
         },
         {
@@ -62,9 +58,7 @@ const Products = ({navigation}) => {
             lowStock: false,
             verified: true,
             onPress: () => {
-                navigation.navigate("Products", {
-                    success: false
-                });
+                navigation.navigate("Products");
             }
         },
         {
@@ -76,9 +70,7 @@ const Products = ({navigation}) => {
             lowStock: false,
             verified: false,
             onPress: () => {
-                navigation.navigate("Products", {
-                    success: false
-                });
+                navigation.navigate("Products");
             }
         },
     ];

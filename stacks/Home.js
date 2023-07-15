@@ -218,7 +218,7 @@ const Home = ({navigation}) => {
     //         });
     //         bottomSheetModalRef.current?.present();
     //         setShowOverlay(true);
-    //     }, 15000);
+    //     }, 5000);
     // }, [])
 
     // render Home page

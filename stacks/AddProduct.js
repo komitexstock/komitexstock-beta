@@ -71,9 +71,11 @@ const AddProduct = ({navigation}) => {
 
     // navigate to products with success parammeter
     // success parameter triggers a success prompt
-    const navigateToProducts = () => {
+    const handleAddProduct = () => {
         navigation.navigate("Products", {
-            success: true,
+            show: true,
+            type: "Success",
+            text: "Product successfully created and saved!"
         });
     }
 
@@ -167,7 +169,7 @@ const AddProduct = ({navigation}) => {
             {/* Add Product button, disables on empty fields */}
             <CustomButton 
                 name={"Add Product"}
-                onPress={navigateToProducts}
+                onPress={handleAddProduct}
                 backgroundColor={background}
                 fixed={false}
                 inactive={emptyFields}
