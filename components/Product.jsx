@@ -11,14 +11,14 @@ import {
 import ClearSearch from "../assets/icons/ClearSearch";
 import { background, black, white } from "../style/colors";
 
-const Product = ({product, removeProduct, increaseQuantity, decreaseQuantity}) => {
+const Product = ({product, removeProduct, increaseQuantity, decreaseQuantity, invertColor}) => {
     // product => object
     // removeProduct, increaseQuantity, decreaseQuantity => function
 
     // render Product component, 
     // used as product input in sending order of sending waybill
     return (
-        <View style={style.productItem}>
+        <View style={[style.productItem, invertColor && {backgroundColor: background}]}>
             <View style={style.productDetailsWrapper}>
                 {/* product main detail */}
                 <Image
@@ -31,7 +31,12 @@ const Product = ({product, removeProduct, increaseQuantity, decreaseQuantity}) =
             </View>
 
             <View style={style.productQuantityWrapper}>
-                <View style={style.productQuantityContainer}>
+                <View 
+                    style={[
+                        style.productQuantityContainer,
+                        invertColor && {backgroundColor: white}
+                    ]}
+                >
                     {/* reduce quantity button */}
                     <TouchableOpacity 
                         style={style.quantityButton}
@@ -97,6 +102,7 @@ const style = StyleSheet.create({
         fontFamily: "mulish-medium",
         color: black,
         flexWrap: "wrap",
+        fontSize: 12,
     },
     productQuantityWrapper: {
         display: "flex",

@@ -35,22 +35,21 @@ const Home = ({navigation}) => {
     // order list
     const orders = [
         {
-            name: "John Doe",
-            location: "New York",
+            name: "Richard Idana",
+            location: "Warri",
             products: [
-                { product_name: "Shirt", quantity: 2 },
-                { product_name: "Jeans", quantity: 1 },
+                { product_name: "Maybach Sunglasses", quantity: 2 },
             ],
             datetime: "2023-03-15 09:30",
             id: "abc123",
-            price: 15000,
+            price: 38000,
             status: "Delivered",
             imageUrl: require('../assets/images/komitex.png'),
             newMessage: true,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "abc123",
-                    type: "order",
+                    type: "Order",
                     order: "Chat Message",
                     name: "Komitex",
                     imageUrl: require('../assets/images/komitex.png'),
@@ -73,7 +72,7 @@ const Home = ({navigation}) => {
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "def456",
-                    type: "order",
+                    type: "Order",
                     order: "Chat Message",
                     name: "Fedex",
                     imageUrl: require('../assets/images/fedex.png'),
@@ -95,7 +94,7 @@ const Home = ({navigation}) => {
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "ghi789",
-                    type: "order",
+                    type: "Order",
                     order: "Chat Message",
                     name: "Komitex",
                     imageUrl: require('../assets/images/komitex.png'),
@@ -117,7 +116,7 @@ const Home = ({navigation}) => {
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "mno345",
-                    type: "order",
+                    type: "Order",
                     order: "Chat Message",
                     name: "Dhl",
                     imageUrl: require('../assets/images/dhl.png'),
@@ -139,7 +138,7 @@ const Home = ({navigation}) => {
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "pqr678",
-                    type: "order",
+                    type: "Order",
                     order: "Chat Message",
                     name: "Ups",
                     imageUrl: require('../assets/images/ups.png'),

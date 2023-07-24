@@ -6,7 +6,7 @@ import ArrowLeft from "../assets/icons/ArrowLeft";
 import { black, white } from "../style/colors";
 
 
-const Header = ({navigation, stackName, iconFunction, icon, removeBackArrow, inlineArrow, backgroundColor, unpadded}) => {
+const Header = ({navigation, stackName, iconFunction, icon, removeBackArrow, inlineArrow, backgroundColor, unpadded, viewStyle}) => {
     // stack name => string
     // iconfunction => function
     // icon => jsx component
@@ -14,7 +14,13 @@ const Header = ({navigation, stackName, iconFunction, icon, removeBackArrow, inl
 
     // render header component
     return (
-        <View style={[style.header, {backgroundColor: backgroundColor ? backgroundColor : 'transparent'}]}>
+        <View 
+            style={[
+                style.header, 
+                viewStyle,
+                {backgroundColor: backgroundColor ? backgroundColor : 'transparent'},
+            ]}
+        >
             {/* elevated back arrow, visible by default */}
             { !removeBackArrow && (
                 <TouchableOpacity

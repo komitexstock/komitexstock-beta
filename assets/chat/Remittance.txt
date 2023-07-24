@@ -1,0 +1,12 @@
+Thursday 13/04
+
+Customer	POD	charge	Remittance
+Odika		13500	2000	11500
+Ezeanyim	10000	2000	8000
+Moses		30000	2000	28000
+Achakpo		26000	2000	24000
+Ifeanyi		60000	2000	58000
+GoTv		0	3000	-3000
+Trxn Fee	0	1000	-1000
+	
+Total				125500

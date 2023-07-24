@@ -217,26 +217,6 @@ const Waybill = ({navigation}) => {
         </>
     };
 
-    // search modal state
-    const searchModal = {
-        snapPointsArray: ["50%", "80%", "100%"],
-        autoSnapAt: 2,
-        sheetTitle: "",
-        overlay: true,
-        clearFilterFunction: false,
-        modalContent: <>
-            <SearchBar 
-                placeholder={"Search Waybills"}
-                searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
-                backgroundColor={background}
-            />
-            <BottomSheetScrollView style={style.orderSearchResults}>
-                
-            </BottomSheetScrollView>
-        </>
-    };
-
     // close modal button
     const closeModal = (type) => {
         setModal(prevModal => {
@@ -419,7 +399,29 @@ const Waybill = ({navigation}) => {
                 })
             },
         },
-    ]
+    ];
+
+    // search modal state
+    const searchModal = {
+        snapPointsArray: ["50%", "80%", "100%"],
+        autoSnapAt: 2,
+        sheetTitle: "",
+        overlay: true,
+        clearFilterFunction: false,
+        modalContent: <>
+            <SearchBar 
+                placeholder={"Search Waybills"}
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                backgroundColor={background}
+            />
+            <BottomSheetScrollView style={style.orderSearchResults}>
+                {inComingWaybills.map((item, index) => (
+                    <WaybillListItem key={item.id} item={item} index={index} length={inComingWaybills.length} />
+                ))}
+            </BottomSheetScrollView>
+        </>
+    };
 
     return (
         <>

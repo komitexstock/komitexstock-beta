@@ -171,7 +171,7 @@ const style = StyleSheet.create({
         top: 0,
         left: 0,
         backgroundColor: 'rgba(0, 0, 0, 0.3)',
-        zIndex: 2
+        zIndex: 100,
     },
     container: {
         // width: "100%",
@@ -187,7 +187,7 @@ const style = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         padding: 20,
-        zIndex: 2,
+        zIndex: 101,
     },
     calenderWrapper: {
         backgroundColor: white,

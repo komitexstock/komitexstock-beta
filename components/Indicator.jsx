@@ -18,10 +18,10 @@ const Indicator = ({type, text}) => {
             <Text style={style.canceledStatus}>{text}</Text>
         </View>
     );
-    else if (type === "Rescheduled") return (
-        // render grey indicator
-        <View style={style.rescheduledContainer}>
-            <Text style={style.rescheduledStatus}>{text}</Text>
+    else if (type === "Pending") return (
+        // render yellowish orange indicator
+        <View style={style.pendingContainer}>
+            <Text style={style.pendingStatus}>{text}</Text>
         </View>
     );
     else if (type === "Dispatched") return (
@@ -31,9 +31,9 @@ const Indicator = ({type, text}) => {
         </View>
     );
     else return (
-        // render yellowish orange indicator
-        <View style={style.pendingContainer}>
-            <Text style={style.pendingStatus}>{text}</Text>
+        // render grey indicator
+        <View style={style.rescheduledContainer}>
+            <Text style={style.rescheduledStatus}>{text}</Text>
         </View>
     );
 }
@@ -45,7 +45,8 @@ const style = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         height: 16,
-        width: 60,
+        minWidth: 60,
+        paddingHorizontal: 5,
         borderRadius: 20,
         backgroundColor: "#D1FADF",
     },  
@@ -59,7 +60,8 @@ const style = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         height: 16,
-        width: 60,
+        minWidth: 60,
+        paddingHorizontal: 5,
         borderRadius: 20,
         backgroundColor: "rgba(34, 34, 34, 0.05)",
     },  
@@ -75,6 +77,7 @@ const style = StyleSheet.create({
         height: 16,
         width: 60,
         borderRadius: 20,
+        paddingHorizontal: 5,
         backgroundColor: "rgba(254, 243, 242, 1)",
     },  
     canceledStatus: {
@@ -88,6 +91,7 @@ const style = StyleSheet.create({
         alignItems: 'center',
         height: 16,
         width: 60,
+        paddingHorizontal: 5,
         borderRadius: 20,
         backgroundColor: secondaryColor,
     },  
@@ -103,6 +107,7 @@ const style = StyleSheet.create({
         height: 16,
         width: 60,
         borderRadius: 20,
+        paddingHorizontal: 5,
         backgroundColor: "rgba(254, 240, 199, 1)",
     },  
     pendingStatus: {

@@ -9,7 +9,7 @@ import ModalButton from "../components/ModalButton";
 // bottomsheet component
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 
-const AddSummaryModalContent = ({logistics, products, customerName, location, phoneNumber, price, address, waybillDetails, shipperLocation, receiverLocation, type}) => {
+const AddSummaryModalContent = ({logistics, products, customerName, location, phoneNumber, price, address, waybillDetails, shipperLocation, receiverLocation, type, onPress}) => {
     // logisitcs => object | business_name(string), company_id(string), verified(boolean), imageUrl
     // products => array of object | product_name, quantity
     // customerName, location, address, waybillDetails, shipperLocation, receiverLocation => string
@@ -123,12 +123,12 @@ const AddSummaryModalContent = ({logistics, products, customerName, location, ph
             { type === "order" ? (
                 <ModalButton 
                     name={"Confirm Order"}
-                    onPress={() => {}}
+                    onPress={onPress}
                 />
             ) : (
                 <ModalButton 
                     name={"Confirm Waybill"}
-                    onPress={() => {}}
+                    onPress={onPress}
                 />
             )}
         </View>

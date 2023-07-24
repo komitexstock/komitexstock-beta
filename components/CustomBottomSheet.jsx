@@ -97,6 +97,7 @@ const styles = StyleSheet.create({
         top: 0,
         right: 0,
         backgroundColor: 'rgba(0, 0, 0, 0.3)',
+        zIndex: 100,
     }, 
     closeOverlay: {
         widyth: "100%",
@@ -130,7 +131,7 @@ const styles = StyleSheet.create({
         width: 20,
         height: 20,
         position: "absolute",
-        left: 20,
+        right: 20,
         display: "flex",
         justifyContent: "center",
         alignItems: "center",

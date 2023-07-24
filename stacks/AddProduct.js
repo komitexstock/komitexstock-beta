@@ -20,7 +20,7 @@ import CameraPrimaryIcon from '../assets/icons/CameraPrimaryIcon';
 import * as ImagePicker from "expo-image-picker";
 import { background, bodyText, inputBorder, inputLabel, secondaryColor, white } from "../style/colors";
 
-const AddProduct = ({navigation}) => {
+const AddProduct = ({navigation, route}) => {
     
     // state to store product name
     const [productName, setProductName] = useState("");
@@ -36,6 +36,8 @@ const AddProduct = ({navigation}) => {
 
     // state to hold selected image
     const [selectedImage, setSelectedImage] = useState(null);
+
+    const origin = route.params ? route.params.origin : "Products"
 
     // variable to check for empty fields
     const emptyFields = [
@@ -72,7 +74,7 @@ const AddProduct = ({navigation}) => {
     // navigate to products with success parammeter
     // success parameter triggers a success prompt
     const handleAddProduct = () => {
-        navigation.navigate("Products", {
+        navigation.navigate(origin, {
             show: true,
             type: "Success",
             text: "Product successfully created and saved!"

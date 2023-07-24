@@ -20,15 +20,16 @@ import AddProductsModalContent from "../components/AddProductsModalContent";
 import AddSummaryModalContent from "../components/AddSummaryModalContent";
 import CustomButton from "../components/CustomButton";
 import Product from "../components/Product";
+import AlertNotice from "../components/AlertNotice";
 // icon
 import ArrowDown from "../assets/icons/ArrowDown";
 import InfoIcon from "../assets/icons/InfoIcon";
 // react hooks
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useLayoutEffect } from "react";
 // colors
 import { accentLight, background, black, primaryColor, white } from "../style/colors";
 
-const SendOrder = ({navigation}) => {
+const SendOrder = ({navigation, route}) => {
 
     // state to store order details
     const [ orderDetails, setOrderdetails] = useState(null);
@@ -350,6 +351,50 @@ const SendOrder = ({navigation}) => {
             setError: setErrorPrice,
         },
     ];
+
+    const [alert, setAlert] = useState({
+        show: false,
+        type: "Success",
+        text: ""
+    });
+
+    const closeAlert = () => {
+        setAlert(prevAlert => {
+            return {
+                ...prevAlert,
+                show: false
+            }
+        });
+    };
+
+    
+    // use effect to remove add product propmt after 3 seconds
+    useLayoutEffect(() => {
+        if (route.params) {
+            setAlert({
+                show: true,
+                type: route.params.type,
+                text: route.params.text
+            })
+        }
+        
+        setTimeout(() => {
+            closeAlert();
+        }, 3000);
+
+    }, [route.params]);
+
+    const handleConfirmOrder = () => {
+        closeModal();
+        navigation.navigate("Chat", {
+            id: "abc123",
+            type: "Order",
+            order: "Chat Message",
+            name: "Komitex",
+            imageUrl: require('../assets/images/komitex.png'),
+            alert: "Order successfully created",
+        })
+    }
     
     // render send order page
     return (
@@ -429,7 +474,9 @@ const SendOrder = ({navigation}) => {
                                                     <Text style={style.addProduct}>+Select Product</Text>
                                                 </TouchableOpacity>
                                                 <TouchableOpacity
-                                                    onPress={() => navigation.navigate("AddProduct")}
+                                                    onPress={() => navigation.navigate("AddProduct", {
+                                                        origin: "SendOrder",
+                                                    })}
                                                 >
                                                     <Text style={style.addProduct}>+New Product</Text>
                                                 </TouchableOpacity>
@@ -528,6 +575,7 @@ const SendOrder = ({navigation}) => {
                         price={price}
                         address={address}
                         type={"order"}
+                        onPress={handleConfirmOrder}
                     />
                 )}
             </CustomBottomSheet>
@@ -539,6 +587,14 @@ const SendOrder = ({navigation}) => {
                     backgroundColor={background}
                     inactive={emptyLogisticsAndOrderDetails}
                     fixed={true}
+                />
+            )}
+            {/* success alert to display on addproduct or edit product */}
+            { alert.show && (
+                <AlertNotice 
+                    type={alert.type}
+                    text={alert.text}
+                    closeAlert={closeAlert}
                 />
             )}
         </>

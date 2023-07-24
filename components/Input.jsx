@@ -216,6 +216,7 @@ const style = StyleSheet.create({
     adornment: {
         fontFamily: 'mulish-regular',
         color: inputLabel,
+        color: black,
         fontSize: 14,  
     },
     focusedInput: {

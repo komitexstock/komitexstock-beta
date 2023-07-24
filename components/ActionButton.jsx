@@ -42,7 +42,7 @@ const style = StyleSheet.create({
     },
     actionButtonText: {
         fontFamily: 'mulish-medium',
-        fontSize: 10,
+        fontSize: 12,
         color: bodyText,
     }
 })

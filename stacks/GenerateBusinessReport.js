@@ -57,7 +57,7 @@ const GenerateBusinessReport = ({navigation}) => {
         open: false,
         close: hanldeCloseCalender,
         setDate: setStartDate
-    })
+    });
 
     const hanldeOpenCalender = (inputType) => {
         if (inputType === "StartDate") {
@@ -208,7 +208,7 @@ const GenerateBusinessReport = ({navigation}) => {
                 closeCalender={calender.close}
                 setDate={calender.setDate}
                 disableActionButtons={true}
-                maxDate={new Date()}
+                minDate={new Date()}
             />
             <CustomBottomSheet 
                 bottomSheetModalRef={bottomSheetModalRef}

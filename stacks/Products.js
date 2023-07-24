@@ -425,7 +425,9 @@ const Products = ({navigation, route}) => {
                             {/* Navigate to addproducts page/stack */}
                             <TouchableOpacity 
                                 style={style.sendOrderButton}
-                                onPress={() => navigation.navigate("AddProduct")}
+                                onPress={() => navigation.navigate("AddProduct", {
+                                    origin: "SendOrder",
+                                })}
                             >
                                 <Text style={style.orderButtonText}>Add Product</Text>
                             </TouchableOpacity>
