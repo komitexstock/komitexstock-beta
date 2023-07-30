@@ -364,6 +364,9 @@ const style = StyleSheet.create({
         fontSize: 12,
         color: bodyText,
         width: "100%",
+        textAlign: 'center',
+        maxWidth: '90%',
+        alignSelf: 'center',
     }
 })
  

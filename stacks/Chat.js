@@ -10,7 +10,7 @@ import {
     Image,
     Dimensions,
     BackHandler,
-    Linking
+    Linking,
 } from "react-native";
 // icons
 import SendIcon from '../assets/icons/SendIcon';
@@ -18,8 +18,14 @@ import PaperClipIcon from "../assets/icons/PaperClipIcon";
 import MenuIcon from "../assets/icons/MenuIcon";
 import EditIcon from "../assets/icons/EditIcon";
 import CallPrimaryIcon from "../assets/icons/CallPrimaryIcon";
+import CameraPrimaryLargeIcon from "../assets/icons/CameraPrimaryLargeIcon";
+import GalleryIcon from "../assets/icons/GalleryIcon";
+import DocumentIcon from "../assets/icons/DocumentIcon";
 import SmsPrimaryIcon from "../assets/icons/SmsPrimaryIcon";
 import WhatsAppIcon from "../assets/icons/WhatsAppIcon";
+import RepliedImageIcon from "../assets/icons/RepliedImageIcon";
+import RepliedDocumentIcon from "../assets/icons/RepliedDocumentIcon";
+import CloseIcon from "../assets/icons/CloseIcon";
 // components
 import ActionButton from "../components/ActionButton";
 import Header from "../components/Header";
@@ -30,6 +36,7 @@ import Product from "../components/Product";
 import ModalButton from "../components/ModalButton";
 import Input from "../components/Input";
 import SelectInput from "../components/SelectInput";
+import MessageContainer from "../components/MessageContainer";
 // import react hooks
 import React, { useState, useEffect, useRef } from "react";
 // colors
@@ -45,33 +52,78 @@ import {
     secondaryColor,
     accentLight,
     messageSenderColors,
-    subText
+    subText,
 } from "../style/colors";
 // bottomsheet components
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+
 
 // screen height
 const windowHeight = Dimensions.get("window").height;
 
 const Chat = ({navigation, route}) => {
 
+    // messages ref
     const messagesRefs = useRef([]);
+
+    // scroll view ref
     const scrollViewRef = useRef();
+    // has scrolled to bottom ref
+    const hasScrolledToBottom = useRef(false);
 
-    const [loadingMessages, setLoadingMessages] = useState(true);
+    // message overlay to show when auto scroll to repluied message
+    const [messageOverlay, setMessageOverlay] = useState({
+        top: 0,
+        height: 0,
+    });
 
-    // auto scroll chat screen to the bottom
-    useEffect(() => {
-        scrollViewRef.current.scrollToEnd({ animated: false });
-    }, []);
+    // state to indicate replying message state in text field
+    const [replying, setReplying] = useState(null);
+    // state to indicate uploading image or doc state in text field
+    const [uploading, setUploading] = useState(false);
+
+    // state to store typed text
+    const [textInput, setTextInput] = useState('');
+    const textInputRef = useRef(null)
+
+    const updateTextInput = (text) => {
+        setTextInput(text === '' ? null : text)
+    }
+
+    // console.log(textInput);
+
+    // scroll to bottom function
+    const scrollToBottom = (animate) => {
+        if (!hasScrolledToBottom.current) {
+            scrollViewRef.current.scrollToEnd({ animated: animate });
+            hasScrolledToBottom.current = true;
+        }
+    }
 
     // function to scroll to message
     const handleScrollToComponent = (id) => {
         // console.log(id);
-        // console.log(messagesRefs.current);
         const targetMessage = messagesRefs.current.filter(message => message.id === id)[0];
-        // console.log(targetMessage);
+        // console.log(messagesRefs.current);
+        // // console.log(targetMessage);
+
+        // get current scroll height
+        // const currentScrollHeight = scrollViewRef.current;
+
+        // console.log('currentScrollHeight: ', currentScrollHeight);
+
         scrollViewRef.current.scrollTo({ y: (targetMessage.y - 70), animated: true });
+        setMessageOverlay({
+            top: targetMessage.y,
+            height: targetMessage.height
+        })
+        
+        setTimeout(() => {
+            setMessageOverlay({
+                top: 0,
+                height: 0,
+            })
+        }, 1500);
     };
 
 
@@ -81,10 +133,10 @@ const Chat = ({navigation, route}) => {
     // accoutntype, retreived from global variables
     const accountType = "Merchant";
     const userId = "hjsdjkji81899";
-    const postOrderUserId = "hjsdjkji81899";
-    const fullname = "Iffie Ovie";
-    const postOrderTimestamp = "6:30 am";
     const companyName = "Mega Enterprise";
+    const fullname = "Iffie Ovie";
+    const postOrderUserId = "hjsdjkji81899";
+    const postOrderTimestamp = "6:30 am";
     const outOfStock = false;
 
 
@@ -117,7 +169,6 @@ const Chat = ({navigation, route}) => {
             product_name: "Maybach Sunglasses",
             quantity: 1,
             imageUrl: require("../assets/images/maybach-sunglasses.png"),
-            checked: true,
         },
     ]);
 
@@ -241,6 +292,11 @@ const Chat = ({navigation, route}) => {
                 type: type,
                 snapPoints: ["25%"],
             });
+        } else if (type === "") {
+            return setModal({
+                type: type,
+                snapPoints: ["30%"],
+            });
         } else {
             return setModal({
                 type: type,
@@ -311,9 +367,7 @@ const Chat = ({navigation, route}) => {
         onPress: () => {}
     }
     
-    const templateText = `  This is Komitex Logistics you ordered 
-    for Maybach Sunglasses at ₦38,000 online,
-    would you be available to receive it today?`;
+    const templateText = `This is Komitex Logistics you ordered for Maybach Sunglasses at ₦38,000 online, would you be available to receive it today?`;
 
     const dialPhoneNumber = () => {
         Linking.openURL('tel:'+linkPhoneNumber);
@@ -332,12 +386,31 @@ const Chat = ({navigation, route}) => {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    const messages = [
+    const openDocument = async (documentUrl) => {
+        try {
+            const supported = await Linking.canOpenURL(documentUrl);
+            if (supported) {
+                await Linking.openURL(documentUrl);
+            } else {
+                // console.log("No apps available to open this document");
+            }
+        } catch (error) {
+            // console.error("An error occurred while opening the document:", error);
+        }
+    };
+
+    // MESSAGES MESSAGES MESSAGES MESSAGES
+    // MESSAGES MESSAGES MESSAGES MESSAGES
+    // MESSAGES MESSAGES MESSAGES MESSAGES
+    const [messages, setMessages] = useState([
         {
+            reschedule_date: () => {},
             id: 1,
+            seen: true,
             user_id: "hjsdjkji81899",
             fullname: "Iffie Ovie",
             company_name: 'Mega Enterprise',
+            color: messageSenderColors[0],
             type: 'message',
             timestamp: () => {
                 const currentTime = new Date();
@@ -350,9 +423,12 @@ const Chat = ({navigation, route}) => {
             text: 'Hello',
         },
         {
+            reschedule_date: () => {},
             id: 2,
+            seen: true,
             user_id: "hayaFGye67qY",
-            fullname: "Iffie Ovie",
+            fullname: "John Mark",
+            color: messageSenderColors[1],
             company_name: 'Komitex Logistics',
             type: 'message',
             timestamp: () => {
@@ -366,10 +442,13 @@ const Chat = ({navigation, route}) => {
             text: 'Hello',
         },
         {
+            reschedule_date: () => {},
             id: 3,
+            seen: true,
             user_id: "hayaFGye67qY",
-            fullname: "Iffie Ovie",
+            fullname: "John Mark",
             company_name: 'Komitex Logistics',
+            color: messageSenderColors[1],
             type: 'message',
             timestamp: () => {
                 const currentTime = new Date();
@@ -382,11 +461,14 @@ const Chat = ({navigation, route}) => {
             text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatibus, labore aperiam blanditiis ex dolor sit?',
         },
         {
+            reschedule_date: () => {},
             id: 4,
+            seen: true,
             user_id: "hayaKGye67q4",
             fullname: "Felix Jones",
             company_name: 'Mega Enterprise',
             type: 'message',
+            color: messageSenderColors[2],
             account_type: 'Merchant',
             file: null,
             reply: false,
@@ -398,10 +480,13 @@ const Chat = ({navigation, route}) => {
             text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores blanditiis, sunt, veritatis hic at ipsa quo, rerum corporis mollitia suscipit esse laudantium  iure recusandae vel praesentium. Harum esse deserunt amet.',
         },
         {
+            reschedule_date: () => {},
             id: 5,
+            seen: true,
             user_id: "hayaFGye67qY",
-            fullname: "Iffie Ovie",
+            fullname: "John Mark",
             company_name: 'Komitex Logistics',
+            color: messageSenderColors[1],
             type: 'message',
             timestamp: () => {
                 const currentTime = new Date();
@@ -414,10 +499,13 @@ const Chat = ({navigation, route}) => {
             text: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Sint labore, optio accusantium magni ipsa cupiditate corrupti, tempore sunt omnis voluptate libero ad sapiente. Quibusdam quaerat dolorem architecto perferendis numquam aspernatur nesciunt sed expedita recusandae, voluptatem ipsum odit excepturi a amet suscipit repellat, quidem, officia eum mollitia quisquam cumque neque fuga aperiam. Aut nam sunt sit mollitia iste odio magnam iusto? Animi quaerat et delectus maiores corrupti corporis! Aperiam, sint? Praesentium placeat quibusdam dolor, eveniet quae velit nesciunt similique sed sunt aspernatur possimus et ipsum, incidunt optio quam nulla sint maxime nisi error alias. Reiciendis, consectetur eveniet tenetur ut doloremque sed?',
         },
         {
+            reschedule_date: () => {},
             id: 6,
+            seen: true,
             user_id: "hayaKGOe67q4",
             fullname: "John Doe",
             company_name: 'Mega Enterprise',
+            color: messageSenderColors[3],
             type: 'message',
             account_type: 'Merchant',
             file: null,
@@ -427,13 +515,18 @@ const Chat = ({navigation, route}) => {
                 currentTime.setMinutes(currentTime.getMinutes() - 30);
                 return currentTime.getTime();
             },
+            seen: true,
+            seen: true,
             text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Delectus illum perspiciatis tempora dolore inventore rerum architecto nam at accusamus vitae eos, in fugit dolores, quod recusandae sapiente? Blanditiis, temporibus saepe beatae reprehenderit delectus eius a. Animi deleniti, sed, beatae excepturi quis aliquid tempore debitis, voluptatum hic pariatur sint veniam velit. Ad ullam vero atque voluptatibus iste provident nesciunt similique, praesentium voluptatum dolorum obcaecati sint voluptas aperiam saepe temporibus dolores illum, unde qui optio quo ratione quod. Ratione ipsam deserunt unde obcaecati fuga quos numquam! Illo consectetur nihil cumque dolor. Facilis enim odit vel quisquam dolorum incidunt mollitia accusantium at corporis quasi fugiat, cumque officia voluptatum id deserunt. Obcaecati distinctio deserunt ut delectus beatae, ipsam aliquam expedita, ea libero asperiores nobis quam facere veritatis ratione quasi natus maxime nihil fuga repellat eveniet cum, dicta suscipit totam? Earum sed magnam esse eveniet iusto deleniti tempore assumenda debitis tenetur soluta quibusdam nihil, id repellat minus voluptatum fugit aspernatur quasi quos illum blanditiis accusantium inventore? Mollitia obcaecati, consequatur quibusdam harum expedita hic illum soluta nam amet blanditiis asperiores in aperiam magni molestiae eligendi, itaque maxime iure consequuntur. Voluptas ad cum aperiam esse expedita nihil repudiandae accusamus, velit earum praesentium rerum, molestias aliquam exercitationem cumque!',
         },
         {
+            reschedule_date: () => {},
             id: 7,
+            seen: true,
             user_id: "HayaFGye67qY",
-            fullname: "Iffie Esere",
+            fullname: "John Mark",
             company_name: 'Komitex Logistics',
+            color: messageSenderColors[1],
             type: 'message',
             timestamp: () => {
                 const currentTime = new Date();
@@ -446,10 +539,13 @@ const Chat = ({navigation, route}) => {
             text: 'Lorem ipsum, dolor sit.',
         },
         {
+            reschedule_date: () => {},
             id: 8,
+            seen: true,
             user_id: "HayaFGye67qY",
-            fullname: "Iffie Esere",
+            fullname: "John Mark",
             company_name: 'Komitex Logistics',
+            color: messageSenderColors[1],
             type: 'message',
             timestamp: () => {
                 const currentTime = new Date();
@@ -462,10 +558,13 @@ const Chat = ({navigation, route}) => {
             text: 'Velit earum praesentium rerum, molestias aliquam exercitationem cumque!',
         },
         {
+            reschedule_date: () => {},
             id: 9,
+            seen: true,
             user_id: "hayaKGye67q4",
             fullname: "Felix Jones",
             company_name: 'Mega Enterprise',
+            color: messageSenderColors[2],
             type: 'message',
             timestamp: () => {
                 const currentTime = new Date();
@@ -474,16 +573,17 @@ const Chat = ({navigation, route}) => {
             },
             account_type: 'Merchant',
             file: null,
-            reply: {
-                replied_message_id: 5,
-            },
+            reply: 5,
             text: 'Okay, understood 👍🏾',
         },
         {
+            reschedule_date: () => {},
             id: 10,
+            seen: true,
             user_id: "hjsdjkji81899",
             fullname: "Iffie Ovie",
             company_name: 'Mega Enterprise',
+            color: messageSenderColors[0],
             type: 'message',
             timestamp: () => {
                 const currentTime = new Date();
@@ -496,10 +596,13 @@ const Chat = ({navigation, route}) => {
             text: 'Call him now, hes expecting your call',
         },
         {
+            reschedule_date: () => {},
             id: 11,
+            seen: true,
             user_id: "HayaFGye67qY",
-            fullname: "Iffie Esere",
+            fullname: "John Mark",
             company_name: 'Komitex Logistics',
+            color: messageSenderColors[1],
             type: 'message',
             timestamp: () => {
                 const currentTime = new Date();
@@ -508,38 +611,399 @@ const Chat = ({navigation, route}) => {
             },
             account_type: 'Logistics',
             file: null,
-            reply: {
-                replied_message_id: 9,
-            },
+            reply: 9,
             text: 'Velit earum praesentium rerum, molestias aliquam exercitationem cumque!',
         },
-    ];
+        {
+            reschedule_date: () => {},
+            id: 12,
+            seen: true,
+            user_id: "hayaKGOe67q4",
+            fullname: "John Doe",
+            company_name: 'Mega Enterprise',
+            color: messageSenderColors[3],
+            type: 'image',
+            account_type: 'Merchant',
+            file: {
+                name: 'image',
+                path: require('../assets/chat/3.jpeg')
+            },
+            reply: false,
+            timestamp: () => {
+                const currentTime = new Date();
+                currentTime.setMinutes(currentTime.getMinutes() - 24);
+                return currentTime.getTime();
+            },
+            text: null,
+        },
+        {
+            reschedule_date: () => {},
+            id: 13,
+            seen: true,
+            user_id: "HayaFGye67qY",
+            fullname: "John Mark",
+            company_name: 'Komitex Logistics',
+            color: messageSenderColors[1],
+            type: 'image',
+            timestamp: () => {
+                const currentTime = new Date();
+                currentTime.setMinutes(currentTime.getMinutes() - 23);
+                return currentTime.getTime();
+            },
+            account_type: 'Logistics',
+            file: {
+                name: 'image',
+                path: require('../assets/chat/2.jpg')
+            },
+            reply: 9,
+            text: 'Velit earum praesentium rerum!',
+        },
+        {
+            reschedule_date: () => {},
+            id: 14,
+            seen: true,
+            user_id: "hayaKGOe67q4",
+            fullname: "John Doe",
+            company_name: 'Mega Enterprise',
+            color: messageSenderColors[3],
+            type: 'image',
+            account_type: 'Merchant',
+            file: {
+                name: 'image',
+                path: require('../assets/chat/1.jpg')
+            },
+            reply: false,
+            timestamp: () => {
+                const currentTime = new Date();
+                currentTime.setMinutes(currentTime.getMinutes() - 21);
+                return currentTime.getTime();
+            },
+            text: `Lorem ipsum dolor sit amet consectetur adipisicing elit. Deleniti cupiditate excepturi ratione aperiam fugiat, provident molestiae repellendus. Deserunt, consequatur est.`,
+        },
+        {
+            reschedule_date: () => {},
+            id: 15,
+            seen: true,
+            user_id: "HayaFGye67qY",
+            fullname: "John Mark",
+            company_name: 'Komitex Logistics',
+            color: messageSenderColors[1],
+            type: 'image',
+            timestamp: () => {
+                const currentTime = new Date();
+                currentTime.setMinutes(currentTime.getMinutes() - 20);
+                return currentTime.getTime();
+            },
+            account_type: 'Logistics',
+            file: {
+                name: 'image',
+                path: require('../assets/chat/4.jpg')
+            },
+            reply: 6,
+            text: null,
+        },
+        {
+            reschedule_date: () => {},
+            id: 16,
+            seen: true,
+            user_id: "hayaKGOe67q4",
+            fullname: "John Doe",
+            company_name: 'Mega Enterprise',
+            color: messageSenderColors[3],
+            type: 'message',
+            account_type: 'Merchant',
+            file: null,
+            reply: 12,
+            timestamp: () => {
+                const currentTime = new Date();
+                currentTime.setMinutes(currentTime.getMinutes() - 20);
+                return currentTime.getTime();
+            },
+            text: `Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam, rem!`,
+        },
+        {
+            reschedule_date: () => {},
+            id: 17,
+            seen: true,
+            user_id: "hayaKGOe67q4",
+            fullname: "John Doe",
+            company_name: 'Mega Enterprise',
+            color: messageSenderColors[3],
+            type: 'message',
+            account_type: 'Merchant',
+            file: null,
+            reply: 13,
+            timestamp: () => {
+                const currentTime = new Date();
+                currentTime.setMinutes(currentTime.getMinutes() - 20);
+                return currentTime.getTime();
+            },
+            text: `Lorem ipsum dolor!`,
+        },
+        {
+            reschedule_date: () => {},
+            id: 18,
+            seen: true,
+            user_id: "HayaFGye67qY",
+            fullname: "John Mark",
+            company_name: 'Komitex Logistics',
+            color: messageSenderColors[1],
+            type: 'message',
+            timestamp: () => {
+                const currentTime = new Date();
+                currentTime.setMinutes(currentTime.getMinutes() - 20);
+                return currentTime.getTime();
+            },
+            account_type: 'Logistics',
+            file: null,
+            reply: 14,
+            text: 'J Hus activate all your Chakra 🧘🏾🧘🏾‍♀️🧘🏾‍♀️',
+        },
+        {
+            reschedule_date: () => {},
+            id: 19,
+            seen: true,
+            user_id: "HayaFGye67qY",
+            fullname: "John Mark",
+            company_name: 'Komitex Logistics',
+            color: messageSenderColors[1],
+            type: 'message',
+            timestamp: () => {
+                const currentTime = new Date();
+                currentTime.setMinutes(currentTime.getMinutes() - 18);
+                return currentTime.getTime();
+            },
+            account_type: 'Logistics',
+            file: null,
+            reply: 15,
+            text: 'Put my hands in every Pie 🍕🍕🍕',
+        },
+        {
+            reschedule_date: () => {},
+            id: 20,
+            seen: true,
+            user_id: "hjsdjkji81899",
+            fullname: "Iffie Ovie",
+            company_name: 'Mega Enterprise',
+            color: messageSenderColors[0],
+            type: 'document',
+            timestamp: () => {
+                const currentTime = new Date();
+                currentTime.setMinutes(currentTime.getMinutes() - 15);
+                return currentTime.getTime();
+            },
+            account_type: 'Merchant',
+            file: {
+                name: 'ovie-resumé',
+                url: '../assets/chat/ovie-resumé.pdf',
+                size: '128KB',
+                format: 'pdf',
+            },
+            reply: false,
+            text: null,
+        },
+        {
+            reschedule_date: () => {},
+            id: 21,
+            seen: true,
+            user_id: "hjsdjkji81899",
+            fullname: "Iffie Ovie",
+            company_name: 'Mega Enterprise',
+            color: messageSenderColors[0],
+            type: 'message',
+            timestamp: () => {
+                const currentTime = new Date();
+                currentTime.setMinutes(currentTime.getMinutes() - 15);
+                return currentTime.getTime();
+            },
+            account_type: 'Merchant',
+            file: null,
+            reply: 1,
+            text: 'Testing...',
+        },
+        {
+            reschedule_date: () => {},
+            id: 22,
+            seen: true,
+            user_id: "hjsdjkji81899",
+            fullname: "Iffie Ovie",
+            company_name: 'Mega Enterprise',
+            color: messageSenderColors[0],
+            type: 'message',
+            timestamp: () => {
+                const currentTime = new Date();
+                currentTime.setMinutes(currentTime.getMinutes() - 14);
+                return currentTime.getTime();
+            },
+            account_type: 'Merchant',
+            file: null,
+            reply: 20,
+            text: 'This is the file I mentioned earlier',
+        },
+        {
+            reschedule_date: () => {},
+            id: 23,
+            seen: true,
+            user_id: "HayaFGye67qY",
+            fullname: "John Mark",
+            company_name: 'Komitex Logistics',
+            color: messageSenderColors[1],
+            type: 'message',
+            timestamp: () => {
+                const currentTime = new Date();
+                currentTime.setMinutes(currentTime.getMinutes() - 11);
+                return currentTime.getTime();
+            },
+            account_type: 'Logistics',
+            file: null,
+            reply: 20,
+            text: `Send the document in MS Word format for easy editing`,
+        },
+        {
+            reschedule_date: () => {},
+            id: 24,
+            seen: true,
+            user_id: "HayaFGye67qY",
+            fullname: "John Mark",
+            company_name: 'Komitex Logistics',
+            color: messageSenderColors[1],
+            type: 'message',
+            timestamp: () => {
+                const currentTime = new Date();
+                currentTime.setMinutes(currentTime.getMinutes() - 11);
+                return currentTime.getTime();
+            },
+            account_type: 'Logistics',
+            file: null,
+            reply: false,
+            text: `Don't worry let me convert it`,
+        },
+        {
+            reschedule_date: () => {},
+            id: 25,
+            seen: true,
+            user_id: "HayaFGye67qY",
+            fullname: "John Mark",
+            company_name: 'Komitex Logistics',
+            color: messageSenderColors[1],
+            type: 'document',
+            timestamp: () => {
+                const currentTime = new Date();
+                currentTime.setMinutes(currentTime.getMinutes() - 10);
+                return currentTime.getTime();
+            },
+            account_type: 'Logistics',
+            file: {
+                name: 'Ovie-resumé',
+                url: '../assets/chat/ovie-resumé.pdf',
+                size: '128KB',
+                format: 'docx',
+            },
+            reply: false,
+            text: `I converted it to .docx`,
+        },
+        {
+            id: 26,
+            seen: true,
+            user_id: "hjsdjkji81899",
+            fullname: "Iffie Ovie",
+            company_name: 'Mega Enterprise',
+            color: messageSenderColors[0],
+            type: 'message',
+            timestamp: () => {
+                const currentTime = new Date();
+                currentTime.setMinutes(currentTime.getMinutes() - 8);
+                return currentTime.getTime();
+            },
+            account_type: 'Merchant',
+            file: null,
+            reply: 25,
+            text: 'Okay thanks 👍🏾',
+            reschedule_date: () => {},
+        },
+        {
+            id: 27,
+            seen: true,
+            user_id: "hayaKGOe67q4",
+            fullname: "John Doe",
+            company_name: 'Mega Enterprise',
+            color: messageSenderColors[0],
+            type: 'Rescheduled',
+            timestamp: () => {
+                const currentTime = new Date();
+                currentTime.setMinutes(currentTime.getMinutes() - 5);
+                return currentTime.getTime();
+            },
+            account_type: 'Merchant',
+            file: null,
+            reply: false,
+            text: 'The customer travelled and would return on saturday',
+            reschedule_date: () => {
+                const currentDate = new Date();
+                const futureDate = new Date(currentDate.setDate(currentDate.getDate() + 3));
+                
+                const options = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' };
+                const formattedDate = futureDate.toLocaleDateString('en-US', options);
+                
+                return formattedDate;
+            }
+        },
+        {
+            id: 28,
+            seen: true,
+            user_id: "HayaFGye67qY",
+            fullname: "John Mark",
+            company_name: 'Komitex Logistics',
+            color: messageSenderColors[1],
+            type: 'Cancelled',
+            timestamp: () => {
+                const currentTime = new Date();
+                currentTime.setMinutes(currentTime.getMinutes() - 3);
+                return currentTime.getTime();
+            },
+            account_type: 'Logistics',
+            file: null,
+            reply: false,
+            text: 'I just called him he said he actually doesn\'t know when he would return, cancel for now',
+            reschedule_date: () => {}
+        },
+    ]);
 
-    // function to generate random number between 0 and 9
-    const generateRandomNumber = () => {
-        return Math.floor(Math.random() * 16);
+    const sendMessage = () => {
+        if (textInput === "" && uploading === false) return;
+        else {
+            setMessages([
+                ...messages,
+                {
+                    id: Math.random(),
+                    seen: false,
+                    user_id: userId,
+                    fullname: fullname,
+                    company_name: companyName,
+                    account_type: accountType,
+                    color: messageSenderColors[0],
+                    type: 'message',
+                    timestamp: () => {
+                        const currentTime = new Date();
+                        return currentTime.getTime();
+                    },
+                    file: null,
+                    reply: replying ? replying : false,
+                    reschedule_date: () => {},
+                    text: textInput,
+                }   
+            ])
+            setTextInput("");
+            setReplying(null);
+            hasScrolledToBottom.current = false;
+            scrollToBottom(true);
+        }
     }
 
     // function to get the first word in a string
     const getFirstWord = (str) => {
         return str.split(" ")[0];
     }
-
-    // function to convert time from UTC to 02:30pm format
-    const convertUTCToTime = (utcTime) => {
-        const date = new Date(utcTime);
-        const formattedTime = date.toLocaleTimeString('en-US', {
-          hour: '2-digit',
-          minute: '2-digit',
-          hour12: true,
-          caseFirst: 'lower'
-        });
-
-        // Convert "AM" or "PM" to lowercase
-        const lowercaseTime = formattedTime.replace(/\b(A|P)M\b/, match => match.toLowerCase())
-      
-        return lowercaseTime;
-    };
 
     const messageSenderName = (user_id, full_name, reply) => {
         if (reply) {
@@ -551,7 +1015,7 @@ const Chat = ({navigation, route}) => {
         }
     }
 
-    const messageSender = (account_type, user_id, full_name, prev_id, company_name, reply, orderDetails) => {
+    const messageSender = (account_type, user_id, full_name, prev_id, company_name, color, reply, orderDetails) => {
 
         if (orderDetails) {
             return account_type === "Merchant" ? (
@@ -559,7 +1023,7 @@ const Chat = ({navigation, route}) => {
                     style={[
                         style.messageSender, 
                         style.myTeam, 
-                        {color: user_id === userId ? accent : messageSenderColors[generateRandomNumber()]}
+                        {color: user_id === userId ? accent : color}
                     ]}
                 >
                     {user_id === userId ? "Me" : full_name}
@@ -583,7 +1047,7 @@ const Chat = ({navigation, route}) => {
                     style={[
                         style.messageSender, 
                         style.myTeam, 
-                        {color: user_id === userId ? accent : messageSenderColors[generateRandomNumber()]}
+                        {color: user_id === userId ? accent : color}
                     ]}
                 >
                     {/* {user_id !== userId && full_name} */}
@@ -599,101 +1063,68 @@ const Chat = ({navigation, route}) => {
         }
     };
 
-    const messageBody = (account_type, text, reply) => {
+    const replyingSenderName = (targetMessage) => {
 
-        const repliedMessage = messages.filter(message => message.id === reply.replied_message_id);
-
-
-
-        if (accountType === account_type) {
-            return !reply ? (
-                <View style={[style.message, style.sent]}>
-                    <Text style={[style.messageText, style.sentText]}>
-                        {text}
-                    </Text>
-                </View>
-            ) : (
-                <View style={[style.message, style.sent]}>
-                    <TouchableOpacity 
-                        activeOpacity={0.8} 
-                        style={style.repliedMessage}
-                        onPress={() => {
-                            handleScrollToComponent(reply.replied_message_id)
-                        }}
-                    >
-                        <Text style={style.repliedUser}>Komitex</Text>
-                        <Text style={style.repliedText}>
-                            {repliedMessage[0].text.length > 175 ? repliedMessage[0].text.slice(0, 175) + "..." : repliedMessage[0].text}
-                        </Text>
-                    </TouchableOpacity>
-                    <Text style={[style.messageText, style.sentText]}>
-                        {text}
-                    </Text>
-                </View>
-            )
-        } else {
-            return !reply ? (
-                <View style={[style.message, style.received]}>
-                    <Text style={[style.messageText]}>
-                        {text}
-                    </Text>
-                </View>
-            ) : (
-                <View style={[style.message, style.received]}>
-                    <TouchableOpacity 
-                        style={style.repliedMessage}
-                        onPress={() => {
-                            handleScrollToComponent(reply.replied_message_id)
-                        }}
-                    >
-                        <Text style={style.repliedUser}>Felix Jones</Text>
-                        <Text style={style.repliedText}>
-                            {repliedMessage[0].text.length > 175 ? repliedMessage[0].text.slice(0, 175) + "..." : repliedMessage[0].text}
-                        </Text>
-                    </TouchableOpacity>
-                    <Text style={[style.messageText]}>
-                        {text}
-                    </Text>
-                </View>
-            )
+        if (accountType !== targetMessage.account_type) {
+            return targetMessage.company_name;
         }
-    };
 
-    const messageTimestamp = (account_type, time, next_time, user_id, next_user_id) => {
-        if (accountType === account_type) {
-            if (user_id !== next_user_id) {
-                return (
-                    <Text style={[style.timeSent, style.myTeam]}>{convertUTCToTime(time)}</Text>
-                );
-            } else {
-                return (time !== next_time) && (
-                    <Text style={[style.timeSent, style.myTeam]}>{convertUTCToTime(time)}</Text>
-                );
-            }
-        } else {
-            if (user_id !== next_user_id) {
-                return (
-                    <Text style={[style.timeSent, style.otherTeam]}>{convertUTCToTime(time)}</Text>
-                );
-            } else {
-                return (time !== next_time) && (
-                    <Text style={[style.timeSent, style.otherTeam]}>{convertUTCToTime(time)}</Text>
-                );
-            }
-        }
-    };
+        return userId === targetMessage.user_id ? "You" : targetMessage.fullname
+    }
 
-    const handleLayout = (id, event) => {
-        const { x, y } = event.nativeEvent.layout;
-        const yOffset = y;
-        // Store the yOffset in the data array
-        data.forEach((item) => {
-          if (item.id === id) {
-            item.yOffset = yOffset;
-          }
-        });
-        console.log(`Y offset of element with id ${id}: ${yOffset}`);
-    };
+    const replyingSenderText = (targetMessage) => {
+
+        return targetMessage.text.length > 175 ? targetMessage.text.slice(0, 175) + "..." : targetMessage.text;
+    }
+
+    const ReplyingMessageInput = (id) => {
+        const targetMessage = messages.find(message => message.id === id);
+        
+        return (
+            <View style={style.replyingInputWrapper}>
+                <View style={style.replyingMessageWrapper}>
+                    <Text style={style.replyingMessageSender}>
+                        Replying to {replyingSenderName(targetMessage)}
+                    </Text>
+                    { targetMessage.type === 'image' && (
+                        <>
+                            <View style={style.replyingImageWrapper}>
+                                <RepliedImageIcon />
+                                <Text style={style.messageType}>Image</Text>
+                            </View>
+                            <View style={style.replyingImageContainer}>
+                                <Image source={targetMessage.file.path} style={style.repliedImage} />
+                            </View>
+                        </>
+                    )}
+                    { targetMessage.type === 'document' && (
+                        <>
+                            <View style={style.replyingImageWrapper}>
+                                <RepliedDocumentIcon />
+                                <Text style={style.messageType}>{targetMessage.file.name}</Text>
+                            </View>
+                        </>
+                    )}
+                    { targetMessage.text && (
+                        <Text style={style.replyingMessage}>
+                            {replyingSenderText(targetMessage)}
+                        </Text>
+                    )}
+                </View>
+                <TouchableOpacity
+                    onPress={() => {
+                        setReplying(null)
+                    }}
+                    style={style.replyingCloseButton}
+                >
+                    <CloseIcon />
+                </TouchableOpacity>
+            </View>
+
+        )
+    }
+
+
 
     return (
         <>
@@ -721,17 +1152,26 @@ const Chat = ({navigation, route}) => {
                 </View>
             )}
 
-            <TouchableWithoutFeedback>
+            {/* <TouchableWithoutFeedback> */}
                 <ScrollView 
                     ref={scrollViewRef}
-                    onContentSizeChange={() =>
-                        scrollViewRef.current.scrollToEnd({ animated: false })
-                    }
+                    onLayout={() => scrollToBottom(false)}
                     showsVerticalScrollIndicator={true}
                     style={style.scrollView}
                     contentContainerStyle={style.scrollViewContent}
-                    scrollsToTop={false}
+                    keyboardShouldPersistTaps="always"
                 >
+                    {/* message overlay */}
+                    <View 
+                        style={[
+                            style.messageOverlay,
+                            {
+                                top: messageOverlay.top,
+                                height: messageOverlay.height,
+                                pointerEvents: 'none',
+                            }
+                        ]} 
+                    />
                     <View style={style.container}>
                         {/* fixed header container */}
                         {/* chat scroll view */}
@@ -751,10 +1191,11 @@ const Chat = ({navigation, route}) => {
                             </View>
 
                             <View style={style.messageContent}>
-                                {messageSender(accountType, userId, fullname, postOrderUserId, companyName, false, true)}
+                                {messageSender(accountType, userId, fullname, postOrderUserId, companyName, accent, false, true)}
                                 <View 
                                     style={[
-                                        style.message, 
+                                        style.message,
+                                        {padding: 10},
                                         accountType === "Merchant" ? style.sent : style.received
                                     ]}
                                 >
@@ -811,74 +1252,59 @@ const Chat = ({navigation, route}) => {
 
                             {messages.map((message, index) => {
 
-                      
-                                if ( message.type === "message" ) {
-                                    return (
-                                        <View 
-                                            key={message.id} 
-                                            style={style.messageContent}
-                                            onLayout={(e) => {
-                                                messagesRefs.current.push({id: message.id, y: e.nativeEvent.layout.y})
-                                                setLoadingMessages(false)
-                                                // console.log(e.nativeEvent.layout.y)
-                                                // handleLayout(item.id, event);
-                                            }}
-                                        >
-                                            {/* message sender */}
-                                            {messageSender(
-                                                message.account_type, 
-                                                message.user_id, 
-                                                message.fullname, 
-                                                index === 0 ? postOrderUserId : messages[index - 1].user_id,
-                                                message.company_name,
-                                                message.reply,
-                                            )}
-                                            {/* message body */}
-                                            {messageBody(message.account_type, message.text, message.reply)}
-                                            {/* mesage timestamp */}
-                                            {messageTimestamp(
-                                                message.account_type, 
-                                                message.timestamp(), 
-                                                index !== messages.length - 1 && messages[index + 1].timestamp(),
-                                                message.user_id,
-                                                index !== messages.length - 1 && messages[index + 1].user_id,
-                                            )}
-                                        </View>
-                                    );
-                                }
+
+                                return (
+                                    <MessageContainer
+                                        key={message.id}
+                                        messagesRefs={messagesRefs}
+                                        message={message}
+                                        messages={messages}
+                                        index={index}
+                                        products={products}
+                                        handleScrollToComponent={handleScrollToComponent}
+                                        setReplying={setReplying}
+                                        textInputRef={textInputRef}
+                                        navigation={navigation}
+                                    />
+                                );
                             })}
 
                         </View>
                     </View>
                 </ScrollView>
-            </TouchableWithoutFeedback>
+            {/* </TouchableWithoutFeedback> */}
 
             {/* text field wrapper */}
             <View style={style.textFieldWrapper}>
-                <View style={style.actionButtonsWrapper}>
-
-                    { type === "Order" ? orderButtons.map((button) => {
-                        if (accountType === "Merchant"){
-                            if (button.id === 1 || button.id === 2){
-                                return (<ActionButton
+                { !replying && !uploading && (
+                    <View style={style.actionButtonsWrapper}>
+                        { type === "Order" && orderButtons.map((button) => {
+                            if (accountType === "Merchant"){
+                                if (button.id === 1 || button.id === 2){
+                                    return <ActionButton
+                                        key={button.id}
+                                        name={button.name}
+                                        onPress={button.onPress}
+                                    />
+                                }
+                            } else {
+                                return <ActionButton
                                     key={button.id}
                                     name={button.name}
                                     onPress={button.onPress}
-                                />)
+                                />
                             }
-                        } else {
-                            return (<ActionButton
-                                key={button.id}
-                                name={button.name}
-                                onPress={button.onPress}
-                                />)
-                            }
-                        }) : (<ActionButton 
-                            name={waybillButton.name}
-                            onPress={waybillButton.onPress}
-                        />
-                    )}
-                </View>
+                        })}
+
+                        { type === "Waybill" && accountType === "Logistics" && (
+                            <ActionButton 
+                                name={waybillButton.name}
+                                onPress={waybillButton.onPress}
+                            />
+                        )}
+                    </View>
+                )}
+                { replying && ReplyingMessageInput(replying) }
                 <View style={style.inputGroupWrapper}>
                     <View style={style.textInputContainer}>
                         <TextInput 
@@ -887,15 +1313,22 @@ const Chat = ({navigation, route}) => {
                             placeholderTextColor={bodyText}
                             multiline={true}
                             numberOfLines={1}
+                            onChangeText={updateTextInput}
+                            defaultValue={textInput}
+                            ref={textInputRef}
                         />
                         <TouchableOpacity
                             style={[style.attachButton, style.fixedButton]}
+                            onPress={() => {
+                                openModal("")
+                            }}
                         >
                             <PaperClipIcon />
                         </TouchableOpacity>
                     </View>
                     <TouchableOpacity
                         style={style.sendButton}
+                        onPress={sendMessage}
                     >
                         <SendIcon />
                     </TouchableOpacity>
@@ -1023,14 +1456,49 @@ const Chat = ({navigation, route}) => {
                         </TouchableOpacity>
                     </View>   
                 )}
+                {/* onclick phone number */}
+                { modal.type === "" && (
+                    <View style={style.uploadButtonsWrapper}>
+                        <TouchableOpacity
+                            style={style.uploadButton}
+                        >
+                            <View style={style.uploadIconWrapper}>
+                                <CameraPrimaryLargeIcon />
+                            </View>
+                            <Text style={style.uploadButtonText}>Camera</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={style.uploadButton}
+                        >
+                            <View style={style.uploadIconWrapper}>
+                                <GalleryIcon />
+                            </View>
+                            <Text style={style.uploadButtonText}>Gallery</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={style.uploadButton}
+                        >
+                            <View style={style.uploadIconWrapper}>
+                                <DocumentIcon />
+                            </View>
+                            <Text style={style.uploadButtonText}>Document</Text>
+                        </TouchableOpacity>
+                    </View>   
+                )}
             </CustomBottomSheet>
         </>
     );
 }
 
 const style = StyleSheet.create({
+    scrollView: {
+        position: 'relative',
+        backgroundColor: white,
+        height: '100%',
+    },
     scrollViewContent: {
         backgroundColor: white,
+        position: 'relative',
     },
     container: {
         flex: 1,
@@ -1133,6 +1601,16 @@ const style = StyleSheet.create({
         justifyContent: 'flex-start',
         marginBottom: 5,
     },
+    messageOverlay: {
+        position: 'absolute',
+        width: "100%",
+        left: 0,
+        top: 0,
+        height: 0,
+        backgroundColor: 'transparent',
+        backgroundColor: secondaryColor,
+        zIndex: 2,
+    },
     linkButton: {
         display: 'flex',
         flexDirection: 'row',
@@ -1162,7 +1640,7 @@ const style = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'flex-start',
         alignItems: 'flex-start',
-        padding: 10,
+        padding: 0,
         borderRadius: 12,
         height: null,
     },
@@ -1221,6 +1699,7 @@ const style = StyleSheet.create({
         lineHeight: 17,
         display: 'flex',
         flexDirection: 'row',
+        marginTop: 10,
         gap: 10,
         justifyContent: 'flex-start',
     },
@@ -1230,15 +1709,24 @@ const style = StyleSheet.create({
         lineHeight: 17,
     },
     repliedMessage: {
-        backgroundColor: background,
-        marginBottom: 10,
+        backgroundColor: white,
+        marginTop: 10,
         borderRadius: 9,
         padding: 8,
         paddingTop: 4,
+        gap: 4,
         display: 'flex',
         flexDirection: 'column',
-        gap: 4,
-        alignSelf: 'stretch'
+        alignSelf: 'stretch',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
+    },
+    repliedImageWrapper: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignSelf: 'stretch',
+        justifyContent: 'space-between',
+        alignItems: 'center',
     },
     repliedUser: {
         fontFamily: 'mulish-semibold',
@@ -1252,11 +1740,95 @@ const style = StyleSheet.create({
         fontSize: 11,
         color: bodyText,
     },
+    postedImageContainer: {
+        minWidth: 100,
+        maxWidth: '100%',
+        minHeight: 100,
+        maxHeight: 160,
+        marginTop: 10,
+        overflow: 'hidden',
+        alignSelf: 'stretch',
+        borderRadius: 12,
+    },
+    postedImage: {
+        borderRadius: 12,
+        height: "100%",
+        width: "100%",
+        aspectRatio: 16/9,
+        resizeMode: 'cover',
+    },
+    imageIconContainer: {
+        marginTop: 7,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-end',
+        gap: 4,
+    },
+    messageType: {
+        fontSize: 11,
+        fontFamily: 'mulish-regular',
+        color: bodyText
+    },
+    repliedImage: {
+        width: 28,
+        height: 28,
+        borderRadius: 3.36,
+    },
+    documentWrapper: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        gap: 8,
+        padding: 10,
+    },
+    documentDescription: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
+        gap: 4,
+    },
+    documentName: {
+        fontFamily: 'mulish-medium',
+        fontSize: 12,
+    },
+    documentProperties: {
+        fontFamily: 'mulish-regular',
+        fontSize: 10,
+    },
+    actionMessageWrapper: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
+        marginTop: 10,
+    },
+    actionMessageTitle: {
+        fontSize: 12,
+        fontFamily: 'mulish-bold',
+        color: black,
+        marginBottom: 4,
+        marginTop: 8,
+    },
+    actionMessageHeading: {
+        fontSize: 12,
+        fontFamily: 'mulish-regular',
+        color: black,
+    },
+    actionMessageText: {
+        fontSize: 12,
+        fontFamily: 'mulish-semibold',
+        color: black,
+    },
+
+
 
     textFieldWrapper: {
         width: "100%",
         minHeight: 64,
-        maxHeight: 130,
+        maxHeight: 170,
         backgroundColor: white,
         paddingHorizontal: 20,
         paddingVertical: 10,
@@ -1363,6 +1935,50 @@ const style = StyleSheet.create({
         fontSize: 14,
         color: bodyText,
     },
+    replyingInputWrapper: {
+        width: "100%",
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 12,
+    },
+    replyingMessageWrapper: {
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        alignSelf: 'stretch',
+        gap: 6,
+        position: 'relative',
+    },
+    replyingMessageSender: {
+        fontFamily: 'mulish-regular',
+        fontSize: 10,
+        color: subText,
+    },
+    replyingMessage: {
+        fontFamily: 'mulish-semibold',
+        fontSize: 12,
+        color: black,
+    },
+    replyingImageWrapper: {
+        display: 'flex',
+        flexDirection: 'row',
+        gap: 4,
+    },
+    replyingImageContainer: {
+        position: 'absolute',
+        right: 0,
+        top: 0,
+    },
+    replyingCloseButton: {
+        display: 'flex',    
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+
+
     modalWrapper: {
         display: 'flex',
         flexDirection: 'column',
@@ -1385,8 +2001,11 @@ const style = StyleSheet.create({
         color: bodyText,
         fontSize: 12,
         marginBottom: 4,
+        textAlign: 'center',
+        maxWidth: '80%',
+        alignSelf: 'center',
     },
-    
+
     productsWrapper: {
         display: "flex",
         flexDirection: "column",

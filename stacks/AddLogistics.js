@@ -13,9 +13,6 @@ import { useState, useRef } from "react";
 import Header from "../components/Header";
 import SelectLogisticsCard from "../components/SelectLogisticsCard";
 import SearchBar from "../components/SearchBar";
-import ModalButton from "../components/ModalButton";
-import PopUpBottomSheet from "../components/PopUpBottomSheet";
-import SuccessPrompt from "../components/SuccessPrompt";
 // colors
 import { bodyText, black, white, background } from "../style/colors";
 

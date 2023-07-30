@@ -42,6 +42,7 @@ import Reviews from './stacks/Reviews';
 import CompanyPolicy from './stacks/CompanyPolicy';
 import CaptureImage from './stacks/CaptureImage';
 import WriteReview from './stacks/WriteReview';
+import ViewImage from './stacks/ViewImage';
 // components
 import BottomNavigation from './components/BottomNavigation';
 // App context
@@ -119,6 +120,14 @@ export default function App() {
                             <Stack.Screen 
                                 name="Chat" 
                                 component={Chat} 
+                                options={{
+                                headerShown: false,
+                                }} 
+                            />
+                            {/* View Image stack */}
+                            <Stack.Screen 
+                                name="ViewImage" 
+                                component={ViewImage} 
                                 options={{
                                 headerShown: false,
                                 }} 

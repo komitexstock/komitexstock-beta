@@ -1,6 +1,6 @@
 // react native components
 import { View, Text, StyleSheet } from "react-native";
-import { black, primaryColor, secondaryColor } from "../style/colors";
+import { black, cancelledContainer, cancelledText, deliveredContainer, deliveredText, pendingContainer, pendingText, primaryColor, rescheduledContainer, secondaryColor } from "../style/colors";
 
 const Indicator = ({type, text}) => {
     // type => string of "Pending", "Delivered", "Cancelled", "Rescheduled", "Dispatched"
@@ -9,31 +9,31 @@ const Indicator = ({type, text}) => {
     if (type === "Delivered") return (
         // render green indicator
         <View style={style.deliveredContainer}>
-            <Text style={style.deliveredStatus}>{text}</Text>
+            <Text style={style.deliveredText}>{text}</Text>
         </View>
     );
     else if (type === "Cancelled") return (
         // render red indicator
         <View style={style.canceledContainer}>
-            <Text style={style.canceledStatus}>{text}</Text>
+            <Text style={style.canceledText}>{text}</Text>
         </View>
     );
     else if (type === "Pending") return (
         // render yellowish orange indicator
         <View style={style.pendingContainer}>
-            <Text style={style.pendingStatus}>{text}</Text>
+            <Text style={style.pendingText}>{text}</Text>
         </View>
     );
     else if (type === "Dispatched") return (
         // render blue indicator
         <View style={style.dispatchedContainer}>
-            <Text style={style.dispatchedStatus}>{text}</Text>
+            <Text style={style.dispatchedText}>{text}</Text>
         </View>
     );
     else return (
         // render grey indicator
         <View style={style.rescheduledContainer}>
-            <Text style={style.rescheduledStatus}>{text}</Text>
+            <Text style={style.rescheduledText}>{text}</Text>
         </View>
     );
 }
@@ -48,11 +48,11 @@ const style = StyleSheet.create({
         minWidth: 60,
         paddingHorizontal: 5,
         borderRadius: 20,
-        backgroundColor: "#D1FADF",
+        backgroundColor: deliveredContainer,
     },  
-    deliveredStatus: {
+    deliveredText: {
         fontSize: 8,
-        color: "#039855",
+        color: deliveredText,
         fontFamily: 'mulish-regular',
     },
     rescheduledContainer: {
@@ -63,9 +63,9 @@ const style = StyleSheet.create({
         minWidth: 60,
         paddingHorizontal: 5,
         borderRadius: 20,
-        backgroundColor: "rgba(34, 34, 34, 0.05)",
+        backgroundColor: rescheduledContainer,
     },  
-    rescheduledStatus: {
+    rescheduledText: {
         fontFamily: 'mulish-regular',
         fontSize: 8,
         color: black,
@@ -78,12 +78,12 @@ const style = StyleSheet.create({
         width: 60,
         borderRadius: 20,
         paddingHorizontal: 5,
-        backgroundColor: "rgba(254, 243, 242, 1)",
+        backgroundColor: cancelledContainer,
     },  
-    canceledStatus: {
+    canceledText: {
         fontFamily: 'mulish-regular',
         fontSize: 8,
-        color: "rgba(180, 35, 24, 1)"
+        color: cancelledText
     },
     dispatchedContainer: {
         display: 'flex',
@@ -95,7 +95,7 @@ const style = StyleSheet.create({
         borderRadius: 20,
         backgroundColor: secondaryColor,
     },  
-    dispatchedStatus: {
+    dispatchedText: {
         fontSize: 8,
         fontFamily: 'mulish-regular',
         color: primaryColor, 
@@ -108,12 +108,12 @@ const style = StyleSheet.create({
         width: 60,
         borderRadius: 20,
         paddingHorizontal: 5,
-        backgroundColor: "rgba(254, 240, 199, 1)",
+        backgroundColor: pendingContainer,
     },  
-    pendingStatus: {
+    pendingText: {
         fontSize: 8,
         fontFamily: 'mulish-regular',
-        color: "rgba(220, 104, 3, 1)"
+        color: pendingText
     },
 })
 

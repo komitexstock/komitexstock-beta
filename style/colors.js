@@ -4,7 +4,7 @@ export const secondaryColor = "#07427C0D";
 export const barChart = '#07427C33';
 export const white = "#FFFFFF";
 export const background = "#F8F8F8";
-export const receivedMessage = "hsl(0, 0%, 95%)";
+export const receivedMessage = "#F2F2F2";
 export const black = "#222222"; // text color level 1
 export const bodyText = "#222222CC"; // text color level 2
 export const subText = "#22222299"; // text color level 3
@@ -18,6 +18,13 @@ export const cameraButton = "#B1B2B24D";
 export const inputLabel = "#837F7F";
 export const inputBorder = "#E7E5E5";
 export const toolTipBackground = "#333333";
+export const deliveredContainer = "#D1FADF";
+export const deliveredText = "#039855";
+export const cancelledContainer = "#FEF3F2";
+export const cancelledText = "#B42318";
+export const pendingContainer = "#FEF0C7";
+export const pendingText = "#DC6803";
+export const rescheduledContainer = "#2222220D";
 export const messageSenderColors = [
     '#FF0000', // Red
     '#FF9900', // Orange
