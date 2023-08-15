@@ -37,6 +37,7 @@ import ModalButton from "../components/ModalButton";
 import Input from "../components/Input";
 import SelectInput from "../components/SelectInput";
 import MessageContainer from "../components/MessageContainer";
+import NumberLink from "../components/NumberLink";
 // import react hooks
 import React, { useState, useEffect, useRef } from "react";
 // colors
@@ -45,7 +46,6 @@ import {
     background,
     black,
     bodyText,
-    linkText,
     primaryColor,
     receivedMessage,
     white,
@@ -151,7 +151,7 @@ const Chat = ({navigation, route}) => {
         
     }
 
-    const [charge, setCharge] = useState(3500);
+    const [charge, setCharge] = useState(3000);
     
     // function to update charge
     const updateCharge = (text) => {
@@ -171,6 +171,11 @@ const Chat = ({navigation, route}) => {
             imageUrl: require("../assets/images/maybach-sunglasses.png"),
         },
     ]);
+
+    const customerName = "Richard Idana";
+    const phoneNumber = ["08165266847", "08123456789"];
+    const address = "No 3 Izono street Udu road, Warri";
+    const location = "Warri";
 
     // decrease product quantity
     const decreaseQuantity = (id) => {
@@ -314,7 +319,6 @@ const Chat = ({navigation, route}) => {
         openModal("Edit order");
     }
 
-
     const hanldeCloseCalender = () => {
         setCalender({
             ...calender,
@@ -359,7 +363,7 @@ const Chat = ({navigation, route}) => {
             name: "Deliver",
             onPress: () => {}
         },
-    ]
+    ];
 
     // waybill buttons
     const waybillButton = {
@@ -967,6 +971,44 @@ const Chat = ({navigation, route}) => {
             text: 'I just called him he said he actually doesn\'t know when he would return, cancel for now',
             reschedule_date: () => {}
         },
+        {
+            id: 29,
+            seen: true,
+            user_id: "HayaFGye67qY",
+            fullname: "John Mark",
+            company_name: 'Komitex Logistics',
+            color: messageSenderColors[1],
+            type: 'Edited',
+            timestamp: () => {
+                const currentTime = new Date();
+                currentTime.setMinutes(currentTime.getMinutes() - 3);
+                return currentTime.getTime();
+            },
+            account_type: 'Logistics',
+            file: null,
+            reply: false,
+            text: '',
+            reschedule_date: () => {}
+        },
+        {
+            id: 30,
+            seen: true,
+            user_id: "hayaKGOe67q4",
+            fullname: "John Doe",
+            company_name: 'Mega Enterprise',
+            color: messageSenderColors[0],
+            type: 'Edited',
+            timestamp: () => {
+                const currentTime = new Date();
+                currentTime.setMinutes(currentTime.getMinutes() - 5);
+                return currentTime.getTime();
+            },
+            account_type: 'Merchant',
+            file: null,
+            reply: false,
+            text: '',
+            reschedule_date: () => {}
+        },
     ]);
 
     const sendMessage = () => {
@@ -1203,43 +1245,37 @@ const Chat = ({navigation, route}) => {
                                         <Text style={[style.messageText, accountType === "Merchant" && style.sentText]}>
                                             Customer's Name: 
                                         </Text>
-                                        Richard Idana
+                                        {customerName}
                                     </Text>
-
                                     <Text style={[style.messageHeading, accountType === "Merchant" && style.sentHeading]}>
                                         <Text style={[style.messageText, accountType === "Merchant" && style.sentText]}>Phone Number: </Text>
-                                        <TouchableOpacity 
-                                            style={style.linkButton}
-                                            onPress={() => {handleOnPressPhoneNumber("08123456789")}}
-                                        >
-                                            <Text style={accountType === "Merchant" ? style.sentLinkText : style.receivedLinkText}>
-                                                08123456789
-                                            </Text>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity 
-                                            style={style.linkButton}
-                                            onPress={() => {handleOnPressPhoneNumber("08165266847")}}
-                                        >
-                                            <Text style={accountType === "Merchant" ? style.sentLinkText : style.receivedLinkText}>
-                                                08165266847
-                                            </Text>
-                                        </TouchableOpacity>
+                                        { phoneNumber.map((number, index) => (
+                                            <NumberLink
+                                                key={index}
+                                                number={number}
+                                                handleOnPressPhoneNumber={handleOnPressPhoneNumber}
+                                                account_type={accountType}
+                                            />
+                                        ))}
                                     </Text>
                                     <Text style={[style.messageHeading, accountType === "Merchant" && style.sentHeading]}>
                                         <Text style={[style.messageText, accountType === "Merchant" && style.sentText]}>Delivery Address: </Text>
-                                        No 3 Izomo street odu roadwarri, delta state
+                                        {address}
                                     </Text>
                                     <Text style={[style.messageHeading, accountType === "Merchant" && style.sentHeading]}>
                                         <Text style={[style.messageText, accountType === "Merchant" && style.sentText]}>Location: </Text>
-                                        Warri (₦3,000)
+                                        {location} ({charge.toLocaleString()})
                                     </Text>
                                     <Text style={[style.messageHeading, accountType === "Merchant" && style.sentHeading]}>
                                         <Text style={[style.messageText, accountType === "Merchant" && style.sentText]}>Product: </Text>
-                                        Maybach Sunglasses x 1
+                                        {products.map((product, index) => {
+                                            // seperate list of products by commas ','
+                                            return `${index === 0 ? '' : ', '} ${product.product_name} x ${product.quantity}`
+                                        })}
                                     </Text>
                                     <Text style={[style.messageHeading, accountType === "Merchant" && style.sentHeading]}>
                                         <Text style={[style.messageText, accountType === "Merchant" && style.sentText]}>Price: </Text>
-                                        ₦38,000
+                                        {price.toLocaleString()}
                                     </Text>
                                     <Text style={[style.messageHeading, accountType === "Merchant" && style.sentHeading]}>
                                         <Text style={[style.messageText, accountType === "Merchant" && style.sentText]}>Logistics: </Text>
@@ -1251,16 +1287,21 @@ const Chat = ({navigation, route}) => {
                             
 
                             {messages.map((message, index) => {
-
-
                                 return (
                                     <MessageContainer
                                         key={message.id}
+                                        index={index}
                                         messagesRefs={messagesRefs}
                                         message={message}
                                         messages={messages}
-                                        index={index}
+                                        customerName={customerName}
+                                        phoneNumber={phoneNumber}
+                                        address={address}
+                                        location={location}
+                                        charge={charge}
                                         products={products}
+                                        price={price}
+                                        handleOnPressPhoneNumber={handleOnPressPhoneNumber}
                                         handleScrollToComponent={handleScrollToComponent}
                                         setReplying={setReplying}
                                         textInputRef={textInputRef}
@@ -1610,27 +1651,6 @@ const style = StyleSheet.create({
         backgroundColor: 'transparent',
         backgroundColor: secondaryColor,
         zIndex: 2,
-    },
-    linkButton: {
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'flex-end',
-        justifyContent: 'center',
-        height: "100%",
-        alignSelf: 'baseline',
-        paddingLeft: 3,
-    },
-    sentLinkText: {
-        fontFamily: 'mulish-semibold',
-        fontSize: 10,
-        marginBottom: -3,
-        color: linkText,
-    },
-    receivedLinkText: {
-        fontFamily: 'mulish-semibold',
-        fontSize: 10,
-        marginBottom: -3,
-        color: primaryColor,
     },
     message: {
         minHeight: 33,

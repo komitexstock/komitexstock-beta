@@ -9,6 +9,8 @@ import OrderRescheduled from "../assets/icons/OrderRescheduled";
 import OrderCancelled from "../assets/icons/OrderCancelled";
 import RepliedImageIcon from "../assets/icons/RepliedImageIcon";
 import RepliedDocumentIcon from "../assets/icons/RepliedDocumentIcon";
+import EditWhiteIcon from "../assets/icons/EditWhiteIcon";
+import EditBlackIcon from "../assets/icons/EditBlackIcon";
 // colors
 import {
     accent,
@@ -31,8 +33,10 @@ import {
     deliveredText,
     pendingText
 } from "../style/colors";
+// components
+import NumberLink from "./NumberLink";
 
-const MessageContainer = ({messages, message, index, messagesRefs, products, handleScrollToComponent, setReplying, textInputRef, navigation}) => {
+const MessageContainer = ({messages, message, index, messagesRefs, customerName, phoneNumber, address, location, charge, price, products, handleOnPressPhoneNumber, handleScrollToComponent, setReplying, textInputRef, navigation}) => {
 
     // accoutntype, retreived from global variables
     const accountType = "Merchant";
@@ -41,6 +45,8 @@ const MessageContainer = ({messages, message, index, messagesRefs, products, han
     const fullname = "Iffie Ovie";
     const postOrderUserId = "hjsdjkji81899";
     const postOrderTimestamp = "6:30 am";
+
+    const customMessages = ['Rescheduled', 'Dispatched', 'Cancelled', 'Delivered', 'Returned', 'Edited'];
 
     const [isDragging, setIsDragging] = useState(false);
         
@@ -162,10 +168,14 @@ const MessageContainer = ({messages, message, index, messagesRefs, products, han
                     style.message,
                     accountType === account_type ? style.sent : style.received,
                     // for sent messages or messages from my team
+                    // remove padding from file
                     file && accountType === account_type && {borderBottomRightRadius: 12, borderBottomRightRadius: 12},
+                    // apply padding to text
                     text && accountType === account_type && {paddingTop: 0, padding: 10, borderBottomRightRadius: 0},
                     // for received messages from other team
+                    // remove padding from file
                     file && accountType !== account_type && {borderBottomRightRadius: 12, borderBottomLeftRadius: 12},
+                    // apply padding to text
                     text && accountType !== account_type && {paddingTop: 0, padding: 10, borderBottomLeftRadius: 0},
                     // general
                     reply && {paddingTop: 0, padding: 10},
@@ -174,6 +184,8 @@ const MessageContainer = ({messages, message, index, messagesRefs, products, han
                     type === "Delivered" && {backgroundColor: deliveredContainer},
                     type === "Dispatched" && {backgroundColor: secondaryColor},
                     type === "Returned" && {backgroundColor: pendingContainer},
+                    // always pad custom messages regardless of is text is present
+                    customMessages.includes(type) && {paddingTop: 0, padding: 10},
                 ]}
             >
                 {/* replied text message */}
@@ -321,7 +333,7 @@ const MessageContainer = ({messages, message, index, messagesRefs, products, han
                     </TouchableOpacity>
                 }
                 {/* if it is not an action triggered message */}
-                { text && !['Rescheduled', 'Dispatched', 'Cancelled', 'Delivered', 'Returned'].includes(type) &&
+                { text && !customMessages.includes(type) &&
                     <Text 
                         style={[
                             style.messageText, 
@@ -332,10 +344,13 @@ const MessageContainer = ({messages, message, index, messagesRefs, products, han
                     </Text>
                 }
 
-                { ['Rescheduled', 'Dispatched', 'Cancelled', 'Delivered', 'Returned'].includes(type) &&
+                { customMessages.includes(type) &&
                     <View style={style.actionMessageWrapper}>
                         {type === "Rescheduled" && <OrderRescheduled />}
                         {type === "Cancelled" && <OrderCancelled />}
+                        {type === "Edited" && accountType === account_type && <EditWhiteIcon />}
+                        {type === "Edited" && accountType !== account_type && <EditBlackIcon />}
+
                         <Text 
                             style={[
                                 style.actionMessageTitle,
@@ -344,19 +359,148 @@ const MessageContainer = ({messages, message, index, messagesRefs, products, han
                                 type === "Dispatched" && {color: primaryColor},
                                 type === "Delivered" && {color: deliveredText},
                                 type === "Returned" && {color: pendingText},
+                                type === "Edited" && accountType === account_type && style.sentText
                             ]}
                         >
                             Order {type}
                         </Text>
-                        <Text style={style.actionMessageHeading}>
-                            Product:
-                            <Text style={style.actionMessageText}>
-                                {products.map((product, index) => {
-                                    // seperate list of products by commas ','
-                                    return `${index === 0 ? '' : ', '} ${product.product_name} x ${product.quantity}`
-                                })}
+                        { type === "Edited" && (
+                            <>
+                                <Text 
+                                    style={[
+                                        style.actionMessageHeading,
+                                        accountType === account_type && style.sentText
+                                    ]}
+                                >
+                                    Customer's Name:&nbsp;
+                                    <Text 
+                                        style={[
+                                            style.actionMessageText,
+                                            accountType === account_type && style.sentText
+                                        ]}
+                                    >
+                                        {customerName}
+                                    </Text>
+                                </Text>
+                                <Text 
+                                    style={[
+                                        style.actionMessageHeading,
+                                        accountType === account_type && style.sentText
+                                    ]}
+                                >
+                                    Phone Number:&nbsp;
+                                    <Text 
+                                        style={[
+                                            style.actionMessageText,
+                                            accountType === account_type && style.sentText
+                                        ]}
+                                    >
+                                        { phoneNumber.map((number, index) => (
+                                            <NumberLink
+                                                key={index}
+                                                number={number}
+                                                handleOnPressPhoneNumber={handleOnPressPhoneNumber}
+                                                account_type={account_type}
+                                            />
+                                        ))}
+                                    </Text>
+                                </Text>
+                                <Text 
+                                    style={[
+                                        style.actionMessageHeading,
+                                        accountType === account_type && style.sentText
+                                    ]}
+                                >
+                                    Delivery Address:&nbsp;
+                                    <Text 
+                                        style={[
+                                            style.actionMessageText,
+                                            accountType === account_type && style.sentText
+                                        ]}
+                                    >
+                                        {address}
+                                    </Text>
+                                </Text>
+                                <Text 
+                                    style={[
+                                        style.actionMessageHeading,
+                                        accountType === account_type && style.sentText
+                                    ]}
+                                >
+                                    Product:&nbsp;
+                                    <Text 
+                                        style={[
+                                            style.actionMessageText,
+                                            accountType === account_type && style.sentText
+                                        ]}
+                                    >
+                                        {products.map((product, index) => {
+                                            // seperate list of products by commas ','
+                                            return `${index === 0 ? '' : ', '} ${product.product_name} x ${product.quantity}`
+                                        })}
+                                    </Text>
+                                </Text>
+                                <Text 
+                                    style={[
+                                        style.actionMessageHeading,
+                                        accountType === account_type && style.sentText
+                                    ]}
+                                >
+                                    Amount:&nbsp;
+                                    <Text 
+                                        style={[
+                                            style.actionMessageText,
+                                            accountType === account_type && style.sentText
+                                        ]}
+                                    >
+                                        ₦{price.toLocaleString()}
+                                    </Text>
+                                </Text>
+                                <Text 
+                                    style={[
+                                        style.actionMessageHeading,
+                                        accountType === account_type && style.sentText
+                                    ]}
+                                >
+                                    Location:&nbsp;
+                                    <Text 
+                                        style={[
+                                            style.actionMessageText,
+                                            accountType === account_type && style.sentText
+                                        ]}
+                                    >
+                                        {location}
+                                    </Text>
+                                </Text>
+                                <Text 
+                                    style={[
+                                        style.actionMessageHeading,
+                                        accountType === account_type && style.sentText
+                                    ]}
+                                >
+                                    Charge:&nbsp;
+                                    <Text 
+                                        style={[
+                                            style.actionMessageText,
+                                            accountType === account_type && style.sentText
+                                        ]}
+                                    >
+                                        ₦{charge.toLocaleString()}
+                                    </Text>
+                                </Text>
+                            </>
+                        )}
+                        { type !== "Edited" && (
+                            <Text style={style.actionMessageHeading}>
+                                Product:
+                                <Text style={style.actionMessageText}>
+                                    {products.map((product, index) => {
+                                        // seperate list of products by commas ','
+                                        return `${index === 0 ? '' : ', '} ${product.product_name} x ${product.quantity}`
+                                    })}
+                                </Text>
                             </Text>
-                        </Text>
+                        )}
                         { type === "Rescheduled" && (
                             <Text style={style.actionMessageHeading}>
                                 New Delivery Date:&nbsp;
@@ -365,6 +509,7 @@ const MessageContainer = ({messages, message, index, messagesRefs, products, han
                                 </Text>
                             </Text>
                         )}
+
                         { ['Rescheduled', 'Cancelled', 'Returned'].includes(type) && (
                             <Text style={style.actionMessageHeading}>
                                 Reason:&nbsp;
@@ -425,6 +570,7 @@ const MessageContainer = ({messages, message, index, messagesRefs, products, han
                 message.type !== 'Cancelled' &&
                 message.type !== 'Delivered' &&
                 message.type !== 'Returned' &&
+                message.type !== 'Edited' &&
                 panResponder.panHandlers
             )}
             key={message.id} 
