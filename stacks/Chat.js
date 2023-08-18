@@ -5,12 +5,12 @@ import {
     TextInput, 
     TouchableOpacity,
     ScrollView, 
-    TouchableWithoutFeedback, 
     StyleSheet, 
     Image,
     Dimensions,
     BackHandler,
     Linking,
+    Keyboard
 } from "react-native";
 // icons
 import SendIcon from '../assets/icons/SendIcon';
@@ -26,18 +26,22 @@ import WhatsAppIcon from "../assets/icons/WhatsAppIcon";
 import RepliedImageIcon from "../assets/icons/RepliedImageIcon";
 import RepliedDocumentIcon from "../assets/icons/RepliedDocumentIcon";
 import CloseIcon from "../assets/icons/CloseIcon";
+import ArrowDown from "../assets/icons/ArrowDown";
+import CalendarIcon from "../assets/icons/CalendarIcon";
 // components
 import ActionButton from "../components/ActionButton";
 import Header from "../components/Header";
 import Indicator from "../components/Indicator";
 import CustomBottomSheet from "../components/CustomBottomSheet";
-import Calender from "../components/Calender";
+import Calendar from "../components/Calendar";
+import CalendarSheet from "../components/CalendarSheet";
 import Product from "../components/Product";
 import ModalButton from "../components/ModalButton";
 import Input from "../components/Input";
 import SelectInput from "../components/SelectInput";
 import MessageContainer from "../components/MessageContainer";
 import NumberLink from "../components/NumberLink";
+import ProductListSummary from "../components/ProductListSummary";
 // import react hooks
 import React, { useState, useEffect, useRef } from "react";
 // colors
@@ -140,7 +144,7 @@ const Chat = ({navigation, route}) => {
     const outOfStock = false;
 
 
-    const [price, setPrice] = useState(38000);
+    const [price, setPrice] = useState(50000);
     
     // function to update price
     const updatePrice = (text) => {
@@ -169,6 +173,12 @@ const Chat = ({navigation, route}) => {
             product_name: "Maybach Sunglasses",
             quantity: 1,
             imageUrl: require("../assets/images/maybach-sunglasses.png"),
+        },
+        {
+            id: 3,
+            product_name: "Accurate Watch",
+            quantity: 2,
+            imageUrl: require("../assets/images/accurate-watch.png"),
         },
     ]);
 
@@ -297,15 +307,25 @@ const Chat = ({navigation, route}) => {
                 type: type,
                 snapPoints: ["25%"],
             });
+        } else if (type === "Reschedule order") {
+            return setModal({
+                type: type,
+                snapPoints: ["85%"],
+            });
+        } else if (type === "Cancel order") {
+            return setModal({
+                type: type,
+                snapPoints: ["80%"],
+            });
         } else if (type === "") {
             return setModal({
                 type: type,
-                snapPoints: ["30%"],
+                snapPoints: ["25%"],
             });
         } else {
             return setModal({
                 type: type,
-                snapPoints: ["80%"],
+                snapPoints: ["90%"],
             });
         } 
     }
@@ -319,39 +339,33 @@ const Chat = ({navigation, route}) => {
         openModal("Edit order");
     }
 
-    const hanldeCloseCalender = () => {
-        setCalender({
-            ...calender,
-            open: false,
-        })
+    const calendarRef = useRef(null);
+
+    const handleCloseCalendar = () => {
+        calendarRef.current?.close();
     }
 
-    const hanldeOpenCalender = () => {
-        setCalender({
-            ...calender,
-            open: true,
-        })
+    const hanldeOpenCalendar = () => {
+        calendarRef.current?.present();
     }
 
     const [rescheduleDate, setRescheduleDate] = useState("")
 
-    const [calender, setCalender] = useState({
-        open: false,
-        close: hanldeCloseCalender,
-        setDate: setRescheduleDate
-    });
-    
     // order buttons
     const orderButtons = [
         {
             id: 1,
             name: "Reschedule",
-            onPress: hanldeOpenCalender
+            onPress: () => {
+                openModal("Reschedule order")
+            }
         },
         {
             id: 2,
             name: "Cancel",
-            onPress: () => {}
+            onPress: () => {
+                openModal("Cancel order")
+            }
         },
         {
             id: 3,
@@ -1167,6 +1181,8 @@ const Chat = ({navigation, route}) => {
     }
 
 
+    const [reason, setReason] = useState("");
+    const [errorReason, setErrorReason] = useState(false);
 
     return (
         <>
@@ -1194,126 +1210,125 @@ const Chat = ({navigation, route}) => {
                 </View>
             )}
 
-            {/* <TouchableWithoutFeedback> */}
-                <ScrollView 
-                    ref={scrollViewRef}
-                    onLayout={() => scrollToBottom(false)}
-                    showsVerticalScrollIndicator={true}
-                    style={style.scrollView}
-                    contentContainerStyle={style.scrollViewContent}
-                    keyboardShouldPersistTaps="always"
-                >
-                    {/* message overlay */}
-                    <View 
-                        style={[
-                            style.messageOverlay,
-                            {
-                                top: messageOverlay.top,
-                                height: messageOverlay.height,
-                                pointerEvents: 'none',
-                            }
-                        ]} 
-                    />
-                    <View style={style.container}>
-                        {/* fixed header container */}
-                        {/* chat scroll view */}
-                        <View style={style.messagesWrapper}>
-                            <View style={style.dateWrapper}>
-                                <Text style={style.dateText}>{"Friday July 7, 2023"}</Text>
-                            </View>
-
-                            <View style={[style.editButtonWrapper, accountType === "Merchant" && {justifyContent: 'flex-end'}]}>
-                                <TouchableOpacity 
-                                    style={style.editButton}
-                                    onPress={handleEditOrder}
-                                >
-                                    <EditIcon />
-                                    <Text style={style.editButtonText}>Edit Order</Text>
-                                </TouchableOpacity>
-                            </View>
-
-                            <View style={style.messageContent}>
-                                {messageSender(accountType, userId, fullname, postOrderUserId, companyName, accent, false, true)}
-                                <View 
-                                    style={[
-                                        style.message,
-                                        {padding: 10},
-                                        accountType === "Merchant" ? style.sent : style.received
-                                    ]}
-                                >
-                                    <Text style={[style.messageHeading, accountType === "Merchant" && style.sentHeading]}>
-                                        <Text style={[style.messageText, accountType === "Merchant" && style.sentText]}>
-                                            Customer's Name: 
-                                        </Text>
-                                        {customerName}
-                                    </Text>
-                                    <Text style={[style.messageHeading, accountType === "Merchant" && style.sentHeading]}>
-                                        <Text style={[style.messageText, accountType === "Merchant" && style.sentText]}>Phone Number: </Text>
-                                        { phoneNumber.map((number, index) => (
-                                            <NumberLink
-                                                key={index}
-                                                number={number}
-                                                handleOnPressPhoneNumber={handleOnPressPhoneNumber}
-                                                account_type={accountType}
-                                            />
-                                        ))}
-                                    </Text>
-                                    <Text style={[style.messageHeading, accountType === "Merchant" && style.sentHeading]}>
-                                        <Text style={[style.messageText, accountType === "Merchant" && style.sentText]}>Delivery Address: </Text>
-                                        {address}
-                                    </Text>
-                                    <Text style={[style.messageHeading, accountType === "Merchant" && style.sentHeading]}>
-                                        <Text style={[style.messageText, accountType === "Merchant" && style.sentText]}>Location: </Text>
-                                        {location} ({charge.toLocaleString()})
-                                    </Text>
-                                    <Text style={[style.messageHeading, accountType === "Merchant" && style.sentHeading]}>
-                                        <Text style={[style.messageText, accountType === "Merchant" && style.sentText]}>Product: </Text>
-                                        {products.map((product, index) => {
-                                            // seperate list of products by commas ','
-                                            return `${index === 0 ? '' : ', '} ${product.product_name} x ${product.quantity}`
-                                        })}
-                                    </Text>
-                                    <Text style={[style.messageHeading, accountType === "Merchant" && style.sentHeading]}>
-                                        <Text style={[style.messageText, accountType === "Merchant" && style.sentText]}>Price: </Text>
-                                        {price.toLocaleString()}
-                                    </Text>
-                                    <Text style={[style.messageHeading, accountType === "Merchant" && style.sentHeading]}>
-                                        <Text style={[style.messageText, accountType === "Merchant" && style.sentText]}>Logistics: </Text>
-                                        Komitex Logistics
-                                    </Text>
-                                </View>
-                                <Text style={[style.timeSent, style.myTeam]}>{postOrderTimestamp}</Text>
-                            </View>
-                            
-
-                            {messages.map((message, index) => {
-                                return (
-                                    <MessageContainer
-                                        key={message.id}
-                                        index={index}
-                                        messagesRefs={messagesRefs}
-                                        message={message}
-                                        messages={messages}
-                                        customerName={customerName}
-                                        phoneNumber={phoneNumber}
-                                        address={address}
-                                        location={location}
-                                        charge={charge}
-                                        products={products}
-                                        price={price}
-                                        handleOnPressPhoneNumber={handleOnPressPhoneNumber}
-                                        handleScrollToComponent={handleScrollToComponent}
-                                        setReplying={setReplying}
-                                        textInputRef={textInputRef}
-                                        navigation={navigation}
-                                    />
-                                );
-                            })}
-
+            {/* chat scrollable view */}
+            <ScrollView 
+                ref={scrollViewRef}
+                onLayout={() => scrollToBottom(false)}
+                showsVerticalScrollIndicator={true}
+                style={style.scrollView}
+                contentContainerStyle={style.scrollViewContent}
+                keyboardShouldPersistTaps="always"
+            >
+                {/* message overlay */}
+                <View 
+                    style={[
+                        style.messageOverlay,
+                        {
+                            top: messageOverlay.top,
+                            height: messageOverlay.height,
+                            pointerEvents: 'none',
+                        }
+                    ]} 
+                />
+                <View style={style.container}>
+                    {/* fixed header container */}
+                    {/* chat scroll view */}
+                    <View style={style.messagesWrapper}>
+                        <View style={style.dateWrapper}>
+                            <Text style={style.dateText}>{"Friday July 7, 2023"}</Text>
                         </View>
+
+                        <View style={[style.editButtonWrapper, accountType === "Merchant" && {justifyContent: 'flex-end'}]}>
+                            <TouchableOpacity 
+                                style={style.editButton}
+                                onPress={handleEditOrder}
+                            >
+                                <EditIcon />
+                                <Text style={style.editButtonText}>Edit Order</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        <View style={style.messageContent}>
+                            {messageSender(accountType, userId, fullname, postOrderUserId, companyName, accent, false, true)}
+                            <View 
+                                style={[
+                                    style.message,
+                                    {padding: 10},
+                                    accountType === "Merchant" ? style.sent : style.received
+                                ]}
+                            >
+                                <Text style={[style.messageHeading, accountType === "Merchant" && style.sentHeading]}>
+                                    <Text style={[style.messageText, accountType === "Merchant" && style.sentText]}>
+                                        Customer's Name: 
+                                    </Text>
+                                    {customerName}
+                                </Text>
+                                <Text style={[style.messageHeading, accountType === "Merchant" && style.sentHeading]}>
+                                    <Text style={[style.messageText, accountType === "Merchant" && style.sentText]}>Phone Number: </Text>
+                                    { phoneNumber.map((number, index) => (
+                                        <NumberLink
+                                            key={index}
+                                            number={number}
+                                            handleOnPressPhoneNumber={handleOnPressPhoneNumber}
+                                            account_type={accountType}
+                                        />
+                                    ))}
+                                </Text>
+                                <Text style={[style.messageHeading, accountType === "Merchant" && style.sentHeading]}>
+                                    <Text style={[style.messageText, accountType === "Merchant" && style.sentText]}>Delivery Address: </Text>
+                                    {address}
+                                </Text>
+                                <Text style={[style.messageHeading, accountType === "Merchant" && style.sentHeading]}>
+                                    <Text style={[style.messageText, accountType === "Merchant" && style.sentText]}>Location: </Text>
+                                    {location} ({charge.toLocaleString()})
+                                </Text>
+                                <Text style={[style.messageHeading, accountType === "Merchant" && style.sentHeading]}>
+                                    <Text style={[style.messageText, accountType === "Merchant" && style.sentText]}>Product: </Text>
+                                    {products.map((product, index) => {
+                                        // seperate list of products by commas ','
+                                        return `${index === 0 ? '' : ', '} ${product.product_name} x ${product.quantity}`
+                                    })}
+                                </Text>
+                                <Text style={[style.messageHeading, accountType === "Merchant" && style.sentHeading]}>
+                                    <Text style={[style.messageText, accountType === "Merchant" && style.sentText]}>Price: </Text>
+                                    {price.toLocaleString()}
+                                </Text>
+                                <Text style={[style.messageHeading, accountType === "Merchant" && style.sentHeading]}>
+                                    <Text style={[style.messageText, accountType === "Merchant" && style.sentText]}>Logistics: </Text>
+                                    Komitex Logistics
+                                </Text>
+                            </View>
+                            <Text style={[style.timeSent, style.myTeam]}>{postOrderTimestamp}</Text>
+                        </View>
+                        
+
+                        {messages.map((message, index) => {
+                            return (
+                                <MessageContainer
+                                    key={message.id}
+                                    index={index}
+                                    messagesRefs={messagesRefs}
+                                    message={message}
+                                    messages={messages}
+                                    customerName={customerName}
+                                    phoneNumber={phoneNumber}
+                                    address={address}
+                                    location={location}
+                                    charge={charge}
+                                    products={products}
+                                    price={price}
+                                    handleOnPressPhoneNumber={handleOnPressPhoneNumber}
+                                    handleScrollToComponent={handleScrollToComponent}
+                                    setReplying={setReplying}
+                                    textInputRef={textInputRef}
+                                    navigation={navigation}
+                                />
+                            );
+                        })}
+
                     </View>
-                </ScrollView>
-            {/* </TouchableWithoutFeedback> */}
+                </View>
+            </ScrollView>
 
             {/* text field wrapper */}
             <View style={style.textFieldWrapper}>
@@ -1376,14 +1391,16 @@ const Chat = ({navigation, route}) => {
                 </View>
             </View>
 
-            {/* calender */}
-            <Calender 
-                open={calender.open}
-                closeCalender={calender.close}
-                setDate={calender.setDate}
+            {/* calendar */}
+            <CalendarSheet 
+                closeCalendar={handleCloseCalendar}
+                setDate={setRescheduleDate}
                 disableActionButtons={true}
-                minDate={tomorrow} 
+                snapPointsArray={["55%"]}
+                minDate={tomorrow}
+                calendarRef={calendarRef} 
             />
+            
             
             {/* Bottom sheet component */}
             <CustomBottomSheet 
@@ -1394,6 +1411,7 @@ const Chat = ({navigation, route}) => {
                 snapPointsArray={modal.snapPoints}
                 autoSnapAt={0}
                 sheetTitle={modal.type}
+                topContentPadding={8}
             >
                 {/* edit order */}
                 { modal.type === "Edit order" && (
@@ -1462,6 +1480,109 @@ const Chat = ({navigation, route}) => {
                         </BottomSheetScrollView>
                         <ModalButton
                             name={"Done"}
+                        />
+                    </>
+                )}
+                {/* Reschedule order */}
+                { modal.type === "Reschedule order" && (
+                    <>
+                        <BottomSheetScrollView contentContainerStyle={style.modalWrapper}>
+                            <View style={style.modalContent}>
+                                <Text style={style.editModalParagragh}>
+                                    Kindly use the form to reschedule your order to a later date
+                                </Text>
+                                {/* Selected Products Container */}
+                                <View style={style.productsWrapper}>
+                                    <View style={style.productsHeading}>
+                                        <Text style={style.producPlaceholder}>Products Selected</Text>
+                                    </View>
+                                    <View style={style.productsDetailsContainer}>
+                                        { products.map((product) => (
+                                            // map through selected products
+                                            <ProductListSummary
+                                                key={product.id}
+                                                product_name={product.product_name}
+                                                quantity={product.quantity}
+                                                imageUrl={product.imageUrl}
+                                                padded={true}
+                                            />
+                                        ))}
+                                    </View>
+                                </View>
+                                {/* Reschedule date */}
+                                <SelectInput 
+                                    label={"Reschedule Date"} 
+                                    placeholder={"Select reschedule date"} 
+                                    value={rescheduleDate}
+                                    onPress={hanldeOpenCalendar}
+                                    icon={<CalendarIcon />}
+                                    active={false}
+                                    inputFor={"Date"}
+                                />
+
+                                <Input
+                                    multiline={true}
+                                    label={"Reason (optional)"}
+                                    placeholder={"Tell us what happened..."}
+                                    value={reason}
+                                    onChange={setReason}
+                                    height={100}
+                                    textAlign={"top"}
+                                    error={errorReason}
+                                    setError={setErrorReason}
+                                />
+
+                                
+                            </View>
+                        </BottomSheetScrollView>
+                        <ModalButton
+                            name={"Done"}
+                        />
+                    </>
+                )}
+                { modal.type === "Cancel order" && (
+                    <>
+                        <BottomSheetScrollView contentContainerStyle={style.modalWrapper}>
+                            <View style={style.modalContent}>
+                                <Text style={style.editModalParagragh}>
+                                    Kindly use the form to cancel your order
+                                </Text>
+                                {/* Selected Products Container */}
+                                <View style={style.productsWrapper}>
+                                    <View style={style.productsHeading}>
+                                        <Text style={style.producPlaceholder}>Products Selected</Text>
+                                    </View>
+                                    <View style={style.productsDetailsContainer}>
+                                        { products.map((product) => (
+                                            // map through selected products
+                                            <ProductListSummary
+                                                key={product.id}
+                                                product_name={product.product_name}
+                                                quantity={product.quantity}
+                                                imageUrl={product.imageUrl}
+                                                padded={true}
+                                            />
+                                        ))}
+                                    </View>
+                                </View>
+                                <Input
+                                    multiline={true}
+                                    label={"Reason"}
+                                    placeholder={"Tell us what happened..."}
+                                    value={reason}
+                                    onChange={setReason}
+                                    height={100}
+                                    textAlign={"top"}
+                                    error={errorReason}
+                                    setError={setErrorReason}
+                                />
+
+                                
+                            </View>
+                        </BottomSheetScrollView>
+                        <ModalButton
+                            name={"Done"}
+                            emptyFeilds={reason === "" ? true : false}
                         />
                     </>
                 )}
@@ -2065,6 +2186,15 @@ const style = StyleSheet.create({
         borderRadius: 12,
 
     },
+
+    productsDetailsContainer: {
+        borderRadius: 12,
+        padding: 12,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 12,
+        backgroundColor: background,
+    }
 })
  
 export default Chat;

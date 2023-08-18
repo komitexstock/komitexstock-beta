@@ -22,7 +22,7 @@ import BarChart from "../components/BarChart";
 import StatWrapper from "../components/StatWrapper";
 import StatCard from "../components/StatCard";
 import LogisticsAnalyticsItem from "../components/LogisticsAnalyticsItem";
-import Calender from "../components/Calender";
+import Calendar from "../components/Calendar";
 // icons
 import ArrowDownSmall from '../assets/icons/ArrowDownSmall';
 // react hooks
@@ -225,7 +225,7 @@ const ProductAnalytics = ({navigation}) => {
                     </View>
                 </View>
             </ScrollView>
-            <Calender 
+            <Calendar 
                 open={open}
                 closeCalender={hanldeCloseCalender}
                 setDate={setDate}

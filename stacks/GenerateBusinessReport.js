@@ -11,15 +11,17 @@ import {
 import Header from "../components/Header";
 import CustomButton from "../components/CustomButton";
 import SelectInput from "../components/SelectInput";
-import Calender from "../components/Calender";
+import Calendar from "../components/Calendar";
 import CustomBottomSheet from "../components/CustomBottomSheet";
 // colors
 import { background, black, bodyText} from "../style/colors";
 // icons
 import ArrowDown from "../assets/icons/ArrowDown";
+import CalendarIcon from "../assets/icons/CalendarIcon";
 // react hooks
 import { useState, useEffect, useRef } from "react";
-
+// import moment
+import moment from "moment";
 
 
 // get windows height
@@ -52,36 +54,50 @@ const GenerateBusinessReport = ({navigation}) => {
         closeModal();
     }
 
+    // previous date
+    const prevDate = new Date();
+    prevDate.setDate(prevDate.getDate() - 1);
 
-    const [calender, setCalender] = useState({
+    // previous date
+    const today = new Date();
+    // today.setDate(today.getDate());
+
+
+    const [calendar, setCalendar] = useState({
         open: false,
-        close: hanldeCloseCalender,
-        setDate: setStartDate
+        close: hanldeCloseCalendar,
+        setDate: setStartDate,
+        maxDate: false,
+        minDate: false,
     });
 
-    const hanldeOpenCalender = (inputType) => {
+    const hanldeOpenCalendar = (inputType) => {
         if (inputType === "StartDate") {
             setActiveStartDate(true);
-            setCalender({
+            setCalendar({
                 open: true,
-                close: hanldeCloseCalender,
-                setDate: setStartDate
+                close: hanldeCloseCalendar,
+                setDate: setStartDate,
+                maxDate: endDate ? moment(endDate).subtract(1, 'days') : prevDate,
+                minDate: false
             });
         } else {
             setActiveEndDate(true);
-            setCalender({
+            setCalendar({
                 open: true,
-                close: hanldeCloseCalender,
-                setDate: setEndDate
+                close: hanldeCloseCalendar,
+                setDate: setEndDate,
+                maxDate: today,
+                minDate: startDate ? moment(startDate).add(1, 'days') : startDate,
             });
         }
     }
 
-    const hanldeCloseCalender = () => {
+    const hanldeCloseCalendar = () => {
         setActiveEndDate(false);
         setActiveStartDate(false);
-        setCalender({
-            ...calender,
+        setCalendar({
+            ...calendar,
             open: false,
         })
     }
@@ -160,10 +176,10 @@ const GenerateBusinessReport = ({navigation}) => {
                         {/* Start date */}
                         <SelectInput 
                             label={"Start Date"} 
-                            placeholder={"DD/MM/YYYY"} 
+                            placeholder={"DD MMMM, YYYY"} 
                             value={startDate}
-                            onPress={() => {hanldeOpenCalender("StartDate")}}
-                            icon={<ArrowDown />}
+                            onPress={() => {hanldeOpenCalendar("StartDate")}}
+                            icon={<CalendarIcon />}
                             active={activeStartDate}
                             inputFor={"Date"}
                         />
@@ -171,10 +187,10 @@ const GenerateBusinessReport = ({navigation}) => {
                         {/* End date */}
                         <SelectInput
                             label={"End Date"}
-                            placeholder={"DD/MM/YYYY"}
+                            placeholder={"DD MMMM, YYYY"}
                             value={endDate}
-                            onPress={() => {hanldeOpenCalender("EndDate")}}
-                            icon={<ArrowDown />}
+                            onPress={() => {hanldeOpenCalendar("EndDate")}}
+                            icon={<CalendarIcon />}
                             active={activeEndDate}
                             inputFor={"Date"}
                         />
@@ -203,12 +219,13 @@ const GenerateBusinessReport = ({navigation}) => {
                 fixed={false}
                 inactive={emptyFields}
             />
-            <Calender 
-                open={calender.open}
-                closeCalender={calender.close}
-                setDate={calender.setDate}
+            <Calendar 
+                open={calendar.open}
+                closeCalender={calendar.close}
+                setDate={calendar.setDate}
                 disableActionButtons={true}
-                minDate={new Date()}
+                minDate={calendar.minDate}
+                maxDate={calendar.maxDate}
             />
             <CustomBottomSheet 
                 bottomSheetModalRef={bottomSheetModalRef}

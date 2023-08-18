@@ -6,8 +6,8 @@ import { accent, background, black, bodyText, primaryColor, white } from "../sty
 import InfoIconWhite from "../assets/icons/InfoIconWhite";
 // components
 import ModalButton from "../components/ModalButton";
-// bottomsheet component
-import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import ProductListSummary from "./ProductListSummary";
+
 
 const AddSummaryModalContent = ({logistics, products, customerName, location, phoneNumber, price, address, waybillDetails, shipperLocation, receiverLocation, type, onPress}) => {
     // logisitcs => object | business_name(string), company_id(string), verified(boolean), imageUrl
@@ -72,22 +72,12 @@ const AddSummaryModalContent = ({logistics, products, customerName, location, ph
                 >   
                     {/* list of products */}
                     {products.map(data => (
-                        <View 
+                        <ProductListSummary
                             key={data.id}
-                            style={style.listItemWrapper}
-                        >
-
-                            <View
-                                style={style.list}
-                            >   
-                                <Image
-                                    style={style.logisticsImage}
-                                    source={data.imageUrl}
-                                />
-                                <Text style={style.listText}>{data.product_name}</Text>
-                                <Text style={style.productQuantity}>Qty {data.quantity}</Text>
-                            </View>
-                        </View>
+                            product_name={data.product_name}
+                            quantity={data.quantity}
+                            imageUrl={data.imageUrl}
+                        />
                     ))}
                 </View>
                 <View style={style.priceContainer}>
@@ -183,9 +173,10 @@ const style = StyleSheet.create({
         alignItems: 'flex-start',
     },
     productHeading: {
-        fontFamily: "mulish-semibold",
-        fontSize: 10,
+        fontFamily: "mulish-bold",
+        fontSize: 12,
         color: bodyText,
+        marginBottom: 12,
     },
     listWrapper: {
         width: '100%',
@@ -194,37 +185,6 @@ const style = StyleSheet.create({
         borderTopLeftRadius: 12,
         gap: 10,
         padding: 10,
-    },
-    listItemWrapper: {
-        display: 'flex',
-        flexDirection: "row",
-        width: '100%',
-        alignItems: 'center',
-    },
-    list: {
-        height: 40,
-        display: 'flex',
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: 10,
-    },
-    logisticsImage: {
-        width: 40,
-        height: 40,
-        borderRadius: 6,
-    },
-    productQuantity: {
-        fontSize: 10,
-        fontFamily: "mulish-semibold",
-        color: black,
-    },
-    listText: {
-        fontFamily: "mulish-regular",
-        fontSize: 12,
-        flex: 1,
-        color: black,
     },
     priceContainer: {
         width: '100%',

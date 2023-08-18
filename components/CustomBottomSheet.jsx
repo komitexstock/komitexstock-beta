@@ -5,7 +5,7 @@ import ModalHandle from "./ModalHandle";
 import CloseIcon from "../assets/icons/CloseIcon";
 import { bodyText, primaryColor } from "../style/colors";
 
-const CustomBottomSheet = ({bottomSheetModalRef, showOverlay, closeModal, snapPointsArray, autoSnapAt, children, sheetTitle, sheetSubtitle, clearFilterFunction}) => {
+const CustomBottomSheet = ({bottomSheetModalRef, showOverlay, closeModal, snapPointsArray, autoSnapAt, children, sheetTitle, sheetSubtitle, clearFilterFunction, topContentPadding}) => {
 
     const snapPoints = useMemo(() => snapPointsArray, [snapPointsArray]);
 
@@ -37,7 +37,12 @@ const CustomBottomSheet = ({bottomSheetModalRef, showOverlay, closeModal, snapPo
                     backgroundStyle={{
                         borderRadius: 32,
                     }}
-                    style={{zIndex: 999}}
+                    style={{
+                        zIndex: 999,
+                        // display: 'flex',
+                        // flexDirection: 'column',
+                        // justifyContent: 'flex-start'
+                    }}
                     handleComponent={() => (
                         <ModalHandle />
                     )}
@@ -69,7 +74,7 @@ const CustomBottomSheet = ({bottomSheetModalRef, showOverlay, closeModal, snapPo
                                 </View>
                             )}
                     </View>
-                    <View style={styles.modalWrapper}>
+                    <View style={[styles.modalWrapper, topContentPadding && {paddingTop: topContentPadding}]}>
                         {children}
                     </View>
                 </BottomSheetModal>
@@ -105,7 +110,7 @@ const styles = StyleSheet.create({
     },
     sheetTitle: {
         width: "100%",
-        height: 40,
+        minHeight: 20,
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -126,6 +131,7 @@ const styles = StyleSheet.create({
         fontFamily: "mulish-regular",
         fontSize: 12,
         color: bodyText,
+        marginTop: 4,
     },
     closeButtonWrapper: {
         width: 20,

@@ -22,7 +22,7 @@ import BarChart from "../components/BarChart";
 import StatWrapper from "../components/StatWrapper";
 import StatCard from "../components/StatCard";
 import LocationAnalyticsItem from "../components/LocationAnalyticsItem";
-import Calender from "../components/Calender";
+import Calendar from "../components/Calendar";
 // icons
 import ArrowDownSmall from '../assets/icons/ArrowDownSmall';
 import VerifiedIcon from '../assets/icons/VerifiedIcon';
@@ -224,7 +224,7 @@ const LogisticsAnalytics = ({navigation}) => {
                     </View>
                 </View>
             </ScrollView>
-            <Calender 
+            <Calendar 
                 open={open}
                 closeCalender={hanldeCloseCalender}
                 setDate={setDate}

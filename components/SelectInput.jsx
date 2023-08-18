@@ -4,6 +4,8 @@ import { TouchableOpacity, Text, View, StyleSheet } from "react-native";
 import { inputBorder, inputLabel, neutral, primaryColor, white } from "../style/colors";
 // icon
 import ArrowDown from "../assets/icons/ArrowDown";
+// moment
+import moment from "moment";
 
 const SelectInput = ({label, labelIcon, placeholder, onPress, icon, value, active, inputFor}) => {
     // label, placeholder, value => string
@@ -64,7 +66,7 @@ const SelectInput = ({label, labelIcon, placeholder, onPress, icon, value, activ
                     { inputFor === "Date" && (
                         <>
                             {/* render any other String */}
-                            {value ? value.format('DD/MM/YYYY') : placeholder} 
+                            {value ? moment(value).format('DD MMMM, YYYY') : placeholder} 
                         </>
                     )}
                     {/* if value is present show value, else show placeholder */}

@@ -6,7 +6,7 @@ import {
     StyleSheet,
     Dimensions,
 } from 'react-native';
-// calenderPicker component
+// calendarPicker component
 import CalendarPicker from 'react-native-calendar-picker'; 
 // colors
 import { primaryColor, white, bodyText, subText, neutral } from '../style/colors';
@@ -14,8 +14,8 @@ import { primaryColor, white, bodyText, subText, neutral } from '../style/colors
 import PrevArrowIcon from '../assets/icons/PrevArrowIcon';
 import NextArrowIcon from '../assets/icons/NextArrowIcon';
 // components
-import ModalButton from '../components/ModalButton';
-import ActionButton from '../components/ActionButton';
+import ModalButton from './ModalButton';
+import ActionButton from './ActionButton';
 // react hooks
 import { useState } from 'react';
 import { min } from 'moment';
@@ -31,7 +31,7 @@ const paddingHorizontal = 40;
 
 const calendatWidth = windwoWidth - paddingHorizontal;
 
-const Calender = ({open, closeCalender, setDate, disableActionButtons, minDate, maxDate}) => {
+const Calendar = ({open, closeCalender, setDate, disableActionButtons, minDate, maxDate}) => {
 
     // temporary date variable
     const [tempDate, setTempDate] = useState("");
@@ -187,7 +187,7 @@ const style = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         padding: 20,
-        zIndex: 101,
+        zIndex: 101000000000000000000,
     },
     calenderWrapper: {
         backgroundColor: white,
@@ -258,4 +258,4 @@ const calenderStyles = {
 
 
  
-export default Calender;
+export default Calendar;

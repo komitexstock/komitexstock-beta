@@ -23,7 +23,7 @@ import StatCard from "../components/StatCard";
 import LogisticsAnalyticsItem from "../components/LogisticsAnalyticsItem";
 import LocationAnalyticsItem from "../components/LocationAnalyticsItem";
 import ProductAnalyticsItem from "../components/ProductAnalyticsItem";
-import Calender from "../components/Calender";
+import Calendar from "../components/Calendar";
 // icons
 import ArrowDownSmall from '../assets/icons/ArrowDownSmall';
 // react hooks
@@ -335,7 +335,7 @@ const Analytics = ({navigation}) => {
                     </View>
                 </View>
             </ScrollView>
-            <Calender 
+            <Calendar 
                 open={open}
                 closeCalender={hanldeCloseCalender}
                 setDate={setDate}
