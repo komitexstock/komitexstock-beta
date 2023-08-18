@@ -293,6 +293,7 @@ const Chat = ({navigation, route}) => {
     const closeModal = () => {
         bottomSheetModalRef.current?.close();
         setShowOverlay(false);
+        setReason("");
     };
 
     // open modal function
@@ -1537,6 +1538,7 @@ const Chat = ({navigation, route}) => {
                         </BottomSheetScrollView>
                         <ModalButton
                             name={"Done"}
+                            emptyFeilds={!rescheduleDate ? true : false}
                         />
                     </>
                 )}
@@ -1582,7 +1584,7 @@ const Chat = ({navigation, route}) => {
                         </BottomSheetScrollView>
                         <ModalButton
                             name={"Done"}
-                            emptyFeilds={reason === "" ? true : false}
+                            emptyFeilds={!reason ? true : false}
                         />
                     </>
                 )}
