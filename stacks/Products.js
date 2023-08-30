@@ -429,9 +429,7 @@ const Products = ({navigation, route}) => {
                             {products.length !== 0 && (
                                 <TouchableOpacity 
                                     style={style.addProductButton}
-                                    onPress={() => navigation.navigate("AddProduct", {
-                                        origin: "SendOrder",
-                                    })}
+                                    onPress={() => navigation.navigate("AddProduct")}
                                 >
                                     <Text style={style.orderButtonText}>Add Product</Text>
                                 </TouchableOpacity>
@@ -492,7 +490,7 @@ const Products = ({navigation, route}) => {
                                         marginTop: 0,
                                     }
                                 ]}
-                                onPress={() => {}}
+                                onPress={() => navigation.navigate("AddProduct")}
                             >
                                 <Text style={[style.orderButtonText, {color: white}]}>Add Product</Text>
                             </TouchableOpacity>

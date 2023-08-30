@@ -570,7 +570,7 @@ const style = StyleSheet.create({
     recentOrderHeadingText: {
         fontFamily: "mulish-bold",
         color: bodyText,
-        fontSize: 10,
+        fontSize: 12,
     },
     actionWrapper: {
         display: "flex",
