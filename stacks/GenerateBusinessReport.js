@@ -94,7 +94,7 @@ const GenerateBusinessReport = ({navigation}) => {
         calendarRef.current?.present();
     }
 
-    const hanldeCloseCalendar = () => {
+    const handleCloseCalendar = () => {
         setActiveEndDate(false);
         setActiveStartDate(false);
         setCalendar({
@@ -122,6 +122,9 @@ const GenerateBusinessReport = ({navigation}) => {
                 // if modal is open, close modal
                 closeModal();
                 return true;
+            } else if (calendar.open) { //if calendar is open, close it
+                handleCloseCalendar();
+                return true;
             } else {
                 // if modal isnt open simply navigate back
                 return false;
@@ -136,7 +139,7 @@ const GenerateBusinessReport = ({navigation}) => {
     
         return () => backHandler.remove();
 
-    }, [showOverlay]);
+    }, [showOverlay, calendar]);
     
     // bottom sheet ref
     const bottomSheetModalRef = useRef(null);
@@ -223,7 +226,7 @@ const GenerateBusinessReport = ({navigation}) => {
             />
             {/* calendar */}
             <CalendarSheet 
-                closeCalendar={hanldeCloseCalendar}
+                closeCalendar={handleCloseCalendar}
                 setDate={calendar.setDate}
                 disableActionButtons={true}
                 snapPointsArray={["60%"]}
