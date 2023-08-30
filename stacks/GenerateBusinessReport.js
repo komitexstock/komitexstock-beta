@@ -11,7 +11,7 @@ import {
 import Header from "../components/Header";
 import CustomButton from "../components/CustomButton";
 import SelectInput from "../components/SelectInput";
-import Calendar from "../components/Calendar";
+import CalendarSheet from "../components/CalendarSheet";
 import CustomBottomSheet from "../components/CustomBottomSheet";
 // colors
 import { background, black, bodyText} from "../style/colors";
@@ -63,9 +63,11 @@ const GenerateBusinessReport = ({navigation}) => {
     // today.setDate(today.getDate());
 
 
+    // calendar ref
+    const calendarRef = useRef(null);
+
     const [calendar, setCalendar] = useState({
         open: false,
-        close: hanldeCloseCalendar,
         setDate: setStartDate,
         maxDate: false,
         minDate: false,
@@ -76,7 +78,6 @@ const GenerateBusinessReport = ({navigation}) => {
             setActiveStartDate(true);
             setCalendar({
                 open: true,
-                close: hanldeCloseCalendar,
                 setDate: setStartDate,
                 maxDate: endDate ? moment(endDate).subtract(1, 'days') : prevDate,
                 minDate: false
@@ -85,12 +86,12 @@ const GenerateBusinessReport = ({navigation}) => {
             setActiveEndDate(true);
             setCalendar({
                 open: true,
-                close: hanldeCloseCalendar,
                 setDate: setEndDate,
                 maxDate: today,
                 minDate: startDate ? moment(startDate).add(1, 'days') : startDate,
             });
         }
+        calendarRef.current?.present();
     }
 
     const hanldeCloseCalendar = () => {
@@ -100,6 +101,7 @@ const GenerateBusinessReport = ({navigation}) => {
             ...calendar,
             open: false,
         })
+        calendarRef.current?.close();
     }
 
     // check for empty fields
@@ -219,14 +221,17 @@ const GenerateBusinessReport = ({navigation}) => {
                 fixed={false}
                 inactive={emptyFields}
             />
-            <Calendar 
-                open={calendar.open}
-                closeCalender={calendar.close}
+            {/* calendar */}
+            <CalendarSheet 
+                closeCalendar={hanldeCloseCalendar}
                 setDate={calendar.setDate}
                 disableActionButtons={true}
+                snapPointsArray={["60%"]}
                 minDate={calendar.minDate}
                 maxDate={calendar.maxDate}
+                calendarRef={calendarRef} 
             />
+
             <CustomBottomSheet 
                 bottomSheetModalRef={bottomSheetModalRef}
                 setShowOverlay={setShowOverlay}

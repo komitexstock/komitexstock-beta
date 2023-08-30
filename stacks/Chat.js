@@ -10,7 +10,6 @@ import {
     Dimensions,
     BackHandler,
     Linking,
-    Keyboard
 } from "react-native";
 // icons
 import SendIcon from '../assets/icons/SendIcon';
@@ -26,7 +25,6 @@ import WhatsAppIcon from "../assets/icons/WhatsAppIcon";
 import RepliedImageIcon from "../assets/icons/RepliedImageIcon";
 import RepliedDocumentIcon from "../assets/icons/RepliedDocumentIcon";
 import CloseIcon from "../assets/icons/CloseIcon";
-import ArrowDown from "../assets/icons/ArrowDown";
 import CalendarIcon from "../assets/icons/CalendarIcon";
 // components
 import ActionButton from "../components/ActionButton";
