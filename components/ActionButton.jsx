@@ -31,14 +31,16 @@ const ActionButton = ({name, onPress, removeBottomMargin, selected}) => {
 // stylesheet
 const style = StyleSheet.create({
     actionButton: {
-        width: 70,
-        height: 24,
+        // width: 70,
+        paddingHorizontal: 16,
+        // paddingVertical: 12,
+        height: 32,
         display: 'flex',
         alignItems: 'center',
         justifyContent: "center",
         backgroundColor: background,
         marginBottom: 15,
-        borderRadius: 5,
+        borderRadius: 8,
     },
     actionButtonText: {
         fontFamily: 'mulish-medium',

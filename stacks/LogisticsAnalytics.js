@@ -5,7 +5,8 @@ import {
     ScrollView,
     StyleSheet,
     TouchableOpacity,
-    Image
+    Image,
+    BackHandler
 } from "react-native";
 // colors
 import {
@@ -22,12 +23,12 @@ import BarChart from "../components/BarChart";
 import StatWrapper from "../components/StatWrapper";
 import StatCard from "../components/StatCard";
 import LocationAnalyticsItem from "../components/LocationAnalyticsItem";
-import Calendar from "../components/Calendar";
+import CalendarSheet from "../components/CalendarSheet";
 // icons
 import ArrowDownSmall from '../assets/icons/ArrowDownSmall';
 import VerifiedIcon from '../assets/icons/VerifiedIcon';
 // react hooks
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 
 const LogisticsAnalytics = ({navigation}) => {
@@ -128,16 +129,46 @@ const LogisticsAnalytics = ({navigation}) => {
         },
     ];
 
-    // state to open calendar
-    const [open, setOpen] = useState(false);
+    // calendar ref
+    const calendarRef = useRef(null);
 
-    const hanldeOpenCalender = () => {
-        setOpen(true);
+    // state to save calendar open or closed state
+    const [openCalendar, setOpenCalendar] = useState(false);
+
+    const handleOpenCalendar = () => {
+        setOpenCalendar(true);
+        calendarRef.current?.present();
+    }
+    
+    const handleCloseCalendar = () => {
+        setOpenCalendar(false);
+        calendarRef.current?.close();
     }
 
-    const hanldeCloseCalender = () => {
-        setOpen(false);
-    }
+    // use effect to close calendar modal
+    useEffect(() => {
+        // function to run if back button is pressed
+        const backAction = () => {
+            // Run your function here
+            if (openCalendar) {
+                // if calendar is open, close it
+                handleCloseCalendar();
+                return true;
+            } else {
+                // if modal isnt open simply navigate back
+                return false;
+            }
+        };
+    
+        // listen for onPress back button
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction
+        );
+    
+        return () => backHandler.remove();
+
+    }, [openCalendar]);
 
     const [date, setDate] = useState(null);
 
@@ -171,7 +202,7 @@ const LogisticsAnalytics = ({navigation}) => {
                         <View style={style.rangeWrapper}>
                             <TouchableOpacity 
                                 style={style.rangeButton}
-                                onPress={hanldeOpenCalender}
+                                onPress={handleOpenCalendar}
                             >
                                 <Text style={style.rangeButtonText}>Lat 7 Days</Text>
                                 <ArrowDownSmall />
@@ -224,11 +255,14 @@ const LogisticsAnalytics = ({navigation}) => {
                     </View>
                 </View>
             </ScrollView>
-            <Calendar 
-                open={open}
-                closeCalender={hanldeCloseCalender}
+            {/* calendar */}
+            <CalendarSheet 
+                closeCalendar={handleCloseCalendar}
                 setDate={setDate}
+                disableActionButtons={false}
+                snapPointsArray={["70%"]}
                 maxDate={new Date()}
+                calendarRef={calendarRef} 
             />
         </>
     );
@@ -241,6 +275,8 @@ const style = StyleSheet.create({
         backgroundColor: background,
         padding: 20,
         paddingTop: 0,
+        width: "100%",
+        minHeight: "100%",
     },
     headerWrapper: {
         display: 'flex',
