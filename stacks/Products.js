@@ -14,6 +14,7 @@ import { useState, useRef, useEffect, useLayoutEffect } from "react";
 import MenuIcon from "../assets/icons/MenuIcon";
 import SearchIcon from '../assets/icons/SearchIcon'
 import FilterIcon from '../assets/icons/FilterIcon';
+import AddProduct from "../assets/icons/AddProduct";
 import VerifiedIcon from "../assets/icons/VerifiedIcon";
 // colors
 import { black, bodyText, primaryColor, secondaryColor, white } from "../style/colors";
@@ -31,6 +32,8 @@ import Header from "../components/Header";
 import ModalButton from "../components/ModalButton";
 // bottomsheet component
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+// helpers
+import { windowHeight } from "../utils/helpers";
 
 
 const Products = ({navigation, route}) => {
@@ -69,60 +72,60 @@ const Products = ({navigation, route}) => {
 
     // list of products
     const products = [
-        {
-            id: 1,
-            product_name: "Maybach Sunglasses",
-            quantity: 7,
-            price: 20000,
-            imageUrl: require('../assets/images/maybach-sunglasses.png'),
-            lowStock: false,
-            onPress: () => openModal("editProduct"),
-        },
-        {
-            id: 2,
-            product_name: "Accurate Watch",
-            quantity: 3,
-            price: 33000,
-            imageUrl: require('../assets/images/accurate-watch.png'),
-            lowStock: false,
-            onPress: () => openModal("editProduct"),
-        },
-        {
-            id: 3,
-            product_name: "Black Sketchers",
-            quantity: 0,
-            price: 35000,
-            imageUrl: require('../assets/images/black-sketchers.png'),
-            lowStock: true,
-            onPress: () => openModal("editProduct"),
-        },
-        {
-            id: 4,
-            product_name: "Brown Clarks",
-            quantity: 11,
-            price: 40000,
-            imageUrl: require('../assets/images/brown-clarks.png'),
-            lowStock: false,
-            onPress: () => openModal("editProduct"),
-        },
-        {
-            id: 5,
-            product_name: "Pheonix Sneakers",
-            quantity: 2,
-            price: 25000,
-            imageUrl: require('../assets/images/sneakers.png'),
-            lowStock: true,
-            onPress: () => openModal("editProduct"),
-        },
-        {
-            id: 6,
-            product_name: "Perfectly Useless Morning Watch",
-            quantity: 9,
-            price: 32000,
-            imageUrl: require('../assets/images/perfectly-useless-mornig-watch.png'),
-            lowStock: false,
-            onPress: () => openModal("editProduct"),
-        },
+        // {
+        //     id: 1,
+        //     product_name: "Maybach Sunglasses",
+        //     quantity: 7,
+        //     price: 20000,
+        //     imageUrl: require('../assets/images/maybach-sunglasses.png'),
+        //     lowStock: false,
+        //     onPress: () => openModal("editProduct"),
+        // },
+        // {
+        //     id: 2,
+        //     product_name: "Accurate Watch",
+        //     quantity: 3,
+        //     price: 33000,
+        //     imageUrl: require('../assets/images/accurate-watch.png'),
+        //     lowStock: false,
+        //     onPress: () => openModal("editProduct"),
+        // },
+        // {
+        //     id: 3,
+        //     product_name: "Black Sketchers",
+        //     quantity: 0,
+        //     price: 35000,
+        //     imageUrl: require('../assets/images/black-sketchers.png'),
+        //     lowStock: true,
+        //     onPress: () => openModal("editProduct"),
+        // },
+        // {
+        //     id: 4,
+        //     product_name: "Brown Clarks",
+        //     quantity: 11,
+        //     price: 40000,
+        //     imageUrl: require('../assets/images/brown-clarks.png'),
+        //     lowStock: false,
+        //     onPress: () => openModal("editProduct"),
+        // },
+        // {
+        //     id: 5,
+        //     product_name: "Pheonix Sneakers",
+        //     quantity: 2,
+        //     price: 25000,
+        //     imageUrl: require('../assets/images/sneakers.png'),
+        //     lowStock: true,
+        //     onPress: () => openModal("editProduct"),
+        // },
+        // {
+        //     id: 6,
+        //     product_name: "Perfectly Useless Morning Watch",
+        //     quantity: 9,
+        //     price: 32000,
+        //     imageUrl: require('../assets/images/perfectly-useless-mornig-watch.png'),
+        //     lowStock: false,
+        //     onPress: () => openModal("editProduct"),
+        // },
     ];
 
     const [alert, setAlert] = useState({
@@ -423,14 +426,16 @@ const Products = ({navigation, route}) => {
                                 ))}
                             </StatWrapper>
                             {/* Navigate to addproducts page/stack */}
-                            <TouchableOpacity 
-                                style={style.sendOrderButton}
-                                onPress={() => navigation.navigate("AddProduct", {
-                                    origin: "SendOrder",
-                                })}
-                            >
-                                <Text style={style.orderButtonText}>Add Product</Text>
-                            </TouchableOpacity>
+                            {products.length !== 0 && (
+                                <TouchableOpacity 
+                                    style={style.addProductButton}
+                                    onPress={() => navigation.navigate("AddProduct", {
+                                        origin: "SendOrder",
+                                    })}
+                                >
+                                    <Text style={style.orderButtonText}>Add Product</Text>
+                                </TouchableOpacity>
+                            )}
                             <View style={style.recentOrderHeading}>
                                 <Text style={style.recentOrderHeadingText}>Products</Text>
                                 <View style={style.actionWrapper}>
@@ -452,12 +457,13 @@ const Products = ({navigation, route}) => {
                             </View>
                         </View>
                     }
-                    columnWrapperStyle={style.listContainer}
+                    contentContainerStyle={style.contentContainer}
+                    columnWrapperStyle={products.length !== 0 ? style.listContainer : null}
                     style={style.listWrapper}
                     keyExtractor={item => item.id}
                     data={products}
-                    // render items in two rows
-                    numColumns={2}
+                    // render items in two rows if theres data, else one row
+                    numColumns={products.length !== 0 ? 2 : 1}
                     renderItem={({ item }) => (
                         // product card
                         <ProductCard 
@@ -468,6 +474,40 @@ const Products = ({navigation, route}) => {
                             lowStock={item.lowStock}
                             onPress={item.onPress}
                         />
+                    )}
+                    ListFooterComponent={products.length === 0 && (
+                        <View style={style.noProductsContainer}>
+                            <View style={style.noProductTextWrapper}>
+                                <AddProduct />
+                                <Text style={style.noProductHeading}>No product inventory... yet!</Text>
+                                <Text style={style.noProductParagraph}>
+                                    Start by adding your first product. You could as well import from an already existing inventory
+                                </Text>
+                            </View>
+                            <TouchableOpacity 
+                                style={[
+                                    style.addProductButton, 
+                                    {
+                                        backgroundColor: primaryColor,
+                                        marginTop: 0,
+                                    }
+                                ]}
+                                onPress={() => {}}
+                            >
+                                <Text style={[style.orderButtonText, {color: white}]}>Add Product</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity 
+                                style={[
+                                    style.addProductButton, 
+                                    {
+                                        marginTop: 0,
+                                    }
+                                ]}
+                                onPress={() => {}}
+                            >
+                                <Text style={style.orderButtonText}>Import Inventory</Text>
+                            </TouchableOpacity>
+                        </View>
                     )}
                 />
             </TouchableWithoutFeedback>
@@ -498,6 +538,12 @@ const Products = ({navigation, route}) => {
 
 // stylesheet
 const style = StyleSheet.create({
+    contentContainer: {
+        minHeight: windowHeight - 70,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+    },
     listWrapper: {
         width: "100%",
         height: "100%",
@@ -537,7 +583,7 @@ const style = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
     },
-    sendOrderButton: {
+    addProductButton: {
         height: 44,
         width: "100%",
         display: "flex",
@@ -545,7 +591,7 @@ const style = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: secondaryColor,
         borderRadius: 12,
-        marginVertical: 22,
+        marginTop: 22,
     },
     orderButtonText: {
         fontFamily: "mulish-semibold",
@@ -559,13 +605,13 @@ const style = StyleSheet.create({
         alignItems: "center",
         justifyContent: "space-between",
         height: 24,
-        marginTop: 8,
+        marginTop: 30,
         marginBottom: 20,
     },
     recentOrderHeadingText: {
         fontFamily: "mulish-bold",
         color: bodyText,
-        fontSize: 10,
+        fontSize: 12,
     },
     actionWrapper: {
         display: "flex",
@@ -582,6 +628,39 @@ const style = StyleSheet.create({
         width: "100%",
         flex: 1,
     },
+    noProductsContainer: {
+        width: "100%",
+        alignSelf: 'auto',
+        display: 'flex',
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'column',
+        gap: 16,
+        minHeight: "50%",
+    },
+    noProductTextWrapper: {
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'column',
+        marginBottom: 14,
+    },
+    noProductHeading: {
+        marginTop: 12,
+        fontFamily: 'mulish-bold',
+        fontSize: 16,
+        textAlign: 'center',
+        color: black,
+    },
+    noProductParagraph: {
+        width: "80%",
+        fontFamily: 'mulish-regular',
+        fontSize: 10,
+        color: bodyText,
+        textAlign: 'center',
+    }
 })
  
 export default Products;
