@@ -1,11 +1,11 @@
 import { TouchableOpacity, StyleSheet, View, Text } from "react-native";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { useMemo } from "react";
+import { BottomSheetModal, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
+import { useMemo, useCallback } from "react";
 import ModalHandle from "./ModalHandle";
 import CloseIcon from "../assets/icons/CloseIcon";
 import { bodyText, primaryColor } from "../style/colors";
 
-const CustomBottomSheet = ({bottomSheetModalRef, showOverlay, closeModal, snapPointsArray, autoSnapAt, children, sheetTitle, sheetSubtitle, clearFilterFunction, topContentPadding}) => {
+const CustomBottomSheet = ({bottomSheetModalRef, showOverlay, closeModal, snapPointsArray, autoSnapAt, children, sheetTitle, sheetSubtitle, clearFilterFunction, topContentPadding, stackBehavior}) => {
 
     const snapPoints = useMemo(() => snapPointsArray, [snapPointsArray]);
 
@@ -14,9 +14,22 @@ const CustomBottomSheet = ({bottomSheetModalRef, showOverlay, closeModal, snapPo
         if (event === -1) closeModal();
     };
 
+    // render popup bottomsheet modal backdrop 
+    const renderBackdrop = useCallback(
+        props => (
+            <BottomSheetBackdrop
+                {...props}
+                disappearsOnIndex={-1}
+                appearsOnIndex={0}
+                opacity={0.3}
+            />
+        ),
+        []
+    );
+
     return (
         <>
-            {showOverlay && (
+            {/* {showOverlay && (
                 <View
                     style={styles.overlay}
                 >
@@ -26,7 +39,7 @@ const CustomBottomSheet = ({bottomSheetModalRef, showOverlay, closeModal, snapPo
                     >
                     </TouchableOpacity>
                 </View>
-            )}
+            )} */}
             <View style={styles.container}>
                 <BottomSheetModal
                     ref={bottomSheetModalRef}
@@ -46,7 +59,10 @@ const CustomBottomSheet = ({bottomSheetModalRef, showOverlay, closeModal, snapPo
                     handleComponent={() => (
                         <ModalHandle />
                     )}
-                    
+                    // push stackbehaviour to allow popup modal to display
+                    // over other bottomsheet
+                    stackBehavior={stackBehavior ? stackBehavior : "push"}
+                    backdropComponent={renderBackdrop}
                 >
                     <View style={styles.sheetTitle}>
                         <TouchableOpacity 

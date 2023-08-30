@@ -36,7 +36,7 @@ import {
 // components
 import NumberLink from "./NumberLink";
 
-const MessageContainer = ({messages, message, index, messagesRefs, customerName, phoneNumber, address, location, charge, price, products, handleOnPressPhoneNumber, handleScrollToComponent, setReplying, textInputRef, navigation}) => {
+const MessageContainer = ({messages, message, index, messagesRefs, customerName, phoneNumber, address, location, price, products, handleOnPressPhoneNumber, handleScrollToComponent, setReplying, textInputRef, navigation}) => {
 
     // accoutntype, retreived from global variables
     const accountType = "Merchant";
@@ -446,7 +446,7 @@ const MessageContainer = ({messages, message, index, messagesRefs, customerName,
                                         accountType === account_type && style.sentText
                                     ]}
                                 >
-                                    Amount:&nbsp;
+                                    Price:&nbsp;
                                     <Text 
                                         style={[
                                             style.actionMessageText,
@@ -469,7 +469,7 @@ const MessageContainer = ({messages, message, index, messagesRefs, customerName,
                                             accountType === account_type && style.sentText
                                         ]}
                                     >
-                                        {location}
+                                        {location.location}
                                     </Text>
                                 </Text>
                                 <Text 
@@ -485,7 +485,7 @@ const MessageContainer = ({messages, message, index, messagesRefs, customerName,
                                             accountType === account_type && style.sentText
                                         ]}
                                     >
-                                        ₦{charge.toLocaleString()}
+                                        ₦{location.charge.toLocaleString()}
                                     </Text>
                                 </Text>
                             </>

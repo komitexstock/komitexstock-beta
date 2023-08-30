@@ -232,7 +232,7 @@ const GenerateBusinessReport = ({navigation}) => {
                 setShowOverlay={setShowOverlay}
                 showOverlay={showOverlay}
                 closeModal={closeModal}
-                snapPointsArray={["26%"]}
+                snapPointsArray={["25%"]}
                 autoSnapAt={0}
                 sheetTitle={"Select Format"}
             >
@@ -298,7 +298,7 @@ const style = StyleSheet.create({
         height: "100%",
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'flex-start',
+        justifyContent: 'center',
         alignItems: 'center',
         gap: 10,
     },

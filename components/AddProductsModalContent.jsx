@@ -11,7 +11,7 @@ import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 // colors
 import { background, black, inputBorder, primaryColor, white } from "../style/colors";
 
-const AddProductsModalContent = ({addProducts, selectedProducts}) => {
+const AddProductsModalContent = ({addProducts, selectedProducts, action}) => {
     // addProducts, selectedProducts => function
 
     // products list with selected logistics
@@ -43,6 +43,20 @@ const AddProductsModalContent = ({addProducts, selectedProducts}) => {
             imageUrl: require("../assets/images/Chaos-Window-Watch.jpg"),
             quantity: 1,
             checked: false
+        },
+        {
+            id: 5,
+            product_name: "Maybach Sunglasses",
+            quantity: 1,
+            imageUrl: require("../assets/images/maybach-sunglasses.png"),
+            checked: false,
+        },
+        {
+            id: 6,
+            product_name: "Accurate Watch",
+            quantity: 2,
+            imageUrl: require("../assets/images/accurate-watch.png"),
+            checked: false,
         },
     ];
 
@@ -79,7 +93,7 @@ const AddProductsModalContent = ({addProducts, selectedProducts}) => {
         <>
             {/* Search bar component */}
             <SearchBar 
-                placeholder={"Search for a logistics"} 
+                placeholder={"Search for a Product"} 
                 searchQuery={searchQuery} 
                 setSearchQuery={setSearchQuery} 
                 backgroundColor={background}
@@ -124,7 +138,7 @@ const AddProductsModalContent = ({addProducts, selectedProducts}) => {
                 <View style={style.fixedButton}>
                     <TouchableOpacity 
                         style={style.button}
-                        onPress={updateProductSelection}
+                        onPress={action ? action : updateProductSelection}
                     >
                         <Text style={style.buttonText}>Done</Text>
                     </TouchableOpacity>

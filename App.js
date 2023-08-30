@@ -90,7 +90,12 @@ export default function App() {
                     {/* BottomSheetModalProvider required to render bottomsheet */}
                     <BottomSheetModalProvider>
                         {/* custom status bar */}
-                        <StatusBar backgroundColor={white} barStyle="light-content" />
+                        <StatusBar backgroundColor={white} barStyle="dark-content" />
+                        {/* barStyle 
+                            "light-content": Sets the status bar style to light content, 
+                            which is usually used when the status bar background color is darker. 
+                            "dark-content": Sets the status bar style to dark content, which is usually used when the status bar background color is lighte
+                        */}
                         <Stack.Navigator initialRouteName='Home'>
                             {/* Home Stack */}
                             <Stack.Screen 
@@ -121,7 +126,7 @@ export default function App() {
                                 name="Chat" 
                                 component={Chat} 
                                 options={{
-                                headerShown: false,
+                                    headerShown: false,
                                 }} 
                             />
                             {/* View Image stack */}

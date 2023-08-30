@@ -33,7 +33,8 @@ import ActionButton from "../components/ActionButton";
 import Header from "../components/Header";
 import Indicator from "../components/Indicator";
 import CustomBottomSheet from "../components/CustomBottomSheet";
-import Calendar from "../components/Calendar";
+import AddProductsModalContent from "../components/AddProductsModalContent";
+import AddLocationModalContent from "../components/AddLocationModalContent";
 import CalendarSheet from "../components/CalendarSheet";
 import Product from "../components/Product";
 import ModalButton from "../components/ModalButton";
@@ -155,37 +156,41 @@ const Chat = ({navigation, route}) => {
         
     }
 
-    const [charge, setCharge] = useState(3000);
-    
-    // function to update charge
-    const updateCharge = (text) => {
-        let newText = text.replace(new RegExp(',', 'g'), '');
-        // remove all occurrence of the comma character ',' in text gloablly
-        if (newText) setCharge(parseFloat(newText));
-        else setCharge(0);
-        
-    }
-
     // response from ChatGPT after extracting order details
     const [products, setProducts] = useState([
         {
-            id: 2,
+            id: 5,
             product_name: "Maybach Sunglasses",
             quantity: 1,
             imageUrl: require("../assets/images/maybach-sunglasses.png"),
+            checked: true,
         },
         {
-            id: 3,
+            id: 6,
             product_name: "Accurate Watch",
             quantity: 2,
             imageUrl: require("../assets/images/accurate-watch.png"),
+            checked: true,
         },
     ]);
 
     const customerName = "Richard Idana";
     const phoneNumber = ["08165266847", "08123456789"];
     const address = "No 3 Izono street Udu road, Warri";
-    const location = "Warri";
+    const [location, setLocation] = useState({
+        id: Math.random(),
+        location: "Warri",
+        charge: 3000,
+    });
+
+        // function to update charge
+    const updateCharge = (text) => {
+        let newText = text.replace(new RegExp(',', 'g'), '');
+        // remove all occurrence of the comma character ',' in text gloablly
+        if (newText) setLocation({...location, charge: parseFloat(newText)});
+        else setLocation({...location, charge: 0});
+        
+    }
 
     // decrease product quantity
     const decreaseQuantity = (id) => {
@@ -231,7 +236,7 @@ const Chat = ({navigation, route}) => {
     // function to addProducts, the function is called in the select product modal
     const addProducts = (productsList) => {
         setProducts(productsList);
-        closeModal();
+        closeStackedModal();
         // console.log(productsList)
     }
 
@@ -252,13 +257,39 @@ const Chat = ({navigation, route}) => {
     // modal overlay
     const [showOverlay, setShowOverlay] = useState(false);
 
+    const [showStackedOverlay, setShowStackedOverlay] = useState(false);
+
     // modal state
     const [modal, setModal] = useState({
         type: "Open with",
         snapPoints: ["25%"],
     });
 
+    // modal state
+    const [stackedModal, setStackedModal] = useState({
+        type: "Products",
+        snapPoints: ["75%"],
+    });
+
     const [linkPhoneNumber, setLinkPhoneNumber] = useState("");
+
+    const calendarRef = useRef(null);
+    const [calendarOpen, setCalendarOpen] = useState(false)
+
+    const handleCloseCalendar = () => {
+        calendarRef.current?.close();
+        setCalendarOpen(false);
+    }
+    
+    const hanldeOpenCalendar = () => {
+        calendarRef.current?.present();
+        setCalendarOpen(true);
+    }
+
+    const handleSelectedLocation = (data) => {
+        closeStackedModal();
+        setLocation(data);
+    }
 
     
     // use effect to close modal
@@ -268,6 +299,14 @@ const Chat = ({navigation, route}) => {
             // Run your function here
             if (showOverlay) {
                 // if modal is open, close modal
+                if (calendarOpen) {
+                    handleCloseCalendar();
+                    return true
+                }
+                if (showStackedOverlay) {
+                    closeStackedModal();
+                    return true
+                }
                 closeModal();
                 return true;
             } else {
@@ -284,16 +323,24 @@ const Chat = ({navigation, route}) => {
     
         return () => backHandler.remove();
 
-    }, [showOverlay]);
+    }, [showOverlay, calendarOpen, showStackedOverlay]);
    
     // bottom sheet ref
     const bottomSheetModalRef = useRef(null);
+
+    // stacked bottom sheet ref
+    const stackedSheetRef = useRef(null);
 
     // close modal function
     const closeModal = () => {
         bottomSheetModalRef.current?.close();
         setShowOverlay(false);
         setReason("");
+    };
+
+    const closeStackedModal = () => {
+        stackedSheetRef.current?.close();
+        setShowStackedOverlay(false);
     };
 
     // open modal function
@@ -326,9 +373,25 @@ const Chat = ({navigation, route}) => {
         } else {
             return setModal({
                 type: type,
-                snapPoints: ["90%"],
+                snapPoints: ["100%"],
             });
         } 
+    }
+
+    const openStackedModal = (type) => {
+        stackedSheetRef.current?.present();
+        setShowStackedOverlay(true);
+        if (type === "Products") {
+            setStackedModal({
+                type: "Products",
+                snapPoints: ["75%"],
+            })
+        } else {
+            setStackedModal({
+                type: "Locations",
+                snapPoints: ["75%"],
+            })
+        }
     }
 
     const handleOnPressPhoneNumber = (phoneNumber) => {
@@ -340,15 +403,6 @@ const Chat = ({navigation, route}) => {
         openModal("Edit order");
     }
 
-    const calendarRef = useRef(null);
-
-    const handleCloseCalendar = () => {
-        calendarRef.current?.close();
-    }
-
-    const hanldeOpenCalendar = () => {
-        calendarRef.current?.present();
-    }
 
     const [rescheduleDate, setRescheduleDate] = useState("")
 
@@ -1181,9 +1235,21 @@ const Chat = ({navigation, route}) => {
         )
     }
 
-
     const [reason, setReason] = useState("");
     const [errorReason, setErrorReason] = useState(false);
+
+    const [errorCharge, setErrorCharge] = useState(false);
+    const [errorPrice, setErrorPrice] = useState(false);
+
+        // variable to check for empty fields
+    const isAnyFieldEmpty = [
+        location, 
+        products, 
+        price
+        ].some((item) => {
+            return item === null || item === '' || item === undefined || item === 0 || item === NaN || (Array.isArray(item) && item.length === 0);
+        }
+    );
 
     return (
         <>
@@ -1280,10 +1346,6 @@ const Chat = ({navigation, route}) => {
                                     {address}
                                 </Text>
                                 <Text style={[style.messageHeading, accountType === "Merchant" && style.sentHeading]}>
-                                    <Text style={[style.messageText, accountType === "Merchant" && style.sentText]}>Location: </Text>
-                                    {location} ({charge.toLocaleString()})
-                                </Text>
-                                <Text style={[style.messageHeading, accountType === "Merchant" && style.sentHeading]}>
                                     <Text style={[style.messageText, accountType === "Merchant" && style.sentText]}>Product: </Text>
                                     {products.map((product, index) => {
                                         // seperate list of products by commas ','
@@ -1292,7 +1354,15 @@ const Chat = ({navigation, route}) => {
                                 </Text>
                                 <Text style={[style.messageHeading, accountType === "Merchant" && style.sentHeading]}>
                                     <Text style={[style.messageText, accountType === "Merchant" && style.sentText]}>Price: </Text>
-                                    {price.toLocaleString()}
+                                    ₦{price.toLocaleString()}
+                                </Text>
+                                <Text style={[style.messageHeading, accountType === "Merchant" && style.sentHeading]}>
+                                    <Text style={[style.messageText, accountType === "Merchant" && style.sentText]}>Location: </Text>
+                                    {location.location}
+                                </Text>
+                                <Text style={[style.messageHeading, accountType === "Merchant" && style.sentHeading]}>
+                                    <Text style={[style.messageText, accountType === "Merchant" && style.sentText]}>Charge: </Text>
+                                    ₦{location.charge.toLocaleString()}
                                 </Text>
                                 <Text style={[style.messageHeading, accountType === "Merchant" && style.sentHeading]}>
                                     <Text style={[style.messageText, accountType === "Merchant" && style.sentText]}>Logistics: </Text>
@@ -1315,7 +1385,6 @@ const Chat = ({navigation, route}) => {
                                     phoneNumber={phoneNumber}
                                     address={address}
                                     location={location}
-                                    charge={charge}
                                     products={products}
                                     price={price}
                                     handleOnPressPhoneNumber={handleOnPressPhoneNumber}
@@ -1427,7 +1496,7 @@ const Chat = ({navigation, route}) => {
                                     <View style={style.productsHeading}>
                                         <Text style={style.producPlaceholder}>Products Selected</Text>
                                         <TouchableOpacity
-                                            onPress={() => openModal("Products", "Select Products", null, 0)}
+                                            onPress={() => openStackedModal("Products")}
                                         >
                                             <Text style={style.addProduct}>+Add Product</Text>
                                         </TouchableOpacity>
@@ -1456,9 +1525,11 @@ const Chat = ({navigation, route}) => {
                                 <SelectInput
                                     label={"Location"}
                                     placeholder={"Location"}
-                                    value={"Warri"}
+                                    value={location.location}
                                     inputFor={"String"}
-                                    onPress={() => {}}
+                                    onPress={() => {
+                                        openStackedModal("Locations")
+                                    }}
                                 />
                                 {/* price input fields */}
                                 <Input
@@ -1467,20 +1538,28 @@ const Chat = ({navigation, route}) => {
                                     adornment={"₦"}
                                     value={price ? price.toLocaleString() : ''}
                                     onChange={updatePrice}
-                                />
+                                    keyboardType={"numeric"}
+                                    error={errorPrice}
+                                    setError={setErrorPrice}
+                                    
+                                    />
                                 {/* charge input fields */}
                                 <Input
                                     label={"Charge"}
                                     placeholder={"Charge"}
                                     adornment={"₦"}
-                                    value={charge ? charge.toLocaleString() : ''}
+                                    value={location.charge ? location.charge.toLocaleString() : ''}
                                     onChange={updateCharge}
+                                    keyboardType={"numeric"}
+                                    error={errorCharge}
+                                    setError={setErrorCharge}
                                 />
                                 
                             </View>
                         </BottomSheetScrollView>
                         <ModalButton
                             name={"Done"}
+                            emptyFeilds={isAnyFieldEmpty}
                         />
                     </>
                 )}
@@ -1513,7 +1592,7 @@ const Chat = ({navigation, route}) => {
                                 {/* Reschedule date */}
                                 <SelectInput 
                                     label={"Reschedule Date"} 
-                                    placeholder={"Select reschedule date"} 
+                                    placeholder={"DD MMMM, YYYY"} 
                                     value={rescheduleDate}
                                     onPress={hanldeOpenCalendar}
                                     icon={<CalendarIcon />}
@@ -1648,6 +1727,31 @@ const Chat = ({navigation, route}) => {
                             <Text style={style.uploadButtonText}>Document</Text>
                         </TouchableOpacity>
                     </View>   
+                )}
+            </CustomBottomSheet>
+
+            {/* bottom sheet to edit product and location */}
+            <CustomBottomSheet 
+                bottomSheetModalRef={stackedSheetRef}
+                setShowOverlay={setShowStackedOverlay}
+                showOverlay={showStackedOverlay}
+                closeModal={closeStackedModal}
+                snapPointsArray={stackedModal.snapPoints}
+                autoSnapAt={0}
+                sheetTitle={stackedModal.type}
+                topContentPadding={8}
+                stackBehavior={"push"}
+            >
+                {stackedModal.type === "Products" && (
+                    <AddProductsModalContent 
+                        addProducts={addProducts} selectedProducts={products}
+                    />
+                )}
+
+                {stackedModal.type === "Locations" && (
+                    <AddLocationModalContent 
+                        handleSelectedLocation={handleSelectedLocation}
+                    />
                 )}
             </CustomBottomSheet>
         </>
@@ -2145,7 +2249,7 @@ const style = StyleSheet.create({
         fontSize: 12,
         marginBottom: 4,
         textAlign: 'center',
-        maxWidth: '80%',
+        maxWidth: '70%',
         alignSelf: 'center',
     },
 
@@ -2187,6 +2291,10 @@ const style = StyleSheet.create({
         padding: 10,
         borderRadius: 12,
 
+    },
+    noProductText: {
+        fontFamily: "mulish-medium",
+        fontSize: 10
     },
 
     productsDetailsContainer: {

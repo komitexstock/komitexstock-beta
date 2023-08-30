@@ -100,7 +100,7 @@ const AddLocationModalContent = ({handleSelectedLocation}) => {
     return (
         <>
             <SearchBar 
-                placeholder={"Search for a logistics"} 
+                placeholder={"Search for a location"} 
                 searchQuery={searchQuery} 
                 setSearchQuery={setSearchQuery} 
                 backgroundColor={background}
