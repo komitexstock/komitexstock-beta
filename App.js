@@ -29,6 +29,7 @@ import Products from './stacks/Products';
 import AddLogistics from './stacks/AddLogistics';
 import AvailableLocations from './stacks/AvailableLocations';
 import AddProduct from './stacks/AddProduct';
+import ImportInventory from './stacks/ImportInventory';
 // account related stacks
 import Account from './stacks/Account';
 import Profile from './stacks/Profile';
@@ -157,6 +158,14 @@ export default function App() {
                             <Stack.Screen 
                                 name="AddProduct" 
                                 component={AddProduct} 
+                                options={{
+                                headerShown: false,
+                                }} 
+                            />
+                            {/* Import Inventory stack */}
+                            <Stack.Screen 
+                                name="ImportInventory" 
+                                component={ImportInventory} 
                                 options={{
                                 headerShown: false,
                                 }} 

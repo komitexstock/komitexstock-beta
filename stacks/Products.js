@@ -477,7 +477,7 @@ const Products = ({navigation, route}) => {
                         <View style={style.noProductsContainer}>
                             <View style={style.noProductTextWrapper}>
                                 <AddProduct />
-                                <Text style={style.noProductHeading}>No product inventory... yet!</Text>
+                                <Text style={style.noProductHeading}>No products in inventory... yet!</Text>
                                 <Text style={style.noProductParagraph}>
                                     Start by adding your first product. You could as well import from an already existing inventory
                                 </Text>
@@ -501,7 +501,7 @@ const Products = ({navigation, route}) => {
                                         marginTop: 0,
                                     }
                                 ]}
-                                onPress={() => {}}
+                                onPress={() => navigation.navigate("ImportInventory")}
                             >
                                 <Text style={style.orderButtonText}>Import Inventory</Text>
                             </TouchableOpacity>
