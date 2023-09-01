@@ -60,6 +60,7 @@ const AddLogisticsModalContent = ({handleSelectedLogistics}) => {
                 searchQuery={searchQuery} 
                 setSearchQuery={setSearchQuery} 
                 backgroundColor={background}
+                disableFIlter={true}
             />
             <View>
                 <Text style={style.modalHeading}>Available Logistics</Text>

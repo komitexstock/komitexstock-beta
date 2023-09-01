@@ -108,7 +108,7 @@ const ImportInventory = ({navigation}) => {
                     {/* Select Logistics */}
                     <SelectInput 
                         label={"Select Logistics"} 
-                        placeholder={"Choose a logistics"} 
+                        placeholder={"Select logistics"} 
                         value={logistics}
                         onPress={() => {}}
                         icon={<ArrowDown />}
