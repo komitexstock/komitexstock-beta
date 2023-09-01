@@ -15,6 +15,7 @@ import AddLogisticsModalContent from "../components/AddLogisticsModalContent";
 import CustomBottomSheet from "../components/CustomBottomSheet";
 import SearchBar from "../components/SearchBar";
 import ModalButton from "../components/ModalButton";
+import Product from "../components/Product";
 import ProductCheckItem from "../components/ProductCheckItem";
 // colors
 import { background, black, bodyText, checkBoxBorder, primaryColor} from "../style/colors";
@@ -122,6 +123,7 @@ const ImportInventory = ({navigation}) => {
 
     // function to select logistics
     const handleSelectedLogistics = (data) => {
+        // handleDeselectAllProducts();
         closeModal();
         setLogistics(data);
     }
@@ -183,6 +185,13 @@ const ImportInventory = ({navigation}) => {
         setProducts(tempProducts);
     }
 
+    const handleDeselectAllProducts = () => {
+        const tempProducts = products.map(product => {
+            return {...product, checked: false}
+        })
+        setProducts(tempProducts);
+    }
+
 
     const handleSelectProduct = (id) => {
         setProducts(prevProducts => {
@@ -236,6 +245,19 @@ const ImportInventory = ({navigation}) => {
                             <Text style={style.addProduct}>+Select Products</Text>
                         </TouchableOpacity>
                     </View>
+                    <View style={style.selectedProductsContainer}>
+                        {products.map(product => {
+                            // return product if its selected
+                            return product.checked && (
+                                <Product
+                                    key={product.id}
+                                    product={product} 
+                                    disableQuanity={true}
+                                    removeProduct={() => handleSelectProduct(product.id)}
+                                />
+                            )
+                        })}
+                    </View>
                 </View>
             </View>
             {/* Add Product button, disables on empty fields */}
@@ -244,7 +266,7 @@ const ImportInventory = ({navigation}) => {
                 onPress={() => {}}
                 backgroundColor={background}
                 fixed={false}
-                inactive={true}
+                inactive={products.filter(product => product.checked === true).length === 0 ? true : false}
             />
                 
             <CustomBottomSheet 
@@ -332,7 +354,7 @@ const ImportInventory = ({navigation}) => {
                         name={"Done"}
                         // activate button if sa product is selected
                         emptyFeilds={products.filter(product => product.checked === true).length === 0 ? true : false}
-                        onPress={() => {}}
+                        onPress={closeModal}
                     />
                 </>)}
             </CustomBottomSheet>
@@ -407,6 +429,15 @@ const style = StyleSheet.create({
         color: primaryColor,
         textDecorationLine: "underline",
         fontSize: 12,
+    },
+
+    selectedProductsContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
+        gap: 16,
+        paddingVertical: 16,
     },
 
     modalWrapper: {

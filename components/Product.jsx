@@ -11,7 +11,7 @@ import {
 import ClearSearch from "../assets/icons/ClearSearch";
 import { background, black, white } from "../style/colors";
 
-const Product = ({product, removeProduct, increaseQuantity, decreaseQuantity, invertColor}) => {
+const Product = ({product, removeProduct, increaseQuantity, decreaseQuantity, invertColor, disableQuanity}) => {
     // product => object
     // removeProduct, increaseQuantity, decreaseQuantity => function
 
@@ -31,37 +31,39 @@ const Product = ({product, removeProduct, increaseQuantity, decreaseQuantity, in
             </View>
 
             <View style={style.productQuantityWrapper}>
-                <View 
-                    style={[
-                        style.productQuantityContainer,
-                        invertColor && {backgroundColor: white}
-                    ]}
-                >
-                    {/* reduce quantity button */}
-                    <TouchableOpacity 
-                        style={style.quantityButton}
-                        onPress={() => {
-                            decreaseQuantity(product.id);
-                        }}
+                {!disableQuanity && (
+                    <View 
+                        style={[
+                            style.productQuantityContainer,
+                            invertColor && {backgroundColor: white}
+                        ]}
                     >
-                        <Text style={style.quantityButtonText}>-</Text>
-                    </TouchableOpacity>
-                    {/* input quantity */}
-                    <TextInput 
-                        keyboardType="numeric"
-                        defaultValue={String(product.quantity)}
-                        style={style.quantityInput}
-                    />
-                    {/* increase quantity button */}
-                    <TouchableOpacity 
-                        style={style.quantityButton}
-                        onPress={() => {
-                            increaseQuantity(product.id);
-                        }}
-                    >
-                        <Text style={style.quantityButtonText}>+</Text>
-                    </TouchableOpacity>
-                </View>
+                        {/* reduce quantity button */}
+                        <TouchableOpacity 
+                            style={style.quantityButton}
+                            onPress={() => {
+                                decreaseQuantity(product.id);
+                            }}
+                        >
+                            <Text style={style.quantityButtonText}>-</Text>
+                        </TouchableOpacity>
+                        {/* input quantity */}
+                        <TextInput 
+                            keyboardType="numeric"
+                            defaultValue={String(product.quantity)}
+                            style={style.quantityInput}
+                        />
+                        {/* increase quantity button */}
+                        <TouchableOpacity 
+                            style={style.quantityButton}
+                            onPress={() => {
+                                increaseQuantity(product.id);
+                            }}
+                        >
+                            <Text style={style.quantityButtonText}>+</Text>
+                        </TouchableOpacity>
+                    </View>
+                )}
                 {/* remove product */}
                 <TouchableOpacity
                     onPress={() => removeProduct(product.id)}
