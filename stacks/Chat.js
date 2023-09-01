@@ -170,6 +170,34 @@ const Chat = ({navigation, route}) => {
             imageUrl: require("../assets/images/accurate-watch.png"),
             checked: true,
         },
+        {
+            id: 7,
+            product_name: "Maybach Sunglasses",
+            quantity: 1,
+            imageUrl: require("../assets/images/maybach-sunglasses.png"),
+            checked: true,
+        },
+        {
+            id: 8,
+            product_name: "Accurate Watch",
+            quantity: 2,
+            imageUrl: require("../assets/images/accurate-watch.png"),
+            checked: true,
+        },
+        {
+            id: 9,
+            product_name: "Maybach Sunglasses",
+            quantity: 1,
+            imageUrl: require("../assets/images/maybach-sunglasses.png"),
+            checked: true,
+        },
+        {
+            id: 10,
+            product_name: "Accurate Watch",
+            quantity: 2,
+            imageUrl: require("../assets/images/accurate-watch.png"),
+            checked: true,
+        },
     ]);
 
     const customerName = "Richard Idana";
@@ -2231,7 +2259,7 @@ const style = StyleSheet.create({
         alignItems: 'flex-start',
         minHeight: "100%",
         width: "100%",
-        paddingBottom: 10,
+        paddingBottom: 20,
     },
     modalContent: {
         width: "100%",

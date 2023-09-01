@@ -24,6 +24,7 @@ export const cancelledContainer = "#FEF3F2";
 export const cancelledText = "#B42318";
 export const pendingContainer = "#FEF0C7";
 export const pendingText = "#DC6803";
+export const checkBoxBorder = "#828282";
 export const rescheduledContainer = "#2222220D";
 export const messageSenderColors = [
     '#FF0000', // Red

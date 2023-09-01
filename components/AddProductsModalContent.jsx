@@ -1,15 +1,14 @@
 // react native components
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
-// expo checkbox components
-import CheckBox from 'expo-checkbox';
 // components
 import SearchBar from "./SearchBar";
+import ProductCheckItem from "./ProductCheckItem";
 // react hook
 import { useState } from "react";
 // bottomsheet components
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 // colors
-import { background, black, inputBorder, primaryColor, white } from "../style/colors";
+import { background, black, primaryColor, white } from "../style/colors";
 
 const AddProductsModalContent = ({addProducts, selectedProducts, action}) => {
     // addProducts, selectedProducts => function
@@ -109,31 +108,11 @@ const AddProductsModalContent = ({addProducts, selectedProducts, action}) => {
                 >
                     {/* list of product with selected logistics */}
                     {productList.map((data) => (
-                        <View 
+                        <ProductCheckItem 
                             key={data.id}
-                            style={style.listItemWrapper}
-                        >
-                            {/* product */}
-                            <TouchableOpacity
-                                style={style.list}
-                                key={data.id}
-                                onPress={() => handleSelectedProducts(data.id)}
-                            >   
-                                {/* product image */}
-                                <Image
-                                    style={style.logisticsImage}
-                                    source={data.imageUrl}
-                                />
-                                <Text style={style.listText}>{data.product_name}</Text>
-                            </TouchableOpacity>
-                            {/* checkbox */}
-                            <CheckBox 
-                                value={data.checked}
-                                color={data.checked ? primaryColor : undefined}
-                                style={style.checkBox}
-                                onValueChange={() => handleSelectedProducts(data.id)}
-                            />
-                        </View>
+                            data={data}
+                            onPress={handleSelectedProducts}
+                        />
                     ))}
                 </BottomSheetScrollView>
                 <View style={style.fixedButton}>
@@ -167,41 +146,6 @@ const style = StyleSheet.create({
     listWrapper: {
         width: '100%',
 
-    },
-    listItemWrapper: {
-        display: 'flex',
-        flexDirection: "row",
-        width: '100%',
-        alignItems: 'center',
-        borderBottomColor: inputBorder,
-        borderBottomWidth: 1,
-    },
-    list: {
-        height: 50,
-        display: 'flex',
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: 10,
-    },
-    logisticsImage: {
-        width: 30,
-        height: 30,
-        borderRadius: 6,
-    },
-    listText: {
-        fontFamily: "mulish-medium",
-        fontSize: 12,
-        flex: 1,
-        color: black,
-    },
-    checkBox: {
-        width: 16,
-        height: 16,
-        borderRadius: 4,
-        borderWidth: 1,
-        borderColor: "#828282",
     },
     button: {
         width: "100%",
