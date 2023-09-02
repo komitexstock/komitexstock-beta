@@ -30,6 +30,8 @@ import EditProductContent from "../components/EditProductContent";
 import ProductListItem from "../components/ProductListItem";
 import Header from "../components/Header";
 import ModalButton from "../components/ModalButton";
+import Menu from "../components/Menu";
+import ImportInventory from "../assets/icons/ImportInventory";
 // bottomsheet component
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 // helpers
@@ -72,60 +74,60 @@ const Products = ({navigation, route}) => {
 
     // list of products
     const products = [
-        // {
-        //     id: 1,
-        //     product_name: "Maybach Sunglasses",
-        //     quantity: 7,
-        //     price: 20000,
-        //     imageUrl: require('../assets/images/maybach-sunglasses.png'),
-        //     lowStock: false,
-        //     onPress: () => openModal("editProduct"),
-        // },
-        // {
-        //     id: 2,
-        //     product_name: "Accurate Watch",
-        //     quantity: 3,
-        //     price: 33000,
-        //     imageUrl: require('../assets/images/accurate-watch.png'),
-        //     lowStock: false,
-        //     onPress: () => openModal("editProduct"),
-        // },
-        // {
-        //     id: 3,
-        //     product_name: "Black Sketchers",
-        //     quantity: 0,
-        //     price: 35000,
-        //     imageUrl: require('../assets/images/black-sketchers.png'),
-        //     lowStock: true,
-        //     onPress: () => openModal("editProduct"),
-        // },
-        // {
-        //     id: 4,
-        //     product_name: "Brown Clarks",
-        //     quantity: 11,
-        //     price: 40000,
-        //     imageUrl: require('../assets/images/brown-clarks.png'),
-        //     lowStock: false,
-        //     onPress: () => openModal("editProduct"),
-        // },
-        // {
-        //     id: 5,
-        //     product_name: "Pheonix Sneakers",
-        //     quantity: 2,
-        //     price: 25000,
-        //     imageUrl: require('../assets/images/sneakers.png'),
-        //     lowStock: true,
-        //     onPress: () => openModal("editProduct"),
-        // },
-        // {
-        //     id: 6,
-        //     product_name: "Perfectly Useless Morning Watch",
-        //     quantity: 9,
-        //     price: 32000,
-        //     imageUrl: require('../assets/images/perfectly-useless-mornig-watch.png'),
-        //     lowStock: false,
-        //     onPress: () => openModal("editProduct"),
-        // },
+        {
+            id: 1,
+            product_name: "Maybach Sunglasses",
+            quantity: 7,
+            price: 20000,
+            imageUrl: require('../assets/images/maybach-sunglasses.png'),
+            lowStock: false,
+            onPress: () => openModal("editProduct"),
+        },
+        {
+            id: 2,
+            product_name: "Accurate Watch",
+            quantity: 3,
+            price: 33000,
+            imageUrl: require('../assets/images/accurate-watch.png'),
+            lowStock: false,
+            onPress: () => openModal("editProduct"),
+        },
+        {
+            id: 3,
+            product_name: "Black Sketchers",
+            quantity: 0,
+            price: 35000,
+            imageUrl: require('../assets/images/black-sketchers.png'),
+            lowStock: true,
+            onPress: () => openModal("editProduct"),
+        },
+        {
+            id: 4,
+            product_name: "Brown Clarks",
+            quantity: 11,
+            price: 40000,
+            imageUrl: require('../assets/images/brown-clarks.png'),
+            lowStock: false,
+            onPress: () => openModal("editProduct"),
+        },
+        {
+            id: 5,
+            product_name: "Pheonix Sneakers",
+            quantity: 2,
+            price: 25000,
+            imageUrl: require('../assets/images/sneakers.png'),
+            lowStock: true,
+            onPress: () => openModal("editProduct"),
+        },
+        {
+            id: 6,
+            product_name: "Perfectly Useless Morning Watch",
+            quantity: 9,
+            price: 32000,
+            imageUrl: require('../assets/images/perfectly-useless-mornig-watch.png'),
+            lowStock: false,
+            onPress: () => openModal("editProduct"),
+        },
     ];
 
     const [alert, setAlert] = useState({
@@ -389,6 +391,29 @@ const Products = ({navigation, route}) => {
     };
 
 
+    // const menu state
+    const [menu, setMenu] = useState(false);
+
+    // close Menu function
+    const closeMenu = () => {
+        setMenu(false);
+    }
+    
+    // open Menu function
+    const openMenu = () => {
+        setMenu(true);
+    }
+    
+
+    const menuButtons = [
+        {
+            id: 1,
+            icon: <ImportInventory />,
+            text: "Import Inventory",
+            onPress: () => navigation.navigate("ImportInventory"),
+        }
+    ]
+
     // render Products page
     return (
         <>
@@ -411,7 +436,7 @@ const Products = ({navigation, route}) => {
                                 inlineArrow={true}
                                 unpadded={true}
                                 icon={<MenuIcon />}
-                                iconFunction={() => {}}
+                                iconFunction={openMenu}
                             />
                             {/* stats */}
                             <StatWrapper>
@@ -528,6 +553,14 @@ const Products = ({navigation, route}) => {
                     type={alert.type}
                     text={alert.text}
                     closeAlert={closeAlert}
+                />
+            )}
+
+            {/* menu */}
+            {menu && (
+                <Menu
+                    closeMenu={closeMenu}
+                    menuButtons={menuButtons}
                 />
             )}
         </>

@@ -8,6 +8,7 @@ export const receivedMessage = "#F2F2F2";
 export const black = "#222222"; // text color level 1
 export const bodyText = "#222222CC"; // text color level 2
 export const subText = "#22222299"; // text color level 3
+export const blackOut = "#000000";
 export const accent = "#E66D1C";
 export const linkText = "#B3DFFD";
 export const accentLight = "#E66D1C0D";
@@ -25,6 +26,7 @@ export const cancelledText = "#B42318";
 export const pendingContainer = "#FEF0C7";
 export const pendingText = "#DC6803";
 export const checkBoxBorder = "#828282";
+export const overlay = "#0000004D";
 export const rescheduledContainer = "#2222220D";
 export const messageSenderColors = [
     '#FF0000', // Red
