@@ -7,8 +7,8 @@
     "icon": "./assets/images/komitex.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/images/komitex.png",
-      "resizeMode": "cover",
+      "image": "./assets/splash/komitexsplash.png",
+      "resizeMode": "contain",
       "backgroundColor": "#07427C"
     },
     "assetBundlePatterns": [

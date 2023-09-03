@@ -56,9 +56,6 @@ import { StatusBar, AppRegistry } from 'react-native';
 // colors
 import { white } from './style/colors';
 
-// Keep the splash screen visible while we fetch resources
-SplashScreen.preventAutoHideAsync();
-
 export default function App() {
 
     // declare fonts 
