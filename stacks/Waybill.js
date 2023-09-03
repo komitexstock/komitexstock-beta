@@ -253,7 +253,7 @@ const Waybill = ({navigation}) => {
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "abc123",
-                    type: "waybill",
+                    type: "Waybill",
                     order: "Chat Message",
                     name: "Komitex",
                     imageUrl: require('../assets/images/komitex.png'),
@@ -273,7 +273,7 @@ const Waybill = ({navigation}) => {
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "def456",
-                    type: "waybill",
+                    type: "Waybill",
                     order: "Chat Message",
                     name: "Fedex",
                     imageUrl: require('../assets/images/fedex.png'),
@@ -292,7 +292,7 @@ const Waybill = ({navigation}) => {
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "ghi789",
-                    type: "waybill",
+                    type: "Waybill",
                     order: "Chat Message",
                     name: "Komitex",
                     imageUrl: require('../assets/images/komitex.png'),
@@ -311,7 +311,7 @@ const Waybill = ({navigation}) => {
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "mno345",
-                    type: "waybill",
+                    type: "Waybill",
                     order: "Chat Message",
                     name: "Dhl",
                     imageUrl: require('../assets/images/dhl.png'),
@@ -330,7 +330,7 @@ const Waybill = ({navigation}) => {
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "pqr678",
-                    type: "waybill",
+                    type: "Waybill",
                     order: "Chat Message",
                     name: "Ups",
                     imageUrl: require('../assets/images/ups.png'),
@@ -354,7 +354,7 @@ const Waybill = ({navigation}) => {
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "stu901",
-                    type: "waybill",
+                    type: "Waybill",
                     order: "Chat Message",
                     name: "Komitex",
                     imageUrl: require('../assets/images/komitex.png'),
@@ -373,7 +373,7 @@ const Waybill = ({navigation}) => {
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "vwx234",
-                    type: "waybill",
+                    type: "Waybill",
                     order: "Chat Message",
                     name: "Fedex",
                     imageUrl: require('../assets/images/fedex.png'),
@@ -392,7 +392,7 @@ const Waybill = ({navigation}) => {
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "yz0123",
-                    type: "waybill",
+                    type: "Waybill",
                     order: "Chat Message",
                     name: "Komitex",
                     imageUrl: require('../assets/images/komitex.png'),

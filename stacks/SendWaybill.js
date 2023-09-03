@@ -204,6 +204,18 @@ const SendWaybill = ({navigation}) => {
 
     // state to indicate error in shipper location
     const [errorReceiverLocation, setErrorReceiverLocation] = useState(false);
+
+    // 
+    const handleConfirmWaybill = () => {
+        closeModal();
+        navigation.navigate("Chat", {
+            id: "abc123",
+            type: "Waybill",
+            name: "Komitex",
+            imageUrl: require('../assets/images/komitex.png'),
+            newChat: true,
+        })
+    }
     
     return (
         <>
@@ -348,6 +360,7 @@ const SendWaybill = ({navigation}) => {
                         shipperLocation={shipperLocation}
                         receiverLocation={receiverLocation}
                         type={"waybill"}
+                        onPress={handleConfirmWaybill}
                     />
                 )}
             </CustomBottomSheet>

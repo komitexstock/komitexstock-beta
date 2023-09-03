@@ -10,7 +10,7 @@ import {
 import Indicator from './Indicator';
 import { black, bodyText, white } from '../style/colors';
 
-const OrderListItem = ({item, index, length}) => {
+const OrderListItem = ({item, index, length, id}) => {
     // lenght, index => int
     // item => object
 

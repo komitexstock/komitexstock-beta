@@ -93,12 +93,6 @@ const style = StyleSheet.create({
         left: 0,
         zIndex: 3,
     },
-    endingPosition: {
-        top: 4,  
-    },
-    startingPosition: {
-        top: 50,  
-    },
     success: {
         backgroundColor: "rgba(3, 152, 85, 1)",
     },

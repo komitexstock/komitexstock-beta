@@ -36,6 +36,15 @@ const Notifications = ({navigation}) => {
             price: 15000,
             status: "Delivered",
             imageUrl: require('../assets/images/fedex.png'),
+            navigateToChat: () => {
+                navigation.navigate("Chat", {
+                    id: "abc123",
+                    type: "Order",
+                    order: "Chat Message",
+                    name: "Fedex",
+                    imageUrl: require('../assets/images/fedex.png'),
+                })
+            },
         },
         {
             name: "Jane Smith",
@@ -49,7 +58,16 @@ const Notifications = ({navigation}) => {
             price: 13000,
             status: "Pending",
             imageUrl: require('../assets/images/komitex.png'),
+            navigateToChat: () => {
+                navigation.navigate("Chat", {
+                    id: "abc123",
+                    type: "Order",
+                    order: "Chat Message",
+                    name: "Komitex",
+                    imageUrl: require('../assets/images/komitex.png'),
+                })
             },
+        },
         {
             name: "Michael Johnson",
             location: "Los Angeles",
@@ -61,6 +79,15 @@ const Notifications = ({navigation}) => {
             price: 14000,
             status: "Dispatched",
             imageUrl: require('../assets/images/dhl.png'),
+            navigateToChat: () => {
+                navigation.navigate("Chat", {
+                    id: "abc123",
+                    type: "Order",
+                    order: "Chat Message",
+                    name: "DHL",
+                    imageUrl: require('../assets/images/dhl.png'),
+                })
+            },
         },
         {
             name: "Robert Davis",
@@ -73,6 +100,15 @@ const Notifications = ({navigation}) => {
             price: 16000,
             status: "Canceled",
             imageUrl: require('../assets/images/komitex.png'),
+            navigateToChat: () => {
+                navigation.navigate("Chat", {
+                    id: "abc123",
+                    type: "Order",
+                    order: "Chat Message",
+                    name: "Komitex",
+                    imageUrl: require('../assets/images/komitex.png'),
+                })
+            },
         },
     ];
 
@@ -89,6 +125,15 @@ const Notifications = ({navigation}) => {
 			price: 12000,
 			status: "Rescheduled",
 			imageUrl: require('../assets/images/dhl.png'),
+            navigateToChat: () => {
+                navigation.navigate("Chat", {
+                    id: "abc123",
+                    type: "Order",
+                    order: "Chat Message",
+                    name: "DHL",
+                    imageUrl: require('../assets/images/dhl.png'),
+                })
+            },
         },
         {
 			name: "Sarah Johnson",
@@ -101,6 +146,15 @@ const Notifications = ({navigation}) => {
 			price: 15500,
 			status: "Delivered",
 			imageUrl: require('../assets/images/ups.png'),
+            navigateToChat: () => {
+                navigation.navigate("Chat", {
+                    id: "abc123",
+                    type: "Order",
+                    order: "Chat Message",
+                    name: "UPS",
+                    imageUrl: require('../assets/images/ups.png'),
+                })
+            },
         },
         {
 			name: "Matthew Wilson",
@@ -114,6 +168,15 @@ const Notifications = ({navigation}) => {
 			price: 17000,
 			status: "Pending",
 			imageUrl: require('../assets/images/komitex.png'),
+            navigateToChat: () => {
+                navigation.navigate("Chat", {
+                    id: "abc123",
+                    type: "Order",
+                    order: "Chat Message",
+                    name: "Komitex",
+                    imageUrl: require('../assets/images/komitex.png'),
+                })
+            },
         },
         {
 			name: "Sophie Lee",
@@ -126,6 +189,15 @@ const Notifications = ({navigation}) => {
 			price: 12500,
 			status: "Dispatched",
 			imageUrl: require('../assets/images/komitex.png'),
+            navigateToChat: () => {
+                navigation.navigate("Chat", {
+                    id: "abc123",
+                    type: "Order",
+                    order: "Chat Message",
+                    name: "Komitex",
+                    imageUrl: require('../assets/images/komitex.png'),
+                })
+            },
         },
         {
 			name: "Daniel Brown",
@@ -139,6 +211,15 @@ const Notifications = ({navigation}) => {
 			price: 19500,
 			status: "Delivered",
 			imageUrl: require('../assets/images/komitex.png'),
+            navigateToChat: () => {
+                navigation.navigate("Chat", {
+                    id: "abc123",
+                    type: "Order",
+                    order: "Chat Message",
+                    name: "Komitex",
+                    imageUrl: require('../assets/images/komitex.png'),
+                })
+            },
         },
         {
 			name: "Emma Davis",
@@ -151,6 +232,15 @@ const Notifications = ({navigation}) => {
 			price: 8000,
 			status: "Canceled",
 			imageUrl: require('../assets/images/fedex.png'),
+            navigateToChat: () => {
+                navigation.navigate("Chat", {
+                    id: "abc123",
+                    type: "Order",
+                    order: "Chat Message",
+                    name: "Fedex",
+                    imageUrl: require('../assets/images/fedex.png'),
+                })
+            },
         },
     ];
 

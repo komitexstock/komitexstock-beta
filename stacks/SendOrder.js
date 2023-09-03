@@ -47,11 +47,18 @@ const SendOrder = ({navigation, route}) => {
     // response from ChatGPT after extracting order details
     const [products, setProducts] = useState([
         {
-            id: 2,
-            product_name: "Phoenix Sneakers",
+            id: 5,
+            product_name: "Maybach Sunglasses",
             quantity: 1,
-            imageUrl: require("../assets/images/sneakers.png"),
-            checked: true,
+            imageUrl: require("../assets/images/maybach-sunglasses.png"),
+            checked: false,
+        },
+        {
+            id: 6,
+            product_name: "Accurate Watch",
+            quantity: 2,
+            imageUrl: require("../assets/images/accurate-watch.png"),
+            checked: false,
         },
     ]);
     
@@ -68,7 +75,7 @@ const SendOrder = ({navigation, route}) => {
     const [address, setAddress] = useState("No 3 Izomo street Udu road Warri");
 
     // price
-    const [price, setPrice] = useState(20000);
+    const [price, setPrice] = useState(50000);
     
 
     const [processOrderResponse, setProcessOrderResponse] = useState(false);
@@ -374,7 +381,7 @@ const SendOrder = ({navigation, route}) => {
             setAlert({
                 show: true,
                 type: route.params.type,
-                text: route.params.text
+                text: route.params.text,
             })
         }
         
@@ -389,10 +396,9 @@ const SendOrder = ({navigation, route}) => {
         navigation.navigate("Chat", {
             id: "abc123",
             type: "Order",
-            order: "Chat Message",
             name: "Komitex",
             imageUrl: require('../assets/images/komitex.png'),
-            alert: "Order successfully created",
+            newChat: true,
         })
     }
     
@@ -595,6 +601,7 @@ const SendOrder = ({navigation, route}) => {
                     type={alert.type}
                     text={alert.text}
                     closeAlert={closeAlert}
+                    show={alert.show}
                 />
             )}
         </>
