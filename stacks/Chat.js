@@ -30,6 +30,7 @@ import CalendarIcon from "../assets/icons/CalendarIcon";
 import ActionButton from "../components/ActionButton";
 import Header from "../components/Header";
 import Indicator from "../components/Indicator";
+import AlertNotice from "../components/AlertNotice";
 import CustomBottomSheet from "../components/CustomBottomSheet";
 import AddProductsModalContent from "../components/AddProductsModalContent";
 import AddLocationModalContent from "../components/AddLocationModalContent";
@@ -42,7 +43,7 @@ import MessageContainer from "../components/MessageContainer";
 import NumberLink from "../components/NumberLink";
 import ProductListSummary from "../components/ProductListSummary";
 // import react hooks
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
 // colors
 import {
     accent,
@@ -98,7 +99,9 @@ const Chat = ({navigation, route}) => {
     // scroll to bottom function
     const scrollToBottom = (animate) => {
         if (!hasScrolledToBottom.current) {
-            scrollViewRef.current.scrollToEnd({ animated: animate });
+            scrollViewRef.current.scrollToEnd({ 
+                animated: animate,
+            });
             hasScrolledToBottom.current = true;
         }
     }
@@ -129,6 +132,34 @@ const Chat = ({navigation, route}) => {
         }, 1500);
     };
 
+    // alert state
+    const [alert, setAlert] = useState({
+        show: false,
+        type: "Success",
+        text: ""
+    });
+
+    const closeAlert = () => {
+        setAlert(prevAlert => {
+            return {
+                ...prevAlert,
+                show: false
+            }
+        });
+    };
+
+    const openAlert = (type, text) => {
+        setAlert({
+            show: true,
+            type: type,
+            text: text
+        });
+
+        // auto close alert after 4 seconds
+        setTimeout(() => {
+            closeAlert();
+        }, 4000);
+    }
 
     // chat rout parameters
     const {id, type, order, name, imageUrl} = route.params;
@@ -165,34 +196,6 @@ const Chat = ({navigation, route}) => {
         },
         {
             id: 6,
-            product_name: "Accurate Watch",
-            quantity: 2,
-            imageUrl: require("../assets/images/accurate-watch.png"),
-            checked: true,
-        },
-        {
-            id: 7,
-            product_name: "Maybach Sunglasses",
-            quantity: 1,
-            imageUrl: require("../assets/images/maybach-sunglasses.png"),
-            checked: true,
-        },
-        {
-            id: 8,
-            product_name: "Accurate Watch",
-            quantity: 2,
-            imageUrl: require("../assets/images/accurate-watch.png"),
-            checked: true,
-        },
-        {
-            id: 9,
-            product_name: "Maybach Sunglasses",
-            quantity: 1,
-            imageUrl: require("../assets/images/maybach-sunglasses.png"),
-            checked: true,
-        },
-        {
-            id: 10,
             product_name: "Accurate Watch",
             quantity: 2,
             imageUrl: require("../assets/images/accurate-watch.png"),
@@ -1277,6 +1280,31 @@ const Chat = ({navigation, route}) => {
         }
     );
 
+    // submit edited order details
+    const submitEditOrder = () => {
+        hasScrolledToBottom.current = false;
+        scrollToBottom(true); // animate === true
+        closeModal();
+        openAlert('Success', 'Order edited successfully');
+    }
+    
+    // submit order rescheduled information
+    const submitRescheduledOrder = () => {
+        setRescheduleDate("");
+        hasScrolledToBottom.current = false;
+        scrollToBottom(true); // animate === true
+        closeModal();
+        openAlert('Success', 'Order rescheduled successfully');
+    }
+    
+    // submit order cancelled information
+    const submitCancelledOrder = () => {
+        hasScrolledToBottom.current = false;
+        scrollToBottom(true); // animate === true
+        closeModal();
+        openAlert('Success', 'Order cancelled successfully');
+    }
+
     return (
         <>
             {/* chat header */}
@@ -1586,6 +1614,7 @@ const Chat = ({navigation, route}) => {
                         <ModalButton
                             name={"Done"}
                             emptyFeilds={isAnyFieldEmpty}
+                            onPress={submitEditOrder}
                         />
                     </>
                 )}
@@ -1644,6 +1673,7 @@ const Chat = ({navigation, route}) => {
                         <ModalButton
                             name={"Done"}
                             emptyFeilds={!rescheduleDate ? true : false}
+                            onPress={submitRescheduledOrder}
                         />
                     </>
                 )}
@@ -1690,6 +1720,7 @@ const Chat = ({navigation, route}) => {
                         <ModalButton
                             name={"Done"}
                             emptyFeilds={!reason ? true : false}
+                            onPress={submitCancelledOrder}
                         />
                     </>
                 )}
@@ -1780,6 +1811,16 @@ const Chat = ({navigation, route}) => {
                     />
                 )}
             </CustomBottomSheet>
+
+            {/* success alert to display on addproduct or edit product */}
+            { alert.show && (
+                <AlertNotice 
+                    type={alert.type}
+                    text={alert.text}
+                    closeAlert={closeAlert}
+                    show={alert.show}
+                />
+            )}
         </>
     );
 }

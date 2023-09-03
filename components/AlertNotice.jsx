@@ -1,15 +1,55 @@
 // react native component
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import {
+    View,
+    Text,
+    TouchableOpacity,
+    StyleSheet,
+    Animated,
+} from "react-native";
 // icons
 import CloseWhiteIcon from "../assets/icons/CloseWhiteIcon";
 import SuccessIcon from "../assets/icons/SuccessIcon";
 import ErrorIcon from "../assets/icons/ErrorIcon";
 // color
 import { white } from "../style/colors";
+// react hooks
+import { useEffect, useRef } from "react";
 
-const AlertNotice = ({type, text, closeAlert}) => {
+const AlertNotice = ({type, text, closeAlert, show}) => {
+
+    const top = useRef(new Animated.Value(20)).current;
+
+    useEffect(() => {
+        if (show) {
+          Animated.spring(top, {
+            toValue: 4,
+            useNativeDriver: false,
+            speed: 1,
+            bounciness: 5,
+            duration: 1000,
+        }).start();
+    } else {
+        Animated.spring(top, {
+            toValue: 10,
+            useNativeDriver: false,
+            speed: 1,
+            bounciness: 5,
+            duration: 1000,
+          }).start();
+        }
+    }, [show]);
+
+
     return (
-        <View style={style.container}>
+        <Animated.View 
+            style={[
+                style.container,
+                {
+                    top: top,
+                    // transform: [{ translateY }], // Apply the animated translation
+                },
+            ]}
+        >
             <View
                 style={[
                     style.noticeWrapper,
@@ -36,7 +76,7 @@ const AlertNotice = ({type, text, closeAlert}) => {
                     <CloseWhiteIcon />
                 </TouchableOpacity>
             </View>
-        </View>
+        </Animated.View>
     );
 }
 
@@ -50,8 +90,14 @@ const style = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         position: "absolute",
-        top: 50,
         left: 0,
+        zIndex: 3,
+    },
+    endingPosition: {
+        top: 4,  
+    },
+    startingPosition: {
+        top: 50,  
     },
     success: {
         backgroundColor: "rgba(3, 152, 85, 1)",
@@ -63,7 +109,7 @@ const style = StyleSheet.create({
         width: "100%",
         minHeight: 65,
         borderRadius: 12,
-        displaay: "flex",
+        display: "flex",
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "flex-start",

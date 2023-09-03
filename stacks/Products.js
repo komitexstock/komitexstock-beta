@@ -553,6 +553,7 @@ const Products = ({navigation, route}) => {
                     type={alert.type}
                     text={alert.text}
                     closeAlert={closeAlert}
+                    show={alert.show}
                 />
             )}
 

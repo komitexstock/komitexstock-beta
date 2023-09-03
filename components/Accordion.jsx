@@ -3,9 +3,9 @@ import {
   View,
   Text,
   TouchableOpacity,
+  StyleSheet,
   LayoutAnimation,
   UIManager,
-  StyleSheet,
 } from 'react-native';
 // icons
 import ArrowDownSmall from '../assets/icons/ArrowDownSmall';
@@ -38,7 +38,7 @@ const Accordion = ({state, locations, opened}) => {
         for (let i = 0; i < locationsArray.length; i++) {
             const charge = locationsArray[i].charge;
             if (charge > maxCharge) {
-            maxCharge = charge;
+                maxCharge = charge;
             }
         }
         return maxCharge.toLocaleString();
@@ -49,7 +49,7 @@ const Accordion = ({state, locations, opened}) => {
         for (let i = 0; i < locationsArray.length; i++) {
             const charge = locationsArray[i].charge;
             if (charge < minCharge) {
-            minCharge = charge;
+                minCharge = charge;
             }
         }
         return minCharge.toLocaleString();
