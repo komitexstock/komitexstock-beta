@@ -1,14 +1,58 @@
 // react native components
-import { TouchableOpacity, Text, StyleSheet, View } from "react-native";
+import { TouchableOpacity, Text, StyleSheet, View, Animated , Easing} from "react-native";
 // colors
 import { inactivePrimaryColor, primaryColor, secondaryColor, white } from "../style/colors";
+// import react hooks
+import { useEffect, useRef } from "react";
 
-const CustomButton = ({name, onPress, backgroundColor, fixed, inactive, secondaryButton, unpadded}) => {
+const CustomButton = ({name, onPress, backgroundColor, fixed, inactive, secondaryButton, unpadded, isLoading}) => {
     // name => string
     // onPress => function
     // backgroundColor => string
     // inactive, fixed => boolean
 
+    const translate1 = useRef(new Animated.Value(0)).current;
+    const translate2 = useRef(new Animated.Value(0)).current;
+    const translate3 = useRef(new Animated.Value(0)).current;
+
+    const animateBox = (translateValue) => {
+        Animated.sequence([
+            Animated.timing(translateValue, {
+              toValue: -10,
+              duration: 600,
+              easing: Easing.linear,
+              useNativeDriver: false,
+            }),
+            Animated.timing(translateValue, {
+              toValue: 5,
+              duration: 250,
+              easing: Easing.linear,
+              useNativeDriver: false,
+            }),
+            Animated.timing(translateValue, {
+              toValue: 0,
+              duration: 200,
+              easing: Easing.linear,
+              useNativeDriver: false,
+            }),
+        ]).start();
+    };
+
+    useEffect(() => {
+        if (isLoading) {
+            animateAllBoxes();
+            setInterval(() => {
+                animateAllBoxes();
+            }, 1300);
+        }
+    }, [isLoading]);
+
+    const animateAllBoxes = () => {
+        animateBox(translate1, 0);
+        setTimeout(() => animateBox(translate2), 100);
+        setTimeout(() => animateBox(translate3), 200);        
+    }
+    
     // render CustomButtom component
     return (
         <View 
@@ -30,15 +74,38 @@ const CustomButton = ({name, onPress, backgroundColor, fixed, inactive, secondar
                     
                 ]}
                 onPress={inactive ? () => {} : onPress}
-            >
-                <Text 
-                    style={[
-                        style.buttonText,
-                        {color: secondaryButton ? primaryColor : white}
-                    ]}
-                >
-                    {name}
-                </Text>
+            >   
+                { isLoading ? (
+                    <>
+                        <Animated.View
+                            style={[
+                                style.loadingBalls,
+                                {transform: [{ translateY: translate1 }]}
+                            ]}
+                        />
+                        <Animated.View
+                            style={[
+                                style.loadingBalls,
+                                {transform: [{ translateY: translate2 }]}
+                            ]}
+                        />
+                        <Animated.View
+                            style={[
+                                style.loadingBalls,
+                                {transform: [{ translateY: translate3 }]}
+                            ]}
+                        />
+                    </>                    
+                ) : (
+                    <Text 
+                        style={[
+                            style.buttonText,
+                            {color: secondaryButton ? primaryColor : white}
+                        ]}
+                    >
+                        {name}
+                    </Text>
+                )}
             </TouchableOpacity>
         </View>
     );
@@ -52,9 +119,18 @@ const style = StyleSheet.create({
         height: 44,
         borderRadius: 12,
         display: 'flex',
+        flexDirection: "row",
         alignItems: 'center',
         justifyContent: 'center',
         padding: 10,
+        gap: 6,
+    },
+    loadingBalls: {
+        borderRadius: 5,
+        width: 10,
+        height: 10,
+        backgroundColor: white,
+        // marginBottom: -5,
     },
     buttonText: {
         fontFamily: "mulish-semibold",

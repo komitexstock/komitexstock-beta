@@ -173,9 +173,16 @@ const SendOrder = ({navigation, route}) => {
         }
     );
 
+    // state to indicate loading
+    const [isLoading, setIsLoading] = useState(false)
+
     // function to process order, would send a request to ChatGPT 3.5
     const processOrderDetails = async () => {
-        setProcessOrderResponse("Response from ChatGPT");
+        setIsLoading(true);
+        setTimeout(() => {
+            setIsLoading(false);
+            setProcessOrderResponse("Response from ChatGPT");
+        }, 1500);
     }
 
     // function to show order summary
@@ -593,6 +600,7 @@ const SendOrder = ({navigation, route}) => {
                     backgroundColor={background}
                     inactive={emptyLogisticsAndOrderDetails}
                     fixed={true}
+                    isLoading={true}
                 />
             )}
             {/* success alert to display on addproduct or edit product */}
