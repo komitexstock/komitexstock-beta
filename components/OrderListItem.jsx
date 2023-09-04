@@ -13,7 +13,7 @@ import SelectedOrderIcon from '../assets/icons/SelectedOrderIcon';
 // colors
 import { background, black, bodyText, white } from '../style/colors';
 
-const OrderListItem = ({item, index, length, id, selectable, selected, selectFunction, extraVerticalPadding}) => {
+const OrderListItem = ({item, index, length, selectable, selected, selectFunction, extraVerticalPadding}) => {
     // lenght, index => int
     // item => object
 
@@ -22,6 +22,7 @@ const OrderListItem = ({item, index, length, id, selectable, selected, selectFun
         <TouchableOpacity 
             style={[
                 style.orderWrapper,
+                selectable && {backgroundColor: 'transparent'},
                 selectable && selected && style.selected,
                 // unique style for first order in order list array
                 // add borderRadius to top of first order
@@ -33,7 +34,8 @@ const OrderListItem = ({item, index, length, id, selectable, selected, selectFun
                 extraVerticalPadding && style.extraVerticalPadding
             ]}
             // navigate to chat on press order
-            onPress={!selectable ? item.navigateToChat : () => selectFunction(id)}
+            onPress={!selectable ? item.navigateToChat : () => selectFunction(item.id)}
+            activeOpacity={selectable ? 0.8 : 0.5}
         >
             {/* logistics image */}
             <View style={style.orderImageContainer}>
@@ -109,12 +111,12 @@ const style = StyleSheet.create({
     firstOrderWrapper: {
         borderTopStartRadius: 12,
         borderTopEndRadius: 12,
-        paddintTop: 10,
+        paddintTop: 5,
     },  
     lastOrderWrapper: {
         borderBottomStartRadius: 12,
         borderBottomEndRadius: 12,
-        paddintBottom: 10,
+        paddintBottom: 5,
     },
     orderImageContainer: {
         position: 'relative',

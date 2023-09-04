@@ -44,6 +44,7 @@ import CompanyPolicy from './stacks/CompanyPolicy';
 import CaptureImage from './stacks/CaptureImage';
 import WriteReview from './stacks/WriteReview';
 import ViewImage from './stacks/ViewImage';
+import Share from './stacks/Share';
 // components
 import BottomNavigation from './components/BottomNavigation';
 // App context
@@ -103,7 +104,7 @@ export default function App() {
                                 name="Home" 
                                 component={Home}
                                 options={{
-                                headerShown: false,
+                                    headerShown: false,
                                 }} 
                             />
                             {/* Orders Stack */}
@@ -111,7 +112,7 @@ export default function App() {
                                 name="Orders" 
                                 component={Orders} 
                                 options={{
-                                headerShown: false,
+                                    headerShown: false,
                                 }} 
                             />
                             {/* Waybill Stack */}
@@ -119,7 +120,7 @@ export default function App() {
                                 name="Waybill" 
                                 component={Waybill} 
                                 options={{
-                                headerShown: false,
+                                    headerShown: false,
                                 }} 
                             />
                             {/* Chat stack, requires chat id and chat type === order || waybill */}
@@ -135,7 +136,7 @@ export default function App() {
                                 name="ViewImage" 
                                 component={ViewImage} 
                                 options={{
-                                headerShown: false,
+                                    headerShown: false,
                                 }} 
                             />
                             {/* Inventory stack */}
@@ -143,7 +144,7 @@ export default function App() {
                                 name="Inventory" 
                                 component={Inventory} 
                                 options={{
-                                headerShown: false,
+                                    headerShown: false,
                                 }} 
                             />
                             {/* Products stack */}
@@ -151,7 +152,7 @@ export default function App() {
                                 name="Products" 
                                 component={Products} 
                                 options={{
-                                headerShown: false,
+                                    headerShown: false,
                                 }} 
                             />
                             {/* Add Products stack */}
@@ -159,7 +160,7 @@ export default function App() {
                                 name="AddProduct" 
                                 component={AddProduct} 
                                 options={{
-                                headerShown: false,
+                                    headerShown: false,
                                 }} 
                             />
                             {/* Import Inventory stack */}
@@ -167,7 +168,7 @@ export default function App() {
                                 name="ImportInventory" 
                                 component={ImportInventory} 
                                 options={{
-                                headerShown: false,
+                                    headerShown: false,
                                 }} 
                             />
                             {/* Add Logistics stack */}
@@ -175,7 +176,7 @@ export default function App() {
                                 name="AddLogistics" 
                                 component={AddLogistics} 
                                 options={{
-                                headerShown: false,
+                                    headerShown: false,
                                 }} 
                             />
                             {/* Logistics Details stack */}
@@ -183,7 +184,7 @@ export default function App() {
                                 name="LogisticsDetails" 
                                 component={LogisticsDetails} 
                                 options={{
-                                headerShown: false,
+                                    headerShown: false,
                                 }} 
                             />
                             {/* Available Locations stack */}
@@ -191,7 +192,7 @@ export default function App() {
                                 name="AvailableLocations" 
                                 component={AvailableLocations} 
                                 options={{
-                                headerShown: false,
+                                    headerShown: false,
                                 }} 
                             />
                             {/* Reviews stack */}
@@ -215,7 +216,7 @@ export default function App() {
                                 name="Account" 
                                 component={Account} 
                                 options={{
-                                headerShown: false,
+                                    headerShown: false,
                                 }} 
                             />
                             {/* Capture Image stack */}
@@ -231,7 +232,7 @@ export default function App() {
                                 name="Profile" 
                                 component={Profile} 
                                 options={{
-                                headerShown: false,
+                                    headerShown: false,
                                 }} 
                             />
                             {/* Analytics stack */}
@@ -239,7 +240,7 @@ export default function App() {
                                 name="Analytics" 
                                 component={Analytics} 
                                 options={{
-                                headerShown: false,
+                                    headerShown: false,
                                 }} 
                             />
                             {/* Logistics Analytics stack */}
@@ -311,7 +312,15 @@ export default function App() {
                                 name="Notifications" 
                                 component={Notifications}
                                 options={{
-                                headerShown: false,
+                                    headerShown: false,
+                                }}
+                            />
+                            {/* Share stack */}
+                            <Stack.Screen 
+                                name="Share" 
+                                component={Share}
+                                options={{
+                                    headerShown: false,
                                 }}
                             />
                             {/* Write Review stack */}
@@ -319,7 +328,7 @@ export default function App() {
                                 name="WriteReview" 
                                 component={WriteReview}
                                 options={{
-                                headerShown: false,
+                                    headerShown: false,
                                 }}
                             />
                             {/* send order stack */}
@@ -327,7 +336,7 @@ export default function App() {
                                 name="SendOrder" 
                                 component={SendOrder}
                                 options={{
-                                headerShown: false,
+                                    headerShown: false,
                                 }}
                             />
                             {/* send waybill stack */}
@@ -335,7 +344,7 @@ export default function App() {
                                 name="SendWaybill" 
                                 component={SendWaybill}
                                 options={{
-                                headerShown: false,
+                                    headerShown: false,
                                 }}
                             />
                         </Stack.Navigator>

@@ -63,9 +63,6 @@ import {
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 
 
-// screen height
-const windowHeight = Dimensions.get("window").height;
-
 const Chat = ({navigation, route}) => {
 
     // messages ref
