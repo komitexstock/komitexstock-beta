@@ -504,7 +504,7 @@ const Waybill = ({navigation}) => {
                     data={tab === "Outgoing" ? outGoingWaybills : inComingWaybills}
                     renderItem={({ item, index }) => (
                         // render waybill list
-                        <WaybillListItem item={item} index={index} length={outGoingWaybills.length} />
+                        <WaybillListItem item={item} index={index} length={tab === "Outgoing" ? outGoingWaybills.length : inComingWaybills.length} />
                     )}
                 />
             </TouchableWithoutFeedback>

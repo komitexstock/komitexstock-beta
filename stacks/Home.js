@@ -320,7 +320,7 @@ const Home = ({navigation}) => {
                                 >
                                     {/* order list max 5 items */}
                                     {orders.map((order, index) => (
-                                        <OrderListItem key={order.id} item={order} index={index} length={orders.length} />
+                                        <OrderListItem key={order.id} item={order} index={index} length={orders.length} extraVerticalPadding={true} />
                                     ))}
                                 </View>
                             </View>
@@ -593,6 +593,10 @@ const style = StyleSheet.create({
     ordersListWrapper: {
         height: "100%",
         width: "100%",
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
     }
 })
  

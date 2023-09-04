@@ -868,7 +868,7 @@ const Orders = ({navigation}) => {
                     keyExtractor={item => item.id}
                     data={orderList}
                     renderItem={({ item, index }) => (
-                        <OrderListItem item={item} index={index} length={orderList.length} />
+                        <OrderListItem item={item} index={index} length={orderList.length} extraVerticalPadding={true} />
                     )}
                 />
             </TouchableWithoutFeedback>

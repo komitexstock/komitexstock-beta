@@ -8,9 +8,12 @@ import {
 } from 'react-native';
 // component
 import Indicator from './Indicator';
-import { black, bodyText, white } from '../style/colors';
+// icons
+import SelectedOrderIcon from '../assets/icons/SelectedOrderIcon';
+// colors
+import { background, black, bodyText, white } from '../style/colors';
 
-const OrderListItem = ({item, index, length, id}) => {
+const OrderListItem = ({item, index, length, id, selectable, selected, selectFunction, extraVerticalPadding}) => {
     // lenght, index => int
     // item => object
 
@@ -18,22 +21,32 @@ const OrderListItem = ({item, index, length, id}) => {
     return (
         <TouchableOpacity 
             style={[
-                style.orderWrapper, 
+                style.orderWrapper,
+                selectable && selected && style.selected,
                 // unique style for first order in order list array
                 // add borderRadius to top of first order
                 index === 0 && style.firstOrderWrapper, 
                 // unique style for last order in order list array
                 // add borderRadius to bottom of last order
-                index === (length - 1) && style.lastOrderWrapper
+                index === (length - 1) && style.lastOrderWrapper,
+
+                extraVerticalPadding && style.extraVerticalPadding
             ]}
             // navigate to chat on press order
-            onPress={item.navigateToChat}
+            onPress={!selectable ? item.navigateToChat : () => selectFunction(id)}
         >
             {/* logistics image */}
-            <Image 
-                source={item.imageUrl}
-                style={style.orderImage}
-            />
+            <View style={style.orderImageContainer}>
+                <Image 
+                    source={item.imageUrl}
+                    style={style.orderImage}
+                />
+                { selectable && selected && (
+                    <View style={style.selectedIconWrapper}> 
+                        <SelectedOrderIcon />
+                    </View>
+                )}
+            </View>
             {/* order info */}
             <View style={style.orderInfo}>
                 <Text 
@@ -82,23 +95,40 @@ const style = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         width: "100%",
-        minHeight: 70,
+        height: 70,
         gap: 10,
         backgroundColor: white,
+    },
+    extraVerticalPadding: {
         paddingVertical: 15,
+    },
+    selected: {
+        backgroundColor: background,
+        borderRadius: 12,
     },
     firstOrderWrapper: {
         borderTopStartRadius: 12,
         borderTopEndRadius: 12,
+        paddintTop: 10,
     },  
     lastOrderWrapper: {
         borderBottomStartRadius: 12,
         borderBottomEndRadius: 12,
+        paddintBottom: 10,
+    },
+    orderImageContainer: {
+        position: 'relative',
+
     },
     orderImage: {
-        width: 50,
-        height: 50,
+        width: 40,
+        height: 40,
         borderRadius: 8,
+    },
+    selectedIconWrapper: {
+        position: 'absolute',
+        bottom: 0,
+        right: 0,  
     },
     orderInfo: {
         flexGrow: 1,

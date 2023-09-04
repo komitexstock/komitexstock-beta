@@ -18,7 +18,7 @@ import ModalButton from "../components/ModalButton";
 // react hooks
 import { useState, useRef, useEffect } from "react";
 // colors and global style
-import { background, bodyText, globalStyleSheet } from "../style/colors";
+import { background, bodyText } from "../style/colors";
 
 const Notifications = ({navigation}) => {
 
@@ -358,7 +358,7 @@ const Notifications = ({navigation}) => {
                 <View style={style.notificationWrapper}>
                     {/* Order list */}
                     {orders.map((item, index) => (
-                        <OrderListItem item={item} index={index} key={index} length={orders.length} />
+                        <OrderListItem item={item} index={index} key={index} length={orders.length} extraVerticalPadding={true} />
                     ))}
                 </View>
                 <View style={style.dateWrapper}>
@@ -368,7 +368,7 @@ const Notifications = ({navigation}) => {
                 <View style={style.notificationWrapper}>
                     {/* Order list */}
                     {orders1.map((item, index) => (
-                        <OrderListItem item={item} index={index} key={index} length={orders.length} />
+                        <OrderListItem item={item} index={index} key={index} length={orders.length} extraVerticalPadding={true} />
                     ))}
                 </View>
             </View>

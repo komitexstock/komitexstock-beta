@@ -60,8 +60,7 @@ const style = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         width: "100%",
-        minHeight: 70,
-        maxHeight: 75,
+        height: 70,
         gap: 10,
         backgroundColor: white,
         paddingVertical: 15,
@@ -75,8 +74,8 @@ const style = StyleSheet.create({
         borderBottomEndRadius: 12,
     },
     orderImage: {
-        width: 50,
-        height: 50,
+        width: 40,
+        height: 40,
         borderRadius: 8,
     },
     orderInfo: {
