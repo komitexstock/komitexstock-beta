@@ -316,7 +316,7 @@ const Share = ({navigation}) => {
                 return order.id === id ? {...order, selected: !order.selected} : order
             })
         })
-    }
+    } 
 
     // share screen
     return (
