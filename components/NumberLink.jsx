@@ -1,14 +1,14 @@
 import { TouchableOpacity, Text, StyleSheet } from "react-native";
 import { linkText, primaryColor } from "../style/colors";
 
-const NumberLink = ({number, account_type, handleOnPressPhoneNumber}) => {
+const NumberLink = ({number, account_type, onPress}) => {
 
     const accountType = "Merchant"
 
     return (
         <TouchableOpacity
             style={style.linkButton}
-            onPress={() => {handleOnPressPhoneNumber(number)}}
+            onPress={() => {onPress(number)}}
         >
             <Text style={accountType === account_type ? style.sentLinkText : style.receivedLinkText}>
                 {number}

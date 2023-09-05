@@ -7,7 +7,7 @@ import {
     ScrollView, 
     StyleSheet, 
     Image,
-    Dimensions,
+    Keyboard,
     BackHandler,
     Linking,
 } from "react-native";
@@ -61,6 +61,8 @@ import {
 } from "../style/colors";
 // bottomsheet components
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+// moment
+import moment from "moment";
 
 
 const Chat = ({navigation, route}) => {
@@ -212,7 +214,7 @@ const Chat = ({navigation, route}) => {
         {
             id: 6,
             product_name: "Accurate Watch",
-            quantity: 2,
+            quantity: 1,
             imageUrl: require("../assets/images/accurate-watch.png"),
             checked: true,
         },
@@ -439,6 +441,7 @@ const Chat = ({navigation, route}) => {
     }
 
     const handleOnPressPhoneNumber = (phoneNumber) => {
+        Keyboard.dismiss();
         openModal("Open with");
         setLinkPhoneNumber(phoneNumber);
     }
@@ -520,44 +523,63 @@ const Chat = ({navigation, route}) => {
     // MESSAGES MESSAGES MESSAGES MESSAGES
     // MESSAGES MESSAGES MESSAGES MESSAGES
     const [messages, setMessages] = useState([
-        // {
-        //     reschedule_date: () => {},
-        //     id: 1,
-        //     seen: true,
-        //     user_id: "hjsdjkji81899",
-        //     fullname: "Iffie Ovie",
-        //     company_name: 'Mega Enterprise',
-        //     color: messageSenderColors[0],
-        //     type: 'message',
-        //     timestamp: () => {
-        //         const currentTime = new Date();
-        //         currentTime.setMinutes(currentTime.getMinutes() - 50);
-        //         return currentTime.getTime();
-        //     },
-        //     account_type: 'Merchant',
-        //     file: null,
-        //     reply: false,
-        //     text: 'Hello',
-        // },
-        // {
-        //     reschedule_date: () => {},
-        //     id: 2,
-        //     seen: true,
-        //     user_id: "hayaFGye67qY",
-        //     fullname: "John Mark",
-        //     color: messageSenderColors[1],
-        //     company_name: 'Komitex Logistics',
-        //     type: 'message',
-        //     timestamp: () => {
-        //         const currentTime = new Date();
-        //         currentTime.setMinutes(currentTime.getMinutes() - 45);
-        //         return currentTime.getTime();
-        //     },
-        //     account_type: 'Logistics',
-        //     file: null,
-        //     reply: false,
-        //     text: 'Hello',
-        // },
+        {
+            reschedule_date: () => {},
+            id: 70,
+            seen: true,
+            user_id: "hjsdjkji81899",
+            fullname: "Iffie Ovie",
+            company_name: 'Mega Enterprise',
+            color: messageSenderColors[0],
+            type: 'message',
+            timestamp: () => {
+                const currentTime = new Date();
+                currentTime.setMinutes(currentTime.getMinutes() - 870);
+                return currentTime.getTime();
+            },
+            account_type: 'Merchant',
+            file: null,
+            reply: false,
+            text: "Customer's Name: *Richard Idana*\nPhone Number: 08165266847, 08123456789\nDelivery Address: *No 3 Izono street Udu road, Warri*\nProduct: *Maybach Sunglasses x 1, Accurate Watch x 1*\nPrice: *₦50,000*\nLocation: *Warri, Delta State*\nCharge: *₦3,000*\nLogistics: *Komitex Logistics*\nMerchant: *Mega Enterprise*",
+        },
+        {
+            reschedule_date: () => {},
+            id: 1,
+            seen: true,
+            user_id: "hjsdjkji81899",
+            fullname: "Iffie Ovie",
+            company_name: 'Mega Enterprise',
+            color: messageSenderColors[0],
+            type: 'message',
+            timestamp: () => {
+                const currentTime = new Date();
+                currentTime.setMinutes(currentTime.getMinutes() - 50);
+                return currentTime.getTime();
+            },
+            account_type: 'Merchant',
+            file: null,
+            reply: false,
+            text: 'Hello',
+        },
+        {
+            reschedule_date: () => {},
+            id: 2,
+            seen: true,
+            user_id: "hayaFGye67qY",
+            fullname: "John Mark",
+            color: messageSenderColors[1],
+            company_name: 'Komitex Logistics',
+            type: 'message',
+            timestamp: () => {
+                const currentTime = new Date();
+                currentTime.setMinutes(currentTime.getMinutes() - 45);
+                return currentTime.getTime();
+            },
+            account_type: 'Logistics',
+            file: null,
+            reply: false,
+            text: 'Hey *there*',
+        },
         // {
         //     reschedule_date: () => {},
         //     id: 3,
@@ -575,7 +597,7 @@ const Chat = ({navigation, route}) => {
         //     account_type: 'Logistics',
         //     file: null,
         //     reply: false,
-        //     text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatibus, labore aperiam blanditiis ex dolor sit?',
+        //     text: 'Lorem *ipsum dolor* sit amet 08045678912 consectetur adipisicing elit. Voluptatibus, labore aperiam blanditiis ex dolor sit?',
         // },
         // {
         //     reschedule_date: () => {},
@@ -1065,89 +1087,103 @@ const Chat = ({navigation, route}) => {
         //         return formattedDate;
         //     }
         // },
-        // {
-        //     id: 28,
-        //     seen: true,
-        //     user_id: "HayaFGye67qY",
-        //     fullname: "John Mark",
-        //     company_name: 'Komitex Logistics',
-        //     color: messageSenderColors[1],
-        //     type: 'Cancelled',
-        //     timestamp: () => {
-        //         const currentTime = new Date();
-        //         currentTime.setMinutes(currentTime.getMinutes() - 3);
-        //         return currentTime.getTime();
-        //     },
-        //     account_type: 'Logistics',
-        //     file: null,
-        //     reply: false,
-        //     text: 'I just called him he said he actually doesn\'t know when he would return, cancel for now',
-        //     reschedule_date: () => {}
-        // },
-        // {
-        //     id: 29,
-        //     seen: true,
-        //     user_id: "HayaFGye67qY",
-        //     fullname: "John Mark",
-        //     company_name: 'Komitex Logistics',
-        //     color: messageSenderColors[1],
-        //     type: 'Edited',
-        //     timestamp: () => {
-        //         const currentTime = new Date();
-        //         currentTime.setMinutes(currentTime.getMinutes() - 3);
-        //         return currentTime.getTime();
-        //     },
-        //     account_type: 'Logistics',
-        //     file: null,
-        //     reply: false,
-        //     text: '',
-        //     reschedule_date: () => {}
-        // },
-        // {
-        //     id: 30,
-        //     seen: true,
-        //     user_id: "hayaKGOe67q4",
-        //     fullname: "John Doe",
-        //     company_name: 'Mega Enterprise',
-        //     color: messageSenderColors[0],
-        //     type: 'Edited',
-        //     timestamp: () => {
-        //         const currentTime = new Date();
-        //         currentTime.setMinutes(currentTime.getMinutes() - 5);
-        //         return currentTime.getTime();
-        //     },
-        //     account_type: 'Merchant',
-        //     file: null,
-        //     reply: false,
-        //     text: '',
-        //     reschedule_date: () => {}
-        // },
     ]);
 
-    const sendMessage = () => {
-        if (textInput === "" && uploading === false) return;
+    const sendMessage = (type) => {
+        if (textInput === "" && uploading === false && type === "message") return;
         else {
-            setMessages([
-                ...messages,
-                {
-                    id: Math.random(),
-                    seen: false,
-                    user_id: userId,
-                    fullname: fullname,
-                    company_name: companyName,
-                    account_type: accountType,
-                    color: messageSenderColors[0],
-                    type: 'message',
-                    timestamp: () => {
-                        const currentTime = new Date();
-                        return currentTime.getTime();
-                    },
-                    file: null,
-                    reply: replying ? replying : false,
-                    reschedule_date: () => {},
-                    text: textInput,
-                }   
-            ])
+            if (type === "message") {
+                setMessages([
+                    ...messages,
+                    {
+                        id: Math.random(),
+                        seen: false,
+                        user_id: userId,
+                        fullname: fullname,
+                        company_name: companyName,
+                        account_type: accountType,
+                        color: messageSenderColors[0],
+                        type: 'message',
+                        timestamp: () => {
+                            const currentTime = new Date();
+                            return currentTime.getTime();
+                        },
+                        file: null,
+                        reply: replying ? replying : false,
+                        reschedule_date: () => {},
+                        text: textInput,
+                    }   
+                ]);
+            } else if (type === "Edited") {
+                setMessages([
+                    ...messages,
+                    {
+                        id: Math.random(),
+                        seen: false,
+                        user_id: userId,
+                        fullname: fullname,
+                        company_name: companyName,
+                        account_type: accountType,
+                        color: messageSenderColors[0],
+                        type: 'Edited',
+                        timestamp: () => {
+                            const currentTime = new Date();
+                            return currentTime.getTime();
+                        },
+                        file: null,
+                        reply: false,
+                        reschedule_date: () => {},
+                        text: `Customer's Name: *Richard Idana*\nPhone Number: 08165266847, 08123456789\nDelivery Address: *${address}*\nProduct: *${products.map((product) => { return ` ${product.product_name} x ${product.quantity}`})}*\nPrice: *₦${price.toLocaleString()}*\nLocation: *${location.location}*\nCharge: *₦${location.charge.toLocaleString()}*\nLogistics: *Komitex Logistics*\nMerchant: *Mega Enterprise*`,
+                    }   
+                ]);
+
+            } else if (type === "Cancelled") {
+                setMessages([
+                    ...messages,
+                    {
+                        id: Math.random(),
+                        seen: false,
+                        user_id: userId,
+                        fullname: fullname,
+                        company_name: companyName,
+                        account_type: accountType,
+                        color: messageSenderColors[0],
+                        type: 'Cancelled',
+                        timestamp: () => {
+                            const currentTime = new Date();
+                            return currentTime.getTime();
+                        },
+                        file: null,
+                        reply: false,
+                        reschedule_date: () => {},
+                        text: reason,
+                    }   
+                ]);
+            } else if (type === "Rescheduled") {
+                setMessages([
+                    ...messages,
+                    {
+                        id: Math.random(),
+                        seen: false,
+                        user_id: userId,
+                        fullname: fullname,
+                        company_name: companyName,
+                        account_type: accountType,
+                        color: messageSenderColors[0],
+                        type: 'Rescheduled',
+                        timestamp: () => {
+                            const currentTime = new Date();
+                            return currentTime.getTime();
+                        },
+                        file: null,
+                        reply: false,
+                        reschedule_date: () => {
+                            return moment(rescheduleDate).format('dddd, D MMMM, YYYY');
+                        },
+                        text: reason ? reason : "N/A",
+                    }   
+                ]);
+            }
             setTextInput("");
             setReplying(null);
             hasScrolledToBottom.current = false;
@@ -1232,6 +1268,19 @@ const Chat = ({navigation, route}) => {
         return targetMessage.text.length > 175 ? targetMessage.text.slice(0, 175) + "..." : targetMessage.text;
     }
 
+    const processText = (text) => {
+
+        if (!text.includes('*')) return text;
+        
+        const textArray = text.split('*');
+        
+        if (textArray.length < 3) {
+            return textArray.join("*");
+        } else {
+            return textArray.join("");
+        }
+    }
+
     const ReplyingMessageInput = (id) => {
         const targetMessage = messages.find(message => message.id === id);
         
@@ -1262,7 +1311,8 @@ const Chat = ({navigation, route}) => {
                     )}
                     { targetMessage.text && (
                         <Text style={style.replyingMessage}>
-                            {replyingSenderText(targetMessage)}
+                            {/* {replyingSenderText(processText(targetMessage))} */}
+                            {processText(replyingSenderText(targetMessage))}
                         </Text>
                     )}
                 </View>
@@ -1299,15 +1349,18 @@ const Chat = ({navigation, route}) => {
     const submitEditOrder = () => {
         hasScrolledToBottom.current = false;
         scrollToBottom(true); // animate === true
+        sendMessage("Edited");
+        Keyboard.dismiss();
         closeModal();
         openAlert('Success', 'Order edited successfully');
     }
     
     // submit order rescheduled information
     const submitRescheduledOrder = () => {
-        setRescheduleDate("");
+        Keyboard.dismiss();
         hasScrolledToBottom.current = false;
         scrollToBottom(true); // animate === true
+        sendMessage("Rescheduled");
         closeModal();
         openAlert('Success', 'Order rescheduled successfully');
     }
@@ -1315,7 +1368,9 @@ const Chat = ({navigation, route}) => {
     // submit order cancelled information
     const submitCancelledOrder = () => {
         hasScrolledToBottom.current = false;
+        Keyboard.dismiss();
         scrollToBottom(true); // animate === true
+        sendMessage("Cancelled");
         closeModal();
         openAlert('Success', 'Order cancelled successfully');
     }
@@ -1382,63 +1437,6 @@ const Chat = ({navigation, route}) => {
                                 <EditIcon />
                                 <Text style={style.editButtonText}>Edit Order</Text>
                             </TouchableOpacity>
-                        </View>
-
-                        <View style={style.messageContent}>
-                            {messageSender(accountType, userId, fullname, postOrderUserId, companyName, accent, false, true)}
-                            <View 
-                                style={[
-                                    style.message,
-                                    {padding: 10},
-                                    accountType === "Merchant" ? style.sent : style.received
-                                ]}
-                            >
-                                <Text style={[style.messageHeading, accountType === "Merchant" && style.sentHeading]}>
-                                    <Text style={[style.messageText, accountType === "Merchant" && style.sentText]}>
-                                        Customer's Name: 
-                                    </Text>
-                                    {customerName}
-                                </Text>
-                                <Text style={[style.messageHeading, accountType === "Merchant" && style.sentHeading]}>
-                                    <Text style={[style.messageText, accountType === "Merchant" && style.sentText]}>Phone Number: </Text>
-                                    { phoneNumber.map((number, index) => (
-                                        <NumberLink
-                                            key={index}
-                                            number={number}
-                                            handleOnPressPhoneNumber={handleOnPressPhoneNumber}
-                                            account_type={accountType}
-                                        />
-                                    ))}
-                                </Text>
-                                <Text style={[style.messageHeading, accountType === "Merchant" && style.sentHeading]}>
-                                    <Text style={[style.messageText, accountType === "Merchant" && style.sentText]}>Delivery Address: </Text>
-                                    {address}
-                                </Text>
-                                <Text style={[style.messageHeading, accountType === "Merchant" && style.sentHeading]}>
-                                    <Text style={[style.messageText, accountType === "Merchant" && style.sentText]}>Product: </Text>
-                                    {products.map((product, index) => {
-                                        // seperate list of products by commas ','
-                                        return `${index === 0 ? '' : ', '} ${product.product_name} x ${product.quantity}`
-                                    })}
-                                </Text>
-                                <Text style={[style.messageHeading, accountType === "Merchant" && style.sentHeading]}>
-                                    <Text style={[style.messageText, accountType === "Merchant" && style.sentText]}>Price: </Text>
-                                    ₦{price.toLocaleString()}
-                                </Text>
-                                <Text style={[style.messageHeading, accountType === "Merchant" && style.sentHeading]}>
-                                    <Text style={[style.messageText, accountType === "Merchant" && style.sentText]}>Location: </Text>
-                                    {location.location}
-                                </Text>
-                                <Text style={[style.messageHeading, accountType === "Merchant" && style.sentHeading]}>
-                                    <Text style={[style.messageText, accountType === "Merchant" && style.sentText]}>Charge: </Text>
-                                    ₦{location.charge.toLocaleString()}
-                                </Text>
-                                <Text style={[style.messageHeading, accountType === "Merchant" && style.sentHeading]}>
-                                    <Text style={[style.messageText, accountType === "Merchant" && style.sentText]}>Logistics: </Text>
-                                    Komitex Logistics
-                                </Text>
-                            </View>
-                            <Text style={[style.timeSent, style.myTeam]}>{postOrderTimestamp}</Text>
                         </View>
                         
 
@@ -1523,7 +1521,7 @@ const Chat = ({navigation, route}) => {
                     </View>
                     <TouchableOpacity
                         style={style.sendButton}
-                        onPress={sendMessage}
+                        onPress={() => sendMessage("message")}
                     >
                         <SendIcon />
                     </TouchableOpacity>
@@ -1667,7 +1665,7 @@ const Chat = ({navigation, route}) => {
                                     onPress={hanldeOpenCalendar}
                                     icon={<CalendarIcon />}
                                     active={false}
-                                    inputFor={"Date"}
+                                    inputFor={"Reschedule Date"}
                                 />
 
                                 <Input

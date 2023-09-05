@@ -56,7 +56,7 @@ const SendOrder = ({navigation, route}) => {
         {
             id: 6,
             product_name: "Accurate Watch",
-            quantity: 2,
+            quantity: 1,
             imageUrl: require("../assets/images/accurate-watch.png"),
             checked: false,
         },
@@ -600,7 +600,7 @@ const SendOrder = ({navigation, route}) => {
                     backgroundColor={background}
                     inactive={emptyLogisticsAndOrderDetails}
                     fixed={true}
-                    isLoading={true}
+                    isLoading={isLoading}
                 />
             )}
             {/* success alert to display on addproduct or edit product */}

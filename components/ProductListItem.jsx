@@ -2,6 +2,8 @@
 import { TouchableOpacity, Image, View, Text, StyleSheet } from 'react-native';
 // colors
 import { black, bodyText, white } from '../style/colors';
+// helpers
+import { windowWidth } from '../utils/helpers';
 
 // product list item that shows up in search results
 const ProductListItem = ({product_name, quantity, price, imageUrl, onPress}) => {
@@ -66,7 +68,7 @@ const style = StyleSheet.create({
         borderRadius: 8,
     },
     orderInfo: {
-        flexGrow: 1,
+        width: windowWidth - 194,
     },
     orderMainText: {
         fontFamily: 'mulish-semibold',

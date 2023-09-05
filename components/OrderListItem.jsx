@@ -12,6 +12,8 @@ import Indicator from './Indicator';
 import SelectedOrderIcon from '../assets/icons/SelectedOrderIcon';
 // colors
 import { background, black, bodyText, white } from '../style/colors';
+// import helper functions
+import { windowWidth } from '../utils/helpers';
 
 const OrderListItem = ({item, index, length, selectable, selected, selectFunction, extraVerticalPadding}) => {
     // lenght, index => int
@@ -98,7 +100,7 @@ const style = StyleSheet.create({
         alignItems: 'center',
         width: "100%",
         height: 70,
-        gap: 10,
+        gap: 12,
         backgroundColor: white,
     },
     extraVerticalPadding: {
@@ -120,7 +122,6 @@ const style = StyleSheet.create({
     },
     orderImageContainer: {
         position: 'relative',
-
     },
     orderImage: {
         width: 40,
@@ -133,7 +134,7 @@ const style = StyleSheet.create({
         right: 0,  
     },
     orderInfo: {
-        flexGrow: 1,
+        width: windowWidth - 194,
     },
     orderMainText: {
         fontFamily: 'mulish-bold',

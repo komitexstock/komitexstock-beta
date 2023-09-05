@@ -38,11 +38,18 @@ const Home = ({navigation}) => {
             name: "Richard Idana",
             location: "Warri",
             products: [
-                { product_name: "Maybach Sunglasses", quantity: 2 },
+                {
+                    product_name: "Maybach Sunglasses",
+                    quantity: 1,
+                },
+                {
+                    product_name: "Accurate Watch",
+                    quantity: 1,
+                },
             ],
             datetime: "2023-03-15 09:30",
             id: "abc123",
-            price: 38000,
+            price: 50000,
             status: "Delivered",
             imageUrl: require('../assets/images/komitex.png'),
             newMessage: true,

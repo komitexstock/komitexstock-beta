@@ -69,6 +69,13 @@ const SelectInput = ({label, labelIcon, placeholder, onPress, icon, value, activ
                             {value ? moment(value).format('DD MMMM, YYYY') : placeholder} 
                         </>
                     )}
+
+                    { inputFor === "Reschedule Date" && (
+                        <>
+                            {/* render any other String */}
+                            {value ? moment(value).format('dddd, D MMMM, YYYY') : placeholder} 
+                        </>
+                    )}
                     {/* if value is present show value, else show placeholder */}
                 </Text>
                 {icon ? icon : <ArrowDown />}

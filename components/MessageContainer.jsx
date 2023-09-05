@@ -157,6 +157,123 @@ const MessageContainer = ({messages, message, index, messagesRefs, customerName,
             return company_name;
         }
     };
+
+    const findPhoneNumbers = (string) => {
+        const regex = /(\+?\d{1,3}\s?)?\d{10,13}/g;
+        let matches = [];
+        
+        let match;
+        while ((match = regex.exec(string)) !== null) {
+          const startIndex = match.index;
+          const endIndex = startIndex + match[0].length;
+          
+          if (match[0].length >= 10) {
+            matches.push(startIndex, endIndex);
+          }
+        }
+        
+        return matches;
+    }
+
+    const sliceStringByNumbers = (string, numbers) => {
+        numbers = [0, ...numbers]; // Add initial 0 index
+        let slicedStrings = [];
+        
+        for (let i = 0; i < numbers.length; i++) {
+          const startIndex = numbers[i];
+          const endIndex = numbers[i + 1];
+          
+          const slicedString = string.slice(startIndex, endIndex);
+          slicedStrings.push(slicedString);
+        }
+        
+        return slicedStrings;
+    }
+
+    const processText = (text, account_type, repliedText) => {
+
+        // first check if phone numbers exist in text
+        
+        const phoneNumbersIndex = findPhoneNumbers(text);
+        
+        if (phoneNumbersIndex.length === 0) {
+            if (!text.includes('*')) return text;
+            const textArray = text.split('*');
+            if (repliedText) return textArray.join("");
+            if (textArray.length < 3) {
+                return textArray.join("*");
+            } else {
+                return textArray.map((item, index) => {
+                    // odd text
+                    if (index % 2 === 0) {
+                        return <Text key={index}>{item}</Text>;
+                    } else {
+                        return (
+                            <Text 
+                                key={index} 
+                                style={[
+                                    style.messageHeading, 
+                                    accountType === account_type && style.sentHeading
+                                ]}
+                            >
+                                {item}
+                            </Text>
+                        )
+                    }
+                })
+            }
+        } else {
+            const stringWithPhoneNumbers = sliceStringByNumbers(text, phoneNumbersIndex);
+
+            return stringWithPhoneNumbers.map((item, index1) => {
+                // odd element in array, would be text
+                if (index1 % 2 === 0) { // actual text
+                    if (!item.includes('*')) return item;
+                    const textArray = item.split('*');
+                    if (repliedText) return textArray.join("");
+                    if (textArray.length < 3) {
+                        return <Text key={index1}>{textArray.join("*")}</Text>;
+                    } else {
+                        return textArray.map((item, index2) => {
+                            // odd text
+                            if (index2 % 2 === 0) {
+                                return <Text key={`${index2}${index2}`}>{item}</Text>;
+                            } else {
+                                return (
+                                    <Text 
+                                        key={`${index2}${index2}`} 
+                                        style={[
+                                            style.messageHeading, 
+                                            accountType === account_type && style.sentHeading
+                                        ]}
+                                    >
+                                        {item}
+                                    </Text>
+                                )
+                            }
+                        })
+                    }
+                } else { // even elements in array would be phone number
+                    if (repliedText) return item;
+                    return (
+                        <NumberLink
+                            key={index1}
+                            number={item}
+                            onPress={() => handleOnPressPhoneNumber(item)}
+                            account_type={account_type}
+                        />
+                    );
+                }
+            })
+
+            console.log(stringWithPhoneNumbers);
+        }
+    }
+
+    // const string = "8012345678 08012345678 +2348107182760 2348107182760 0807 140 2847 +234 807 559 1478";
+    // const phoneNumberMatches = findPhoneNumbers(string);
+    // const slicedStrings = sliceStringByNumbers(string, phoneNumberMatches);
+    // console.log(slicedStrings)
     
     const messageBody = (account_type, text, reply, file, timestamp, user_id, full_name, company_name, type, reschedule_date, id) => {
 
@@ -207,7 +324,10 @@ const MessageContainer = ({messages, message, index, messagesRefs, customerName,
                             )}
                         </Text>
                         <Text style={style.repliedText}>
-                            {repliedMessage[0].text.length > 175 ? repliedMessage[0].text.slice(0, 175) + "..." : repliedMessage[0].text}
+                            {repliedMessage[0].text.length > 175 ? 
+                                processText(repliedMessage[0].text.slice(0, 175), account_type, true) :
+                                processText(repliedMessage[0].text, account_type, true)
+                            }
                         </Text>
                     </TouchableOpacity>
                 }
@@ -332,7 +452,7 @@ const MessageContainer = ({messages, message, index, messagesRefs, customerName,
                         </View>
                     </TouchableOpacity>
                 }
-                {/* if it is not an action triggered message */}
+                {/* if it is not an action triggered message i.e a basic text*/}
                 { text && !customMessages.includes(type) &&
                     <Text 
                         style={[
@@ -340,7 +460,7 @@ const MessageContainer = ({messages, message, index, messagesRefs, customerName,
                             accountType === account_type && style.sentText
                         ]}
                     >
-                        {text}
+                        {processText(text, account_type)}
                     </Text>
                 }
 
@@ -365,130 +485,14 @@ const MessageContainer = ({messages, message, index, messagesRefs, customerName,
                             Order {type}
                         </Text>
                         { type === "Edited" && (
-                            <>
-                                <Text 
-                                    style={[
-                                        style.actionMessageHeading,
-                                        accountType === account_type && style.sentText
-                                    ]}
-                                >
-                                    Customer's Name:&nbsp;
-                                    <Text 
-                                        style={[
-                                            style.actionMessageText,
-                                            accountType === account_type && style.sentText
-                                        ]}
-                                    >
-                                        {customerName}
-                                    </Text>
-                                </Text>
-                                <Text 
-                                    style={[
-                                        style.actionMessageHeading,
-                                        accountType === account_type && style.sentText
-                                    ]}
-                                >
-                                    Phone Number:&nbsp;
-                                    <Text 
-                                        style={[
-                                            style.actionMessageText,
-                                            accountType === account_type && style.sentText
-                                        ]}
-                                    >
-                                        { phoneNumber.map((number, index) => (
-                                            <NumberLink
-                                                key={index}
-                                                number={number}
-                                                handleOnPressPhoneNumber={handleOnPressPhoneNumber}
-                                                account_type={account_type}
-                                            />
-                                        ))}
-                                    </Text>
-                                </Text>
-                                <Text 
-                                    style={[
-                                        style.actionMessageHeading,
-                                        accountType === account_type && style.sentText
-                                    ]}
-                                >
-                                    Delivery Address:&nbsp;
-                                    <Text 
-                                        style={[
-                                            style.actionMessageText,
-                                            accountType === account_type && style.sentText
-                                        ]}
-                                    >
-                                        {address}
-                                    </Text>
-                                </Text>
-                                <Text 
-                                    style={[
-                                        style.actionMessageHeading,
-                                        accountType === account_type && style.sentText
-                                    ]}
-                                >
-                                    Product:&nbsp;
-                                    <Text 
-                                        style={[
-                                            style.actionMessageText,
-                                            accountType === account_type && style.sentText
-                                        ]}
-                                    >
-                                        {products.map((product, index) => {
-                                            // seperate list of products by commas ','
-                                            return `${index === 0 ? '' : ', '} ${product.product_name} x ${product.quantity}`
-                                        })}
-                                    </Text>
-                                </Text>
-                                <Text 
-                                    style={[
-                                        style.actionMessageHeading,
-                                        accountType === account_type && style.sentText
-                                    ]}
-                                >
-                                    Price:&nbsp;
-                                    <Text 
-                                        style={[
-                                            style.actionMessageText,
-                                            accountType === account_type && style.sentText
-                                        ]}
-                                    >
-                                        ₦{price.toLocaleString()}
-                                    </Text>
-                                </Text>
-                                <Text 
-                                    style={[
-                                        style.actionMessageHeading,
-                                        accountType === account_type && style.sentText
-                                    ]}
-                                >
-                                    Location:&nbsp;
-                                    <Text 
-                                        style={[
-                                            style.actionMessageText,
-                                            accountType === account_type && style.sentText
-                                        ]}
-                                    >
-                                        {location.location}
-                                    </Text>
-                                </Text>
-                                <Text 
-                                    style={[
-                                        style.actionMessageHeading,
-                                        accountType === account_type && style.sentText
-                                    ]}
-                                >
-                                    Charge:&nbsp;
-                                    <Text 
-                                        style={[
-                                            style.actionMessageText,
-                                            accountType === account_type && style.sentText
-                                        ]}
-                                    >
-                                        ₦{location.charge.toLocaleString()}
-                                    </Text>
-                                </Text>
-                            </>
+                            <Text 
+                            style={[
+                                style.messageText, 
+                                accountType === account_type && style.sentText
+                                ]}
+                            >
+                                {processText(text, account_type)}
+                            </Text>
                         )}
                         { type !== "Edited" && (
                             <Text style={style.actionMessageHeading}>
@@ -598,6 +602,7 @@ const MessageContainer = ({messages, message, index, messagesRefs, customerName,
                 message.company_name,
                 message.color,
                 message.reply,
+                index === 0 ? true : false, // parameter to indicate the first message which is the order details
             )}
             {/* message body */}
             { messageBody(
@@ -605,18 +610,18 @@ const MessageContainer = ({messages, message, index, messagesRefs, customerName,
                 message.text, 
                 message.reply, 
                 message.file,
-                message.timestamp(),
+                typeof message.timestamp === "function" ? message.timestamp() : message.timestamp,
                 message.user_id,
                 message.fullname,
                 message.company_name,
                 message.type,
-                message.reschedule_date(),
+                typeof message.reschedule_date === "function" ? message.reschedule_date() : message.reschedule_date,
                 message.id
             )}
             {/* mesage timestamp */}
             { messageTimestamp(
                 message.account_type, 
-                message.timestamp(), 
+                typeof message.timestamp === "function" ? message.timestamp() : message.timestamp,
                 index !== messages.length - 1 && messages[index + 1].timestamp(),
                 message.user_id,
                 index !== messages.length - 1 && messages[index + 1].user_id,

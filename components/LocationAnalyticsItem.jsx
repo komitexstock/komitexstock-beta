@@ -4,6 +4,8 @@ import { TouchableOpacity, Image, View, Text, StyleSheet } from 'react-native';
 import { black, bodyText, white } from '../style/colors';
 // components
 import PercentageChange from './PercentageChange';
+// helpers
+import { windowWidth } from '../utils/helpers';
 
 // product list item that shows up in search results
 const LocationAnalyticsItem = ({location, numberOfDeliveries, totalPrice, oldTotalPrice, onPress, disableCick}) => {
@@ -79,7 +81,7 @@ const style = StyleSheet.create({
         paddingVertical: 15,
     },
     orderInfo: {
-        flexGrow: 1,
+        width: windowWidth - 194,
     },
     orderMainText: {
         fontFamily: 'mulish-semibold',

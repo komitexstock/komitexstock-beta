@@ -4,6 +4,8 @@ import { TouchableOpacity, Image, View, Text, StyleSheet } from 'react-native';
 import Indicator from './Indicator';
 // colors
 import { black, bodyText, white } from '../style/colors';
+// import helper functions
+import { windowWidth } from '../utils/helpers';
 
 const WaybillListItem = ({item, index, length}) => {
     // item => object
@@ -79,7 +81,7 @@ const style = StyleSheet.create({
         borderRadius: 8,
     },
     orderInfo: {
-        flexGrow: 1,
+        width: windowWidth - 194,
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
