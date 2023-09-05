@@ -19,19 +19,19 @@ const CustomButton = ({name, onPress, backgroundColor, fixed, inactive, secondar
         Animated.sequence([
             Animated.timing(translateValue, {
               toValue: -10,
-              duration: 600,
+              duration: 500,
               easing: Easing.linear,
               useNativeDriver: false,
             }),
             Animated.timing(translateValue, {
               toValue: 5,
-              duration: 250,
+              duration: 200,
               easing: Easing.linear,
               useNativeDriver: false,
             }),
             Animated.timing(translateValue, {
               toValue: 0,
-              duration: 200,
+              duration: 150,
               easing: Easing.linear,
               useNativeDriver: false,
             }),
@@ -43,7 +43,7 @@ const CustomButton = ({name, onPress, backgroundColor, fixed, inactive, secondar
             animateAllBoxes();
             setInterval(() => {
                 animateAllBoxes();
-            }, 1300);
+            }, 1200);
         }
     }, [isLoading]);
 
