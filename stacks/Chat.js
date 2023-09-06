@@ -1375,6 +1375,8 @@ const Chat = ({navigation, route}) => {
         openAlert('Success', 'Order cancelled successfully');
     }
 
+    // console.log(moment("today").format('DD MMMM, YYYY'));
+
     return (
         <>
             {/* chat header */}
@@ -1665,7 +1667,7 @@ const Chat = ({navigation, route}) => {
                                     onPress={hanldeOpenCalendar}
                                     icon={<CalendarIcon />}
                                     active={false}
-                                    inputFor={"Reschedule Date"}
+                                    inputFor={"Date"}
                                 />
 
                                 <Input

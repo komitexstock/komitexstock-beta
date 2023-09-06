@@ -26,6 +26,7 @@ import SearchBar from "../components/SearchBar";
 import Badge from "../components/Badge";
 import ModalButton from "../components/ModalButton";
 import Header from "../components/Header";
+import FilterBottomSheet from "../components/FilterBottomSheet";
 // bottomsheet components
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 
@@ -799,6 +800,16 @@ const Orders = ({navigation}) => {
         modalRef.current?.present();
     }
 
+    const filterSheetRef = useRef(null);
+
+    const openFilter = () => {
+        filterSheetRef.current?.present()
+    }
+
+    const closeFilter = () => {
+        filterSheetRef.current?.close()
+    }
+
     return (
         <>
             <TouchableWithoutFeedback style={{flex: 1}}>
@@ -854,7 +865,7 @@ const Orders = ({navigation}) => {
                                     {/* filter button to trigger filter bottomsheet */}
                                     <TouchableOpacity
                                         style={style.menuIcon}
-                                        onPress={() => openModal("filter")}
+                                        onPress={openFilter}
                                     >
                                         <FilterIcon />
                                     </TouchableOpacity>
@@ -885,6 +896,15 @@ const Orders = ({navigation}) => {
                 {/* modal content */}
                 {modal.modalContent}
             </CustomBottomSheet>
+            {/* filter bottom sheet */}
+            <FilterBottomSheet 
+                fiterSheetRef={filterSheetRef}
+                closeFilter={closeFilter}
+                clearFilterFunction={() => {}}
+                applyFilterFunction={() => {}}
+            >
+
+            </FilterBottomSheet>
         </>
     );
 }

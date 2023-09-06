@@ -204,9 +204,9 @@ const Waybill = ({navigation}) => {
             <View style={style.modalContent}>
                 {filterButtons.map(item => (
                     <FilterButtonGroup
-                    buttons={item.buttons}
-                    title={item.title}
-                    key={item.id}
+                        buttons={item.buttons}
+                        title={item.title}
+                        key={item.id}
                     />
                 ))}
                 <ModalButton
