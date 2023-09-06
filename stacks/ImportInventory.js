@@ -4,129 +4,31 @@ import {
     Text, 
     StyleSheet,
     TouchableOpacity, 
-    BackHandler,
-    Dimensions
+    ScrollView
 } from "react-native";
 // components
 import Header from "../components/Header";
 import CustomButton from "../components/CustomButton";
-import SelectInput from "../components/SelectInput";
-import AddLogisticsModalContent from "../components/AddLogisticsModalContent";
-import CustomBottomSheet from "../components/CustomBottomSheet";
 import SearchBar from "../components/SearchBar";
-import ModalButton from "../components/ModalButton";
-import Product from "../components/Product";
 import ProductCheckItem from "../components/ProductCheckItem";
 // colors
-import { background, black, bodyText, checkBoxBorder, primaryColor} from "../style/colors";
-// icons
-import ArrowDown from "../assets/icons/ArrowDown";
+import { background, black, bodyText, checkBoxBorder, primaryColor, white} from "../style/colors";
 // react hooks
-import { useState, useEffect, useRef } from "react";
-// import bottomsheet components
-import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import { useState } from "react";
 // expo checkbox components
 import CheckBox from 'expo-checkbox';
+// helpers
+import { windowHeight } from "../utils/helpers";
 
 
 // get windows height
-const windowsHeight = Dimensions.get("window").height;
 
 const ImportInventory = ({navigation}) => {
 
-    // modal overlay
-    const [showOverlay, setShowOverlay] = useState(false);
-
-    // logistics
-    const [logistics, setLogistics] = useState(null);
-
-    // state to indicate if select logistics input is active
-    const [selectLogisticsActive, setSelectLogisticsActive] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     // state to store search queries
     const [searchQuery, setSearchQuery] = useState(null);
-
-
-    // check for empty fields
-    // const emptyFields = [
-    //     endDate,
-    //     format
-    //     ].some(
-    //         (item) => item === null || item === ''
-    // );
-
-    // use effect to close modal
-    useEffect(() => {
-        // function to run if back button is pressed
-        const backAction = () => {
-            // Run your function here
-            if (showOverlay) {
-                // if modal is open, close modal
-                closeModal();
-                return true;
-            } else {
-                // if modal isnt open simply navigate back
-                return false;
-            }
-        };
-    
-        // listen for onPress back button
-        const backHandler = BackHandler.addEventListener(
-            'hardwareBackPress',
-            backAction
-        );
-    
-        return () => backHandler.remove();
-
-    }, [showOverlay]);
-    
-    // bottom sheet ref
-    const bottomSheetModalRef = useRef(null);
-
-    // modal state
-    const [modal, setModal] = useState({
-        type: "Logistics",
-        snapPointsArray: ["50", "80%"],
-        autoSnapAt: 0,
-        sheetTitle: "Select Logistics",
-
-    });
-
-    // close modal function
-    const closeModal = () => {
-        bottomSheetModalRef.current?.close();
-        setShowOverlay(false);
-    };
-
-    // open modal function
-    const openModal = (type) => {
-        // open bottomsheet modal
-        // set overlay
-        setShowOverlay(true);
-        bottomSheetModalRef.current?.present();
-        if (type === "Logistics") {
-            setModal({
-                type: "Logistics",
-                snapPointsArray: ["50", "80%"],
-                autoSnapAt: 1,
-                sheetTitle: "Select Logistics",
-            })
-        } else if (type === "Products") {
-            setModal({
-                type: "Products",
-                snapPointsArray: ["50", "90%"],
-                autoSnapAt: 1,
-                sheetTitle: "Select Products",
-            })
-        }
-    }
-
-    // function to select logistics
-    const handleSelectedLogistics = (data) => {
-        // handleDeselectAllProducts();
-        closeModal();
-        setLogistics(data);
-    }
 
     // should be retrieved from database
     const allProducts = [
@@ -176,7 +78,7 @@ const ImportInventory = ({navigation}) => {
     });
 
     // select all state
-    const [selectAll, setSelectAll] = useState(false);
+    const selectAll = false;
 
     const handleSelectAllProducts = () => {
         const tempProducts = products.map(product => {
@@ -208,10 +110,24 @@ const ImportInventory = ({navigation}) => {
         })
     }
 
+    const handleImportInventory = () => {
+        setIsLoading(true);
+
+        setTimeout(() => {
+            setIsLoading(false);
+            handleDeselectAllProducts();
+            navigation.navigate("Products", {
+                show: true,
+                type: "Success",
+                text: "Product successfully imported!"
+            });
+        }, 3000);
+    }
+
     // Render ImportInventory page
     return (
         <>
-            <View
+            <ScrollView
                 style={style.container}
             >
                 <View style={style.main}>
@@ -227,137 +143,82 @@ const ImportInventory = ({navigation}) => {
                         Import an already existing inventory from a different logistics. 
                         Note all products will have zero quantity after its imported
                     </Text>
-                    {/* Select Logistics */}
-                    <SelectInput 
-                        label={"Select Logistics"} 
-                        placeholder={"Select logistics"} 
-                        value={logistics}
-                        onPress={() => openModal("Logistics")}
-                        icon={<ArrowDown />}
-                        active={selectLogisticsActive}
-                        inputFor={"Logistics"}
+                    <SearchBar 
+                        placeholder={"Search for a Product"} 
+                        searchQuery={searchQuery} 
+                        setSearchQuery={setSearchQuery} 
+                        backgroundColor={white}
+                        disableFIlter={true}
                     />
-                    <View style={style.selectProductsButtonWrapper}>
-                        <TouchableOpacity
-                            // if logistics is selected enable Products modal
-                            onPress={logistics ? () => openModal("Products") : () => {}}
-                        >
-                            <Text style={style.addProduct}>+Select Products</Text>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={style.selectedProductsContainer}>
-                        {products.map(product => {
-                            // return product if its selected
-                            return product.checked && (
-                                <Product
-                                    key={product.id}
-                                    product={product} 
-                                    disableQuanity={true}
-                                    removeProduct={() => handleSelectProduct(product.id)}
-                                />
-                            )
-                        })}
+                    <View style={style.modalContent}>
+                        {/* if products list has some selected products */}
+                        {products.filter(product => product.checked === true).length !== 0 && (
+                            <View style={style.productGroupWrapper}>
+                                <View style={style.productGroupHeading}>
+                                    <Text style={style.productGroupHeadingText}>
+                                        Selected Products
+                                    </Text>
+                                </View>
+                                <View>
+                                    {products.map((product) => {
+                                        return product.checked && (
+                                            <ProductCheckItem
+                                                key={product.id}
+                                                data={product}
+                                                onPress={handleSelectProduct}
+                                                unpadded={true}
+                                            />
+                                        )
+                                    })}
+                                </View>
+                            </View>
+                        )}
+
+                        {/* list of unselected products */}
+                        {products.filter(product => product.checked === false).length !== 0 && (
+                            <View style={style.productGroupWrapper}>
+                                <View style={style.productGroupHeading}>
+                                    <Text style={style.productGroupHeadingText}>
+                                        Available Products
+                                    </Text>
+                                    <TouchableOpacity onPress={handleSelectAllProducts} style={style.selectAllButton}>
+                                        <Text style={style.selectAllText}>
+                                            Select all
+                                        </Text>
+                                        <CheckBox      
+                                            value={selectAll}
+                                            color={selectAll ? primaryColor : undefined}
+                                            style={style.checkBox}
+                                            onValueChange={handleSelectAllProducts}
+                                        />
+                                    </TouchableOpacity>
+                                </View>
+                                <View>
+                                    {products.map((product) => {
+                                        return !product.checked && (
+                                            <ProductCheckItem
+                                                key={product.id}
+                                                data={product}
+                                                onPress={handleSelectProduct}
+                                                unpadded={true}
+                                            />
+                                        )
+                                    })}
+                                </View>
+                            </View>
+                        )}
                     </View>
                 </View>
-            </View>
+            </ScrollView>
             {/* Add Product button, disables on empty fields */}
             <CustomButton 
                 name={"Import Inventory"}
-                onPress={() => {}}
+                onPress={handleImportInventory}
                 backgroundColor={background}
                 fixed={false}
                 inactive={products.filter(product => product.checked === true).length === 0 ? true : false}
+                isLoading={isLoading}
             />
-                
-            <CustomBottomSheet 
-                bottomSheetModalRef={bottomSheetModalRef}
-                setShowOverlay={setShowOverlay}
-                showOverlay={showOverlay}
-                closeModal={closeModal}
-                snapPointsArray={modal.snapPointsArray}
-                autoSnapAt={modal.autoSnapAt}
-                sheetTitle={modal.sheetTitle}
-            >
-                {/* if modal type is logistics, render logistics modal content */}
-                {modal.type === "Logistics" && (
-                    <AddLogisticsModalContent 
-                        handleSelectedLogistics={handleSelectedLogistics}
-                    />
-                )}
-                {modal.type === "Products" && (<>
-                    <BottomSheetScrollView contentContainerStyle={style.modalWrapper}>
-                        <SearchBar 
-                            placeholder={"Search for a Product"} 
-                            searchQuery={searchQuery} 
-                            setSearchQuery={setSearchQuery} 
-                            backgroundColor={background}
-                            disableFIlter={true}
-                        />
-                        <View style={style.modalContent}>
-                            {/* if products list has some selected products */}
-                            {products.filter(product => product.checked === true).length !== 0 && (
-                                <View style={style.productGroupWrapper}>
-                                    <View style={style.productGroupHeading}>
-                                        <Text style={style.productGroupHeadingText}>
-                                            Selected Products
-                                        </Text>
-                                    </View>
-                                    <View>
-                                        {products.map((product) => {
-                                            return product.checked && (
-                                                <ProductCheckItem
-                                                    key={product.id}
-                                                    data={product}
-                                                    onPress={handleSelectProduct}
-                                                />
-                                            )
-                                        })}
-                                    </View>
-                                </View>
-                            )}
-
-                            {/* list of unselected products */}
-                            {products.filter(product => product.checked === false).length !== 0 && (
-                                <View style={style.productGroupWrapper}>
-                                    <View style={style.productGroupHeading}>
-                                        <Text style={style.productGroupHeadingText}>
-                                            Available Products
-                                        </Text>
-                                        <TouchableOpacity onPress={handleSelectAllProducts} style={style.selectAllButton}>
-                                            <Text style={style.selectAllText}>
-                                                Select all
-                                            </Text>
-                                            <CheckBox      
-                                                value={selectAll}
-                                                color={selectAll ? primaryColor : undefined}
-                                                style={style.checkBox}
-                                                onValueChange={handleSelectAllProducts}
-                                            />
-                                        </TouchableOpacity>
-                                    </View>
-                                    <View>
-                                        {products.map((product) => {
-                                            return !product.checked && (
-                                                <ProductCheckItem
-                                                    key={product.id}
-                                                    data={product}
-                                                    onPress={handleSelectProduct}
-                                                />
-                                            )
-                                        })}
-                                    </View>
-                                </View>
-                            )}
-                        </View>
-                    </BottomSheetScrollView>
-                    <ModalButton
-                        name={"Done"}
-                        // activate button if sa product is selected
-                        emptyFeilds={products.filter(product => product.checked === true).length === 0 ? true : false}
-                        onPress={closeModal}
-                    />
-                </>)}
-            </CustomBottomSheet>
         </>
     );
 }
@@ -370,7 +231,7 @@ const style = StyleSheet.create({
         backgroundColor: background,
         padding: 20,
         paddingTop: 0,
-        minHeight: windowsHeight - 100,
+        minHeight: windowHeight - 100,
     },
     main: {
         paddingBottom: 90,

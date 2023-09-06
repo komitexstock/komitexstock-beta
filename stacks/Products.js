@@ -162,6 +162,7 @@ const Products = ({navigation, route}) => {
     useLayoutEffect(() => {
 
         if (route.params) {
+            setMenu(false);
             setAlert({
                 show: true,
                 type: route.params.type,

@@ -3,11 +3,11 @@ import { View, TouchableOpacity, Image, Text, StyleSheet } from "react-native";
 // expo checkbox components
 import CheckBox from 'expo-checkbox';
 // colors
-import { primaryColor, inputBorder, checkBoxBorder, black } from "../style/colors";
+import { primaryColor, listSeparator, checkBoxBorder, black } from "../style/colors";
 
-const ProductCheckItem = ({data, onPress}) => {
+const ProductCheckItem = ({data, onPress, unpadded}) => {
     return (
-        <View style={style.listItemWrapper}>
+        <View style={[style.listItemWrapper, unpadded && {paddingRight: 0}]}>
             {/* product */}
             <TouchableOpacity
                 style={style.list}
@@ -37,11 +37,14 @@ const style = StyleSheet.create({
         flexDirection: "row",
         width: '100%',
         alignItems: 'center',
-        borderBottomColor: inputBorder,
+        borderBottomColor: listSeparator,
         borderBottomWidth: 1,
+        paddingVertical: 6,
+        paddingRight: 12,
+        height: 42,
+        marginBottom: 10,
     },
     list: {
-        height: 50,
         display: 'flex',
         flex: 1,
         flexDirection: 'row',

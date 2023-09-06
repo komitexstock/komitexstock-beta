@@ -18,6 +18,7 @@ export const neutral = "#B1B2B2"; // mostly uses for inactive bottom navigation 
 export const cameraButton = "#B1B2B24D";
 export const inputLabel = "#837F7F";
 export const inputBorder = "#E7E5E5";
+export const listSeparator = "#F4F4F4"
 export const toolTipBackground = "#333333";
 export const deliveredContainer = "#D1FADF";
 export const deliveredText = "#039855";
