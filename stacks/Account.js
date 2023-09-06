@@ -181,7 +181,7 @@ const Account = ({navigation, route}) => {
         else if (type === "Help & Support") {
             return setModal({
                 type: type,
-                snapPoints: ["45%"],
+                snapPoints: ["40%"],
             });
         } 
         else if (type === "Open with") {

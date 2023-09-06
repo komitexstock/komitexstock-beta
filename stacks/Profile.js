@@ -23,6 +23,8 @@ import PhoneIcon from "../assets/icons/PhoneIcon";
 import SmsIcon from "../assets/icons/SmsIcon";
 import EmailIcon from "../assets/icons/EmailIcon";
 import { background, black, bodyText } from "../style/colors";
+// bottom sheet component
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 
 const Profile = ({navigation}) => {
 
@@ -214,7 +216,7 @@ const Profile = ({navigation}) => {
                 setShowOverlay={setShowOverlay}
                 showOverlay={showOverlay}
                 closeModal={closeModal}
-                snapPointsArray={["50%"]}
+                snapPointsArray={modal === "Help & Support" ? ["40%"] : ["55%"]}
                 autoSnapAt={0}
                 sheetTitle={modal}
             >   

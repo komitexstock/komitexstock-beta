@@ -312,8 +312,8 @@ const Home = ({navigation}) => {
                                 <View style={style.homeOrdersHeader}>
                                     <Text style={style.homeOrdersHeading}>Recent Orders</Text>
                                     <TouchableOpacity
-                                        // onPress={() => {navigation.navigate("Orders")}}
-                                        onPress={() => {navigation.navigate("Share")}}
+                                        onPress={() => {navigation.navigate("Orders")}}
+                                        // onPress={() => {navigation.navigate("Share")}}
                                     >
                                         <Text style={style.seeMore} >
                                             See more

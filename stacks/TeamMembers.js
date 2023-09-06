@@ -25,6 +25,8 @@ import SuccessPrompt from "../components/SuccessPrompt";
 import CautionPrompt from "../components/CautionPrompt";
 // colors
 import { black, bodyText, white } from "../style/colors";
+// bottomsheet components
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 
 const TeamMembers = ({navigation}) => {
 
@@ -100,7 +102,7 @@ const TeamMembers = ({navigation}) => {
         setShowOverlay(true);
         setModal(type);
 
-        type === "Add" ? setBottomSheetSnapPoints(["75%"]) : setBottomSheetSnapPoints(["60%"]);
+        type === "Add" ? setBottomSheetSnapPoints(["70%"]) : setBottomSheetSnapPoints(["60%"]);
     }
 
     // function to close Popup modal
@@ -362,42 +364,44 @@ const TeamMembers = ({navigation}) => {
             >    
                 {/* Add new member modal content */}
                 {modal === "Add" && (
-                    <TouchableWithoutFeedback
-                        onPress={() => Keyboard.dismiss()}
-                    >
-                        <View style={style.modalWrapper}>
-                            <View style={style.modalContent}>
-                                <Text style={style.modalText}>We will email your team member an invite</Text>
-                                {newMemberInputs.map(input => (
-                                    <Input
-                                        key={input.id}
-                                        placeholder={input.placeholder}
-                                        label={input.label}
-                                        value={input.value}
-                                        forceBlur={input.forceBlur}
-                                        onChange={input.onChange}
-                                        error={input.error}
-                                        setError={input.setError}
+                    <>
+                        <BottomSheetScrollView contentContainerStyle={style.modalWrapper}>
+                            <TouchableWithoutFeedback
+                                onPress={() => Keyboard.dismiss()}
+                            >
+                                <View style={style.modalContent}>
+                                    <Text style={style.modalText}>We will email your team member an invite</Text>
+                                    {newMemberInputs.map(input => (
+                                        <Input
+                                            key={input.id}
+                                            placeholder={input.placeholder}
+                                            label={input.label}
+                                            value={input.value}
+                                            forceBlur={input.forceBlur}
+                                            onChange={input.onChange}
+                                            error={input.error}
+                                            setError={input.setError}
+                                        />
+                                    ))}
+                                    <SelectInput 
+                                        label={"Role"}
+                                        placeholder={"Role"}
+                                        onPress={() => openPopUpModal("Add")}
+                                        value={role}
+                                        active={roleInputActive}
+                                        inputFor={"String"}
                                     />
-                                ))}
-                                <SelectInput 
-                                    label={"Role"}
-                                    placeholder={"Role"}
-                                    onPress={() => openPopUpModal("Add")}
-                                    value={role}
-                                    active={roleInputActive}
-                                    inputFor={"String"}
-                                />
-                            </View>
-                            <ModalButton
-                                name={"Add New Team Member"}
-                                onPress={() => {
-                                    openPopUpModal("AddSuccess")
-                                }}
-                                emptyFeilds={emptyFields}
-                            />
-                        </View>
-                    </TouchableWithoutFeedback>
+                                </View>
+                            </TouchableWithoutFeedback>
+                        </BottomSheetScrollView>
+                        <ModalButton
+                            name={"Add New Team Member"}
+                            onPress={() => {
+                                openPopUpModal("AddSuccess")
+                            }}
+                            emptyFeilds={emptyFields}
+                        />
+                    </>
                 )}
                 {/* edit existing member role modal content */}
                 {modal === "Edit" && (
@@ -580,7 +584,8 @@ const style = StyleSheet.create({
     },
     modalWrapper: {
         width: "100%",
-        height: "100%",
+        flex: 1,
+        minHeight: "100%",
         display: "flex",
         flexDirection: 'column',
         justifyContent: 'space-between',
@@ -626,6 +631,8 @@ const style = StyleSheet.create({
         fontSize: 12,
         color: bodyText,
         marginBottom: 4,
+        textAlign: 'center',
+        alignSelf: 'center'
     },
     popUpContent: {
         flex: 1,
