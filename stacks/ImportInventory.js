@@ -11,12 +11,11 @@ import Header from "../components/Header";
 import CustomButton from "../components/CustomButton";
 import SearchBar from "../components/SearchBar";
 import ProductCheckItem from "../components/ProductCheckItem";
+import CheckBox from "../components/CheckBox";
 // colors
 import { background, black, bodyText, checkBoxBorder, primaryColor, white} from "../style/colors";
 // react hooks
 import { useState } from "react";
-// expo checkbox components
-import CheckBox from 'expo-checkbox';
 // helpers
 import { windowHeight } from "../utils/helpers";
 
@@ -187,9 +186,7 @@ const ImportInventory = ({navigation}) => {
                                         </Text>
                                         <CheckBox      
                                             value={selectAll}
-                                            color={selectAll ? primaryColor : undefined}
-                                            style={style.checkBox}
-                                            onValueChange={handleSelectAllProducts}
+                                            onPress={handleSelectAllProducts}
                                         />
                                     </TouchableOpacity>
                                 </View>

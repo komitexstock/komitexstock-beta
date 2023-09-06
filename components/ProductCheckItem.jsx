@@ -1,7 +1,7 @@
 // react native components
 import { View, TouchableOpacity, Image, Text, StyleSheet } from "react-native";
-// expo checkbox components
-import CheckBox from 'expo-checkbox';
+//  components
+import CheckBox from "./CheckBox";
 // colors
 import { primaryColor, listSeparator, checkBoxBorder, black } from "../style/colors";
 
@@ -23,9 +23,7 @@ const ProductCheckItem = ({data, onPress, unpadded}) => {
             {/* checkbox */}
             <CheckBox      
                 value={data.checked}
-                color={data.checked ? primaryColor : undefined}
-                style={style.checkBox}
-                onValueChange={() => onPress(data.id)}
+                onPress={() => onPress(data.id)}
             />
         </View>
     );
