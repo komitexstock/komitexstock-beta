@@ -71,7 +71,7 @@ const Header = ({navigation, stackName, iconFunction, icon, removeBackArrow, inl
 const style = StyleSheet.create({
     header: {
         maxHeight: 75,
-        minHeight: 45,
+        minHeight: 25,
         width: "100%",
         display: 'flex',
         gap: 20,
@@ -86,7 +86,7 @@ const style = StyleSheet.create({
     headerBar: {
         gap: 12,
         width: "100%",
-        // height: 45,
+        height: 57,
         display: "flex",
         flexDirection: "row",
         alignItems: 'center',

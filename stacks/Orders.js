@@ -6,7 +6,8 @@ import {
     TouchableOpacity, 
     TouchableWithoutFeedback,
     StyleSheet,
-    BackHandler
+    BackHandler,
+    Animated,
 } from "react-native";
 // colors
 import { background, black, bodyText, primaryColor, secondaryColor, white } from "../style/colors";
@@ -967,8 +968,17 @@ const Orders = ({navigation}) => {
     }
 
     const fixedBarHeight = useRef(0);
+    
+    const animatedOffset = useRef(new Animated.Value(0)).current;
 
-    const [scrollHeight, setScrollHeight] = useState(0);
+    const animateHeaderOnScroll = (e) => {
+        const yOffset = e.nativeEvent.contentOffset.y;
+        Animated.timing(animatedOffset, {
+            toValue: yOffset < fixedBarHeight.current ? -yOffset : -234,
+            duration: 200,
+            useNativeDriver: false,
+        }).start();
+    }
 
     // console.log(fixedBarHeight.current);
     // console.log(scrollHeight);
@@ -976,26 +986,27 @@ const Orders = ({navigation}) => {
     return (
         <>
             {/* Header component */}
-            {/* <Header
+            <Header
                 navigation={navigation}
                 stackName={"Orders"}
                 removeBackArrow={true}
                 icon={<MenuIcon />}
                 iconFunction={() => {}}
                 backgroundColor={background}
-            /> */}
+            />
             <TouchableWithoutFeedback style={{flex: 1}}>
                 <FlatList 
-                    onScroll={(e) => {
-                        setScrollHeight(e.nativeEvent.contentOffset.y);
-                    }}
+                    onScroll={animateHeaderOnScroll}
                     // disable flatlist vertical scroll indicator
                     showsVerticalScrollIndicator={false}
+                    stickyHeaderIndices={[0]}
                     // flat list header component
                     ListHeaderComponent={
-                        <View style={style.headerWrapper}>
+                        <Animated.View 
+                            style={[style.headerWrapper, {transform: [{translateY: animatedOffset}]}]}
+                        >
                             {/* Header component */}
-                            <Header
+                            {/* <Header
                                 navigation={navigation}
                                 stackName={"Orders"}
                                 removeBackArrow={true}
@@ -1003,7 +1014,8 @@ const Orders = ({navigation}) => {
                                 icon={<MenuIcon />}
                                 iconFunction={() => {}}
                                 backgroundColor={background}
-                            />
+                                viewStyle={{zIndex: 2}}
+                            /> */}
                             <StatWrapper>
                                 {stats.map(stat => (
                                     <StatCard
@@ -1073,7 +1085,7 @@ const Orders = ({navigation}) => {
 
                                 </View>
                             </View>
-                        </View>
+                        </Animated.View>
                     }
                     // pad the bottom due to presence of a bottom nav
                     contentContainerStyle={{paddingBottom: 90}}
@@ -1137,7 +1149,8 @@ const style = StyleSheet.create({
     },
     headerWrapper: {
         width: "100%",
-        marginBottom: 20,
+        paddingBottom: 20,
+        backgroundColor: background,
     },
     menuIcon: {
         width: 24,
@@ -1168,21 +1181,8 @@ const style = StyleSheet.create({
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "flex-start",
-        // backgroundColor: 'red',
-        // position: 'sticky',
-    },
-    fixedBar: {
-        paddingHorizontal: 20,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "flex-start",
-        // backgroundColor: 'red',
-        zIndex: 2,
-        position: 'absolute',
-        top: 55,
-        width: '100%',
         backgroundColor: background,
+        // backgroundColor: 'purple',
     },
     recentOrderHeading: {
         width: "100%",
