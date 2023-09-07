@@ -24,7 +24,7 @@ import TeamMemberCard from "../components/TeamMemberCard";
 import SuccessPrompt from "../components/SuccessPrompt";
 import CautionPrompt from "../components/CautionPrompt";
 // colors
-import { black, bodyText, white } from "../style/colors";
+import { background, black, bodyText, white } from "../style/colors";
 // bottomsheet components
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 
@@ -558,8 +558,9 @@ const style = StyleSheet.create({
     },
     listWrapper: {
         width: "100%",
-        height: "100%",
+        minHeight: "100%",
         paddingHorizontal: 20,
+        backgroundColor: background,
     },
     listContainer: {
         display: "flex",

@@ -8,7 +8,7 @@ import {
 import Header from "../components/Header";
 import LogisticsCard from "../components/LogisticsCard";
 // color
-import { black, bodyText, white } from "../style/colors";
+import { black, bodyText, white, background } from "../style/colors";
 
 const Logistics = ({navigation}) => {
 
@@ -123,9 +123,10 @@ const style = StyleSheet.create({
     },
     listWrapper: {
         width: "100%",
-        height: "100%",
+        minHeight: "100%",
         paddingHorizontal: 20,
         marginBottom: 70,
+        backgroundColor: background,
     },
     listContainer: {
         display: "flex",

@@ -400,6 +400,9 @@ const Home = ({navigation}) => {
 
 // stylesheet
 const style = StyleSheet.create({
+    container: {
+        backgroundColor: background,
+    },
     modalWrapper: {
         width: "100%",
         height: "100%",

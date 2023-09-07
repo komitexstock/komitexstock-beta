@@ -9,7 +9,7 @@ import {
     BackHandler
 } from "react-native";
 // colors
-import { black, bodyText, primaryColor, secondaryColor, white } from "../style/colors";
+import { background, black, bodyText, primaryColor, secondaryColor, white } from "../style/colors";
 // icons
 import MenuIcon from "../assets/icons/MenuIcon";
 import SearchIcon from '../assets/icons/SearchIcon'
@@ -966,10 +966,29 @@ const Orders = ({navigation}) => {
         filterSheetRef.current?.close()
     }
 
+    const fixedBarHeight = useRef(0);
+
+    const [scrollHeight, setScrollHeight] = useState(0);
+
+    // console.log(fixedBarHeight.current);
+    // console.log(scrollHeight);
+
     return (
         <>
+            {/* Header component */}
+            {/* <Header
+                navigation={navigation}
+                stackName={"Orders"}
+                removeBackArrow={true}
+                icon={<MenuIcon />}
+                iconFunction={() => {}}
+                backgroundColor={background}
+            /> */}
             <TouchableWithoutFeedback style={{flex: 1}}>
                 <FlatList 
+                    onScroll={(e) => {
+                        setScrollHeight(e.nativeEvent.contentOffset.y);
+                    }}
                     // disable flatlist vertical scroll indicator
                     showsVerticalScrollIndicator={false}
                     // flat list header component
@@ -983,6 +1002,7 @@ const Orders = ({navigation}) => {
                                 unpadded={true}
                                 icon={<MenuIcon />}
                                 iconFunction={() => {}}
+                                backgroundColor={background}
                             />
                             <StatWrapper>
                                 {stats.map(stat => (
@@ -1004,45 +1024,54 @@ const Orders = ({navigation}) => {
                             >
                                 <Text style={style.orderButtonText}>Send an Order</Text>
                             </TouchableOpacity>
-                            <View style={style.recentOrderHeading}>
-                                <View style={style.recentOrderTextWrapper}>
-                                    <Text style={style.recentOrderHeadingText}>Recent Orders</Text>
-                                    {/* badge showing numbers of unread orders */}
-                                    <Badge number={9} />
-                                </View>
-                                <View style={style.actionWrapper}>
-                                    {/* search button to trigger search bottomsheet */}
-                                    <TouchableOpacity 
-                                        style={style.menuIcon}
-                                        onPress={() => openModal("search")}
+                            <View 
+                                style={[
+                                    style.unfixedBar,
+                                ]}
+                                onLayout={(e) => {
+                                    fixedBarHeight.current = e.nativeEvent.layout.y;
+                                }}
+                            >
+                                <View style={style.recentOrderHeading}>
+                                    <View style={style.recentOrderTextWrapper}>
+                                        <Text style={style.recentOrderHeadingText}>Recent Orders</Text>
+                                        {/* badge showing numbers of unread orders */}
+                                        <Badge number={9} />
+                                    </View>
+                                    <View style={style.actionWrapper}>
+                                        {/* search button to trigger search bottomsheet */}
+                                        <TouchableOpacity 
+                                            style={style.menuIcon}
+                                            onPress={() => openModal("search")}
+                                            >
+                                            <SearchIcon />
+                                        </TouchableOpacity>
+                                        {/* filter button to trigger filter bottomsheet */}
+                                        <TouchableOpacity
+                                            style={style.menuIcon}
+                                            onPress={openFilter}
                                         >
-                                        <SearchIcon />
-                                    </TouchableOpacity>
-                                    {/* filter button to trigger filter bottomsheet */}
-                                    <TouchableOpacity
-                                        style={style.menuIcon}
-                                        onPress={openFilter}
-                                    >
-                                        <FilterIcon />
-                                    </TouchableOpacity>
+                                            <FilterIcon />
+                                        </TouchableOpacity>
+                                    </View>
                                 </View>
-                            </View>
-                            <View style={style.orderPillWrapper}>
-                                {filterParameters.map(filterParam => {
-                                    if (!filterParam.default) {
-                                        if (filterParam.title !== "Period") {
-                                            return (
-                                                <FilterPill
-                                                    key={filterParam.title}
-                                                    text={filterParam.value}
-                                                    onPress={() => handleRemoveFIlter(filterParam.title)}
-                                                    background={white}
-                                                />
-                                            )
+                                <View style={style.orderPillWrapper}>
+                                    {filterParameters.map(filterParam => {
+                                        if (!filterParam.default) {
+                                            if (filterParam.title !== "Period") {
+                                                return (
+                                                    <FilterPill
+                                                        key={filterParam.title}
+                                                        text={filterParam.value}
+                                                        onPress={() => handleRemoveFIlter(filterParam.title)}
+                                                        background={white}
+                                                    />
+                                                )
+                                            }
                                         }
-                                    }
-                                })}
+                                    })}
 
+                                </View>
                             </View>
                         </View>
                     }
@@ -1104,6 +1133,7 @@ const style = StyleSheet.create({
         width: "100%",
         height: "100%",
         paddingHorizontal: 20,
+        backgroundColor: background,
     },
     headerWrapper: {
         width: "100%",
@@ -1132,6 +1162,27 @@ const style = StyleSheet.create({
         fontFamily: "mulish-semibold",
         fontSize: 16,
         color: primaryColor,
+    },
+    unfixedBar: {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "flex-start",
+        // backgroundColor: 'red',
+        // position: 'sticky',
+    },
+    fixedBar: {
+        paddingHorizontal: 20,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "flex-start",
+        // backgroundColor: 'red',
+        zIndex: 2,
+        position: 'absolute',
+        top: 55,
+        width: '100%',
+        backgroundColor: background,
     },
     recentOrderHeading: {
         width: "100%",

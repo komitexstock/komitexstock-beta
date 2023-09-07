@@ -17,7 +17,7 @@ import FilterIcon from '../assets/icons/FilterIcon';
 import AddProduct from "../assets/icons/AddProduct";
 import VerifiedIcon from "../assets/icons/VerifiedIcon";
 // colors
-import { black, bodyText, primaryColor, secondaryColor, white } from "../style/colors";
+import { background, black, bodyText, primaryColor, secondaryColor, white } from "../style/colors";
 // components
 import StatWrapper from "../components/StatWrapper";
 import StatCard from "../components/StatCard";
@@ -582,6 +582,7 @@ const style = StyleSheet.create({
         height: "100%",
         paddingHorizontal: 20,
         marginBottom: 70,
+        backgroundColor: background,
     },
     listContainer: {
         display: "flex",

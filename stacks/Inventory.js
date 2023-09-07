@@ -10,7 +10,7 @@ import {
 // icons
 import MenuIcon from "../assets/icons/MenuIcon";
 // colors
-import { primaryColor, secondaryColor, white } from "../style/colors";
+import { primaryColor, secondaryColor, white, background } from "../style/colors";
 // react hooks
 import { useState } from "react";
 // components
@@ -144,6 +144,7 @@ const style = StyleSheet.create({
         height: "100%",
         paddingHorizontal: 20,
         marginBottom: 70,
+        backgroundColor: background,
     },
     listContainer: {
         display: "flex",

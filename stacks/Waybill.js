@@ -529,6 +529,7 @@ const style = StyleSheet.create({
         width: "100%",
         height: "100%",
         paddingHorizontal: 20,
+        backgroundColor: background,
     },
     headerWrapper: {
         width: "100%",

@@ -340,7 +340,7 @@ const Notifications = ({navigation}) => {
 
     // render Notifications page
     return (
-        <ScrollView>
+        <ScrollView showsVerticalScrollIndicator={false}>
             <View style={style.main}>
                 {/* Header */}
                 <Header 
