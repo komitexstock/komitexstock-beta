@@ -4,6 +4,8 @@ import { useCallback } from "react";
 import ModalHandle from "./ModalHandle";
 import CloseIcon from "../assets/icons/CloseIcon";
 import { bodyText, primaryColor, secondaryColor, white } from "../style/colors";
+// window height
+import { windowHeight } from "../utils/helpers";
 
 const FilterBottomSheet = ({fiterSheetRef, closeFilter, children, clearFilterFunction, applyFilterFunction}) => {
 
@@ -31,11 +33,12 @@ const FilterBottomSheet = ({fiterSheetRef, closeFilter, children, clearFilterFun
                 ref={fiterSheetRef}
                 index={0}
                 snapPoints={["75%"]}
-                enableContentPanningGestures={false}
+                enableContentPanningGestures={true}
                 enablePanDownToClose={false}
                 onChange={event => handleGestureEnd(event)}
                 backgroundStyle={{
                     borderRadius: 32,
+                    paddingBottom: 90,
                 }}
                 handleComponent={() => (
                     <ModalHandle />
@@ -143,7 +146,7 @@ const style = StyleSheet.create({
         padding: 20,
         paddingRight: 0,
         width: '100%',
-        minHeight: "100%"
+        minHeight: (windowHeight * 0.75) - 104,
     },
     filterButtonsWrapper: {
         padding: 20,

@@ -10,10 +10,11 @@ import {
     Animated,
 } from "react-native";
 // colors
-import { background, black, bodyText, primaryColor, secondaryColor, white } from "../style/colors";
+import { background, blackOut, bodyText, primaryColor, secondaryColor, white } from "../style/colors";
 // icons
 import MenuIcon from "../assets/icons/MenuIcon";
 import SearchIcon from '../assets/icons/SearchIcon'
+import CalendarIcon from "../assets/icons/CalendarIcon";
 import FilterIcon from '../assets/icons/FilterIcon';
 // react hooks
 import { useState, useRef, useEffect } from "react";
@@ -22,14 +23,18 @@ import StatWrapper from "../components/StatWrapper";
 import StatCard from "../components/StatCard";
 import OrderListItem from "../components/OrderListItem";
 import CustomBottomSheet from "../components/CustomBottomSheet";
+import SelectInput from "../components/SelectInput";
 import FilterButtonGroup from "../components/FilterButtonGroup";
 import SearchBar from "../components/SearchBar";
 import Badge from "../components/Badge";
 import Header from "../components/Header";
 import FilterBottomSheet from "../components/FilterBottomSheet";
+import CalendarSheet from "../components/CalendarSheet";
 // bottomsheet components
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import FilterPill from "../components/FilterPill";
+// moment
+import moment from "moment";
 
 const Orders = ({navigation}) => {
 
@@ -849,17 +854,38 @@ const Orders = ({navigation}) => {
                     }
                 },
                 {
-                    text: "Last 7 Days",
+                    text: "Current Week",
                     selected: false,
                     onPress: () => {
-                        handleFilterParameters("Period", "Last 7 Days")
+                        handleFilterParameters("Period", "Current week")
                     }
                 },
                 {
-                    text: "Manual Selection",
+                    text: "Last Week",
                     selected: false,
                     onPress: () => {
-                        handleFilterParameters("Period", "Manual Selection")
+                        handleFilterParameters("Period", "Last week")
+                    }
+                },
+                {
+                    text: "Custom period",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Period", "Custom period")
+                    }
+                },
+                {
+                    text: "Current month",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Period", "Current month")
+                    }
+                },
+                {
+                    text: "Last month",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Period", "Last month")
                     }
                 },
             ]
@@ -893,6 +919,9 @@ const Orders = ({navigation}) => {
                 // if modal is open, close modal
                 closeModal();
                 return true;
+            } else if (calendar.open) { //if calendar is open, close it
+                handleCloseCalendar();
+                return true;
             } else {
                 // if modal isnt open simply navigate back
                 return false;
@@ -907,7 +936,7 @@ const Orders = ({navigation}) => {
     
         return () => backHandler.remove();
 
-    }, [modal.overlay]);
+    }, [modal.overlay, calendar]);
 
     // search modal parameters
     const searchModal = {
@@ -968,11 +997,15 @@ const Orders = ({navigation}) => {
     }
 
     const fixedBarHeight = useRef(0);
+    // const [scrollHeight, setScrollHeight] = useState(0);
+    const [showHeaderShadow, setShowHeaderShadow] = useState(false);
     
     const animatedOffset = useRef(new Animated.Value(0)).current;
 
     const animateHeaderOnScroll = (e) => {
         const yOffset = e.nativeEvent.contentOffset.y;
+        if (yOffset < fixedBarHeight.current) setShowHeaderShadow(false);
+        else setShowHeaderShadow(true);
         Animated.timing(animatedOffset, {
             toValue: yOffset < fixedBarHeight.current ? -yOffset : -234,
             duration: 200,
@@ -980,6 +1013,75 @@ const Orders = ({navigation}) => {
         }).start();
     }
 
+    // previous date
+    const prevDate = new Date();
+    prevDate.setDate(prevDate.getDate() - 1);
+
+    // previous date
+    const today = new Date();
+    // today.setDate(today.getDate());
+
+    // variable to store start date
+    const [startDate, setStartDate] = useState(today);
+
+    // variable to indicate start date input active state
+    const [activeStartDate, setActiveStartDate] = useState(false);
+    
+    // variable to store end date
+    const [endDate, setEndDate] = useState(today);
+    // variable to indicate end date input active state
+    const [activeEndDate, setActiveEndDate] = useState(false);
+
+
+
+    // calendar ref
+    const calendarRef = useRef(null);
+
+    const [calendar, setCalendar] = useState({
+        open: false,
+        setDate: setStartDate,
+        maxDate: false,
+        minDate: false,
+    });
+
+    useEffect(() => {
+        // console.log(startDate);
+        // console.log(today);
+        if (moment(startDate).format('DD MMMM, YYYY') === moment(today).format('DD MMMM, YYYY')) {
+            setEndDate(today);
+        }
+    }, [startDate])
+
+    const hanldeOpenCalendar = (inputType) => {
+        if (inputType === "StartDate") {
+            setActiveStartDate(true);
+            setCalendar({
+                open: true,
+                setDate: setStartDate,
+                maxDate: endDate ? moment(endDate).subtract(1, 'days') : today,
+                minDate: false
+            });
+        } else {
+            setActiveEndDate(true);
+            setCalendar({
+                open: true,
+                setDate: setEndDate,
+                maxDate: today,
+                minDate: startDate ? moment(startDate).add(1, 'days') : startDate,
+            });
+        }
+        calendarRef.current?.present();
+    }
+
+    const handleCloseCalendar = () => {
+        setActiveEndDate(false);
+        setActiveStartDate(false);
+        setCalendar({
+            ...calendar,
+            open: false,
+        })
+        calendarRef.current?.close();
+    }
     // console.log(fixedBarHeight.current);
     // console.log(scrollHeight);
 
@@ -1003,19 +1105,12 @@ const Orders = ({navigation}) => {
                     // flat list header component
                     ListHeaderComponent={
                         <Animated.View 
-                            style={[style.headerWrapper, {transform: [{translateY: animatedOffset}]}]}
+                            style={[
+                                style.headerWrapper, 
+                                {transform: [{translateY: animatedOffset}]},
+                                showHeaderShadow && style.headerShadow
+                            ]}
                         >
-                            {/* Header component */}
-                            {/* <Header
-                                navigation={navigation}
-                                stackName={"Orders"}
-                                removeBackArrow={true}
-                                unpadded={true}
-                                icon={<MenuIcon />}
-                                iconFunction={() => {}}
-                                backgroundColor={background}
-                                viewStyle={{zIndex: 2}}
-                            /> */}
                             <StatWrapper>
                                 {stats.map(stat => (
                                     <StatCard
@@ -1098,12 +1193,14 @@ const Orders = ({navigation}) => {
                     //     // else return orderList.filter(order => order.status === filterParameters[0].value);
                     // }}
                     renderItem={({ item, index }) => (
-                        <OrderListItem 
-                            item={item} 
-                            index={index} 
-                            length={orderList.length} 
-                            extraVerticalPadding={true} 
-                        />
+                        <View style={style.orderWrapper}>
+                            <OrderListItem 
+                                item={item} 
+                                index={index} 
+                                length={orderList.length} 
+                                extraVerticalPadding={true} 
+                            />
+                        </View>
                     )}
                 />
             </TouchableWithoutFeedback>
@@ -1134,7 +1231,40 @@ const Orders = ({navigation}) => {
                         key={item.title}
                     />
                 ))}
+                    <View style={style.inputContainer}>
+                        {/* Start date */}
+                        <SelectInput 
+                            label={"Start Date"} 
+                            placeholder={"DD MMMM, YYYY"} 
+                            value={startDate}
+                            onPress={() => {hanldeOpenCalendar("StartDate")}}
+                            icon={<CalendarIcon />}
+                            active={activeStartDate}
+                            inputFor={"Date"}
+                        />
+
+                        {/* End date */}
+                        <SelectInput
+                            label={"End Date"}
+                            placeholder={"DD MMMM, YYYY"}
+                            value={endDate}
+                            onPress={() => {hanldeOpenCalendar("EndDate")}}
+                            icon={<CalendarIcon />}
+                            active={activeEndDate}
+                            inputFor={"Date"}
+                        />
+                    </View>
             </FilterBottomSheet>
+            {/* calnedar */}
+            <CalendarSheet 
+                closeCalendar={handleCloseCalendar}
+                setDate={calendar.setDate}
+                disableActionButtons={true}
+                snapPointsArray={["60%"]}
+                minDate={calendar.minDate}
+                maxDate={calendar.maxDate}
+                calendarRef={calendarRef} 
+            />
         </>
     );
 }
@@ -1144,13 +1274,23 @@ const style = StyleSheet.create({
     listWrapper: {
         width: "100%",
         height: "100%",
-        paddingHorizontal: 20,
         backgroundColor: background,
     },
     headerWrapper: {
+        paddingHorizontal: 20,
         width: "100%",
         paddingBottom: 20,
         backgroundColor: background,
+    },
+    headerShadow: {
+        shadowColor: blackOut,
+        shadowOffset: { 
+            width: 0,
+            height: 4
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 16,
+        elevation: 5,
     },
     menuIcon: {
         width: 24,
@@ -1181,7 +1321,6 @@ const style = StyleSheet.create({
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "flex-start",
-        backgroundColor: background,
         // backgroundColor: 'purple',
     },
     recentOrderHeading: {
@@ -1230,6 +1369,20 @@ const style = StyleSheet.create({
         gap: 8,
         marginTop: 8,
     },
+    orderWrapper: {
+        paddingHorizontal: 20,
+    },
+    inputContainer: {
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "flex-start",
+        gap: 20,
+        paddingEnd: 20,
+        paddingBottom: 90,
+    },
+
 })
  
 export default Orders;

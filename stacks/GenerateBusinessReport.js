@@ -22,10 +22,9 @@ import CalendarIcon from "../assets/icons/CalendarIcon";
 import { useState, useEffect, useRef } from "react";
 // import moment
 import moment from "moment";
+// helpers
+import { windowHeight } from "../utils/helpers";
 
-
-// get windows height
-const windowsHeight = Dimensions.get("window").height;
 
 const GenerateBusinessReport = ({navigation}) => {
 
@@ -275,7 +274,7 @@ const style = StyleSheet.create({
         backgroundColor: background,
         padding: 20,
         paddingTop: 0,
-        minHeight: windowsHeight - 100,
+        minHeight: windowHeight - 100,
     },
     main: {
         paddingBottom: 90,

@@ -6,7 +6,7 @@ import ArrowLeft from "../assets/icons/ArrowLeft";
 import { black, white } from "../style/colors";
 
 
-const Header = ({navigation, stackName, iconFunction, icon, removeBackArrow, inlineArrow, backgroundColor, unpadded, viewStyle}) => {
+const Header = ({navigation, stackName, iconFunction, icon, iconBackground, removeBackArrow, inlineArrow, backgroundColor, unpadded, viewStyle}) => {
     // stack name => string
     // iconfunction => function
     // icon => jsx component
