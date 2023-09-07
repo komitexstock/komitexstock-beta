@@ -30,8 +30,9 @@ const FilterBottomSheet = ({fiterSheetRef, closeFilter, children, clearFilterFun
             <BottomSheetModal
                 ref={fiterSheetRef}
                 index={0}
-                snapPoints={["70%"]}
-                enablePanDownToClose={true}
+                snapPoints={["75%"]}
+                enableContentPanningGestures={false}
+                enablePanDownToClose={false}
                 onChange={event => handleGestureEnd(event)}
                 backgroundStyle={{
                     borderRadius: 32,
@@ -140,6 +141,7 @@ const style = StyleSheet.create({
         display: "flex",
         flexDirection: "column",
         padding: 20,
+        paddingRight: 0,
         width: '100%',
         minHeight: "100%"
     },

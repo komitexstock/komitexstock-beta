@@ -3,10 +3,15 @@ import {
     View,
     Text,
     StyleSheet,
-    TouchableOpacity
+    ScrollView
 } from "react-native";
+// components
+import ActionButton from "./ActionButton";
 // colors
 import { background, black, bodyText, primaryColor, secondaryColor } from "../style/colors";
+// bottomsheet components
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+
 
 
 const FilterButtonGroup = ({buttons, title}) => {
@@ -18,23 +23,23 @@ const FilterButtonGroup = ({buttons, title}) => {
         <View style={style.filterButtonGroup}>
             {/* filter button group title */}
             <Text style={style.filterHeading}>{title}</Text>
-            <View style={style.buttonWrapper}>
+            <BottomSheetScrollView 
+                contentContainerStyle={style.buttonWrapper}
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+            >
                 {/* filter button list */}
                 {buttons.map(button => (
                     // filter button
-                    <TouchableOpacity 
-                        key={button.id} 
-                        style={button.selected ? style.selectedButton : style.filterButton}
-                    >
-                        <Text 
-                            style={button.selected ? style.selectedButtonText : style.filterButtonText}
-                        >
-                            {/* button text */}
-                            {button.text}
-                        </Text>
-                    </TouchableOpacity>
+                    <ActionButton
+                        key={button.text}
+                        name={button.text}
+                        removeBottomMargin={true}
+                        selected={button.selected}
+                        onPress={button.onPress}
+                    />
                 ))}
-            </View>
+            </BottomSheetScrollView>
         </View>
     );
 }
@@ -46,7 +51,6 @@ const style =  StyleSheet.create({
         flexDirection: 'column',
         width: "100%",
         height: 80,
-        gap: 10,
     },
     filterHeading: {
         fontFamily: 'mulish-semibold',
@@ -55,7 +59,12 @@ const style =  StyleSheet.create({
     buttonWrapper: {
         display: 'flex',
         flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
         gap: 10,
+        paddingRight: 20,
+        paddingBottom: 24,
+        paddingTop: 12,
     },
     filterButton: {
         height: 28,

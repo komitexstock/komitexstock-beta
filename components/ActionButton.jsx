@@ -14,6 +14,7 @@ const ActionButton = ({name, onPress, removeBottomMargin, selected}) => {
                 selected && { borderColor: primaryColor, borderWidth:1 }
             ]}
             onPress={onPress}
+            activeOpacity={0.5}
         >
             {/* button text */}
             <Text 

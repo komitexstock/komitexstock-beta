@@ -9,7 +9,7 @@ import {
     BackHandler
 } from "react-native";
 // colors
-import { bodyText, primaryColor, secondaryColor, white } from "../style/colors";
+import { black, bodyText, primaryColor, secondaryColor, white } from "../style/colors";
 // icons
 import MenuIcon from "../assets/icons/MenuIcon";
 import SearchIcon from '../assets/icons/SearchIcon'
@@ -24,11 +24,11 @@ import CustomBottomSheet from "../components/CustomBottomSheet";
 import FilterButtonGroup from "../components/FilterButtonGroup";
 import SearchBar from "../components/SearchBar";
 import Badge from "../components/Badge";
-import ModalButton from "../components/ModalButton";
 import Header from "../components/Header";
 import FilterBottomSheet from "../components/FilterBottomSheet";
 // bottomsheet components
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import FilterPill from "../components/FilterPill";
 
 const Orders = ({navigation}) => {
 
@@ -610,82 +610,262 @@ const Orders = ({navigation}) => {
         },
     ];
 
+    // function to apply filter
+    const handleApplyFilter = () => {
+        setFilterParameters(prevParamters => {
+            return prevParamters.map(filterParam => {
+                if (filterParam.title  !== "Period") {
+                    const selectedButton = filterParam.buttons.filter(button => button.selected === true);
+                    // console.log(selectedButton);
+                    return {
+                        ...filterParam,
+                        value: selectedButton[0].text,
+                        default: selectedButton[0].text === "All" ? true : false, 
+
+                    }
+                } else {
+                    return {...filterParam}
+                }
+            })
+        });
+        closeFilter();
+    }
+
+
+    const handleFilterParameters = (title, button) => {
+        if (title !== "Period") {
+            // console.log("Here");
+            setFilterParameters(prevParamters => {
+                return prevParamters.map(filterParam => {
+                    if (filterParam.title === title) {
+                        return {
+                            ...filterParam,
+                            buttons: filterParam.buttons.map(filterButton => {
+                                if (filterButton.text === button) {
+                                    return {
+                                        ...filterButton,
+                                        selected: true,
+                                    }
+                                } else {
+                                    return {
+                                        ...filterButton,
+                                        selected: false,
+                                    }
+                                }
+                            }),
+                        }
+                    } else {
+                        return {...filterParam}
+                    }
+                })
+            });
+        }
+    }
+    
+    const handleRemoveFIlter = (title) => {
+        if (title !== "Period") {
+            setFilterParameters(prevParamters => {
+                return prevParamters.map(filterParam => {
+                    if (filterParam.title === title) {
+                        return {
+                            ...filterParam,
+                            default: true,
+                            value: "All",
+                            buttons: filterParam.buttons.map(filterButton => {
+                                if (filterButton.text === "All") {
+                                    return {
+                                        ...filterButton,
+                                        selected: true,
+                                    }
+                                } else {
+                                    return {
+                                        ...filterButton,
+                                        selected: false,
+                                    }
+                                }
+                            }),
+                        }
+                    } else {
+                        return {...filterParam}
+                    }
+                })
+            });
+        }
+    }
+
     // filter order button
-    const filterButtons = [
+    const [filterParameters, setFilterParameters] = useState([
         {
-            id: 1,
             title: "Status",
+            value: "All",
+            default: true,
             buttons: [
                 {
-                id: 1,
-                text: "All",
-                selected: true,
+                    text: "All",
+                    selected: true,
+                    onPress: () => {
+                        handleFilterParameters("Status", "All")
+                    }
                 },
                 {
-                id: 2,
-                text: "Pending",
-                selected: false,
+                    text: "Pending",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Status", "Pending")
+                    }
                 },
                 {
-                id: 3,
-                text: "Delivered",
-                selected: false,
+                    text: "Delivered",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Status", "Delivered")
+                    }
                 },
                 {
-                id: 4,
-                text: "Cancelled",
-                selected: false,
+                    text: "Cancelled",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Status", "Cancelled")
+                    }
                 },
-            ]
+                {
+                    text: "Dispatched",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Status", "Dispatched")
+                    }
+                },
+            ],
         },
         {
-            id: 2,
             title: "Logistics",
+            value: "All",
+            default: true,
             buttons: [
                 {
-                id: 1,
-                text: "All",
-                selected: true,
+                    text: "All",
+                    selected: true,
+                    onPress: () => {
+                        handleFilterParameters("Logistics", "All")
+                    }
                 },
                 {
-                id: 2,
-                text: "Komitex",
-                selected: false,
+                    text: "Komitex",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Logistics", "Komitex")
+                    }
                 },
                 {
-                id: 3,
-                text: "Fedex",
-                selected: false,
+                    text: "Fedex",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Logistics", "Fedex")
+                    }
                 },
                 {
-                id: 4,
-                text: "DHL",
-                selected: false,
+                    text: "DHL",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Logistics", "DHL")
+                    }
+                },
+                {
+                    text: "UPS",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Logistics", "UPS")
+                    }
                 },
             ]
         },
         {
-            id: 3,
-            title: "Date",
+            title: "Warehouse",
+            value: "All",
+            default: true,
             buttons: [
                 {
-                id: 1,
-                text: "Today",
-                selected: true,
+                    text: "All",
+                    selected: true,
+                    onPress: () => {
+                        handleFilterParameters("Warehouse", "All")
+                    }
                 },
                 {
-                id: 2,
-                text: "Yesterday",
-                selected: false,
+                    text: "Warri",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Warehouse", "Warri")
+                    }
                 },
                 {
-                id: 3,
-                text: "Manual Selection",
-                selected: false,
+                    text: "Asaba",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Warehouse", "Asaba")
+                    }
+                },
+                {
+                    text: "Benin",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Warehouse", "Benin")
+                    }
+                },
+                {
+                    text: "Sapele",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Warehouse", "Sapele")
+                    }
+                },
+                {
+                    text: "Abraka",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Warehouse", "Abraka")
+                    }
+                },
+            ]
+        },
+        {
+            title: "Period",
+            value: new Date(),
+            default: true,
+            buttons: [
+                {
+                    text: "Today",
+                    selected: true,
+                    onPress: () => {
+                        handleFilterParameters("Period", "Today")
+                    }
+                },
+                {
+                    text: "Yesterday",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Period", "Yesterday")
+                    }
+                },
+                {
+                    text: "Last 7 Days",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Period", "Last 7 Days")
+                    }
+                },
+                {
+                    text: "Manual Selection",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Period", "Manual Selection")
+                    }
                 },
             ]
         }
-    ]
+    ]);
+
+    // console.log(filterParameters[0].value);
 
     // state to store search query
     const [searchQuery, setSearchQuery] = useState("");
@@ -727,30 +907,6 @@ const Orders = ({navigation}) => {
         return () => backHandler.remove();
 
     }, [modal.overlay]);
-
-    // filter modal parameters
-    const filterModal = {
-        snapPointsArray: ["50%"],
-        autoSnapAt: 0,
-        sheetTitle: "Filter by",
-        overlay: true,
-        clearFilterFunction: () => {},
-        modalContent: <>
-            <View style={style.modalContent}>
-                {filterButtons.map(item => (
-                    <FilterButtonGroup
-                    buttons={item.buttons}
-                    title={item.title}
-                    key={item.id}
-                    />
-                ))}
-                <ModalButton
-                    name={"Apply"}
-                    onPress={() => {}}
-                />
-            </View>
-        </>
-    };
 
     // search modal parameters
     const searchModal = {
@@ -871,15 +1027,42 @@ const Orders = ({navigation}) => {
                                     </TouchableOpacity>
                                 </View>
                             </View>
+                            <View style={style.orderPillWrapper}>
+                                {filterParameters.map(filterParam => {
+                                    if (!filterParam.default) {
+                                        if (filterParam.title !== "Period") {
+                                            return (
+                                                <FilterPill
+                                                    key={filterParam.title}
+                                                    text={filterParam.value}
+                                                    onPress={() => handleRemoveFIlter(filterParam.title)}
+                                                    background={white}
+                                                />
+                                            )
+                                        }
+                                    }
+                                })}
+
+                            </View>
                         </View>
                     }
                     // pad the bottom due to presence of a bottom nav
                     contentContainerStyle={{paddingBottom: 90}}
                     style={style.listWrapper}
                     keyExtractor={item => item.id}
-                    data={orderList}
+                    data={filterParameters[0].value === "All" ? orderList : orderList.filter(order => order.status === filterParameters[0].value)}
+                    // data={() => {
+                    //     if (filterParameters[0].value === "All") return orderList;
+                    //     else return orderList;
+                    //     // else return orderList.filter(order => order.status === filterParameters[0].value);
+                    // }}
                     renderItem={({ item, index }) => (
-                        <OrderListItem item={item} index={index} length={orderList.length} extraVerticalPadding={true} />
+                        <OrderListItem 
+                            item={item} 
+                            index={index} 
+                            length={orderList.length} 
+                            extraVerticalPadding={true} 
+                        />
                     )}
                 />
             </TouchableWithoutFeedback>
@@ -901,9 +1084,15 @@ const Orders = ({navigation}) => {
                 fiterSheetRef={filterSheetRef}
                 closeFilter={closeFilter}
                 clearFilterFunction={() => {}}
-                applyFilterFunction={() => {}}
+                applyFilterFunction={handleApplyFilter}
             >
-
+                {filterParameters.map(item => (
+                    <FilterButtonGroup
+                        buttons={item.buttons}
+                        title={item.title}
+                        key={item.title}
+                    />
+                ))}
             </FilterBottomSheet>
         </>
     );
@@ -918,6 +1107,7 @@ const style = StyleSheet.create({
     },
     headerWrapper: {
         width: "100%",
+        marginBottom: 20,
     },
     menuIcon: {
         width: 24,
@@ -951,7 +1141,6 @@ const style = StyleSheet.create({
         justifyContent: "space-between",
         height: 24,
         marginTop: 8,
-        marginBottom: 20,
     },
     recentOrderTextWrapper: {
         display: 'flex',
@@ -979,6 +1168,16 @@ const style = StyleSheet.create({
         justifyContent: "flex-start",
         width: "100%",
         flex: 1,
+    },
+    orderPillWrapper: {
+        width: '100%',
+        display: "flex",
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        alignItems: "center",
+        justifyContent: "flex-start",
+        gap: 8,
+        marginTop: 8,
     },
 })
  
