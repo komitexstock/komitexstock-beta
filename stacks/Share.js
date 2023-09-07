@@ -322,7 +322,7 @@ const Share = ({navigation}) => {
     return (
         <>
             <TouchableWithoutFeedback>
-                <ScrollView style={style.container}>
+                <ScrollView style={style.container} showsHorizontalScrollIndicator={false}>
                     <View 
                         style={[
                             style.mainWrapper,
