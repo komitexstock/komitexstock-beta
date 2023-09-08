@@ -6,6 +6,7 @@ import CloseIcon from "../assets/icons/CloseIcon";
 import { bodyText, primaryColor, secondaryColor, white } from "../style/colors";
 // window height
 import { windowHeight } from "../utils/helpers";
+import BottomSheet from "@gorhom/bottom-sheet";
 
 const FilterBottomSheet = ({fiterSheetRef, closeFilter, children, clearFilterFunction, applyFilterFunction}) => {
 
@@ -32,7 +33,7 @@ const FilterBottomSheet = ({fiterSheetRef, closeFilter, children, clearFilterFun
             <BottomSheetModal
                 ref={fiterSheetRef}
                 index={0}
-                snapPoints={["75%"]}
+                snapPoints={["100%"]}
                 enableContentPanningGestures={true}
                 enablePanDownToClose={false}
                 onChange={event => handleGestureEnd(event)}

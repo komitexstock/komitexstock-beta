@@ -326,7 +326,7 @@ const Home = ({navigation}) => {
                             >
                                 {/* order list max 5 items */}
                                 {orders.map((order, index) => (
-                                    <OrderListItem key={order.id} item={order} index={index} length={orders.length} extraVerticalPadding={true} />
+                                    <OrderListItem key={order.id} item={order} index={index} lastOrder={orders.length - 1} firstOrder={0} extraVerticalPadding={true} />
                                 ))}
                             </View>
                         </View>

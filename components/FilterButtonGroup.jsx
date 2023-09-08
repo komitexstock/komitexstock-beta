@@ -23,7 +23,8 @@ const FilterButtonGroup = ({buttons, title}) => {
         <View style={style.filterButtonGroup}>
             {/* filter button group title */}
             <Text style={style.filterHeading}>{title}</Text>
-            <BottomSheetScrollView 
+            <BottomSheetScrollView
+                style={style.buttonContainer}
                 contentContainerStyle={style.buttonWrapper}
                 horizontal={true}
                 showsHorizontalScrollIndicator={false}
@@ -56,15 +57,17 @@ const style =  StyleSheet.create({
         fontFamily: 'mulish-semibold',
         fontSize: 12,
     },
+    buttonContainer: {
+        height: 68,
+    },
     buttonWrapper: {
+        paddingRight: 20,
+        paddingTop: 12,
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'flex-start',
-        alignItems: 'center',
+        alignItems: 'flex-start',
         gap: 10,
-        paddingRight: 20,
-        paddingBottom: 24,
-        paddingTop: 12,
     },
     filterButton: {
         height: 28,

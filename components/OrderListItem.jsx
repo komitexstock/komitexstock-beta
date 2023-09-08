@@ -15,7 +15,7 @@ import { background, black, bodyText, white } from '../style/colors';
 // import helper functions
 import { windowWidth } from '../utils/helpers';
 
-const OrderListItem = ({item, index, length, selectable, selected, selectFunction, extraVerticalPadding}) => {
+const OrderListItem = ({item, index, firstOrder, lastOrder, selectable, selected, selectFunction, extraVerticalPadding}) => {
     // lenght, index => int
     // item => object
 
@@ -28,10 +28,10 @@ const OrderListItem = ({item, index, length, selectable, selected, selectFunctio
                 selectable && selected && style.selected,
                 // unique style for first order in order list array
                 // add borderRadius to top of first order
-                index === 0 && style.firstOrderWrapper, 
+                index === firstOrder && style.firstOrderWrapper, 
                 // unique style for last order in order list array
                 // add borderRadius to bottom of last order
-                index === (length - 1) && style.lastOrderWrapper,
+                index === lastOrder && style.lastOrderWrapper,
 
                 extraVerticalPadding && style.extraVerticalPadding
             ]}

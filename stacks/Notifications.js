@@ -351,14 +351,14 @@ const Notifications = ({navigation}) => {
                     iconExist={true} 
                     unpadded={true}
                 />
+                {/* Date */}
                 <View style={style.dateWrapper}>
-                    {/* Date */}
                     <Text style={style.date}>Today</Text>
                 </View>
                 <View style={style.notificationWrapper}>
                     {/* Order list */}
                     {orders.map((item, index) => (
-                        <OrderListItem item={item} index={index} key={index} length={orders.length} extraVerticalPadding={true} />
+                        <OrderListItem item={item} index={index} key={index} firstOrder={0} lastOrder={orders.length - 1} extraVerticalPadding={true} />
                     ))}
                 </View>
                 <View style={style.dateWrapper}>
@@ -368,7 +368,7 @@ const Notifications = ({navigation}) => {
                 <View style={style.notificationWrapper}>
                     {/* Order list */}
                     {orders1.map((item, index) => (
-                        <OrderListItem item={item} index={index} key={index} length={orders.length} extraVerticalPadding={true} />
+                        <OrderListItem item={item} index={index} key={index} firstOrder={0} lastOrder={orders1.length - 1} extraVerticalPadding={true} />
                     ))}
                 </View>
             </View>
@@ -431,7 +431,8 @@ const style = StyleSheet.create({
 		justifyContent: 'flex-start',
 		flexDirection: 'row',
 		width: "100%",
-		paddingVertical: 10,
+        marginTop: 24,
+        marginBottom: 12,
     },
     modalContent: {
 		display: "flex",

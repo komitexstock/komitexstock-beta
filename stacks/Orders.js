@@ -50,6 +50,7 @@ const Orders = ({navigation}) => {
             datetime: "2023-03-15 09:30",
             id: "abc123",
             price: 15000,
+            Logistics: "Komitex",
             status: "Delivered",
             imageUrl: require('../assets/images/komitex.png'),
             newMessage: true,
@@ -74,6 +75,7 @@ const Orders = ({navigation}) => {
             id: "def456",
             price: 13000,
             status: "Pending",
+            logistics: "Fedex",
             imageUrl: require('../assets/images/fedex.png'),
             newMessage: true,
             navigateToChat: () => {
@@ -96,6 +98,7 @@ const Orders = ({navigation}) => {
             id: "ghi789",
             price: 14000,
             status: "Dispatched",
+            logistics: "Komitex",
             imageUrl: require('../assets/images/komitex.png'),
             newMessage: true,
             navigateToChat: () => {
@@ -117,7 +120,8 @@ const Orders = ({navigation}) => {
             datetime: "2023-03-01 11:10",
             id: "mno345",
             price: 16000,
-            status: "Cancelled",
+            status: "Delivered",
+            logistics: "DHL",
             imageUrl: require('../assets/images/dhl.png'),
             newMessage: true,
             navigateToChat: () => {
@@ -125,7 +129,7 @@ const Orders = ({navigation}) => {
                     id: "mno345",
                     type: "order",
                     order: "Chat Message",
-                    name: "Dhl",
+                    name: "DHL",
                     imageUrl: require('../assets/images/dhl.png'),
                 })
             },
@@ -139,6 +143,7 @@ const Orders = ({navigation}) => {
             datetime: "2023-02-14 16:55",
             id: "pqr678",
             price: 12000,
+            logistics: "UPS",
             status: "Rescheduled",
             imageUrl: require('../assets/images/ups.png'),
             newMessage: false,
@@ -147,7 +152,7 @@ const Orders = ({navigation}) => {
                     id: "pqr678",
                     type: "order",
                     order: "Chat Message",
-                    name: "Ups",
+                    name: "UPS",
                     imageUrl: require('../assets/images/ups.png'),
                 })
             },
@@ -163,6 +168,7 @@ const Orders = ({navigation}) => {
             id: "stu901",
             price: 25000,
             status: "Delivered",
+            logistics: "Komitex",
             imageUrl: require('../assets/images/komitex.png'),
             newMessage: false,
             navigateToChat: () => {
@@ -184,6 +190,7 @@ const Orders = ({navigation}) => {
             datetime: "2023-04-01 09:45",
             id: "vwx234",
             price: 18000,
+            logistics: "Fedex",
             status: "Pending",
             imageUrl: require('../assets/images/fedex.png'),
             newMessage: false,
@@ -206,6 +213,7 @@ const Orders = ({navigation}) => {
             datetime: "2023-05-21 15:30",
             id: "yz0123",
             price: 19000,
+            logistics: "Komitex",
             status: "Dispatched",
             imageUrl: require('../assets/images/komitex.png'),
             newMessage: false,
@@ -229,6 +237,7 @@ const Orders = ({navigation}) => {
             id: "bcd345",
             price: 22000,
             status: "Cancelled",
+            logistics: "DHL",
             imageUrl: require('../assets/images/dhl.png'),
             newMessage: false,
             navigateToChat: () => {
@@ -236,7 +245,7 @@ const Orders = ({navigation}) => {
                     id: "bcd345",
                     type: "order",
                     order: "Chat Message",
-                    name: "Dhl",
+                    name: "DHL",
                     imageUrl: require('../assets/images/dhl.png'),
                 })
             },
@@ -251,6 +260,7 @@ const Orders = ({navigation}) => {
             id: "efg567",
             price: 28000,
             status: "Delivered",
+            logistics: "UPS",
             imageUrl: require('../assets/images/ups.png'),
             newMessage: false,
             navigateToChat: () => {
@@ -258,7 +268,7 @@ const Orders = ({navigation}) => {
                     id: "efg567",
                     type: "order",
                     order: "Chat Message",
-                    name: "Ups",
+                    name: "UPS",
                     imageUrl: require('../assets/images/ups.png'),
                 })
             },
@@ -272,6 +282,7 @@ const Orders = ({navigation}) => {
             datetime: "2023-04-25 16:15",
             id: "ghi678",
             price: 20000,
+            logistics: "Komitex",
             status: "Rescheduled",
             imageUrl: require('../assets/images/komitex.png'),
             newMessage: true,
@@ -295,6 +306,7 @@ const Orders = ({navigation}) => {
             datetime: "2023-06-01 11:30",
             id: "jkl901",
             price: 30000,
+            logistics: "Fedex",
             status: "Pending",
             imageUrl: require('../assets/images/fedex.png'),
             newMessage: true,
@@ -316,6 +328,7 @@ const Orders = ({navigation}) => {
             ],
             datetime: "2023-05-17 14:50",
             id: "mno234",
+            logistics: "Komitex",
             price: 26000,
             status: "Dispatched",
             imageUrl: require('../assets/images/komitex.png'),
@@ -338,8 +351,9 @@ const Orders = ({navigation}) => {
             ],
             datetime: "2023-04-05 12:05",
             id: "pqr345",
+            logistics: "DHL",
             price: 23000,
-            status: "Cancelled",
+            status: "Dispatched",
             imageUrl: require('../assets/images/dhl.png'),
             newMessage: false,
             navigateToChat: () => {
@@ -347,7 +361,7 @@ const Orders = ({navigation}) => {
                     id: "pqr345",
                     type: "order",
                     order: "Chat Message",
-                    name: "Dhl",
+                    name: "DHL",
                     imageUrl: require('../assets/images/dhl.png'),
                 })
             },
@@ -361,6 +375,7 @@ const Orders = ({navigation}) => {
             datetime: "2023-06-03 09:40",
             id: "stu567",
             price: 32000,
+            logistics: "UPS",
             status: "Delivered",
             imageUrl: require('../assets/images/ups.png'),
             newMessage: true,
@@ -369,7 +384,7 @@ const Orders = ({navigation}) => {
                     id: "stu567",
                     type: "order",
                     order: "Chat Message",
-                    name: "Ups",
+                    name: "UPS",
                     imageUrl: require('../assets/images/ups.png'),
                 })
             },
@@ -383,6 +398,7 @@ const Orders = ({navigation}) => {
             datetime: "2023-05-11 15:55",
             id: "vwx678",
             price: 24000,
+            logistics: "Komitex",
             status: "Rescheduled",
             imageUrl: require('../assets/images/komitex.png'),
             newMessage: true,
@@ -406,8 +422,9 @@ const Orders = ({navigation}) => {
             datetime: "2023-06-09 11:15",
             id: "yz0124",
             price: 35000,
-            status: "Pending",
+            status: "Delivered",
             imageUrl: require('../assets/images/fedex.png'),
+            logistics: "Fedex",
             newMessage: false,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
@@ -429,6 +446,7 @@ const Orders = ({navigation}) => {
             id: "bcd456",
             price: 27000,
             status: "Dispatched",
+            logistics: "Komitex",
             imageUrl: require('../assets/images/komitex.png'),
             newMessage: false,
             navigateToChat: () => {
@@ -450,7 +468,8 @@ const Orders = ({navigation}) => {
             datetime: "2023-04-15 11:55",
             id: "efg789",
             price: 30000,
-            status: "Cancelled",
+            status: "Pending",
+            logistics: "DHL",
             imageUrl: require('../assets/images/dhl.png'),
             newMessage: true,
             navigateToChat: () => {
@@ -458,7 +477,7 @@ const Orders = ({navigation}) => {
                     id: "efg789",
                     type: "order",
                     order: "Chat Message",
-                    name: "Dhl",
+                    name: "DHL",
                     imageUrl: require('../assets/images/dhl.png'),
                 })
             },
@@ -472,7 +491,8 @@ const Orders = ({navigation}) => {
             datetime: "2023-06-13 10:25",
             id: "ghi901",
             price: 38000,
-            status: "Delivered",
+            logistics: "UPS",
+            status: "Cancelled",
             imageUrl: require('../assets/images/ups.png'),
             newMessage: false,
             navigateToChat: () => {
@@ -480,9 +500,425 @@ const Orders = ({navigation}) => {
                     id: "ghi901",
                     type: "order",
                     order: "Chat Message",
-                    name: "Ups",
+                    name: "UPS",
                     imageUrl: require('../assets/images/ups.png'),
                 })
+            },
+        },
+        {
+            name: "Liam Williams",
+            location: "San Francisco",
+            products: [
+              { product_name: "Shoes", quantity: 1 },
+            ],
+            datetime: "2023-09-01 09:15",
+            id: "fedex101",
+            price: 22000,
+            status: "Dispatched",
+            logistics: "Fedex",
+            imageUrl: require('../assets/images/fedex.png'),
+            newMessage: true,
+            navigateToChat: () => {
+              navigation.navigate("Chat", {
+                id: "fedex101",
+                type: "order",
+                order: "Chat Message",
+                name: "Fedex",
+                imageUrl: require('../assets/images/fedex.png'),
+              });
+            },
+        },
+        {
+            name: "Liam Thomas",
+            location: "Seattle",
+            products: [
+              { product_name: "Gloves", quantity: 1 },
+            ],
+            datetime: "2023-08-01 09:15",
+            id: "ups001",
+            price: 22000,
+            status: "Dispatched",
+            logistics: "UPS",
+            imageUrl: require('../assets/images/ups.png'),
+            newMessage: true,
+            navigateToChat: () => {
+              navigation.navigate("Chat", {
+                id: "ups001",
+                type: "order",
+                order: "Chat Message",
+                name: "UPS",
+                imageUrl: require('../assets/images/ups.png'),
+              });
+            },
+        },
+        {
+            name: "Olivia Anderson",
+            location: "Seattle",
+            products: [
+              { product_name: "Jacket", quantity: 1 },
+              { product_name: "Socks", quantity: 3 },
+            ],
+            datetime: "2023-08-28 14:30",
+            id: "fedex102",
+            price: 18000,
+            status: "Delivered",
+            logistics: "Fedex",
+            imageUrl: require('../assets/images/fedex.png'),
+            newMessage: false,
+            navigateToChat: () => {
+              navigation.navigate("Chat", {
+                id: "fedex102",
+                type: "order",
+                order: "Chat Message",
+                name: "Fedex",
+                imageUrl: require('../assets/images/fedex.png'),
+              });
+            },
+        },
+        {
+            name: "Olivia Brown",
+            location: "Phoenix",
+            products: [
+              { product_name: "Belt", quantity: 1 },
+            ],
+            datetime: "2023-08-05 14:30",
+            id: "ups002",
+            price: 18000,
+            status: "Delivered",
+            logistics: "UPS",
+            imageUrl: require('../assets/images/ups.png'),
+            newMessage: false,
+            navigateToChat: () => {
+              navigation.navigate("Chat", {
+                id: "ups002",
+                type: "order",
+                order: "Chat Message",
+                name: "UPS",
+                imageUrl: require('../assets/images/ups.png'),
+              });
+            },
+        },
+        {
+            name: "Ella Wilson",
+            location: "Denver",
+            products: [
+              { product_name: "Sweatshirt", quantity: 1 },
+            ],
+            datetime: "2023-08-10 16:45",
+            id: "ups003",
+            price: 15000,
+            status: "Cancelled",
+            logistics: "UPS",
+            imageUrl: require('../assets/images/ups.png'),
+            newMessage: true,
+            navigateToChat: () => {
+              navigation.navigate("Chat", {
+                id: "ups003",
+                type: "order",
+                order: "Chat Message",
+                name: "UPS",
+                imageUrl: require('../assets/images/ups.png'),
+              });
+            },
+        },
+        {
+            name: "Sophia Martinez",
+            location: "Denver",
+            products: [
+              { product_name: "T-Shirt", quantity: 2 },
+            ],
+            datetime: "2023-08-25 16:45",
+            id: "fedex103",
+            price: 15000,
+            status: "Cancelled",
+            logistics: "Fedex",
+            imageUrl: require('../assets/images/fedex.png'),
+            newMessage: true,
+            navigateToChat: () => {
+              navigation.navigate("Chat", {
+                id: "fedex103",
+                type: "order",
+                order: "Chat Message",
+                name: "Fedex",
+                imageUrl: require('../assets/images/fedex.png'),
+              });
+            },
+        },
+        {
+            name: "James Davis",
+            location: "Miami",
+            products: [
+              { product_name: "Dress", quantity: 1 },
+            ],
+            datetime: "2023-08-22 10:20",
+            id: "fedex104",
+            price: 26000,
+            status: "Pending",
+            logistics: "Fedex",
+            imageUrl: require('../assets/images/fedex.png'),
+            newMessage: false,
+            navigateToChat: () => {
+              navigation.navigate("Chat", {
+                id: "fedex104",
+                type: "order",
+                order: "Chat Message",
+                name: "Fedex",
+                imageUrl: require('../assets/images/fedex.png'),
+              });
+            },
+        },
+        {
+            name: "William Taylor",
+            location: "Phoenix",
+            products: [
+              { product_name: "Sweater", quantity: 1 },
+            ],
+            datetime: "2023-08-19 15:30",
+            id: "fedex105",
+            price: 28000,
+            status: "Rescheduled",
+            logistics: "Fedex",
+            imageUrl: require('../assets/images/fedex.png'),
+            newMessage: true,
+            navigateToChat: () => {
+              navigation.navigate("Chat", {
+                id: "fedex105",
+                type: "order",
+                order: "Chat Message",
+                name: "Fedex",
+                imageUrl: require('../assets/images/fedex.png'),
+              });
+            },
+        },
+        {
+            name: "Ella Harris",
+            location: "Las Vegas",
+            products: [
+              { product_name: "Coat", quantity: 1 },
+            ],
+            datetime: "2023-08-16 13:20",
+            id: "fedex106",
+            price: 25000,
+            status: "Delivered",
+            logistics: "Fedex",
+            imageUrl: require('../assets/images/fedex.png'),
+            newMessage: false,
+            navigateToChat: () => {
+              navigation.navigate("Chat", {
+                id: "fedex106",
+                type: "order",
+                order: "Chat Message",
+                name: "Fedex",
+                imageUrl: require('../assets/images/fedex.png'),
+              });
+            },
+        },
+        {
+            name: "James Martin",
+            location: "Dallas",
+            products: [
+              { product_name: "Coat", quantity: 1 },
+            ],
+            datetime: "2023-08-15 10:20",
+            id: "ups004",
+            price: 26000,
+            status: "Pending",
+            logistics: "UPS",
+            imageUrl: require('../assets/images/ups.png'),
+            newMessage: false,
+            navigateToChat: () => {
+              navigation.navigate("Chat", {
+                id: "ups004",
+                type: "order",
+                order: "Chat Message",
+                name: "UPS",
+                imageUrl: require('../assets/images/ups.png'),
+              });
+            },
+          },
+          {
+            name: "Aiden Smith",
+            location: "Atlanta",
+            products: [
+              { product_name: "Dress", quantity: 1 },
+            ],
+            datetime: "2023-08-20 13:20",
+            id: "ups005",
+            price: 25000,
+            status: "Delivered",
+            logistics: "UPS",
+            imageUrl: require('../assets/images/ups.png'),
+            newMessage: true,
+            navigateToChat: () => {
+              navigation.navigate("Chat", {
+                id: "ups005",
+                type: "order",
+                order: "Chat Message",
+                name: "UPS",
+                imageUrl: require('../assets/images/ups.png'),
+              });
+            },
+          },
+        {
+            name: "Liam Davis",
+            location: "Chicago",
+            products: [
+              { product_name: "Shoes", quantity: 1 },
+            ],
+            datetime: "2023-08-01 09:15",
+            id: "dhl001",
+            price: 22000,
+            status: "Dispatched",
+            logistics: "DHL",
+            imageUrl: require('../assets/images/dhl.png'),
+            newMessage: true,
+            navigateToChat: () => {
+              navigation.navigate("Chat", {
+                id: "dhl001",
+                type: "order",
+                order: "Chat Message",
+                name: "DHL",
+                imageUrl: require('../assets/images/dhl.png'),
+              });
+            },
+          },
+          {
+            name: "William Johnson",
+            location: "Miami",
+            products: [
+              { product_name: "Jeans", quantity: 1 },
+              { product_name: "T-Shirt", quantity: 2 },
+            ],
+            datetime: "2023-08-05 14:30",
+            id: "dhl002",
+            price: 18000,
+            status: "Delivered",
+            logistics: "DHL",
+            imageUrl: require('../assets/images/dhl.png'),
+            newMessage: false,
+            navigateToChat: () => {
+              navigation.navigate("Chat", {
+                id: "dhl002",
+                type: "order",
+                order: "Chat Message",
+                name: "DHL",
+                imageUrl: require('../assets/images/dhl.png'),
+              });
+            },
+          },
+          {
+            name: "Sophia Smith",
+            location: "Los Angeles",
+            products: [
+              { product_name: "Dress", quantity: 1 },
+            ],
+            datetime: "2023-08-10 16:45",
+            id: "dhl003",
+            price: 15000,
+            status: "Cancelled",
+            logistics: "DHL",
+            imageUrl: require('../assets/images/dhl.png'),
+            newMessage: true,
+            navigateToChat: () => {
+              navigation.navigate("Chat", {
+                id: "dhl003",
+                type: "order",
+                order: "Chat Message",
+                name: "DHL",
+                imageUrl: require('../assets/images/dhl.png'),
+              });
+            },
+          },
+          {
+            name: "James Brown",
+            location: "San Francisco",
+            products: [
+              { product_name: "Sweater", quantity: 1 },
+            ],
+            datetime: "2023-08-15 10:20",
+            id: "dhl004",
+            price: 26000,
+            status: "Pending",
+            logistics: "DHL",
+            imageUrl: require('../assets/images/dhl.png'),
+            newMessage: false,
+            navigateToChat: () => {
+              navigation.navigate("Chat", {
+                id: "dhl004",
+                type: "order",
+                order: "Chat Message",
+                name: "DHL",
+                imageUrl: require('../assets/images/dhl.png'),
+              });
+            },
+        },
+        {
+            name: "Aiden Wilson",
+            location: "New York",
+            products: [
+              { product_name: "Coat", quantity: 1 },
+            ],
+            datetime: "2023-08-20 13:20",
+            id: "dhl005",
+            price: 25000,
+            status: "Delivered",
+            logistics: "DHL",
+            imageUrl: require('../assets/images/dhl.png'),
+            newMessage: true,
+            navigateToChat: () => {
+              navigation.navigate("Chat", {
+                id: "dhl005",
+                type: "order",
+                order: "Chat Message",
+                name: "DHL",
+                imageUrl: require('../assets/images/dhl.png'),
+              });
+            },
+        },        
+        {
+            name: "Aiden Jackson",
+            location: "Atlanta",
+            products: [
+              { product_name: "Gloves", quantity: 1 },
+            ],
+            datetime: "2023-08-13 12:05",
+            id: "fedex107",
+            price: 23000,
+            status: "Dispatched",
+            logistics: "Fedex",
+            imageUrl: require('../assets/images/fedex.png'),
+            newMessage: false,
+            navigateToChat: () => {
+              navigation.navigate("Chat", {
+                id: "fedex107",
+                type: "order",
+                order: "Chat Message",
+                name: "Fedex",
+                imageUrl: require('../assets/images/fedex.png'),
+              });
+            },
+        },
+        {
+            name: "Mia Thomas",
+            location: "Philadelphia",
+            products: [
+              { product_name: "Belt", quantity: 1 },
+            ],
+            datetime: "2023-08-10 09:40",
+            id: "fedex108",
+            price: 32000,
+            status: "Rescheduled",
+            logistics: "Fedex",
+            imageUrl: require('../assets/images/fedex.png'),
+            newMessage: true,
+            navigateToChat: () => {
+              navigation.navigate("Chat", {
+                id: "fedex108",
+                type: "order",
+                order: "Chat Message",
+                name: "Fedex",
+                imageUrl: require('../assets/images/fedex.png'),
+              });
             },
         },
     ];
@@ -569,50 +1005,10 @@ const Orders = ({navigation}) => {
                     id: "efg789",
                     type: "order",
                     order: "Chat Message",
-                    name: "Dhl",
+                    name: "DHL",
                     imageUrl: require('../assets/images/dhl.png'),
                 })
             },
-        },
-    ]
-
-    // order daily stat array
-    const stats = [
-        {
-            id: 1,
-            title: "Total Earnings",
-            presentValue: 200000,
-            oldValue: 185500,
-            decimal: true,
-            unit: "₦",
-            unitPosition: "start",
-        },
-        {
-            id: 2,
-            title: "Total Orders",
-            presentValue: 40,
-            oldValue: 36,
-            decimal: false,
-            unit: "",
-            unitPosition: "end",
-        },
-        {
-            id: 3,
-            title: "Total Delivered",
-            presentValue: 29,
-            oldValue: 33,
-            decimal: false,
-            unit: "",
-            unitPosition: "end",
-        },
-        {
-            id: 4,
-            title: "Total Cancelled",
-            presentValue: 1,
-            oldValue: 3,
-            decimal: false,
-            unit: "",
-            unitPosition: "end",
         },
     ];
 
@@ -634,7 +1030,8 @@ const Orders = ({navigation}) => {
                 }
             })
         });
-        closeFilter();
+
+        closeFilter(); // pass true to not reset filter
     }
 
 
@@ -741,6 +1138,13 @@ const Orders = ({navigation}) => {
                         handleFilterParameters("Status", "Dispatched")
                     }
                 },
+                {
+                    text: "Rescheduled",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Status", "Rescheduled")
+                    }
+                },
             ],
         },
         {
@@ -785,55 +1189,55 @@ const Orders = ({navigation}) => {
                 },
             ]
         },
-        {
-            title: "Warehouse",
-            value: "All",
-            default: true,
-            buttons: [
-                {
-                    text: "All",
-                    selected: true,
-                    onPress: () => {
-                        handleFilterParameters("Warehouse", "All")
-                    }
-                },
-                {
-                    text: "Warri",
-                    selected: false,
-                    onPress: () => {
-                        handleFilterParameters("Warehouse", "Warri")
-                    }
-                },
-                {
-                    text: "Asaba",
-                    selected: false,
-                    onPress: () => {
-                        handleFilterParameters("Warehouse", "Asaba")
-                    }
-                },
-                {
-                    text: "Benin",
-                    selected: false,
-                    onPress: () => {
-                        handleFilterParameters("Warehouse", "Benin")
-                    }
-                },
-                {
-                    text: "Sapele",
-                    selected: false,
-                    onPress: () => {
-                        handleFilterParameters("Warehouse", "Sapele")
-                    }
-                },
-                {
-                    text: "Abraka",
-                    selected: false,
-                    onPress: () => {
-                        handleFilterParameters("Warehouse", "Abraka")
-                    }
-                },
-            ]
-        },
+        // {
+        //     title: "Warehouse",
+        //     value: "All",
+        //     default: true,
+        //     buttons: [
+        //         {
+        //             text: "All",
+        //             selected: true,
+        //             onPress: () => {
+        //                 handleFilterParameters("Warehouse", "All")
+        //             }
+        //         },
+        //         {
+        //             text: "Warri",
+        //             selected: false,
+        //             onPress: () => {
+        //                 handleFilterParameters("Warehouse", "Warri")
+        //             }
+        //         },
+        //         {
+        //             text: "Asaba",
+        //             selected: false,
+        //             onPress: () => {
+        //                 handleFilterParameters("Warehouse", "Asaba")
+        //             }
+        //         },
+        //         {
+        //             text: "Benin",
+        //             selected: false,
+        //             onPress: () => {
+        //                 handleFilterParameters("Warehouse", "Benin")
+        //             }
+        //         },
+        //         {
+        //             text: "Sapele",
+        //             selected: false,
+        //             onPress: () => {
+        //                 handleFilterParameters("Warehouse", "Sapele")
+        //             }
+        //         },
+        //         {
+        //             text: "Abraka",
+        //             selected: false,
+        //             onPress: () => {
+        //                 handleFilterParameters("Warehouse", "Abraka")
+        //             }
+        //         },
+        //     ]
+        // },
         {
             title: "Period",
             value: new Date(),
@@ -891,6 +1295,89 @@ const Orders = ({navigation}) => {
             ]
         }
     ]);
+
+    const [orders, setOrders] = useState([
+        {id: "sticky"},
+        ...orderList
+    ]);
+
+    // total proce
+    const totalPrice = orders.reduce((accumulator, currentOrder) => {
+        const price = parseFloat(currentOrder.price);
+        if (!isNaN(price)) {
+          return accumulator + price;
+        }
+        return accumulator;
+    }, 0);
+
+    // console.log(totalPrice);
+
+    useEffect(() => {
+        const newOrder = orderList.filter(order => {
+            const filterArray = filterParameters.map(filterParam => {
+                if (filterParam.title !== "Period") {
+                    if (filterParam.value === "All") {
+                        return true;
+                    } else {
+                        if (filterParam.title === "Status") {
+                            return filterParam.value.toLowerCase() === order.status.toLowerCase();
+                        } else if (filterParam.title === "Logistics") {
+                            return filterParam.value === order.logistics;
+                        }
+                    } 
+                } else {
+                    return true;
+                }
+            })
+            // console.log(filterArray);
+            return filterArray.every((element) => element === true);;
+        })
+
+        setOrders([
+            {id: "sticky"},
+            ...newOrder
+        ]);
+    }, [filterParameters]);
+
+    // order daily stat array
+    const stats = [
+        {
+            id: 1,
+            title: "Total Earnings",
+            presentValue: totalPrice,
+            oldValue: 745500,
+            decimal: true,
+            unit: "₦",
+            unitPosition: "start",
+        },
+        {
+            id: 2,
+            title: "Total Orders",
+            presentValue: orders.length - 1,
+            oldValue: 36,
+            decimal: false,
+            unit: "",
+            unitPosition: "end",
+        },
+        {
+            id: 3,
+            title: "Total Delivered",
+            presentValue: orders.filter(order => order.status === "Delivered").length,
+            oldValue: 33,
+            decimal: false,
+            unit: "",
+            unitPosition: "end",
+        },
+        {
+            id: 4,
+            title: "Total Cancelled",
+            presentValue: orders.filter(order => order.status === "Cancelled").length,
+            oldValue: 3,
+            decimal: false,
+            unit: "",
+            unitPosition: "end",
+        },
+    ];
 
     // console.log(filterParameters[0].value);
 
@@ -992,22 +1479,21 @@ const Orders = ({navigation}) => {
         filterSheetRef.current?.present()
     }
 
-    const closeFilter = () => {
+    const closeFilter = (resetFlter) => {
         filterSheetRef.current?.close()
     }
 
-    const fixedBarHeight = useRef(0);
-    // const [scrollHeight, setScrollHeight] = useState(0);
-    const [showHeaderShadow, setShowHeaderShadow] = useState(false);
-    
-    const animatedOffset = useRef(new Animated.Value(0)).current;
+    // sticky header offset
+    const stickyHeaderOffset = useRef(0);
+
+    const shadowElevation = useRef(new Animated.Value(0)).current;
 
     const animateHeaderOnScroll = (e) => {
+        // console.log(stickyHeaderOffset.current);
         const yOffset = e.nativeEvent.contentOffset.y;
-        if (yOffset < fixedBarHeight.current) setShowHeaderShadow(false);
-        else setShowHeaderShadow(true);
-        Animated.timing(animatedOffset, {
-            toValue: yOffset < fixedBarHeight.current ? -yOffset : -234,
+        // console.log(yOffset);
+        Animated.timing(shadowElevation, {
+            toValue: yOffset > stickyHeaderOffset.current ? 2 : 0,
             duration: 200,
             useNativeDriver: false,
         }).start();
@@ -1082,8 +1568,6 @@ const Orders = ({navigation}) => {
         })
         calendarRef.current?.close();
     }
-    // console.log(fixedBarHeight.current);
-    // console.log(scrollHeight);
 
     return (
         <>
@@ -1098,18 +1582,19 @@ const Orders = ({navigation}) => {
             />
             <TouchableWithoutFeedback style={{flex: 1}}>
                 <FlatList 
+                    // onscroll event run function
                     onScroll={animateHeaderOnScroll}
                     // disable flatlist vertical scroll indicator
                     showsVerticalScrollIndicator={false}
-                    stickyHeaderIndices={[0]}
+                    stickyHeaderIndices={[1]}
                     // flat list header component
                     ListHeaderComponent={
-                        <Animated.View 
-                            style={[
-                                style.headerWrapper, 
-                                {transform: [{translateY: animatedOffset}]},
-                                showHeaderShadow && style.headerShadow
-                            ]}
+                        <View 
+                            style={style.headerWrapper}
+                            onLayout={e => {
+                                stickyHeaderOffset.current = e.nativeEvent.layout.height + 57;
+                                // where 57 is the height of the Header component
+                            }}
                         >
                             <StatWrapper>
                                 {stats.map(stat => (
@@ -1131,77 +1616,78 @@ const Orders = ({navigation}) => {
                             >
                                 <Text style={style.orderButtonText}>Send an Order</Text>
                             </TouchableOpacity>
-                            <View 
-                                style={[
-                                    style.unfixedBar,
-                                ]}
-                                onLayout={(e) => {
-                                    fixedBarHeight.current = e.nativeEvent.layout.y;
-                                }}
-                            >
-                                <View style={style.recentOrderHeading}>
-                                    <View style={style.recentOrderTextWrapper}>
-                                        <Text style={style.recentOrderHeadingText}>Recent Orders</Text>
-                                        {/* badge showing numbers of unread orders */}
-                                        <Badge number={9} />
-                                    </View>
-                                    <View style={style.actionWrapper}>
-                                        {/* search button to trigger search bottomsheet */}
-                                        <TouchableOpacity 
-                                            style={style.menuIcon}
-                                            onPress={() => openModal("search")}
-                                            >
-                                            <SearchIcon />
-                                        </TouchableOpacity>
-                                        {/* filter button to trigger filter bottomsheet */}
-                                        <TouchableOpacity
-                                            style={style.menuIcon}
-                                            onPress={openFilter}
-                                        >
-                                            <FilterIcon />
-                                        </TouchableOpacity>
-                                    </View>
-                                </View>
-                                <View style={style.orderPillWrapper}>
-                                    {filterParameters.map(filterParam => {
-                                        if (!filterParam.default) {
-                                            if (filterParam.title !== "Period") {
-                                                return (
-                                                    <FilterPill
-                                                        key={filterParam.title}
-                                                        text={filterParam.value}
-                                                        onPress={() => handleRemoveFIlter(filterParam.title)}
-                                                        background={white}
-                                                    />
-                                                )
-                                            }
-                                        }
-                                    })}
-
-                                </View>
-                            </View>
-                        </Animated.View>
+                        </View>
                     }
                     // pad the bottom due to presence of a bottom nav
                     contentContainerStyle={{paddingBottom: 90}}
                     style={style.listWrapper}
                     keyExtractor={item => item.id}
-                    data={filterParameters[0].value === "All" ? orderList : orderList.filter(order => order.status === filterParameters[0].value)}
-                    // data={() => {
-                    //     if (filterParameters[0].value === "All") return orderList;
-                    //     else return orderList;
-                    //     // else return orderList.filter(order => order.status === filterParameters[0].value);
-                    // }}
-                    renderItem={({ item, index }) => (
-                        <View style={style.orderWrapper}>
-                            <OrderListItem 
-                                item={item} 
-                                index={index} 
-                                length={orderList.length} 
-                                extraVerticalPadding={true} 
-                            />
-                        </View>
-                    )}
+                    data={orders}
+                    renderItem={({ item, index }) => {
+                        // console.log(index);
+                        if (item.id === "sticky") {
+                            return (
+                                <Animated.View
+                                    style={[
+                                        style.stickyBar,
+                                        {elevation: shadowElevation}
+                                    ]}
+                                >
+                                    <View style={style.recentOrderHeading}>
+                                        <View style={style.recentOrderTextWrapper}>
+                                            <Text style={style.recentOrderHeadingText}>Recent Orders</Text>
+                                            {/* badge showing numbers of unread orders */}
+                                            <Badge number={orders.filter(order => order.newMessage).length} />
+                                        </View>
+                                        <View style={style.actionWrapper}>
+                                            {/* search button to trigger search bottomsheet */}
+                                            <TouchableOpacity 
+                                                style={style.menuIcon}
+                                                onPress={() => openModal("search")}
+                                                >
+                                                <SearchIcon />
+                                            </TouchableOpacity>
+                                            {/* filter button to trigger filter bottomsheet */}
+                                            <TouchableOpacity
+                                                style={style.menuIcon}
+                                                onPress={openFilter}
+                                            >
+                                                <FilterIcon />
+                                            </TouchableOpacity>
+                                        </View>
+                                    </View>
+                                    <View style={style.orderPillWrapper}>
+                                        {filterParameters.map(filterParam => {
+                                            if (!filterParam.default) {
+                                                if (filterParam.title !== "Period") {
+                                                    return (
+                                                        <FilterPill
+                                                            key={filterParam.title}
+                                                            text={filterParam.value}
+                                                            onPress={() => handleRemoveFIlter(filterParam.title)}
+                                                            background={white}
+                                                        />
+                                                    )
+                                                }
+                                            }
+                                        })}
+
+                                    </View>
+                                </Animated.View>
+                            )
+                        }
+                        return (
+                            <View style={style.orderWrapper}>
+                                <OrderListItem 
+                                    item={item} 
+                                    index={index} 
+                                    lastOrder={orders.length - 1}
+                                    firstOrder={1}
+                                    extraVerticalPadding={true} 
+                                />
+                            </View>
+                        )
+                    }}
                 />
             </TouchableWithoutFeedback>
             {/* bottom sheet */}
@@ -1220,7 +1706,7 @@ const Orders = ({navigation}) => {
             {/* filter bottom sheet */}
             <FilterBottomSheet 
                 fiterSheetRef={filterSheetRef}
-                closeFilter={closeFilter}
+                closeFilter={() => closeFilter(true)}
                 clearFilterFunction={() => {}}
                 applyFilterFunction={handleApplyFilter}
             >
@@ -1279,18 +1765,8 @@ const style = StyleSheet.create({
     headerWrapper: {
         paddingHorizontal: 20,
         width: "100%",
-        paddingBottom: 20,
         backgroundColor: background,
-    },
-    headerShadow: {
-        shadowColor: blackOut,
-        shadowOffset: { 
-            width: 0,
-            height: 4
-        },
-        shadowOpacity: 0.1,
-        shadowRadius: 16,
-        elevation: 5,
+        marginBottom: 30,
     },
     menuIcon: {
         width: 24,
@@ -1309,19 +1785,27 @@ const style = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: secondaryColor,
         borderRadius: 12,
-        marginVertical: 22,
+        marginTop: 22,
     },
     orderButtonText: {
         fontFamily: "mulish-semibold",
         fontSize: 16,
         color: primaryColor,
     },
-    unfixedBar: {
+    stickyBar: {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "flex-start",
-        // backgroundColor: 'purple',
+        backgroundColor: background,
+        paddingHorizontal: 20,
+        shadowColor: blackOut,
+        shadowOffset: { 
+            width: 0,
+            height: 0
+        },
+        shadowOpacity: 0.05,
+        shadowRadius: 20,
     },
     recentOrderHeading: {
         width: "100%",
@@ -1330,7 +1814,6 @@ const style = StyleSheet.create({
         alignItems: "center",
         justifyContent: "space-between",
         height: 24,
-        marginTop: 8,
     },
     recentOrderTextWrapper: {
         display: 'flex',
@@ -1367,7 +1850,8 @@ const style = StyleSheet.create({
         alignItems: "center",
         justifyContent: "flex-start",
         gap: 8,
-        marginTop: 8,
+        paddingTop: 8,
+        paddingBottom: 12,
     },
     orderWrapper: {
         paddingHorizontal: 20,

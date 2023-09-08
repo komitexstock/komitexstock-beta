@@ -36,7 +36,7 @@ const Header = ({navigation, stackName, iconFunction, icon, iconBackground, remo
             <View 
                 style={[
                     style.headerBar,
-                    removeBackArrow && {paddingTop: 12, paddingBottom: 20},
+                    removeBackArrow ? {height: 57, paddingTop: 12, paddingBottom: 20} : {paddingTop: 0},
                     {paddingHorizontal: unpadded ? 0 : 20}
                 ]}
             >
@@ -81,12 +81,10 @@ const style = StyleSheet.create({
     },
     backArrow: {
         paddingTop: 10,
-        // backgroundColor: 'red',
     },
     headerBar: {
         gap: 12,
         width: "100%",
-        height: 57,
         display: "flex",
         flexDirection: "row",
         alignItems: 'center',
