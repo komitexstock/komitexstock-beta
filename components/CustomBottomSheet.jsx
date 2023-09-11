@@ -5,7 +5,7 @@ import ModalHandle from "./ModalHandle";
 import CloseIcon from "../assets/icons/CloseIcon";
 import { bodyText, primaryColor } from "../style/colors";
 
-const CustomBottomSheet = ({bottomSheetModalRef, showOverlay, closeModal, snapPointsArray, autoSnapAt, children, sheetTitle, sheetSubtitle, clearFilterFunction, topContentPadding, stackBehavior}) => {
+const CustomBottomSheet = ({bottomSheetModalRef, showOverlay, closeModal, snapPointsArray, autoSnapAt, children, sheetTitle, sheetSubtitle, topContentPadding, stackBehavior, disablePanToClode}) => {
 
     const snapPoints = useMemo(() => snapPointsArray, [snapPointsArray]);
 
@@ -22,6 +22,7 @@ const CustomBottomSheet = ({bottomSheetModalRef, showOverlay, closeModal, snapPo
                 disappearsOnIndex={-1}
                 appearsOnIndex={0}
                 opacity={0.3}
+                onPress={closeModal}
             />
         ),
         []
@@ -45,7 +46,7 @@ const CustomBottomSheet = ({bottomSheetModalRef, showOverlay, closeModal, snapPo
                     ref={bottomSheetModalRef}
                     index={autoSnapAt}
                     snapPoints={snapPoints}
-                    enablePanDownToClose={true}
+                    enablePanDownToClose={disablePanToClode ? false : true}
                     onChange={event => handleGestureEnd(event)}
                     backgroundStyle={{
                         borderRadius: 32,
@@ -71,14 +72,6 @@ const CustomBottomSheet = ({bottomSheetModalRef, showOverlay, closeModal, snapPo
                         >
                             <CloseIcon />
                         </TouchableOpacity>
-                        { clearFilterFunction && (
-                            <TouchableOpacity 
-                                style={styles.clearFilterButton} 
-                                onPress={clearFilterFunction}
-                            >
-                                <Text style={styles.clearFilterText}>Clear All</Text>
-                            </TouchableOpacity>
-                        )}
                         { !sheetSubtitle ? (
                             <Text style={styles.sheetTitleText}>
                                 {sheetTitle}

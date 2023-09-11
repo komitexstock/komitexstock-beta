@@ -50,15 +50,14 @@ const Orders = ({navigation}) => {
             datetime: "2023-03-15 09:30",
             id: "abc123",
             price: 15000,
-            Logistics: "Komitex",
+            logistics: "Komitex",
             status: "Delivered",
             imageUrl: require('../assets/images/komitex.png'),
             newMessage: true,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "abc123",
-                    type: "order",
-                    order: "Chat Message",
+                    type: "Order",
                     name: "Komitex",
                     imageUrl: require('../assets/images/komitex.png'),
                 })
@@ -81,8 +80,7 @@ const Orders = ({navigation}) => {
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "def456",
-                    type: "order",
-                    order: "Chat Message",
+                    type: "Order",
                     name: "Fedex",
                     imageUrl: require('../assets/images/fedex.png'),
                 })
@@ -104,8 +102,7 @@ const Orders = ({navigation}) => {
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "ghi789",
-                    type: "order",
-                    order: "Chat Message",
+                    type: "Order",
                     name: "Komitex",
                     imageUrl: require('../assets/images/komitex.png'),
                 })
@@ -127,8 +124,7 @@ const Orders = ({navigation}) => {
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "mno345",
-                    type: "order",
-                    order: "Chat Message",
+                    type: "Order",
                     name: "DHL",
                     imageUrl: require('../assets/images/dhl.png'),
                 })
@@ -150,8 +146,7 @@ const Orders = ({navigation}) => {
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "pqr678",
-                    type: "order",
-                    order: "Chat Message",
+                    type: "Order",
                     name: "UPS",
                     imageUrl: require('../assets/images/ups.png'),
                 })
@@ -174,8 +169,7 @@ const Orders = ({navigation}) => {
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "stu901",
-                    type: "order",
-                    order: "Chat Message",
+                    type: "Order",
                     name: "Komitex",
                     imageUrl: require('../assets/images/komitex.png'),
                 })
@@ -197,8 +191,7 @@ const Orders = ({navigation}) => {
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "vwx234",
-                    type: "order",
-                    order: "Chat Message",
+                    type: "Order",
                     name: "Fedex",
                     imageUrl: require('../assets/images/fedex.png'),
                 })
@@ -220,8 +213,7 @@ const Orders = ({navigation}) => {
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "yz0123",
-                    type: "order",
-                    order: "Chat Message",
+                    type: "Order",
                     name: "Komitex",
                     imageUrl: require('../assets/images/komitex.png'),
                 })
@@ -243,8 +235,7 @@ const Orders = ({navigation}) => {
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "bcd345",
-                    type: "order",
-                    order: "Chat Message",
+                    type: "Order",
                     name: "DHL",
                     imageUrl: require('../assets/images/dhl.png'),
                 })
@@ -266,8 +257,7 @@ const Orders = ({navigation}) => {
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "efg567",
-                    type: "order",
-                    order: "Chat Message",
+                    type: "Order",
                     name: "UPS",
                     imageUrl: require('../assets/images/ups.png'),
                 })
@@ -289,8 +279,7 @@ const Orders = ({navigation}) => {
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "ghi678",
-                    type: "order",
-                    order: "Chat Message",
+                    type: "Order",
                     name: "Komitex",
                     imageUrl: require('../assets/images/komitex.png'),
                 })
@@ -313,8 +302,7 @@ const Orders = ({navigation}) => {
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "jkl901",
-                    type: "order",
-                    order: "Chat Message",
+                    type: "Order",
                     name: "Fedex",
                     imageUrl: require('../assets/images/fedex.png'),
                 })
@@ -336,8 +324,7 @@ const Orders = ({navigation}) => {
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "mno234",
-                    type: "order",
-                    order: "Chat Message",
+                    type: "Order",
                     name: "Komitex",
                     imageUrl: require('../assets/images/komitex.png'),
                 })
@@ -359,8 +346,7 @@ const Orders = ({navigation}) => {
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "pqr345",
-                    type: "order",
-                    order: "Chat Message",
+                    type: "Order",
                     name: "DHL",
                     imageUrl: require('../assets/images/dhl.png'),
                 })
@@ -382,8 +368,7 @@ const Orders = ({navigation}) => {
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "stu567",
-                    type: "order",
-                    order: "Chat Message",
+                    type: "Order",
                     name: "UPS",
                     imageUrl: require('../assets/images/ups.png'),
                 })
@@ -405,8 +390,7 @@ const Orders = ({navigation}) => {
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "vwx678",
-                    type: "order",
-                    order: "Chat Message",
+                    type: "Order",
                     name: "Komitex",
                     imageUrl: require('../assets/images/komitex.png'),
                 })
@@ -429,8 +413,7 @@ const Orders = ({navigation}) => {
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "yz0124",
-                    type: "order",
-                    order: "Chat Message",
+                    type: "Order",
                     name: "Fedex",
                     imageUrl: require('../assets/images/fedex.png'),
                 })
@@ -452,8 +435,7 @@ const Orders = ({navigation}) => {
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "bcd456",
-                    type: "order",
-                    order: "Chat Message",
+                    type: "Order",
                     name: "Komitex",
                     imageUrl: require('../assets/images/komitex.png'),
                 })
@@ -475,8 +457,7 @@ const Orders = ({navigation}) => {
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "efg789",
-                    type: "order",
-                    order: "Chat Message",
+                    type: "Order",
                     name: "DHL",
                     imageUrl: require('../assets/images/dhl.png'),
                 })
@@ -498,8 +479,7 @@ const Orders = ({navigation}) => {
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "ghi901",
-                    type: "order",
-                    order: "Chat Message",
+                    type: "Order",
                     name: "UPS",
                     imageUrl: require('../assets/images/ups.png'),
                 })
@@ -521,8 +501,7 @@ const Orders = ({navigation}) => {
             navigateToChat: () => {
               navigation.navigate("Chat", {
                 id: "fedex101",
-                type: "order",
-                order: "Chat Message",
+                type: "Order",
                 name: "Fedex",
                 imageUrl: require('../assets/images/fedex.png'),
               });
@@ -544,8 +523,7 @@ const Orders = ({navigation}) => {
             navigateToChat: () => {
               navigation.navigate("Chat", {
                 id: "ups001",
-                type: "order",
-                order: "Chat Message",
+                type: "Order",
                 name: "UPS",
                 imageUrl: require('../assets/images/ups.png'),
               });
@@ -568,8 +546,7 @@ const Orders = ({navigation}) => {
             navigateToChat: () => {
               navigation.navigate("Chat", {
                 id: "fedex102",
-                type: "order",
-                order: "Chat Message",
+                type: "Order",
                 name: "Fedex",
                 imageUrl: require('../assets/images/fedex.png'),
               });
@@ -591,8 +568,7 @@ const Orders = ({navigation}) => {
             navigateToChat: () => {
               navigation.navigate("Chat", {
                 id: "ups002",
-                type: "order",
-                order: "Chat Message",
+                type: "Order",
                 name: "UPS",
                 imageUrl: require('../assets/images/ups.png'),
               });
@@ -614,8 +590,7 @@ const Orders = ({navigation}) => {
             navigateToChat: () => {
               navigation.navigate("Chat", {
                 id: "ups003",
-                type: "order",
-                order: "Chat Message",
+                type: "Order",
                 name: "UPS",
                 imageUrl: require('../assets/images/ups.png'),
               });
@@ -637,8 +612,7 @@ const Orders = ({navigation}) => {
             navigateToChat: () => {
               navigation.navigate("Chat", {
                 id: "fedex103",
-                type: "order",
-                order: "Chat Message",
+                type: "Order",
                 name: "Fedex",
                 imageUrl: require('../assets/images/fedex.png'),
               });
@@ -660,8 +634,7 @@ const Orders = ({navigation}) => {
             navigateToChat: () => {
               navigation.navigate("Chat", {
                 id: "fedex104",
-                type: "order",
-                order: "Chat Message",
+                type: "Order",
                 name: "Fedex",
                 imageUrl: require('../assets/images/fedex.png'),
               });
@@ -683,8 +656,7 @@ const Orders = ({navigation}) => {
             navigateToChat: () => {
               navigation.navigate("Chat", {
                 id: "fedex105",
-                type: "order",
-                order: "Chat Message",
+                type: "Order",
                 name: "Fedex",
                 imageUrl: require('../assets/images/fedex.png'),
               });
@@ -706,8 +678,7 @@ const Orders = ({navigation}) => {
             navigateToChat: () => {
               navigation.navigate("Chat", {
                 id: "fedex106",
-                type: "order",
-                order: "Chat Message",
+                type: "Order",
                 name: "Fedex",
                 imageUrl: require('../assets/images/fedex.png'),
               });
@@ -729,8 +700,7 @@ const Orders = ({navigation}) => {
             navigateToChat: () => {
               navigation.navigate("Chat", {
                 id: "ups004",
-                type: "order",
-                order: "Chat Message",
+                type: "Order",
                 name: "UPS",
                 imageUrl: require('../assets/images/ups.png'),
               });
@@ -752,8 +722,7 @@ const Orders = ({navigation}) => {
             navigateToChat: () => {
               navigation.navigate("Chat", {
                 id: "ups005",
-                type: "order",
-                order: "Chat Message",
+                type: "Order",
                 name: "UPS",
                 imageUrl: require('../assets/images/ups.png'),
               });
@@ -775,8 +744,7 @@ const Orders = ({navigation}) => {
             navigateToChat: () => {
               navigation.navigate("Chat", {
                 id: "dhl001",
-                type: "order",
-                order: "Chat Message",
+                type: "Order",
                 name: "DHL",
                 imageUrl: require('../assets/images/dhl.png'),
               });
@@ -799,8 +767,7 @@ const Orders = ({navigation}) => {
             navigateToChat: () => {
               navigation.navigate("Chat", {
                 id: "dhl002",
-                type: "order",
-                order: "Chat Message",
+                type: "Order",
                 name: "DHL",
                 imageUrl: require('../assets/images/dhl.png'),
               });
@@ -822,8 +789,7 @@ const Orders = ({navigation}) => {
             navigateToChat: () => {
               navigation.navigate("Chat", {
                 id: "dhl003",
-                type: "order",
-                order: "Chat Message",
+                type: "Order",
                 name: "DHL",
                 imageUrl: require('../assets/images/dhl.png'),
               });
@@ -845,8 +811,7 @@ const Orders = ({navigation}) => {
             navigateToChat: () => {
               navigation.navigate("Chat", {
                 id: "dhl004",
-                type: "order",
-                order: "Chat Message",
+                type: "Order",
                 name: "DHL",
                 imageUrl: require('../assets/images/dhl.png'),
               });
@@ -868,8 +833,7 @@ const Orders = ({navigation}) => {
             navigateToChat: () => {
               navigation.navigate("Chat", {
                 id: "dhl005",
-                type: "order",
-                order: "Chat Message",
+                type: "Order",
                 name: "DHL",
                 imageUrl: require('../assets/images/dhl.png'),
               });
@@ -891,8 +855,7 @@ const Orders = ({navigation}) => {
             navigateToChat: () => {
               navigation.navigate("Chat", {
                 id: "fedex107",
-                type: "order",
-                order: "Chat Message",
+                type: "Order",
                 name: "Fedex",
                 imageUrl: require('../assets/images/fedex.png'),
               });
@@ -914,130 +877,66 @@ const Orders = ({navigation}) => {
             navigateToChat: () => {
               navigation.navigate("Chat", {
                 id: "fedex108",
-                type: "order",
-                order: "Chat Message",
+                type: "Order",
                 name: "Fedex",
                 imageUrl: require('../assets/images/fedex.png'),
               });
             },
         },
     ];
-
+    
     // searched order list
-    const ordersListSearched = [
-        {
-            name: "Emily Wilson",
-            location: "Paris",
-            products: [
-                { product_name: "Dress", quantity: 1 },
-                { product_name: "Scarf", quantity: 2 },
-            ],
-            datetime: "2023-05-03 10:20",
-            id: "stu901",
-            price: 25000,
-            status: "Delivered",
-            imageUrl: require('../assets/images/komitex.png'),
-            navigateToChat: () => {
-                navigation.navigate("Chat", {
-                    id: "stu901",
-                    type: "order",
-                    order: "Chat Message",
-                    name: "Komitex",
-                    imageUrl: require('../assets/images/komitex.png'),
-                })
-            },
-        },
-        {
-            name: "David Johnson",
-            location: "New York",
-            products: [
-                { product_name: "Pants", quantity: 2 },
-            ],
-            datetime: "2023-04-01 09:45",
-            id: "vwx234",
-            price: 18000,
-            status: "Pending",
-            imageUrl: require('../assets/images/fedex.png'),
-            navigateToChat: () => {
-                navigation.navigate("Chat", {
-                    id: "vwx234",
-                    type: "order",
-                    order: "Chat Message",
-                    name: "Fedex",
-                    imageUrl: require('../assets/images/fedex.png'),
-                })
-            },
-        },
-        {
-            name: "Amelia Taylor",
-            location: "London",
-            products: [
-                { product_name: "Shirt", quantity: 1 },
-            ],
-            datetime: "2023-05-26 16:40",
-            id: "bcd456",
-            price: 27000,
-            status: "Dispatched",
-            imageUrl: require('../assets/images/komitex.png'),
-            navigateToChat: () => {
-                navigation.navigate("Chat", {
-                    id: "bcd456",
-                    type: "order",
-                    order: "Chat Message",
-                    name: "Komitex",
-                    imageUrl: require('../assets/images/komitex.png'),
-                })
-            },
-        },
-        {
-            name: "Benjamin Davis",
-            location: "Los Angeles",
-            products: [
-                { product_name: "Socks", quantity: 2 },
-            ],
-            datetime: "2023-04-15 11:55",
-            id: "efg789",
-            price: 30000,
-            status: "Cancelled",
-            imageUrl: require('../assets/images/dhl.png'),
-            navigateToChat: () => {
-                navigation.navigate("Chat", {
-                    id: "efg789",
-                    type: "order",
-                    order: "Chat Message",
-                    name: "DHL",
-                    imageUrl: require('../assets/images/dhl.png'),
-                })
-            },
-        },
-    ];
 
     // function to apply filter
-    const handleApplyFilter = () => {
-        setFilterParameters(prevParamters => {
-            return prevParamters.map(filterParam => {
-                if (filterParam.title  !== "Period") {
+    const handleApplyFilter = (filterType) => {
+        if (filterType !== "search") {
+            setFilterParameters(prevParamters => {
+                return prevParamters.map(filterParam => {
                     const selectedButton = filterParam.buttons.filter(button => button.selected === true);
                     // console.log(selectedButton);
-                    return {
-                        ...filterParam,
-                        value: selectedButton[0].text,
-                        default: selectedButton[0].text === "All" ? true : false, 
-
+                    if (filterParam.title  !== "Period") {
+                        return {
+                            ...filterParam,
+                            value: selectedButton[0].text,
+                            default: selectedButton[0].text === "All" ? true : false, 
+                        }
+                    } else {
+                        return {
+                            ...filterParam,
+                            value: selectedButton[0].text,
+                            default: selectedButton[0].text === "Today" ? true : false, 
+                        }
                     }
-                } else {
-                    return {...filterParam}
-                }
-            })
-        });
+                })
+            });
+        } else {
+            setSearchFilterParameters(prevParamters => {
+                return prevParamters.map(filterParam => {
+                    const selectedButton = filterParam.buttons.filter(button => button.selected === true);
+                    // console.log(selectedButton);
+                    if (filterParam.title  !== "Period") {
+                        return {
+                            ...filterParam,
+                            value: selectedButton[0].text,
+                            default: selectedButton[0].text === "All" ? true : false, 
+                        }
+                    } else {
+                        return {
+                            ...filterParam,
+                            value: selectedButton[0].text,
+                            default: selectedButton[0].text === "Today" ? true : false, 
+                        }
+                    }
+                })
+            });
+        }
 
         closeFilter(); // pass true to not reset filter
     }
 
 
-    const handleFilterParameters = (title, button) => {
-        if (title !== "Period") {
-            // console.log("Here");
+    const handleFilterParameters = (title, button, filterType) => {
+        if (filterType !== "search") {
             setFilterParameters(prevParamters => {
                 return prevParamters.map(filterParam => {
                     if (filterParam.title === title) {
@@ -1062,18 +961,76 @@ const Orders = ({navigation}) => {
                     }
                 })
             });
+            if (title === "Period") {
+                // console.log("Here");
+            }
+        } else {
+            setSearchFilterParameters(prevParamters => {
+                return prevParamters.map(filterParam => {
+                    if (filterParam.title === title) {
+                        return {
+                            ...filterParam,
+                            buttons: filterParam.buttons.map(filterButton => {
+                                if (filterButton.text === button) {
+                                    return {
+                                        ...filterButton,
+                                        selected: true,
+                                    }
+                                } else {
+                                    return {
+                                        ...filterButton,
+                                        selected: false,
+                                    }
+                                }
+                            }),
+                        }
+                    } else {
+                        return {...filterParam}
+                    }
+                })
+            });
+            if (title === "Period") {
+                // console.log("Here");
+            }
         }
     }
     
-    const handleRemoveFIlter = (title) => {
-        if (title !== "Period") {
+    const handleRemoveFilter = (title, filterType) => {
+        if (filterType !== "search") {
             setFilterParameters(prevParamters => {
                 return prevParamters.map(filterParam => {
                     if (filterParam.title === title) {
                         return {
                             ...filterParam,
                             default: true,
-                            value: "All",
+                            value: title === "Period" ? "Today" : "All",
+                            buttons: filterParam.buttons.map(filterButton => {
+                                if (filterButton.text === "All") {
+                                    return {
+                                        ...filterButton,
+                                        selected: true,
+                                    }
+                                } else {
+                                    return {
+                                        ...filterButton,
+                                        selected: false,
+                                    }
+                                }
+                            }),
+                        }
+                    } else {
+                        return {...filterParam}
+                    }
+                })
+            });
+        } else {
+            setSearchFilterParameters(prevParamters => {
+                return prevParamters.map(filterParam => {
+                    if (filterParam.title === title) {
+                        return {
+                            ...filterParam,
+                            default: true,
+                            value: title === "Period" ? "Today" : "All",
                             buttons: filterParam.buttons.map(filterButton => {
                                 if (filterButton.text === "All") {
                                     return {
@@ -1096,7 +1053,24 @@ const Orders = ({navigation}) => {
         }
     }
 
-    // filter order button
+    // function to clearAll fiter
+    const handleClearAllFilter = (filterType) => {
+        if (filterType !== "search") {
+            // clear all filter
+            handleRemoveFilter("Period");
+            handleRemoveFilter("Status");
+            handleRemoveFilter("Logistics");
+        } else {
+            // clear all filter
+            handleRemoveFilter("Period", "search");
+            handleRemoveFilter("Status", "search");
+            handleRemoveFilter("Logistics", "search");
+        }
+        // close filter bottomsheet
+        closeFilter();
+    }
+
+    // filter order bottom sheet parameters
     const [filterParameters, setFilterParameters] = useState([
         {
             title: "Status",
@@ -1240,7 +1214,7 @@ const Orders = ({navigation}) => {
         // },
         {
             title: "Period",
-            value: new Date(),
+            value: "Today",
             default: true,
             buttons: [
                 {
@@ -1258,14 +1232,14 @@ const Orders = ({navigation}) => {
                     }
                 },
                 {
-                    text: "Current Week",
+                    text: "Current week",
                     selected: false,
                     onPress: () => {
                         handleFilterParameters("Period", "Current week")
                     }
                 },
                 {
-                    text: "Last Week",
+                    text: "Last week",
                     selected: false,
                     onPress: () => {
                         handleFilterParameters("Period", "Last week")
@@ -1276,6 +1250,7 @@ const Orders = ({navigation}) => {
                     selected: false,
                     onPress: () => {
                         handleFilterParameters("Period", "Custom period")
+                        openCalendar("StartDate");
                     }
                 },
                 {
@@ -1296,11 +1271,180 @@ const Orders = ({navigation}) => {
         }
     ]);
 
+    // filter order bottom sheet parameters
+    const [searchFilterParameters, setSearchFilterParameters] = useState([
+        {
+            title: "Status",
+            value: "All",
+            default: true,
+            buttons: [
+                {
+                    text: "All",
+                    selected: true,
+                    onPress: () => {
+                        handleFilterParameters("Status", "All", "search")
+                    }
+                },
+                {
+                    text: "Pending",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Status", "Pending", "search")
+                    }
+                },
+                {
+                    text: "Delivered",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Status", "Delivered", "search")
+                    }
+                },
+                {
+                    text: "Cancelled",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Status", "Cancelled", "search")
+                    }
+                },
+                {
+                    text: "Dispatched",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Status", "Dispatched", "search")
+                    }
+                },
+                {
+                    text: "Rescheduled",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Status", "Rescheduled", "search")
+                    }
+                },
+            ],
+        },
+        {
+            title: "Logistics",
+            value: "All",
+            default: true,
+            buttons: [
+                {
+                    text: "All",
+                    selected: true,
+                    onPress: () => {
+                        handleFilterParameters("Logistics", "All", "search")
+                    }
+                },
+                {
+                    text: "Komitex",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Logistics", "Komitex", "search")
+                    }
+                },
+                {
+                    text: "Fedex",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Logistics", "Fedex", "search")
+                    }
+                },
+                {
+                    text: "DHL",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Logistics", "DHL", "search")
+                    }
+                },
+                {
+                    text: "UPS",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Logistics", "UPS", "search")
+                    }
+                },
+            ]
+        },
+        {
+            title: "Period",
+            value: "Today",
+            default: true,
+            buttons: [
+                {
+                    text: "Today",
+                    selected: true,
+                    onPress: () => {
+                        handleFilterParameters("Period", "Today", "search")
+                    }
+                },
+                {
+                    text: "Yesterday",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Period", "Yesterday", "search")
+                    }
+                },
+                {
+                    text: "Current week",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Period", "Current week", "search")
+                    }
+                },
+                {
+                    text: "Last week",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Period", "Last week", "search")
+                    }
+                },
+                {
+                    text: "Custom period",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Period", "Custom period", "search")
+                        openCalendar("StartDate");
+                    }
+                },
+                {
+                    text: "Current month",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Period", "Current month", "search")
+                    }
+                },
+                {
+                    text: "Last month",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Period", "Last month", "search")
+                    }
+                },
+            ]
+        }
+    ]);
+
+    // get filtervlaue
+    const getFilterValue = (title, filterType) => {
+        if (filterType !== "search") {
+            return filterParameters.find(filterParam => filterParam.title === title).value
+        } else {
+            return searchFilterParameters.find(filterParam => filterParam.title === title).value
+        }
+    }
+
     const [orders, setOrders] = useState([
         {id: "sticky"},
         ...orderList
     ]);
+ 
+    const [searchedOrders, setSearchedOrders] = useState([
+        // ...orderList
+    ]);
 
+    
+    // state to store search query
+    const [searchQuery, setSearchQuery] = useState("");
+ 
     // total proce
     const totalPrice = orders.reduce((accumulator, currentOrder) => {
         const price = parseFloat(currentOrder.price);
@@ -1312,6 +1456,7 @@ const Orders = ({navigation}) => {
 
     // console.log(totalPrice);
 
+    // implement filter in home order list
     useEffect(() => {
         const newOrder = orderList.filter(order => {
             const filterArray = filterParameters.map(filterParam => {
@@ -1337,7 +1482,46 @@ const Orders = ({navigation}) => {
             {id: "sticky"},
             ...newOrder
         ]);
-    }, [filterParameters]);
+    }, [getFilterValue("Status"), getFilterValue("Logistics"), getFilterValue("Period")]);
+
+    // implement filter in home order list
+    useEffect(() => {
+
+        if (searchQuery === '') {
+            return setSearchedOrders([]);
+        }
+
+        const searchResult = orderList.filter(order => {
+            return order.name.toLowerCase().includes(searchQuery.toLowerCase()) || order.location.toLowerCase().includes(searchQuery.toLowerCase()) || order.logistics.toLowerCase().includes(searchQuery.toLowerCase()) || order.products.some(product => product.product_name.toLowerCase().includes(searchQuery.toLowerCase()));
+        });
+
+        // console.log(searchResult);
+
+        const newOrder = searchResult.filter(order => {
+            const filterArray = searchFilterParameters.map(filterParam => {
+                if (filterParam.title !== "Period") {
+                    if (filterParam.value === "All") {
+                        return true;
+                    } else {
+                        if (filterParam.title === "Status") {
+                            return filterParam.value.toLowerCase() === order.status.toLowerCase();
+                        } else if (filterParam.title === "Logistics") {
+                            return filterParam.value === order.logistics;
+                        }
+                    } 
+                } else {
+                    return true;
+                }
+            })
+            // console.log(filterArray);
+
+            return filterArray.every((element) => element === true);;
+        })
+
+        setSearchedOrders([
+            ...newOrder
+        ]);
+    }, [getFilterValue("Status", "search"), getFilterValue("Logistics", "search"), getFilterValue("Period", "search"), searchQuery]);
 
     // order daily stat array
     const stats = [
@@ -1379,108 +1563,52 @@ const Orders = ({navigation}) => {
         },
     ];
 
-    // console.log(filterParameters[0].value);
+    // console.log(filterParameters[0].value)
 
-    // state to store search query
-    const [searchQuery, setSearchQuery] = useState("");
+    // console.log(searchQuery);
 
     // search modal refernce
     const modalRef = useRef(null);
 
     // state to store modal parameters
-    const [modal, setModal] = useState({
-        snapPointsArray: ["50%"],
-        autoSnapAt: 0,
-        sheetTitle: "",
-        overlay: false,
-        modalContent: <></>,
-        clearFilterFunction: false,
-    })
-
-    // use effect to close modal if back button is pressed
-    useEffect(() => {
-        // function to run if back button is pressed
-        const backAction = () => {
-            // Run your function here
-            if (modal.overlay) {
-                // if modal is open, close modal
-                closeModal();
-                return true;
-            } else if (calendar.open) { //if calendar is open, close it
-                handleCloseCalendar();
-                return true;
-            } else {
-                // if modal isnt open simply navigate back
-                return false;
-            }
-        };
-    
-        // listen for onPress back button
-        const backHandler = BackHandler.addEventListener(
-            'hardwareBackPress',
-            backAction
-        );
-    
-        return () => backHandler.remove();
-
-    }, [modal.overlay, calendar]);
-
-    // search modal parameters
-    const searchModal = {
-        snapPointsArray: ["50%", "80%", "100%"],
-        autoSnapAt: 2,
-        sheetTitle: "Orders",
-        overlay: true,
-        clearFilterFunction: false,
-        modalContent: <>
-            <SearchBar 
-                placeholder={"Search orders"}
-                searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
-                backgroundColor={"#f8f8f8"}
-            />
-            <BottomSheetScrollView style={style.orderSearchResults}>
-                {ordersListSearched.map((order, index) => (
-                    <OrderListItem
-                        key={order.id} 
-                        item={order} 
-                        index={index} 
-                        length={ordersListSearched.length} 
-                    />
-                ))}
-            </BottomSheetScrollView>
-        </>
-    };
+    const [modalOpen, setModalOpen] = useState(false)
 
     // close modal function
     const closeModal = () => {
-        setModal(prevModal => {
-            return {
-                ...prevModal,
-                overlay: false,
-            }
-        });
+        setModalOpen(false);
         modalRef.current?.close();
     };
 
     // open modal function
-    const openModal = (type) => {
-        if (type === "filter") {
-            setModal(filterModal);
-        } else {
-            setModal(searchModal);
-        }
+    const openModal = () => {
+        setModalOpen(true);
         modalRef.current?.present();
     }
 
+    // filter state
+    const [filter, setFilter] = useState({
+        open: false,
+        filterType: "home",
+    })
+
+    // filter bottom sheef ref
     const filterSheetRef = useRef(null);
 
-    const openFilter = () => {
+    // open filter function
+    const openFilter = (filterType) => {
+        setFilter({
+            open: true,
+            filterType: filterType,
+        })
         filterSheetRef.current?.present()
     }
-
-    const closeFilter = (resetFlter) => {
+    
+    const closeFilter = () => {
+        // close filter bottomsheet
         filterSheetRef.current?.close()
+        setFilter({
+            open: false,
+        })
     }
 
     // sticky header offset
@@ -1518,8 +1646,6 @@ const Orders = ({navigation}) => {
     // variable to indicate end date input active state
     const [activeEndDate, setActiveEndDate] = useState(false);
 
-
-
     // calendar ref
     const calendarRef = useRef(null);
 
@@ -1538,7 +1664,7 @@ const Orders = ({navigation}) => {
         }
     }, [startDate])
 
-    const hanldeOpenCalendar = (inputType) => {
+    const openCalendar = (inputType) => {
         if (inputType === "StartDate") {
             setActiveStartDate(true);
             setCalendar({
@@ -1559,7 +1685,7 @@ const Orders = ({navigation}) => {
         calendarRef.current?.present();
     }
 
-    const handleCloseCalendar = () => {
+    const closeCalendar = () => {
         setActiveEndDate(false);
         setActiveStartDate(false);
         setCalendar({
@@ -1568,6 +1694,44 @@ const Orders = ({navigation}) => {
         })
         calendarRef.current?.close();
     }
+
+    // function to set startDate and endDate based on range provided
+    const handleSetTimeRange = (range) => {
+
+    }
+
+    // use effect to close modal if back button is pressed
+    useEffect(() => {
+        // function to run if back button is pressed
+        const backAction = () => {
+            // Run your function here
+            if (calendar.open) { //if calendar is open, close it
+                closeCalendar();
+                return true;
+            }else if (filter.open) {
+                // if modal is open, close modal
+                closeFilter();
+                return true;
+            }else if (modalOpen) {
+                // if modal is open, close modal
+                closeModal();
+                return true;
+            } else {
+                // if modal isnt open simply navigate back
+                return false;
+            }
+        };
+    
+        // listen for onPress back button
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction
+        );
+    
+        return () => backHandler.remove();
+
+    }, [modalOpen, calendar.open, filter.open]);
+    
 
     return (
         <>
@@ -1650,7 +1814,7 @@ const Orders = ({navigation}) => {
                                             {/* filter button to trigger filter bottomsheet */}
                                             <TouchableOpacity
                                                 style={style.menuIcon}
-                                                onPress={openFilter}
+                                                onPress={() => openFilter("home")}
                                             >
                                                 <FilterIcon />
                                             </TouchableOpacity>
@@ -1659,12 +1823,12 @@ const Orders = ({navigation}) => {
                                     <View style={style.orderPillWrapper}>
                                         {filterParameters.map(filterParam => {
                                             if (!filterParam.default) {
-                                                if (filterParam.title !== "Period") {
+                                                if (filterParam.value !== "Custom period") {
                                                     return (
                                                         <FilterPill
                                                             key={filterParam.title}
                                                             text={filterParam.value}
-                                                            onPress={() => handleRemoveFIlter(filterParam.title)}
+                                                            onPress={() => handleRemoveFilter(filterParam.title)}
                                                             background={white}
                                                         />
                                                     )
@@ -1693,24 +1857,73 @@ const Orders = ({navigation}) => {
             {/* bottom sheet */}
             <CustomBottomSheet 
                 bottomSheetModalRef={modalRef}
-                showOverlay={modal.overlay}
-                closeModal={() => closeModal("filter")}
-                snapPointsArray={modal.snapPointsArray}
-                autoSnapAt={modal.autoSnapAt}
-                sheetTitle={modal.sheetTitle}
-                clearFilterFunction={modal.clearFilterFunction}
+                showOverlay={modalOpen}
+                closeModal={closeModal}
+                snapPointsArray={["100%"]}
+                autoSnapAt={0}
+                sheetTitle={"Orders"}
+                disablePanToClode={true}
             >
-                {/* modal content */}
-                {modal.modalContent}
+                <SearchBar 
+                    placeholder={"Search orders"}
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                    backgroundColor={background}
+                    openFilter={() => openFilter("search")}
+                />
+
+                {/* check if any filter has been applied, i.e it is not in its default value */}
+                {searchFilterParameters.find(filterParam => filterParam.default === false) && (
+                    <View style={style.searchOrderPillWrapper}>
+                        {searchFilterParameters.map(filterParam => {
+                            if (!filterParam.default) {
+                                if (filterParam.value !== "Custom period") {
+                                    return (
+                                        <FilterPill
+                                            key={filterParam.title}
+                                            text={filterParam.value}
+                                            onPress={() => handleRemoveFilter(filterParam.title, "search")}
+                                            background={background}
+                                        />
+                                    )
+                                }
+                            }
+                        })}
+                    </View>
+                )}
+
+                <BottomSheetScrollView 
+                    showsVerticalScrollIndicator={false} 
+                    style={style.orderSearchResults}
+                >
+                    {searchedOrders.map((order, index) => (
+                        <OrderListItem
+                            key={order.id} 
+                            item={order} 
+                            index={index}
+                            firstOrder={0}
+                            lastOrder={searchedOrders.length}
+                        />
+                    ))}
+                </BottomSheetScrollView>
             </CustomBottomSheet>
             {/* filter bottom sheet */}
             <FilterBottomSheet 
                 fiterSheetRef={filterSheetRef}
-                closeFilter={() => closeFilter(true)}
-                clearFilterFunction={() => {}}
-                applyFilterFunction={handleApplyFilter}
+                closeFilter={() => closeFilter()}
+                clearFilterFunction={handleClearAllFilter}
+                applyFilterFunction={filter.filterType === "search" ? () => handleApplyFilter("search") : handleApplyFilter}
+                height={"80%"}
             >
-                {filterParameters.map(item => (
+                {filter.filterType === "home" && filterParameters.map(item => (
+                    <FilterButtonGroup
+                        buttons={item.buttons}
+                        title={item.title}
+                        key={item.title}
+                    />
+                ))}
+
+                {filter.filterType === "search" && searchFilterParameters.map(item => (
                     <FilterButtonGroup
                         buttons={item.buttons}
                         title={item.title}
@@ -1723,7 +1936,7 @@ const Orders = ({navigation}) => {
                             label={"Start Date"} 
                             placeholder={"DD MMMM, YYYY"} 
                             value={startDate}
-                            onPress={() => {hanldeOpenCalendar("StartDate")}}
+                            onPress={() => {openCalendar("StartDate")}}
                             icon={<CalendarIcon />}
                             active={activeStartDate}
                             inputFor={"Date"}
@@ -1734,7 +1947,7 @@ const Orders = ({navigation}) => {
                             label={"End Date"}
                             placeholder={"DD MMMM, YYYY"}
                             value={endDate}
-                            onPress={() => {hanldeOpenCalendar("EndDate")}}
+                            onPress={() => {openCalendar("EndDate")}}
                             icon={<CalendarIcon />}
                             active={activeEndDate}
                             inputFor={"Date"}
@@ -1743,7 +1956,7 @@ const Orders = ({navigation}) => {
             </FilterBottomSheet>
             {/* calnedar */}
             <CalendarSheet 
-                closeCalendar={handleCloseCalendar}
+                closeCalendar={closeCalendar}
                 setDate={calendar.setDate}
                 disableActionButtons={true}
                 snapPointsArray={["60%"]}
@@ -1852,6 +2065,17 @@ const style = StyleSheet.create({
         gap: 8,
         paddingTop: 8,
         paddingBottom: 12,
+    },
+    searchOrderPillWrapper: {
+        width: '100%',
+        display: "flex",
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        alignItems: "center",
+        justifyContent: "flex-start",
+        gap: 8,
+        marginBottom: 14,
+        marginTop: -4,
     },
     orderWrapper: {
         paddingHorizontal: 20,

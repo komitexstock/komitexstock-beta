@@ -57,7 +57,6 @@ const Home = ({navigation}) => {
                 navigation.navigate("Chat", {
                     id: "abc123",
                     type: "Order",
-                    order: "Chat Message",
                     name: "Komitex",
                     imageUrl: require('../assets/images/komitex.png'),
                 })
@@ -80,7 +79,6 @@ const Home = ({navigation}) => {
                 navigation.navigate("Chat", {
                     id: "def456",
                     type: "Order",
-                    order: "Chat Message",
                     name: "Fedex",
                     imageUrl: require('../assets/images/fedex.png'),
                 })
@@ -102,7 +100,6 @@ const Home = ({navigation}) => {
                 navigation.navigate("Chat", {
                     id: "ghi789",
                     type: "Order",
-                    order: "Chat Message",
                     name: "Komitex",
                     imageUrl: require('../assets/images/komitex.png'),
                 })
@@ -124,7 +121,6 @@ const Home = ({navigation}) => {
                 navigation.navigate("Chat", {
                     id: "mno345",
                     type: "Order",
-                    order: "Chat Message",
                     name: "Dhl",
                     imageUrl: require('../assets/images/dhl.png'),
                 })
@@ -146,7 +142,6 @@ const Home = ({navigation}) => {
                 navigation.navigate("Chat", {
                     id: "pqr678",
                     type: "Order",
-                    order: "Chat Message",
                     name: "Ups",
                     imageUrl: require('../assets/images/ups.png'),
                 })

@@ -8,7 +8,7 @@ import { bodyText, primaryColor, secondaryColor, white } from "../style/colors";
 import { windowHeight } from "../utils/helpers";
 import BottomSheet from "@gorhom/bottom-sheet";
 
-const FilterBottomSheet = ({fiterSheetRef, closeFilter, children, clearFilterFunction, applyFilterFunction}) => {
+const FilterBottomSheet = ({fiterSheetRef, height, closeFilter, children, clearFilterFunction, applyFilterFunction}) => {
 
     const handleGestureEnd = (event) => {
         // console.log(event);
@@ -23,6 +23,7 @@ const FilterBottomSheet = ({fiterSheetRef, closeFilter, children, clearFilterFun
                 disappearsOnIndex={-1}
                 appearsOnIndex={0}
                 opacity={0.3}
+                onPress={closeFilter}
             />
         ),
         []
@@ -33,8 +34,8 @@ const FilterBottomSheet = ({fiterSheetRef, closeFilter, children, clearFilterFun
             <BottomSheetModal
                 ref={fiterSheetRef}
                 index={0}
-                snapPoints={["100%"]}
-                enableContentPanningGestures={true}
+                snapPoints={[height]}
+                enableContentPanningGestures={false}
                 enablePanDownToClose={false}
                 onChange={event => handleGestureEnd(event)}
                 backgroundStyle={{

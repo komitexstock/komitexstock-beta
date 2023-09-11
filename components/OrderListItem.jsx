@@ -15,7 +15,7 @@ import { background, black, bodyText, white } from '../style/colors';
 // import helper functions
 import { windowWidth } from '../utils/helpers';
 
-const OrderListItem = ({item, index, firstOrder, lastOrder, selectable, selected, selectFunction, extraVerticalPadding}) => {
+const OrderListItem = ({item, index, firstOrder, lastOrder, selectable, selected, selectFunction, extraVerticalPadding, searchKeyword}) => {
     // lenght, index => int
     // item => object
 

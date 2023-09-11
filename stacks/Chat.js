@@ -75,7 +75,8 @@ const Chat = ({navigation, route}) => {
     // has scrolled to bottom ref
     const hasScrolledToBottom = useRef(false);
 
-    // message overlay to show when auto scroll to repluied message
+    // message overlay to show when auto scroll to replied message
+    // it hightights a replied message
     const [messageOverlay, setMessageOverlay] = useState({
         top: 0,
         height: 0,
@@ -1896,11 +1897,6 @@ const style = StyleSheet.create({
         fontFamily: 'mulish-regular',
         color: bodyText,
     },
-    imageBackground: {
-        flex: 1,
-        resizeMode: 'cover',
-        justifyContent: 'center',
-    },
     messagesWrapper: {
         paddingTop: 60,
         paddingBottom: 130,
@@ -1950,55 +1946,14 @@ const style = StyleSheet.create({
         top: 100,
         zIndex: 2,
     },
-    messageContent: {
-        width: "100%",
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-        marginBottom: 5,
-    },
     messageOverlay: {
         position: 'absolute',
         width: "100%",
         left: 0,
         top: 0,
         height: 0,
-        backgroundColor: 'transparent',
         backgroundColor: secondaryColor,
         zIndex: 2,
-    },
-    message: {
-        minHeight: 33,
-        maxWidth: "90%",
-        minWidth: 60,
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'flex-start',
-        alignItems: 'flex-start',
-        padding: 0,
-        borderRadius: 12,
-        height: null,
-    },
-    textGroup: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-        width: "100%",
-        flexWrap: 'wrap',
-    },
-    sent: {
-        alignSelf: 'flex-end',
-        backgroundColor: primaryColor,
-        borderBottomRightRadius: 0,
-    },
-    sentText: {
-        color: white,
-        // flexWrap: 'wrap',
-    },
-    sentHeading: {
-        color: background,
     },
     messageSender: {
         fontFamily: 'mulish-semibold',
@@ -2017,90 +1972,6 @@ const style = StyleSheet.create({
     otherTeam: {
         alignSelf: 'flex-start',
     },
-    timeSent: {
-        fontFamily: 'mulish-regular',
-        color: bodyText,
-        fontSize: 10,
-        marginTop: 4,  
-        marginBottom: 5,
-    },
-    received: {
-        alignSelf: 'flex-start',
-        backgroundColor: receivedMessage,
-        borderBottomLeftRadius: 0,
-    },
-    messageText: {
-        fontFamily: 'mulish-regular',
-        fontSize: 12,
-        lineHeight: 17,
-        display: 'flex',
-        flexDirection: 'row',
-        marginTop: 10,
-        gap: 10,
-        justifyContent: 'flex-start',
-    },
-    messageHeading: {
-        fontFamily: 'mulish-semibold',
-        fontSize: 12,
-        lineHeight: 17,
-    },
-    repliedMessage: {
-        backgroundColor: white,
-        marginTop: 10,
-        borderRadius: 9,
-        padding: 8,
-        paddingTop: 4,
-        gap: 4,
-        display: 'flex',
-        flexDirection: 'column',
-        alignSelf: 'stretch',
-        justifyContent: 'flex-start',
-        alignItems: 'flex-start',
-    },
-    repliedImageWrapper: {
-        display: 'flex',
-        flexDirection: 'row',
-        alignSelf: 'stretch',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    repliedUser: {
-        fontFamily: 'mulish-semibold',
-        lineHeight: 12.4,
-        fontSize: 9.5,
-        color: subText,
-    },
-    repliedText: {
-        fontFamily: 'mulish-regular',
-        lineHeight: 14.6,
-        fontSize: 11,
-        color: bodyText,
-    },
-    postedImageContainer: {
-        minWidth: 100,
-        maxWidth: '100%',
-        minHeight: 100,
-        maxHeight: 160,
-        marginTop: 10,
-        overflow: 'hidden',
-        alignSelf: 'stretch',
-        borderRadius: 12,
-    },
-    postedImage: {
-        borderRadius: 12,
-        height: "100%",
-        width: "100%",
-        aspectRatio: 16/9,
-        resizeMode: 'cover',
-    },
-    imageIconContainer: {
-        marginTop: 7,
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        alignItems: 'flex-end',
-        gap: 4,
-    },
     messageType: {
         fontSize: 11,
         fontFamily: 'mulish-regular',
@@ -2111,56 +1982,6 @@ const style = StyleSheet.create({
         height: 28,
         borderRadius: 3.36,
     },
-    documentWrapper: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-        gap: 8,
-        padding: 10,
-    },
-    documentDescription: {
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'flex-start',
-        alignItems: 'flex-start',
-        gap: 4,
-    },
-    documentName: {
-        fontFamily: 'mulish-medium',
-        fontSize: 12,
-    },
-    documentProperties: {
-        fontFamily: 'mulish-regular',
-        fontSize: 10,
-    },
-    actionMessageWrapper: {
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'flex-start',
-        alignItems: 'flex-start',
-        marginTop: 10,
-    },
-    actionMessageTitle: {
-        fontSize: 12,
-        fontFamily: 'mulish-bold',
-        color: black,
-        marginBottom: 4,
-        marginTop: 8,
-    },
-    actionMessageHeading: {
-        fontSize: 12,
-        fontFamily: 'mulish-regular',
-        color: black,
-    },
-    actionMessageText: {
-        fontSize: 12,
-        fontFamily: 'mulish-semibold',
-        color: black,
-    },
-
-
-
     textFieldWrapper: {
         width: "100%",
         minHeight: 64,

@@ -9,7 +9,7 @@ import { useState } from "react";
 // colors
 import { black } from "../style/colors";
 
-const SearchBar = ({placeholder, searchQuery, setSearchQuery, backgroundColor, disableFIlter}) => {
+const SearchBar = ({placeholder, searchQuery, setSearchQuery, backgroundColor, disableFIlter, openFilter}) => {
 
     // function to update search query
     const handleSearchQuery = (text) => {
@@ -42,7 +42,13 @@ const SearchBar = ({placeholder, searchQuery, setSearchQuery, backgroundColor, d
                 )}
             </View>
             { !disableFIlter && 
-                <TouchableOpacity style={[style.filterButton, {backgroundColor: backgroundColor}]}>
+                <TouchableOpacity 
+                    onPress={openFilter}
+                    style={[
+                        style.filterButton, 
+                        {backgroundColor: backgroundColor}
+                    ]}
+                >
                     <FilterIcon />
                 </TouchableOpacity>
             }
