@@ -417,6 +417,25 @@ const AvailableLocations = ({navigation}) => {
     }
 
 
+    const splitAtIndices = (referenceString, indices) => {
+        const substrings = [];
+        
+        let startIndex = 0;
+        for (let i = 0; i < indices.length; i++) {
+          const endIndex = indices[i];
+          const substring = referenceString.substring(startIndex, endIndex);
+          substrings.push(substring);
+          startIndex = endIndex;
+        }
+        
+        // Add the remaining part of the string after the last index
+        const lastSubstring = referenceString.substring(startIndex);
+        substrings.push(lastSubstring);
+        
+        return substrings;
+    }
+
+
     const filterStatesAndLocations = (inputString) => {
         const filteredStates = states.filter((state) => {
           const isMatch = state.name.toLowerCase().includes(inputString.toLowerCase()) ||
@@ -424,36 +443,88 @@ const AvailableLocations = ({navigation}) => {
                 return location.location.toLowerCase().includes(inputString.toLowerCase())
             });
       
-          if (isMatch) {
-            state.opened = true;
-            state.name = (() => { // self invoking function
-                const searchIndex = state.name.toLowerCase().indexOf(inputString.toLowerCase());
-                if (searchIndex !== -1) {
-                    const hightlightedString = highlightString(state.name, inputString, searchIndex);
-                    return hightlightedString
-                } else {
-                    return state.name;
-                }
-            })(); 
-            state.locations = state.locations.map((location) => {
-                const searchIndex = location.location.toLowerCase().indexOf(inputString.toLowerCase());
-                if (searchIndex !== -1) {
-                    const hightlightedString = highlightString(location.location, inputString, searchIndex);
-                    return {
-                        ...location,
-                        location: hightlightedString
+            if (isMatch) {
+                state.opened = true;
+                state.name = (() => { // self invoking function
+                    const searchIndex = state.name.toLowerCase().indexOf(inputString.toLowerCase());
+
+                    if (searchIndex !== -1) {
+                        let textArray = state.name.toLowerCase().split(inputString.toLowerCase());
+                        const fullString = textArray.join(`%!#${inputString}%!#`)
+    
+                        textArray = fullString.split('%!#');
+                        // console.log(textArray);
+    
+                        return textArray.map((text, index) => {
+                            if (index % 2 === 0) {
+                                return (
+                                    <Text 
+                                        key={index} 
+                                        style={index === 0 && {textTransform: 'capitalize'}}
+                                        >
+                                        {text}
+                                    </Text>
+                                ) 
+                            } else {
+                                return (
+                                    <Text
+                                        key={index}
+                                        style={textArray[0] === "" && index === 1 && {textTransform: 'capitalize'}}
+                                    >
+                                        <Mark key={index}>{text.toLowerCase()}</Mark>
+                                    </Text>
+                                )
+                            }
+                        })
+                    } else {
+                        return state.name
                     }
-                } else {
-                    return location;
-                }
-            })
-          }
+
+                })(); 
+                state.locations = state.locations.map((location) => {
+                    const searchIndex = location.location.toLowerCase().indexOf(inputString.toLowerCase());
+                    if (searchIndex !== -1) {
+
+                        let textArray = location.location.toLowerCase().split(inputString.toLowerCase());
+                        const fullString = textArray.join(`%!#${inputString}%!#`)
+    
+                        textArray = fullString.split('%!#');
+                        return {
+                            ...location,
+                            location: textArray.map((text, index) => {
+                                if (index % 2 === 0) {
+                                    return (
+                                        <Text 
+                                            key={index} 
+                                            style={index === 0 && {textTransform: 'capitalize'}}
+                                            >
+                                            {text}
+                                        </Text>
+                                    ) 
+                                } else {
+                                    return (
+                                        <Text
+                                            key={index}
+                                            style={textArray[0] === "" && index === 1 && {textTransform: 'capitalize'}}
+                                        >
+                                            <Mark key={index}>{text.toLowerCase()}</Mark>
+                                        </Text>
+                                    )
+                                }
+                            }) 
+                        }
+
+                    } else {
+                        return location;
+                    }
+                })
+            }
       
           return isMatch;
         });
       
         return filteredStates;
-      }
+    }
 
     useEffect(() => {
         // console.log(searchQuery);
