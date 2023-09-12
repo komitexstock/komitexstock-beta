@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 // component
 import Indicator from './Indicator';
+import Mark from './Mark';
 // icons
 import SelectedOrderIcon from '../assets/icons/SelectedOrderIcon';
 // colors
@@ -15,9 +16,47 @@ import { background, black, bodyText, white } from '../style/colors';
 // import helper functions
 import { windowWidth } from '../utils/helpers';
 
-const OrderListItem = ({item, index, firstOrder, lastOrder, selectable, selected, selectFunction, extraVerticalPadding, searchKeyword}) => {
+const OrderListItem = ({item, index, firstOrder, lastOrder, selectable, selected, selectFunction, extraVerticalPadding, searchQuery}) => {
     // lenght, index => int
     // item => object
+
+    const highlightSearchtext = (text) => {
+        if (!searchQuery) return text;
+
+        const searchIndex = text.toLowerCase().indexOf(searchQuery.toLowerCase());
+
+        if (searchIndex !== -1) {
+            let textArray = text.toLowerCase().split(searchQuery.toLowerCase());
+            const fullString = textArray.join(`%!#${searchQuery}%!#`)
+
+            textArray = fullString.split('%!#');
+            // console.log(textArray);
+
+            return textArray.map((text, index) => {
+                if (index % 2 === 0) {
+                    return (
+                        <Text 
+                            key={index} 
+                            style={index === 0 && {textTransform: 'capitalize'}}
+                            >
+                            {text}
+                        </Text>
+                    ) 
+                } else {
+                    return (
+                        <Text
+                            key={index}
+                            style={textArray[0] === "" && index === 1 && {textTransform: 'capitalize'}}
+                        >
+                            <Mark key={index}>{text.toLowerCase()}</Mark>
+                        </Text>
+                    )
+                }
+            })
+        } else {
+            return text
+        }
+    }
 
     // render OrderListItem
     return (
@@ -60,19 +99,25 @@ const OrderListItem = ({item, index, firstOrder, lastOrder, selectable, selected
                         {color: item.newMessage ? black : bodyText},
                         // if order has a new message make font have a higher weight
                         {fontFamily: item.newMessage ? 'mulish-bold' : 'mulish-regular'},
+                        searchQuery && {color: bodyText, fontFamily: 'mulish-regular'},
                     ]}
                     >
-                    {item.name}, {item.location}
+                    {highlightSearchtext(item.name)}, {highlightSearchtext(item.location)}
                     </Text>
                 <Text 
                     style={[
                         style.orderSubText,
                         {color: item.newMessage ? black : bodyText},
+                        searchQuery && {color: bodyText, fontFamily: 'mulish-regular'}
                     ]}
                 >
                     {item.products.map((product, index) => {
                         // seperate list of products by commas ','
-                        return `${index === 0 ? '' : ', '} ${product.product_name} x ${product.quantity}`
+                        if (index !== 0) {
+                            return highlightSearchtext(", "+ product.product_name + " x " + product.quantity);
+                        } else {
+                            return highlightSearchtext(product.product_name + " x " + product.quantity);
+                        }
                     })}
                 </Text>
                 <Text style={style.orderDatetime}>

@@ -1903,6 +1903,7 @@ const Orders = ({navigation}) => {
                             index={index}
                             firstOrder={0}
                             lastOrder={searchedOrders.length}
+                            searchQuery={searchQuery}
                         />
                     ))}
                 </BottomSheetScrollView>
