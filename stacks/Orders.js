@@ -31,9 +31,9 @@ import Badge from "../components/Badge";
 import Header from "../components/Header";
 import FilterBottomSheet from "../components/FilterBottomSheet";
 import CalendarSheet from "../components/CalendarSheet";
+import FilterPill from "../components/FilterPill";
 // bottomsheet components
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import FilterPill from "../components/FilterPill";
 // moment
 import moment from "moment";
 
@@ -1564,8 +1564,8 @@ const Orders = ({navigation}) => {
         },
     ];
 
+    
     // console.log(filterParameters[0].value)
-
     // console.log(searchQuery);
 
     // search modal refernce
@@ -1609,6 +1609,7 @@ const Orders = ({navigation}) => {
         // close filter bottomsheet
         filterSheetRef.current?.close()
         setFilter({
+            ...filter,
             open: false,
         })
     }
@@ -1658,6 +1659,7 @@ const Orders = ({navigation}) => {
         minDate: false,
     });
 
+    // function to setEnd date as today if start date is selected as today
     useEffect(() => {
         // console.log(startDate);
         // console.log(today);
@@ -1864,7 +1866,7 @@ const Orders = ({navigation}) => {
                 snapPointsArray={["100%"]}
                 autoSnapAt={0}
                 sheetTitle={"Orders"}
-                disablePanToClode={true}
+                disablePanToClose={true}
             >
                 <SearchBar 
                     placeholder={"Search orders"}
@@ -1913,7 +1915,7 @@ const Orders = ({navigation}) => {
             {/* filter bottom sheet */}
             <FilterBottomSheet 
                 fiterSheetRef={filterSheetRef}
-                closeFilter={() => closeFilter()}
+                closeFilter={closeFilter}
                 clearFilterFunction={handleClearAllFilter}
                 applyFilterFunction={filter.filterType === "search" ? () => handleApplyFilter("search") : handleApplyFilter}
                 height={"80%"}

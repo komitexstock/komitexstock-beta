@@ -5,7 +5,7 @@ import ModalHandle from "./ModalHandle";
 import CloseIcon from "../assets/icons/CloseIcon";
 import { bodyText, primaryColor } from "../style/colors";
 
-const CustomBottomSheet = ({bottomSheetModalRef, showOverlay, closeModal, snapPointsArray, autoSnapAt, children, sheetTitle, sheetSubtitle, topContentPadding, stackBehavior, disablePanToClode}) => {
+const CustomBottomSheet = ({bottomSheetModalRef, showOverlay, closeModal, snapPointsArray, autoSnapAt, children, sheetTitle, sheetSubtitle, topContentPadding, stackBehavior, disablePanToClose}) => {
 
     const snapPoints = useMemo(() => snapPointsArray, [snapPointsArray]);
 
@@ -46,7 +46,7 @@ const CustomBottomSheet = ({bottomSheetModalRef, showOverlay, closeModal, snapPo
                     ref={bottomSheetModalRef}
                     index={autoSnapAt}
                     snapPoints={snapPoints}
-                    enablePanDownToClose={disablePanToClode ? false : true}
+                    enablePanDownToClose={disablePanToClose ? false : true}
                     onChange={event => handleGestureEnd(event)}
                     backgroundStyle={{
                         borderRadius: 32,
