@@ -21,21 +21,21 @@ const AlertNotice = ({type, text, closeAlert, show}) => {
 
     useEffect(() => {
         if (show) {
-          Animated.spring(top, {
-            toValue: 4,
-            useNativeDriver: false,
-            speed: 1,
-            bounciness: 5,
-            duration: 1000,
-        }).start();
-    } else {
-        Animated.spring(top, {
-            toValue: 10,
-            useNativeDriver: false,
-            speed: 1,
-            bounciness: 5,
-            duration: 1000,
-          }).start();
+            Animated.spring(top, {
+                toValue: 4,
+                useNativeDriver: false,
+                speed: 1,
+                bounciness: 5,
+                duration: 1000,
+            }).start();
+        } else {
+            Animated.spring(top, {
+                toValue: 10,
+                useNativeDriver: false,
+                speed: 1,
+                bounciness: 5,
+                duration: 1000,
+            }).start();
         }
     }, [show]);
 

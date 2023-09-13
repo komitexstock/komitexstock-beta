@@ -36,7 +36,7 @@ import {
 // components
 import NumberLink from "./NumberLink";
 
-const MessageContainer = ({messages, message, index, messagesRefs, customerName, phoneNumber, address, location, price, products, handleOnPressPhoneNumber, handleScrollToComponent, setReplying, textInputRef, navigation}) => {
+const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAlert, products, handleOnPressPhoneNumber, handleScrollToComponent, setReplying, textInputRef, navigation}) => {
 
     // accoutntype, retreived from global variables
     const accountType = "Merchant";
@@ -261,6 +261,7 @@ const MessageContainer = ({messages, message, index, messagesRefs, customerName,
                             number={item}
                             onPress={() => handleOnPressPhoneNumber(item)}
                             account_type={account_type}
+                            copyNumberAlert={copyNumberAlert}
                         />
                     );
                 }

@@ -3,19 +3,35 @@ import {
     View,
     Text,
     StyleSheet,
+    Image,
+    Animated
 } from "react-native";
 // icons
 import SuccessGreenIcon from "../assets/icons/SuccessGreenIcon";
 // color
-import { background, blackOut, bodyText, deliveredText, subText, white } from "../style/colors";
+import { bodyText, deliveredText, neutral, subText, white } from "../style/colors";
 // react hooks
+import { useEffect, useRef } from "react";
 
-const AlertNotice = ({text}) => {
+const AlertNotice = ({show, text, copyNumberAlert}) => {
+
+    const bottom = useRef(new Animated.Value(127)).current;
+
+    useEffect(() => {
+        Animated.spring(bottom, {
+            toValue: 147,
+            useNativeDriver: false,
+            speed: 1,
+            bounciness: 10,
+            duration: 750,
+        }).start();
+    }, [show]);
 
     return (
-        <View 
+        <Animated.View 
             style={[
                 style.container,
+                {bottom: bottom},
             ]}
         >
             <View
@@ -23,10 +39,19 @@ const AlertNotice = ({text}) => {
                     style.noticeWrapper,
                 ]}
             >   
-                <SuccessGreenIcon />
-                <Text style={style.noticeText}>{text}</Text>
+                {copyNumberAlert ? (
+                    <>
+                        <Image source={require("../assets/splash/komitexsplash1.png")} style={style.noticeImage} />
+                        <Text style={style.text}>Number copied</Text>
+                    </>
+                ) : (
+                    <>
+                        <SuccessGreenIcon />
+                        <Text style={style.noticeText}>{text}</Text>
+                    </>
+                ) }
             </View>
-        </View>
+        </Animated.View>
     );
 }
 
@@ -54,11 +79,21 @@ const style = StyleSheet.create({
         padding: 10,
         gap: 10,
         backgroundColor: white,
-        shadowColor: bodyText,
-        elevation: 8,
+        shadowColor: neutral,
+        elevation: 10,
     },
     noticeText: {
         color: deliveredText,
+        fontFamily: "mulish-semibold",
+        fontSize: 12,
+    },
+    noticeImage: {
+        width: 20,
+        height: 20,
+        borderRadius: 4,
+    },
+    text: {
+        color: bodyText,
         fontFamily: "mulish-semibold",
         fontSize: 12,
     },

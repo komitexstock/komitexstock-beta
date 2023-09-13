@@ -41,7 +41,6 @@ import ModalButton from "../components/ModalButton";
 import Input from "../components/Input";
 import SelectInput from "../components/SelectInput";
 import MessageContainer from "../components/MessageContainer";
-import NumberLink from "../components/NumberLink";
 import ProductListSummary from "../components/ProductListSummary";
 // import react hooks
 import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
@@ -95,20 +94,34 @@ const Chat = ({navigation, route}) => {
         setTextInput(text === '' ? null : text)
     }
 
-    const [newChat, setNewChat] = useState(false);
+    const [newChat, setNewChat] = useState({
+        open: false,
+        copyAlert: false,
+    });
+
+    const openNewMessageAlert = (copyAlert) => {
+        
+        setNewChat({
+            copyAlert: copyAlert ? copyAlert : false,
+            open: true
+        });
+        
+        // after 3 seconds set as false
+        setTimeout(() => {
+            setNewChat({
+                copyAlert: copyAlert ? copyAlert : false,
+                open: false
+            });
+        }, 2500);
+    }
 
     // check for a newChat
     useLayoutEffect(() => {
         // if newChat variable is receives via the route
         if (route.params.newChat) {
             // set new chat as true
-            setNewChat(true);
+            openNewMessageAlert();
         }
-        
-        // after 3 seconds set as false
-        // setTimeout(() => {
-        //     setNewChat(false);
-        // }, 3000);
 
     }, [route.params.newChat]);
 
@@ -183,12 +196,10 @@ const Chat = ({navigation, route}) => {
     const {id, type, name, imageUrl} = route.params;
 
     // accoutntype, retreived from global variables
-    const accountType = "Logistics";
+    const accountType = "Merchant";
     const userId = "hjsdjkji81899";
     const companyName = "Mega Enterprise";
     const fullname = "Iffie Ovie";
-    const postOrderUserId = "hjsdjkji81899";
-    const postOrderTimestamp = "6:30 am";
     const outOfStock = false;
 
 
@@ -1192,11 +1203,6 @@ const Chat = ({navigation, route}) => {
         }
     }
 
-    // function to get the first word in a string
-    const getFirstWord = (str) => {
-        return str.split(" ")[0];
-    }
-
     const messageSenderName = (user_id, full_name, reply) => {
         if (reply) {
             if (userId === user_id) return "You replied"
@@ -1206,54 +1212,6 @@ const Chat = ({navigation, route}) => {
             return userId === user_id ? "Me" : full_name 
         }
     }
-
-    const messageSender = (account_type, user_id, full_name, prev_id, company_name, color, reply, orderDetails) => {
-
-        if (orderDetails) {
-            return account_type === "Merchant" ? (
-                <Text 
-                    style={[
-                        style.messageSender, 
-                        style.myTeam, 
-                        {color: user_id === userId ? accent : color}
-                    ]}
-                >
-                    {user_id === userId ? "Me" : full_name}
-                </Text>
-            ) : (
-                <Text 
-                    style={[
-                        style.messageSender, 
-                        style.otherTeam, 
-                        {color: primaryColor}
-                    ]}
-                >
-                    {company_name}
-                </Text>
-            )
-        }
-
-        if (accountType === account_type) {
-            return prev_id !== user_id && (
-                <Text 
-                    style={[
-                        style.messageSender, 
-                        style.myTeam, 
-                        {color: user_id === userId ? accent : color}
-                    ]}
-                >
-                    {/* {user_id !== userId && full_name} */}
-                    {messageSenderName(user_id, full_name, reply)}
-                </Text>
-            )
-        } else {
-            return prev_id !== user_id && (
-                <Text style={[style.messageReceiver, style.otherTeam, {color: primaryColor}]}>
-                    {company_name} {reply && "replied"} 
-                </Text>
-            )
-        }
-    };
 
     const replyingSenderName = (targetMessage) => {
 
@@ -1449,14 +1407,10 @@ const Chat = ({navigation, route}) => {
                                     key={message.id}
                                     index={index}
                                     messagesRefs={messagesRefs}
+                                    copyNumberAlert={openNewMessageAlert}
                                     message={message}
                                     messages={messages}
-                                    customerName={customerName}
-                                    phoneNumber={phoneNumber}
-                                    address={address}
-                                    location={location}
                                     products={products}
-                                    price={price}
                                     handleOnPressPhoneNumber={handleOnPressPhoneNumber}
                                     handleScrollToComponent={handleScrollToComponent}
                                     setReplying={setReplying}
@@ -1839,9 +1793,11 @@ const Chat = ({navigation, route}) => {
             )}
 
             {/* Alert to display whena  new order or waybill is created */}
-            { newChat && (
+            { newChat.open && (
                 <AlertNewChat 
+                    show={newChat.show}
                     text={type + " successfully created"}
+                    copyNumberAlert={newChat.copyAlert}
                 />
             )}
         </>

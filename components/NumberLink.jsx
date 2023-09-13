@@ -3,7 +3,7 @@ import { linkText, primaryColor } from "../style/colors";
 // expo clipboard
 import * as Clipboard from 'expo-clipboard';
 
-const NumberLink = ({number, account_type, onPress}) => {
+const NumberLink = ({number, account_type, onPress, copyNumberAlert}) => {
 
     const accountType = "Merchant";
 
@@ -12,6 +12,7 @@ const NumberLink = ({number, account_type, onPress}) => {
 
     const copyToClipboard = async (text) => {
         await Clipboard.setStringAsync(text);
+        copyNumberAlert(true);
     };
 
     return (
