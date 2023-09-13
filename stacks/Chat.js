@@ -106,9 +106,9 @@ const Chat = ({navigation, route}) => {
         }
         
         // after 3 seconds set as false
-        setTimeout(() => {
-            setNewChat(false);
-        }, 3000);
+        // setTimeout(() => {
+        //     setNewChat(false);
+        // }, 3000);
 
     }, [route.params.newChat]);
 
@@ -183,7 +183,7 @@ const Chat = ({navigation, route}) => {
     const {id, type, name, imageUrl} = route.params;
 
     // accoutntype, retreived from global variables
-    const accountType = "Merchant";
+    const accountType = "Logistics";
     const userId = "hjsdjkji81899";
     const companyName = "Mega Enterprise";
     const fullname = "Iffie Ovie";
@@ -543,44 +543,44 @@ const Chat = ({navigation, route}) => {
             reply: false,
             text: "Customer's Name: *Richard Idana*\nPhone Number: 08165266847, 08123456789\nDelivery Address: *No 3 Izono street Udu road, Warri*\nProduct: *Maybach Sunglasses x 1, Accurate Watch x 1*\nPrice: *₦50,000*\nLocation: *Warri, Delta State*\nCharge: *₦3,000*\nLogistics: *Komitex Logistics*\nMerchant: *Mega Enterprise*",
         },
-        {
-            reschedule_date: () => {},
-            id: 1,
-            seen: true,
-            user_id: "hjsdjkji81899",
-            fullname: "Iffie Ovie",
-            company_name: 'Mega Enterprise',
-            color: messageSenderColors[0],
-            type: 'message',
-            timestamp: () => {
-                const currentTime = new Date();
-                currentTime.setMinutes(currentTime.getMinutes() - 50);
-                return currentTime.getTime();
-            },
-            account_type: 'Merchant',
-            file: null,
-            reply: false,
-            text: 'Hello',
-        },
-        {
-            reschedule_date: () => {},
-            id: 2,
-            seen: true,
-            user_id: "hayaFGye67qY",
-            fullname: "John Mark",
-            color: messageSenderColors[1],
-            company_name: 'Komitex Logistics',
-            type: 'message',
-            timestamp: () => {
-                const currentTime = new Date();
-                currentTime.setMinutes(currentTime.getMinutes() - 45);
-                return currentTime.getTime();
-            },
-            account_type: 'Logistics',
-            file: null,
-            reply: false,
-            text: 'Hey *there*',
-        },
+        // {
+        //     reschedule_date: () => {},
+        //     id: 1,
+        //     seen: true,
+        //     user_id: "hjsdjkji81899",
+        //     fullname: "Iffie Ovie",
+        //     company_name: 'Mega Enterprise',
+        //     color: messageSenderColors[0],
+        //     type: 'message',
+        //     timestamp: () => {
+        //         const currentTime = new Date();
+        //         currentTime.setMinutes(currentTime.getMinutes() - 50);
+        //         return currentTime.getTime();
+        //     },
+        //     account_type: 'Merchant',
+        //     file: null,
+        //     reply: false,
+        //     text: 'Hello',
+        // },
+        // {
+        //     reschedule_date: () => {},
+        //     id: 2,
+        //     seen: true,
+        //     user_id: "hayaFGye67qY",
+        //     fullname: "John Mark",
+        //     color: messageSenderColors[1],
+        //     company_name: 'Komitex Logistics',
+        //     type: 'message',
+        //     timestamp: () => {
+        //         const currentTime = new Date();
+        //         currentTime.setMinutes(currentTime.getMinutes() - 45);
+        //         return currentTime.getTime();
+        //     },
+        //     account_type: 'Logistics',
+        //     file: null,
+        //     reply: false,
+        //     text: 'Hey *there*',
+        // },
         // {
         //     reschedule_date: () => {},
         //     id: 3,

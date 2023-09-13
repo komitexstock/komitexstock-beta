@@ -6,7 +6,7 @@ import CloseIcon from "../assets/icons/CloseIcon";
 import { bodyText, primaryColor, secondaryColor, white } from "../style/colors";
 // window height
 import { windowHeight } from "../utils/helpers";
-import BottomSheet from "@gorhom/bottom-sheet";
+import {  } from "react-native-gesture-handler";
 
 const FilterBottomSheet = ({fiterSheetRef, height, closeFilter, children, clearFilterFunction, applyFilterFunction}) => {
 

@@ -3,16 +3,13 @@ import {
     View,
     Text,
     StyleSheet,
-    ScrollView
 } from "react-native";
 // components
 import ActionButton from "./ActionButton";
 // colors
 import { background, black, bodyText, primaryColor, secondaryColor } from "../style/colors";
-// bottomsheet components
-import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-
-
+// scroll view from gesture handler
+import { ScrollView } from "react-native-gesture-handler";
 
 const FilterButtonGroup = ({buttons, title}) => {
     // buttons => array of objects
@@ -23,7 +20,7 @@ const FilterButtonGroup = ({buttons, title}) => {
         <View style={style.filterButtonGroup}>
             {/* filter button group title */}
             <Text style={style.filterHeading}>{title}</Text>
-            <BottomSheetScrollView
+            <ScrollView
                 style={style.buttonContainer}
                 contentContainerStyle={style.buttonWrapper}
                 horizontal={true}
@@ -40,7 +37,7 @@ const FilterButtonGroup = ({buttons, title}) => {
                         onPress={button.onPress}
                     />
                 ))}
-            </BottomSheetScrollView>
+            </ScrollView>
         </View>
     );
 }

@@ -8,6 +8,7 @@ import {
     StyleSheet,
     BackHandler,
     Animated,
+    Keyboard,
 } from "react-native";
 // colors
 import { background, blackOut, bodyText, primaryColor, secondaryColor, white } from "../style/colors";
@@ -1596,6 +1597,7 @@ const Orders = ({navigation}) => {
 
     // open filter function
     const openFilter = (filterType) => {
+        Keyboard.dismiss();
         setFilter({
             open: true,
             filterType: filterType,

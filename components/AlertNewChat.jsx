@@ -7,7 +7,7 @@ import {
 // icons
 import SuccessGreenIcon from "../assets/icons/SuccessGreenIcon";
 // color
-import { background, deliveredText } from "../style/colors";
+import { background, blackOut, bodyText, deliveredText, subText, white } from "../style/colors";
 // react hooks
 
 const AlertNotice = ({text}) => {
@@ -53,7 +53,9 @@ const style = StyleSheet.create({
         alignItems: "center",
         padding: 10,
         gap: 10,
-        backgroundColor: background,
+        backgroundColor: white,
+        shadowColor: bodyText,
+        elevation: 8,
     },
     noticeText: {
         color: deliveredText,
