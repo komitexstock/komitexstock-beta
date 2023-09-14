@@ -16,9 +16,20 @@ import { background, black, bodyText, white } from '../style/colors';
 // import helper functions
 import { windowWidth } from '../utils/helpers';
 
-const OrderListItem = ({item, index, firstOrder, lastOrder, selectable, selected, selectFunction, extraVerticalPadding, searchQuery}) => {
+const OrderListItem = ({item, index, firstOrder, lastOrder, selectable, selected, selectFunction, extraVerticalPadding, sideFunctions, searchQuery}) => {
     // lenght, index => int
     // item => object
+
+    const handleOnPress = () => {
+        if (selectable) {
+            return selectFunction(item.id);
+        } else {
+            if (sideFunctions) sideFunctions();
+            return setTimeout(() => {
+                item.navigateToChat();
+            }, 250);
+        }
+    }
 
     const highlightSearchtext = (text) => {
         if (!searchQuery) return text;
@@ -75,7 +86,7 @@ const OrderListItem = ({item, index, firstOrder, lastOrder, selectable, selected
                 extraVerticalPadding && style.extraVerticalPadding
             ]}
             // navigate to chat on press order
-            onPress={!selectable ? item.navigateToChat : () => selectFunction(item.id)}
+            onPress={handleOnPress}
             activeOpacity={selectable ? 0.8 : 0.5}
         >
             {/* logistics image */}
