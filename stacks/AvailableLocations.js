@@ -566,6 +566,7 @@ const AvailableLocations = ({navigation}) => {
                             searchQuery={searchQuery}
                             setSearchQuery={setSearchQuery}
                             backgroundColor={white}
+                            disableFIlter={true}
                         />
                     </View>
                     <View style={style.locationsWrapper}>

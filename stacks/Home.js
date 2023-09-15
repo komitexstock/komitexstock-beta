@@ -1078,31 +1078,6 @@ const Home = ({navigation}) => {
         autoSnapAt: 0,
     })
 
-    // useEffect to listen for onPress back button and close modal
-    useEffect(() => {
-        // function to run if back button is pressed
-        const backAction = () => {
-            // Run your function here
-            if (showOverlay) {
-                // if modal is open, close modal
-                closeModal();
-                return true;
-            } else {
-                // if modal isnt open simply navigate back
-                return false;
-            }
-        };
-    
-        // listen for onPress back button
-        const backHandler = BackHandler.addEventListener(
-            'hardwareBackPress',
-            backAction
-        );
-    
-        return () => backHandler.remove();
-
-    }, [showOverlay]);
-
     // useEffect to open portal to review Bottomsheet
     // useEffect(() => {
     //     setTimeout(() => {
@@ -1554,6 +1529,36 @@ const Home = ({navigation}) => {
         })
         calendarRef.current?.close();
     }
+
+    // useEffect to listen for onPress back button and close modal
+    useEffect(() => {
+        // function to run if back button is pressed
+        const backAction = () => {
+            // Run your function here
+            // if filter bottomsheet is opem
+            if (filter.open) {
+                // close filter bottomsheet 
+                closeFilter();
+                return true;
+            } else if (showOverlay) {
+                // if modal is open, close modal
+                closeModal();
+                return true;
+            } else {
+                // if modal isnt open simply navigate back
+                return false;
+            }
+        };
+    
+        // listen for onPress back button
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction
+        );
+    
+        return () => backHandler.remove();
+
+    }, [showOverlay, filter]);
 
     // render Home page
     return (
