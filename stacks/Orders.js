@@ -1655,6 +1655,7 @@ const Orders = ({navigation}) => {
 
     const shadowElevation = useRef(new Animated.Value(0)).current;
 
+    // animated shadow when scroll height reaches sticky header
     const animateHeaderOnScroll = (e) => {
         // console.log(stickyHeaderOffset.current);
         const yOffset = e.nativeEvent.contentOffset.y;

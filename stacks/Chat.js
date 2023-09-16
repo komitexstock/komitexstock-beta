@@ -307,7 +307,7 @@ const Chat = ({navigation, route}) => {
             />
             <View style={style.headerTextWrapper}>
                 <Text style={style.headerPrimaryText}>{name}</Text>
-                <Text style={style.headerSecondaryText}>Order ID: Y5lq3xgCK9rkKRD7oJ4Q</Text>
+                <Text style={style.headerSecondaryText}>{type === "Order" ? "Order" : "Waybill"} ID: Y5lq3xgCK9rkKRD7oJ4Q</Text>
             </View>
         </View>
     );

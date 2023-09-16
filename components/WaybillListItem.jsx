@@ -2,14 +2,64 @@
 import { TouchableOpacity, Image, View, Text, StyleSheet } from 'react-native';
 // components
 import Indicator from './Indicator';
+import Mark from './Mark';
 // colors
 import { black, bodyText, white } from '../style/colors';
 // import helper functions
 import { windowWidth } from '../utils/helpers';
 
-const WaybillListItem = ({item, index, length}) => {
+const WaybillListItem = ({item, index, firstWaybill, lastWaybill, sideFunctions, searchQuery}) => {
     // item => object
     // index, length => int
+
+    const handleOnPress = () => {
+        if (sideFunctions) {
+            sideFunctions();
+            return setTimeout(() => {
+                item.navigateToChat();
+            }, 250);
+        } else {
+            item.navigateToChat();
+        }
+    }
+
+    const highlightSearchtext = (text) => {
+        if (!searchQuery) return text;
+
+        const searchIndex = text.toLowerCase().indexOf(searchQuery.toLowerCase());
+
+        if (searchIndex !== -1) {
+            let textArray = text.toLowerCase().split(searchQuery.toLowerCase());
+            const fullString = textArray.join(`%!#${searchQuery}%!#`)
+
+            textArray = fullString.split('%!#');
+            // console.log(textArray);
+
+            return textArray.map((text, index) => {
+                if (index % 2 === 0) {
+                    return (
+                        <Text 
+                            key={index} 
+                            style={index === 0 && {textTransform: 'capitalize'}}
+                            >
+                            {text}
+                        </Text>
+                    ) 
+                } else {
+                    return (
+                        <Text
+                            key={index}
+                            style={textArray[0] === "" && index === 1 && {textTransform: 'capitalize'}}
+                        >
+                            <Mark key={index}>{text.toLowerCase()}</Mark>
+                        </Text>
+                    )
+                }
+            })
+        } else {
+            return text
+        }
+    }
 
     // render WaybillListItem component
     return (
@@ -17,11 +67,12 @@ const WaybillListItem = ({item, index, length}) => {
             style={[
                 style.orderWrapper, 
                 // add top border radius to first waybill in the list
-                index === 0 && style.firstOrderWrapper, 
+                index === firstWaybill && style.firstOrderWrapper, 
                 // add bottom border radius to last waybill in the list
-                index === (length - 1) && style.lastOrderWrapper
+                index === lastWaybill && style.lastOrderWrapper
             ]}
-            onPress={item.navigateToChat}
+            onPress={handleOnPress}
+            activeOpacity={0.8}
         >
             {/* waybill image */}
             <Image 
@@ -36,11 +87,17 @@ const WaybillListItem = ({item, index, length}) => {
                         {color: item.newMessage ? black : bodyText},
                         // if theres a newMessage in the waybill chat, use diffrent font weight
                         {fontFamily: item.newMessage ? 'mulish-bold' : 'mulish-regular'},
+                        searchQuery && {color: bodyText, fontFamily: 'mulish-regular'},
                     ]}
                 >
                     {/* map through product array */}
                     { item.products.map((product, index) => {
-                        return `${index === 0 ? '' : ', '} ${product.product_name} x ${product.quantity}`
+                        // seperate list of products by commas ','
+                        if (index !== 0) {
+                            return highlightSearchtext(", "+ product.product_name + " x " + product.quantity);
+                        } else {
+                            return highlightSearchtext(product.product_name + " x " + product.quantity);
+                        }
                     })}
                 </Text>
                 <Text style={style.orderDatetime}>{item.datetime}</Text>
