@@ -36,6 +36,10 @@ import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { accentLight, background, black, bodyText, greenLight, primaryColor, secondaryColor, white, yellowLight } from "../style/colors";
 // moment
 import moment from "moment";
+// skeleton components
+import { createShimmerPlaceholder } from "react-native-shimmer-placeholder";
+import { LinearGradient } from "expo-linear-gradient";
+import ShimmerPlaceHolder from "react-native-shimmer-placeholder";
 
 const Home = ({navigation}) => {
       
@@ -155,6 +159,10 @@ const Home = ({navigation}) => {
             },
         }
     ];
+
+    const Skeleton = createShimmerPlaceholder(LinearGradient);
+
+    const [pageLoading, setPageLoading] = useState(false);
 
     // orders full list
     const orderList = [
@@ -1563,109 +1571,125 @@ const Home = ({navigation}) => {
     // render Home page
     return (
         <>
-            <TouchableWithoutFeedback 
-                onPress={() => Keyboard.dismiss()}
-            >
-                <ScrollView
-                    showsVerticalScrollIndicator={false}
-                    style={style.container}
+            {!pageLoading && (
+                <TouchableWithoutFeedback 
+                    onPress={() => Keyboard.dismiss()}
                 >
-                    <View
-                        style={style.homeScrollView}
+                    <ScrollView
+                        showsVerticalScrollIndicator={false}
+                        style={style.container}
                     >
-                        <View style={style.homeWrapper}>
-                            {/* Header Component */}
-                            <Header
-                                navigation={navigation}
-                                stackName={
-                                    <View style={style.headerTextContainer}>
-                                        <Text style={style.paragraph}>Welcome back!</Text>
-                                        <Text style={style.heading}> Abayomi Daniel</Text>
-                                    </View>
-                                }
-                                removeBackArrow={true}
-                                unpadded={true}
-                                icon={<NotificationIcon />}
-                                iconFunction={() => {navigation.navigate("Notifications")}}
-                            />
-                            {/* button search bar to open search modal bottomsheet */}
-                            <View style={style.searchWrapper}>
-                                <SearchIcon />
-                                <TouchableOpacity 
-                                    style={style.searchInput}
-                                    onPress={openModal}
-                                >
-                                    <Text style={style.searchPlaceholder}>Search Komitex Stocks</Text>
-                                </TouchableOpacity>
-                            </View>
-                            <View>
-                                <Text style={style.callToActionText}>What do you want to do today?</Text>
-                            </View>
-                            {/* quick action buttons */}
-                            <View style={style.quickAccessWrapper}>
-                                {/* quick order */}
-                                <TouchableOpacity 
-                                    style={style.quickOrder}
-                                    onPress={() => {navigation.navigate("SendOrder")}}
-                                >
-                                    <QuickOrderIcon />
-                                    <Text style={style.quickActionHeading}>Send an Order</Text>
-                                    <Text style={style.quickActionParagraph}>Make fast deliveries to your customers</Text>
-                                </TouchableOpacity>
-                                {/* quick inventory */}
-                                <TouchableOpacity 
-                                    style={style.quickInventory}
-                                    onPress={() => {navigation.navigate("Inventory")}}    
-                                >
-                                    <QuickInventoryIcon />
-                                    <Text style={style.quickActionHeading}>Manage Inventory</Text>
-                                    <Text style={style.quickActionParagraph}>Review and add to your stores inventory</Text>
-                                </TouchableOpacity>
-                                {/* quick waybill */}
-                                <TouchableOpacity 
-                                    style={style.quickWaybill}
-                                    onPress={() => {navigation.navigate("SendWaybill")}}
-                                >
-                                    <QuickWaybiillIcon />
-                                    <Text style={style.quickActionHeading}>Send Waybill</Text>
-                                    <Text style={style.quickActionParagraph}>Restock your inventory with your preferred partner</Text>
-                                </TouchableOpacity>
-                                {/* quick analytics */}
-                                <TouchableOpacity 
-                                    style={style.quickAnalytics}
-                                    onPress={() => {navigation.navigate("Analytics")}}
-                                >
-                                    <QuickAnalyticsIcon />
-                                    <Text style={style.quickActionHeading}>View Analytics</Text>
-                                    <Text style={style.quickActionParagraph}>Easily view your business growth and analytics</Text>
-                                </TouchableOpacity>
-                            </View>
-                            {/* recent orders */}
-                            <View style={style.homeOrders}>
-                                <View style={style.homeOrdersHeader}>
-                                    <Text style={style.homeOrdersHeading}>Recent Orders</Text>
-                                    <TouchableOpacity
-                                        onPress={() => {navigation.navigate("Orders")}}
-                                        // onPress={() => {navigation.navigate("Share")}}
+                        <View
+                            style={style.homeScrollView}
+                        >
+                            <View style={style.homeWrapper}>
+                                {/* Header Component */}
+                                <Header
+                                    navigation={navigation}
+                                    stackName={
+                                        <View style={style.headerTextContainer}>
+                                            <Text style={style.paragraph}>Welcome back!</Text>
+                                            <Text style={style.heading}> Abayomi Daniel</Text>
+                                        </View>
+                                    }
+                                    removeBackArrow={true}
+                                    unpadded={true}
+                                    icon={<NotificationIcon />}
+                                    iconFunction={() => {navigation.navigate("Notifications")}}
+                                />
+                                {/* button search bar to open search modal bottomsheet */}
+                                <View style={style.searchWrapper}>
+                                    <SearchIcon />
+                                    <TouchableOpacity 
+                                        style={style.searchInput}
+                                        onPress={openModal}
                                     >
-                                        <Text style={style.seeMore} >
-                                            See more
-                                        </Text>
+                                        <Text style={style.searchPlaceholder}>Search Komitex Stocks</Text>
                                     </TouchableOpacity>
                                 </View>
-                            </View>
-                            <View
-                                style={style.ordersListWrapper}
-                            >
-                                {/* order list max 5 items */}
-                                {orders.map((order, index) => (
-                                    <OrderListItem key={order.id} item={order} index={index} lastOrder={orders.length - 1} firstOrder={0} extraVerticalPadding={true} />
-                                ))}
+                                <View>
+                                    <Text style={style.callToActionText}>What do you want to do today?</Text>
+                                </View>
+                                {/* quick action buttons */}
+                                <View style={style.quickAccessWrapper}>
+                                    {/* quick order */}
+                                    <TouchableOpacity 
+                                        style={style.quickOrder}
+                                        onPress={() => {navigation.navigate("SendOrder")}}
+                                    >
+                                        <QuickOrderIcon />
+                                        <Text style={style.quickActionHeading}>Send an Order</Text>
+                                        <Text style={style.quickActionParagraph}>Make fast deliveries to your customers</Text>
+                                    </TouchableOpacity>
+                                    {/* quick inventory */}
+                                    <TouchableOpacity 
+                                        style={style.quickInventory}
+                                        onPress={() => {navigation.navigate("Inventory")}}    
+                                    >
+                                        <QuickInventoryIcon />
+                                        <Text style={style.quickActionHeading}>Manage Inventory</Text>
+                                        <Text style={style.quickActionParagraph}>Review and add to your stores inventory</Text>
+                                    </TouchableOpacity>
+                                    {/* quick waybill */}
+                                    <TouchableOpacity 
+                                        style={style.quickWaybill}
+                                        onPress={() => {navigation.navigate("SendWaybill")}}
+                                    >
+                                        <QuickWaybiillIcon />
+                                        <Text style={style.quickActionHeading}>Send Waybill</Text>
+                                        <Text style={style.quickActionParagraph}>Restock your inventory with your preferred partner</Text>
+                                    </TouchableOpacity>
+                                    {/* quick analytics */}
+                                    <TouchableOpacity 
+                                        style={style.quickAnalytics}
+                                        onPress={() => {navigation.navigate("Analytics")}}
+                                    >
+                                        <QuickAnalyticsIcon />
+                                        <Text style={style.quickActionHeading}>View Analytics</Text>
+                                        <Text style={style.quickActionParagraph}>Easily view your business growth and analytics</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                {/* recent orders */}
+                                <View style={style.homeOrders}>
+                                    <View style={style.homeOrdersHeader}>
+                                        <Text style={style.homeOrdersHeading}>Recent Orders</Text>
+                                        <TouchableOpacity
+                                            // onPress={() => {navigation.navigate("Orders")}}
+                                            onPress={() => {navigation.navigate("Share")}}
+                                        >
+                                            <Text style={style.seeMore} >
+                                                See more
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                                <View
+                                    style={style.ordersListWrapper}
+                                >
+                                    {/* order list max 5 items */}
+                                    {orders.map((order, index) => (
+                                        <OrderListItem key={order.id} item={order} index={index} lastOrder={orders.length - 1} firstOrder={0} extraVerticalPadding={true} />
+                                    ))}
+                                </View>
                             </View>
                         </View>
-                    </View>
-                </ScrollView>
-            </TouchableWithoutFeedback>
+                    </ScrollView>
+                </TouchableWithoutFeedback>
+            )}
+
+            {pageLoading && (
+                <>
+                    {/* <ShimmerPlaceHolder
+                        LinearGradient={LinearGradient}
+                        visible={false}
+                    /> */}
+                    <Skeleton 
+                        height={100}
+                        width={100}
+                        style={{borderRadius: 50}}
+                    />
+                </>
+            )}
             {/* bottomsheet */}
             <CustomBottomSheet
                 bottomSheetModalRef={bottomSheetModalRef}

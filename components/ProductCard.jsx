@@ -11,7 +11,7 @@ import { black, bodyText, primaryColor, secondaryColor, white } from "../style/c
 // components
 import Indicator from '../components/Indicator'
 
-const ProductCard = ({product_name, quantity, price, imageUrl, lowStock, onPress}) => {
+const ProductCard = ({product_name, quantity, price, imageUrl, onPress}) => {
     // imageUrl => string | imagePath
     // quantity => int
     // price => float
@@ -28,7 +28,7 @@ const ProductCard = ({product_name, quantity, price, imageUrl, lowStock, onPress
                     <Indicator text={"Empty Stock"} type={"Cancelled"} />
                 </View>}
             {/* low stock indicator */}
-            { quantity !== 0 && lowStock && <View style={style.indicatorWrapper}>
+            { quantity !== 0 && quantity <= 3 && <View style={style.indicatorWrapper}>
                     <Indicator text={"Low Stock"} type={"Pending"} />
                 </View>
             }

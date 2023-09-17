@@ -84,7 +84,6 @@ const Products = ({navigation, route}) => {
             quantity: 7,
             price: 20000,
             imageUrl: require('../assets/images/maybach-sunglasses.png'),
-            lowStock: false,
             onPress: () => handleEditProduct(1),
         },
         {
@@ -93,7 +92,6 @@ const Products = ({navigation, route}) => {
             quantity: 3,
             price: 33000,
             imageUrl: require('../assets/images/accurate-watch.png'),
-            lowStock: false,
             onPress: () => handleEditProduct(2),
         },
         {
@@ -102,7 +100,6 @@ const Products = ({navigation, route}) => {
             quantity: 0,
             price: 35000,
             imageUrl: require('../assets/images/black-sketchers.png'),
-            lowStock: true,
             onPress: () => handleEditProduct(3),
         },
         {
@@ -111,7 +108,6 @@ const Products = ({navigation, route}) => {
             quantity: 11,
             price: 40000,
             imageUrl: require('../assets/images/brown-clarks.png'),
-            lowStock: false,
             onPress: () => handleEditProduct(4),
         },
         {
@@ -120,7 +116,6 @@ const Products = ({navigation, route}) => {
             quantity: 2,
             price: 25000,
             imageUrl: require('../assets/images/sneakers.png'),
-            lowStock: true,
             onPress: () => handleEditProduct(5),
         },
         {
@@ -129,7 +124,6 @@ const Products = ({navigation, route}) => {
             quantity: 9,
             price: 32000,
             imageUrl: require('../assets/images/perfectly-useless-mornig-watch.png'),
-            lowStock: false,
             onPress: () => handleEditProduct(6),
         },
         {
@@ -138,7 +132,6 @@ const Products = ({navigation, route}) => {
             quantity: 15,
             price: 30000,
             imageUrl: require('../assets/images/Chaos-Window-Watch.jpg'),
-            lowStock: false,
             onPress: () => handleEditProduct(7),
         },
         {
@@ -147,7 +140,6 @@ const Products = ({navigation, route}) => {
             quantity: 10,
             price: 25000,
             imageUrl: require('../assets/images/Clarks.jpg'),
-            lowStock: false,
             onPress: () => handleEditProduct(8),
         },
         {
@@ -156,7 +148,6 @@ const Products = ({navigation, route}) => {
             quantity: 10,
             price: 35000,
             imageUrl: require('../assets/images/Timberland.jpg'),
-            lowStock: false,
             onPress: () => handleEditProduct(9),
         },
         {
@@ -165,7 +156,6 @@ const Products = ({navigation, route}) => {
             quantity: 19,
             price: 32000,
             imageUrl: require('../assets/images/useless-afternoon-watch.png'),
-            lowStock: false,
             onPress: () => handleEditProduct(10),
         },
     ];
@@ -921,7 +911,6 @@ const Products = ({navigation, route}) => {
                                         quantity={item.quantity}
                                         price={item.price}
                                         imageUrl={item.imageUrl}
-                                        lowStock={item.lowStock}
                                         onPress={item.onPress}
                                     />
                                 </View>

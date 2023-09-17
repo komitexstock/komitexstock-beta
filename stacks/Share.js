@@ -23,6 +23,7 @@ const Share = ({navigation}) => {
             datetime: "2023-03-15 09:30",
             id: "abc123",
             price: 38000,
+            logistics: "Komitex",
             status: "Delivered",
             imageUrl: require('../assets/images/komitex.png'),
             newMessage: true,
@@ -49,6 +50,7 @@ const Share = ({navigation}) => {
             id: "def456",
             price: 13000,
             status: "Pending",
+            logistics: "Fedex",
             imageUrl: require('../assets/images/fedex.png'),
             newMessage: false,
             navigateToChat: () => {
@@ -73,6 +75,7 @@ const Share = ({navigation}) => {
             id: "ghi789",
             price: 14000,
             status: "Dispatched",
+            logistics: "Komitex",
             imageUrl: require('../assets/images/komitex.png'),
             newMessage: true,
             navigateToChat: () => {
@@ -97,6 +100,7 @@ const Share = ({navigation}) => {
             id: "mno345",
             price: 16000,
             status: "Cancelled",
+            logistics: "Dhl",
             imageUrl: require('../assets/images/dhl.png'),
             newMessage: true,
             navigateToChat: () => {
@@ -121,6 +125,7 @@ const Share = ({navigation}) => {
             id: "pqr678",
             price: 12000,
             status: "Rescheduled",
+            logistics: "Ups",
             imageUrl: require('../assets/images/ups.png'),
             newMessage: false,
             navigateToChat: () => {
@@ -146,6 +151,7 @@ const Share = ({navigation}) => {
             id: "abz123",
             price: 15000,
             status: "Delivered",
+            logistics: "Komitex",
             imageUrl: require('../assets/images/komitex.png'),
             newMessage: true,
             navigateToChat: () => {
@@ -171,6 +177,7 @@ const Share = ({navigation}) => {
             id: "dzf456",
             price: 13000,
             status: "Pending",
+            logistics: "Fedex",
             imageUrl: require('../assets/images/fedex.png'),
             newMessage: true,
             navigateToChat: () => {
@@ -195,6 +202,7 @@ const Share = ({navigation}) => {
             id: "gzi789",
             price: 14000,
             status: "Dispatched",
+            logistics: "Komitex",
             imageUrl: require('../assets/images/komitex.png'),
             newMessage: true,
             navigateToChat: () => {
@@ -219,6 +227,7 @@ const Share = ({navigation}) => {
             id: "mxo345",
             price: 16000,
             status: "Cancelled",
+            logistics: "Dhl",
             imageUrl: require('../assets/images/dhl.png'),
             newMessage: true,
             navigateToChat: () => {
@@ -243,6 +252,7 @@ const Share = ({navigation}) => {
             id: "pkr678",
             price: 12000,
             status: "Rescheduled",
+            logistics: "Ups",
             imageUrl: require('../assets/images/ups.png'),
             newMessage: false,
             navigateToChat: () => {
@@ -268,6 +278,7 @@ const Share = ({navigation}) => {
             id: "ztu901",
             price: 25000,
             status: "Delivered",
+            logistics: "Komitex",
             imageUrl: require('../assets/images/komitex.png'),
             newMessage: false,
             navigateToChat: () => {
@@ -292,6 +303,7 @@ const Share = ({navigation}) => {
             id: "vwj234",
             price: 18000,
             status: "Pending",
+            logistics: "Fedex",
             imageUrl: require('../assets/images/fedex.png'),
             newMessage: false,
             navigateToChat: () => {
