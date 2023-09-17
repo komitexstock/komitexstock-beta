@@ -102,32 +102,6 @@ const Waybill = ({navigation}) => {
         open: false,
     });
 
-    // use effect to close modal if 
-    // back button is pressed and modal is opened
-    useEffect(() => {
-        // function to run if back button is pressed
-        const backAction = () => {
-            // Run your function here
-            if (modal.overlay) {
-                // if modal is open, close modal
-                closeModal();
-                return true;
-            } else {
-                // if modal isnt open simply navigate back
-                return false;
-            }
-        };
-    
-        // listen for onPress back button
-        const backHandler = BackHandler.addEventListener(
-            'hardwareBackPress',
-            backAction
-        );
-    
-        return () => backHandler.remove();
-
-    }, [modal]);
-
     // close search modal bottomsheet function
     const closeModal = () => {
         modalRef.current?.close();
@@ -1357,7 +1331,37 @@ const Waybill = ({navigation}) => {
         ]);
     }, [getFilterValue("Status", "search"), getFilterValue("Logistics", "search"), getFilterValue("Period", "search"), searchQuery]);
 
-    // console.log(outgoingFilter);
+    // use effect to close modal if 
+    // back button is pressed and modal is opened
+    useEffect(() => {
+        // function to run if back button is pressed
+        const backAction = () => {
+            // Run your function here
+            if (calendar.open) {
+                closeCalendar();
+                return true;        
+            }else if (filter.open) {
+                closeFilter();
+                return true;
+            } else if (modal.overlay) {
+                // if modal is open, close modal
+                closeModal();
+                return true;
+            } else {
+                // if modal isnt open simply navigate back
+                return false;
+            }
+        };
+    
+        // listen for onPress back button
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction
+        );
+    
+        return () => backHandler.remove();
+
+    }, [modal, filter, calendar]);
 
 
     return (

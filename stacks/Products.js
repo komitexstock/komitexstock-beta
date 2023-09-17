@@ -7,7 +7,8 @@ import {
     TouchableWithoutFeedback,
     StyleSheet,
     BackHandler,
-    Animated
+    Animated,
+    Keyboard
 } from "react-native";
 // react hooks
 import { useState, useRef, useEffect } from "react";
@@ -23,13 +24,15 @@ import { background, black, bodyText, primaryColor, secondaryColor, white } from
 import StatWrapper from "../components/StatWrapper";
 import StatCard from "../components/StatCard";
 import CustomBottomSheet from "../components/CustomBottomSheet";
-import FilterButtonGroup from "../components/FilterButtonGroup";
 import SearchBar from "../components/SearchBar";
 import ProductCard from "../components/ProductCard";
 import AlertNotice from "../components/AlertNotice";
 import EditProductContent from "../components/EditProductContent";
 import ProductListItem from "../components/ProductListItem";
 import Header from "../components/Header";
+import FilterBottomSheet from "../components/FilterBottomSheet";
+import FilterButtonGroup from "../components/FilterButtonGroup";
+import FilterPill from "../components/FilterPill";
 import ModalButton from "../components/ModalButton";
 import Menu from "../components/Menu";
 import ImportInventory from "../assets/icons/ImportInventory";
@@ -173,6 +176,8 @@ const Products = ({navigation, route}) => {
         ...productsList,
     ]);
 
+    const [searchedProducts, setSearchedProducts] = useState([]);
+
     const [editProduct, setEditProduct] = useState({
         id: "",
         product_name: "",
@@ -276,7 +281,7 @@ const Products = ({navigation, route}) => {
 
     // open modal function
     const openModal = (type) => {
-        console.log("here");
+        // console.log("here");
         setModal(prevModal => {
             return {
                 ...prevModal,
@@ -297,7 +302,7 @@ const Products = ({navigation, route}) => {
 
     }
 
-    console.log(editProduct);
+    // console.log(editProduct);
 
     // function to update selected product
     const handleUpdateProduct = () => {
@@ -345,6 +350,449 @@ const Products = ({navigation, route}) => {
             useNativeDriver: false,
         }).start();
     }
+
+    // filter state
+    const [filter, setFilter] = useState({
+        open: false,
+        filterType: "products",
+    })
+
+    // filter bottom sheef ref
+    const filterSheetRef = useRef(null);
+
+    // open filter function
+    const openFilter = (filterType) => {
+        Keyboard.dismiss();
+        setFilter({
+            open: true,
+            filterType: filterType,
+        })
+        filterSheetRef.current?.present()
+    }
+    
+    const closeFilter = () => {
+        // close filter bottomsheet
+        filterSheetRef.current?.close()
+        setFilter({
+            ...filter,
+            open: false,
+        })
+    }
+
+    // function to apply filter
+    const handleApplyFilter = (filterType) => {
+        if (filterType !== "search") {
+            setFilterParameters(prevParamters => {
+                return prevParamters.map(filterParam => {
+                    const selectedButton = filterParam.buttons.filter(button => button.selected === true);
+                    // console.log(selectedButton);
+                    return {
+                        ...filterParam,
+                        value: selectedButton[0].text,
+                        default: selectedButton[0].text === "All" ? true : false, 
+                    }
+                })
+            });
+        } else {
+            setSearchFilterParameters(prevParamters => {
+                return prevParamters.map(filterParam => {
+                    const selectedButton = filterParam.buttons.filter(button => button.selected === true);
+                    // console.log(selectedButton);
+                    return {
+                        ...filterParam,
+                        value: selectedButton[0].text,
+                        default: selectedButton[0].text === "All" ? true : false, 
+                    }
+                })
+            });
+        }
+
+        closeFilter(); // pass true to not reset filter
+    }
+
+    const handleFilterParameters = (title, button, filterType) => {
+        if (filterType !== "search") {
+            setFilterParameters(prevParamters => {
+                return prevParamters.map(filterParam => {
+                    if (filterParam.title === title) {
+                        return {
+                            ...filterParam,
+                            buttons: filterParam.buttons.map(filterButton => {
+                                if (filterButton.text === button) {
+                                    return {
+                                        ...filterButton,
+                                        selected: true,
+                                    }
+                                } else {
+                                    return {
+                                        ...filterButton,
+                                        selected: false,
+                                    }
+                                }
+                            }),
+                        }
+                    } else {
+                        return {...filterParam}
+                    }
+                })
+            });
+        } else {
+            setSearchFilterParameters(prevParamters => {
+                return prevParamters.map(filterParam => {
+                    if (filterParam.title === title) {
+                        return {
+                            ...filterParam,
+                            buttons: filterParam.buttons.map(filterButton => {
+                                if (filterButton.text === button) {
+                                    return {
+                                        ...filterButton,
+                                        selected: true,
+                                    }
+                                } else {
+                                    return {
+                                        ...filterButton,
+                                        selected: false,
+                                    }
+                                }
+                            }),
+                        }
+                    } else {
+                        return {...filterParam}
+                    }
+                })
+            });
+        }
+    }
+    
+    const handleRemoveFilter = (title, filterType) => {
+        if (filterType !== "search") {
+            setFilterParameters(prevParamters => {
+                return prevParamters.map(filterParam => {
+                    if (filterParam.title === title) {
+                        return {
+                            ...filterParam,
+                            default: true,
+                            value: "All",
+                            buttons: filterParam.buttons.map(filterButton => {
+                                if (filterButton.text === "All") {
+                                    return {
+                                        ...filterButton,
+                                        selected: true,
+                                    }
+                                } else {
+                                    return {
+                                        ...filterButton,
+                                        selected: false,
+                                    }
+                                }
+                            }),
+                        }
+                    } else {
+                        return {...filterParam}
+                    }
+                })
+            });
+        } else {
+            setSearchFilterParameters(prevParamters => {
+                return prevParamters.map(filterParam => {
+                    if (filterParam.title === title) {
+                        return {
+                            ...filterParam,
+                            default: true,
+                            value: "All",
+                            buttons: filterParam.buttons.map(filterButton => {
+                                if (filterButton.text === "All") {
+                                    return {
+                                        ...filterButton,
+                                        selected: true,
+                                    }
+                                } else {
+                                    return {
+                                        ...filterButton,
+                                        selected: false,
+                                    }
+                                }
+                            }),
+                        }
+                    } else {
+                        return {...filterParam}
+                    }
+                })
+            });
+        }
+    }
+
+    // function to clearAll fiter
+    const handleClearAllFilter = (filterType) => {
+        if (filterType !== "search") {
+            // clear all filter
+            handleRemoveFilter("Period");
+            handleRemoveFilter("Status");
+            handleRemoveFilter("Logistics");
+        } else {
+            // clear all filter
+            handleRemoveFilter("Period", "search");
+            handleRemoveFilter("Status", "search");
+            handleRemoveFilter("Logistics", "search");
+        }
+        // close filter bottomsheet
+        closeFilter();
+    };
+
+    // filter order bottom sheet parameters
+    const [filterParameters, setFilterParameters] = useState([
+        {
+            title: "Warehouse",
+            value: "All",
+            default: true,
+            buttons: [
+                {
+                    text: "All",
+                    selected: true,
+                    onPress: () => {
+                        handleFilterParameters("Warehouse", "All")
+                    }
+                },
+                {
+                    text: "Warri",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Warehouse", "Warri")
+                    }
+                },
+                {
+                    text: "Asaba",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Warehouse", "Asaba")
+                    }
+                },
+                {
+                    text: "Benin",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Warehouse", "Benin")
+                    }
+                },
+                {
+                    text: "Sapele",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Warehouse", "Sapele")
+                    }
+                },
+                {
+                    text: "Abraka",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Warehouse", "Abraka")
+                    }
+                },
+            ]
+        },
+        {
+            title: "Quantity",
+            value: "All",
+            default: true,
+            buttons: [
+                {
+                    text: "All",
+                    selected: true,
+                    onPress: () => {
+                        handleFilterParameters("Quantity", "All")
+                    }
+                },
+                {
+                    text: "Healthy stock",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Quantity", "Healthy stock")
+                    }
+                },
+                {
+                    text: "Low stock",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Quantity", "Low stock")
+                    }
+                },
+                {
+                    text: "Empty stock",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Quantity", "Empty stock")
+                    }
+                },
+            ]
+        },
+        {
+            title: "Activity",
+            value: "All",
+            default: true,
+            buttons: [
+                {
+                    text: "All",
+                    selected: true,
+                    onPress: () => {
+                        handleFilterParameters("Activity", "All")
+                    }
+                },
+                {
+                    text: "Active products",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Activity", "Active products")
+                    }
+                },
+                {
+                    text: "Dormant products",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Activity", "Dormant products")
+                    }
+                },
+            ]
+        },
+    ]);
+
+    // filter order bottom sheet parameters
+    const [searchFilterParameters, setSearchFilterParameters] = useState([
+        {
+            title: "Warehouse",
+            value: "All",
+            default: true,
+            buttons: [
+                {
+                    text: "All",
+                    selected: true,
+                    onPress: () => {
+                        handleFilterParameters("Warehouse", "All", "search")
+                    }
+                },
+                {
+                    text: "Warri",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Warehouse", "Warri", "search")
+                    }
+                },
+                {
+                    text: "Asaba",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Warehouse", "Asaba", "search")
+                    }
+                },
+                {
+                    text: "Benin",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Warehouse", "Benin", "search")
+                    }
+                },
+                {
+                    text: "Sapele",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Warehouse", "Sapele", "search")
+                    }
+                },
+                {
+                    text: "Abraka",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Warehouse", "Abraka", "search")
+                    }
+                },
+            ]
+        },
+        {
+            title: "Quantity",
+            value: "All",
+            default: true,
+            buttons: [
+                {
+                    text: "All",
+                    selected: true,
+                    onPress: () => {
+                        handleFilterParameters("Quantity", "All", "search")
+                    }
+                },
+                {
+                    text: "Healthy stock",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Quantity", "Healthy stock", "search")
+                    }
+                },
+                {
+                    text: "Low stock",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Quantity", "Low stock", "search")
+                    }
+                },
+                {
+                    text: "Empty stock",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Quantity", "Empty stock", "search")
+                    }
+                },
+            ]
+        },
+        {
+            title: "Activity",
+            value: "All",
+            default: true,
+            buttons: [
+                {
+                    text: "All",
+                    selected: true,
+                    onPress: () => {
+                        handleFilterParameters("Activity", "All", "search")
+                    }
+                },
+                {
+                    text: "Active products",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Activity", "Active products", "search")
+                    }
+                },
+                {
+                    text: "Dormant products",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Activity", "Dormant products", "search")
+                    }
+                },
+            ]
+        },
+    ]);
+
+
+    // get filtervlaue
+    const getFilterValue = (title, filterType) => {
+        if (filterType !== "search") {
+            return filterParameters.find(filterParam => filterParam.title === title).value
+        } else {
+            return searchFilterParameters.find(filterParam => filterParam.title === title).value
+        }
+    }
+
+    useEffect(() => {
+        if (searchQuery === '') {
+            return setSearchedProducts([]);
+        }
+
+        const searchResult = productsList.filter(product => {
+            return product.product_name.toLowerCase().includes(searchQuery.toLowerCase());
+        });
+
+        setSearchedProducts(searchResult);
+
+    }, [searchQuery])
 
     // render Products page
     return (
@@ -419,33 +867,46 @@ const Products = ({navigation, route}) => {
                                 >
                                     <View style={style.headingWrapper}>
                                         <Text style={style.recentOrderHeadingText}>Products</Text>
+                                        <View style={style.iconsContainer}>
+                                            {/* open bottomsheet search modal */}
+                                            <TouchableOpacity 
+                                                style={style.menuIcon}
+                                                onPress={() => openModal("search")}
+                                            >
+                                                <SearchIcon />
+                                            </TouchableOpacity>
+                                            {/* open bottomsheet filter modal */}
+                                            <TouchableOpacity
+                                                style={style.menuIcon}
+                                                onPress={() => {openFilter("products")}}
+                                            >
+                                                <FilterIcon />
+                                            </TouchableOpacity>
+                                        </View>
                                     </View>
-                                    
+                                    {filterParameters.find(filterParam => filterParam.default === false) && (
+                                        <View style={style.filterPillWrapper}>
+                                            {filterParameters.map(filterParam => {
+                                                if (!filterParam.default) {
+                                                    if (filterParam.value !== "Custom period") {
+                                                        return (
+                                                            <FilterPill
+                                                                key={filterParam.title}
+                                                                text={filterParam.value}
+                                                                onPress={() => handleRemoveFilter(filterParam.title)}
+                                                                background={white}
+                                                            />
+                                                        )
+                                                    }
+                                                }
+                                            })}
+                                        </View>
+                                    )}
                                 </Animated.View>
                             )
                         } else if (item.id === "stickyRight") {
                             return (
-                                <Animated.View 
-                                    style={[
-                                        style.actionWrapper,
-                                        {elevation: shadowElevation}
-                                    ]}
-                                >
-                                    {/* open bottomsheet search modal */}
-                                    <TouchableOpacity 
-                                        style={style.menuIcon}
-                                        onPress={() => openModal("search")}
-                                    >
-                                        <SearchIcon />
-                                    </TouchableOpacity>
-                                    {/* open bottomsheet filter modal */}
-                                    <TouchableOpacity
-                                        style={style.menuIcon}
-                                        onPress={() => {}}
-                                    >
-                                        <FilterIcon />
-                                    </TouchableOpacity>
-                                </Animated.View>
+                                <View style={style.emptyView}/>   
                             )
                         } else {
                             return (
@@ -517,13 +978,33 @@ const Products = ({navigation, route}) => {
                 { modal.modalContent === "search" && (
                     <>
                         <SearchBar 
-                            placeholder={"Search orders"}
+                            placeholder={"Search prodcuts"}
                             searchQuery={searchQuery}
                             setSearchQuery={setSearchQuery}
                             backgroundColor={background}
+                            openFilter={() => openFilter("search")}
                         />
+                        
+                        {searchFilterParameters.find(filterParam => filterParam.default === false) && (
+                            <View style={style.searchFilterPillWrapper}>
+                                {searchFilterParameters.map(filterParam => {
+                                    if (!filterParam.default) {
+                                        if (filterParam.value !== "Custom period") {
+                                            return (
+                                                <FilterPill
+                                                    key={filterParam.title}
+                                                    text={filterParam.value}
+                                                    onPress={() => handleRemoveFilter(filterParam.title, "search")}
+                                                    background={background}
+                                                />
+                                            )
+                                        }
+                                    }
+                                })}
+                            </View>
+                        )}
                         <BottomSheetScrollView showsVerticalScrollIndicator={false} style={style.orderSearchResults}>
-                            {productsList.map(item => (
+                            {searchedProducts.map(item => (
                                 <ProductListItem 
                                     key={item.id}
                                     product_name={item.product_name}
@@ -531,6 +1012,7 @@ const Products = ({navigation, route}) => {
                                     price={item.price}
                                     imageUrl={item.imageUrl}
                                     onPress={item.onPress}
+                                    searchQuery={searchQuery}
                                 />
                             ))}
                         </BottomSheetScrollView>
@@ -550,6 +1032,30 @@ const Products = ({navigation, route}) => {
                 )}
                     
             </CustomBottomSheet>
+            {/* filter bottom sheet */}
+            <FilterBottomSheet 
+                fiterSheetRef={filterSheetRef}
+                closeFilter={closeFilter}
+                clearFilterFunction={handleClearAllFilter}
+                applyFilterFunction={filter.filterType === "search" ? () => handleApplyFilter("search") : handleApplyFilter}
+                height={"60%"}
+            >
+                {filter.filterType === "products" && filterParameters.map(item => (
+                    <FilterButtonGroup
+                        buttons={item.buttons}
+                        title={item.title}
+                        key={item.title}
+                    />
+                ))}
+
+                {filter.filterType === "search" && searchFilterParameters.map(item => (
+                    <FilterButtonGroup
+                        buttons={item.buttons}
+                        title={item.title}
+                        key={item.title}
+                    />
+                ))}
+            </FilterBottomSheet>
 
             {/* success alert to display on addproduct or edit product */}
             { alert.show && (
@@ -589,7 +1095,7 @@ const style = StyleSheet.create({
     listContainer: {
         display: "flex",
         flexDirection: "row",
-        alignItems: "center",
+        alignItems: "flex-start",
         justifyContent: "space-between",
         marginBottom: 16,
     },
@@ -636,19 +1142,41 @@ const style = StyleSheet.create({
         color: primaryColor,
     },
     recentOrderHeading: {
-        paddingLeft: 20,
-        flex: 1,
+        paddingHorizontal: 20,
+        width: '100%',
         display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
+        flexDirection: "column",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
         marginBottom: -16,
         paddingBottom: 10,
         backgroundColor: background,
     },
-    headingWrapper: {
+    filterPillWrapper: {
+        width: '100%',
         display: "flex",
-        justifyContent: 'center',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        alignItems: "center",
+        justifyContent: "flex-start",
+        gap: 8,
+    },
+    searchFilterPillWrapper: {
+        width: '100%',
+        display: "flex",
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        alignItems: "center",
+        justifyContent: "flex-start",
+        gap: 8,
+        marginBottom: 14,
+        marginTop: -4,
+    },
+    headingWrapper: {
+        width: "100%",
+        display: "flex",
+        flexDirection: 'row',
+        justifyContent: 'space-between',
         alignItems: "center",
         height: 24,
         marginBottom: 10,
@@ -658,17 +1186,16 @@ const style = StyleSheet.create({
         color: bodyText,
         fontSize: 12,
     },
-    actionWrapper: {
-        paddingBottom: 20,
-        marginBottom: -16,
-        flex: 1,        
-        backgroundColor: background,
-        paddingRight: 20,
+    emptyView: {
+        display: 'none',
+    },
+    iconsContainer: {
         display: "flex",
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "flex-end",
         gap: 10,
+        height: 24,
     },
     productCardWrapperLeft: {
         width: "50%",

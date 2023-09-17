@@ -4,14 +4,54 @@ import { TouchableOpacity, Image, View, Text, StyleSheet } from 'react-native';
 import { black, bodyText, white } from '../style/colors';
 // helpers
 import { windowWidth } from '../utils/helpers';
+// components
+import Mark from './Mark';
 
 // product list item that shows up in search results
-const ProductListItem = ({product_name, quantity, price, imageUrl, onPress}) => {
+const ProductListItem = ({product_name, quantity, price, imageUrl, onPress, searchQuery}) => {
     // product_name => string
     // quantity => int
     // price => float
     // imageUrl => string | pathToImage
     // onPress => function
+
+    const highlightSearchtext = (text) => {
+        if (!searchQuery) return text;
+
+        const searchIndex = text.toLowerCase().indexOf(searchQuery.toLowerCase());
+
+        if (searchIndex !== -1) {
+            let textArray = text.toLowerCase().split(searchQuery.toLowerCase());
+            const fullString = textArray.join(`%!#${searchQuery}%!#`)
+
+            textArray = fullString.split('%!#');
+            // console.log(textArray);
+
+            return textArray.map((text, index) => {
+                if (index % 2 === 0) {
+                    return (
+                        <Text 
+                            key={index} 
+                            style={index === 0 && {textTransform: 'capitalize'}}
+                            >
+                            {text}
+                        </Text>
+                    ) 
+                } else {
+                    return (
+                        <Text
+                            key={index}
+                            style={textArray[0] === "" && index === 1 && {textTransform: 'capitalize'}}
+                        >
+                            <Mark key={index}>{text.toLowerCase()}</Mark>
+                        </Text>
+                    )
+                }
+            })
+        } else {
+            return text
+        }
+    }
 
     // render ProductListItem component
     return (
@@ -30,7 +70,7 @@ const ProductListItem = ({product_name, quantity, price, imageUrl, onPress}) => 
             {/* product information */}
             <View style={style.orderInfo}>
                 <Text style={style.orderMainText}>
-                    {product_name}
+                    {highlightSearchtext(product_name)}
                 </Text>
                 <Text style={style.orderSubText}>
                     {quantity} &nbsp;
@@ -71,7 +111,7 @@ const style = StyleSheet.create({
         width: windowWidth - 194,
     },
     orderMainText: {
-        fontFamily: 'mulish-semibold',
+        fontFamily: 'mulish-regular',
         fontSize: 12,
         color: black,
         marginBottom: 4,

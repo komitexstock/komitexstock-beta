@@ -1105,7 +1105,7 @@ const Orders = ({navigation}) => {
         }
         // close filter bottomsheet
         closeFilter();
-    }
+    };
 
     // filter order bottom sheet parameters
     const [filterParameters, setFilterParameters] = useState([
@@ -1973,29 +1973,29 @@ const Orders = ({navigation}) => {
                         key={item.title}
                     />
                 ))}
-                    <View style={style.inputContainer}>
-                        {/* Start date */}
-                        <SelectInput 
-                            label={"Start Date"} 
-                            placeholder={"DD MMMM, YYYY"} 
-                            value={startDate}
-                            onPress={() => {openCalendar("StartDate")}}
-                            icon={<CalendarIcon />}
-                            active={activeStartDate}
-                            inputFor={"Date"}
-                        />
+                <View style={style.inputContainer}>
+                    {/* Start date */}
+                    <SelectInput 
+                        label={"Start Date"} 
+                        placeholder={"DD MMMM, YYYY"} 
+                        value={startDate}
+                        onPress={() => {openCalendar("StartDate")}}
+                        icon={<CalendarIcon />}
+                        active={activeStartDate}
+                        inputFor={"Date"}
+                    />
 
-                        {/* End date */}
-                        <SelectInput
-                            label={"End Date"}
-                            placeholder={"DD MMMM, YYYY"}
-                            value={endDate}
-                            onPress={() => {openCalendar("EndDate")}}
-                            icon={<CalendarIcon />}
-                            active={activeEndDate}
-                            inputFor={"Date"}
-                        />
-                    </View>
+                    {/* End date */}
+                    <SelectInput
+                        label={"End Date"}
+                        placeholder={"DD MMMM, YYYY"}
+                        value={endDate}
+                        onPress={() => {openCalendar("EndDate")}}
+                        icon={<CalendarIcon />}
+                        active={activeEndDate}
+                        inputFor={"Date"}
+                    />
+                </View>
             </FilterBottomSheet>
             {/* calnedar */}
             <CalendarSheet 
