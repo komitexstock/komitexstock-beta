@@ -93,6 +93,7 @@ const AddLogistics = ({navigation}) => {
                                 searchQuery={searchQuery}
                                 setSearchQuery={setSearchQuery}
                                 backgroundColor={white}
+                                disableFIlter={true}
                             />
                         </View>
                     }

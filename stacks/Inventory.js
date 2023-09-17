@@ -103,6 +103,7 @@ const Products = ({navigation}) => {
                                 searchQuery={searchQuery}
                                 setSearchQuery={setSearchQuery}
                                 backgroundColor={white}
+                                disableFIlter={true}
                             />
                             {/* navigate to AddLogistics page/stack */}
                             <TouchableOpacity 
