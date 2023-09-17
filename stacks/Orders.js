@@ -1661,7 +1661,7 @@ const Orders = ({navigation}) => {
         const yOffset = e.nativeEvent.contentOffset.y;
         // console.log(yOffset);
         Animated.timing(shadowElevation, {
-            toValue: yOffset > stickyHeaderOffset.current ? 2 : 0,
+            toValue: yOffset > stickyHeaderOffset.current ? 3 : 0,
             duration: 200,
             useNativeDriver: false,
         }).start();

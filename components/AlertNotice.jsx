@@ -24,17 +24,17 @@ const AlertNotice = ({type, text, closeAlert, show}) => {
             Animated.spring(top, {
                 toValue: 4,
                 useNativeDriver: false,
-                speed: 1,
-                bounciness: 5,
-                duration: 1000,
+                speed: 0.1,
+                bounciness: 2,
+                duration: 2000,
             }).start();
         } else {
             Animated.spring(top, {
                 toValue: 10,
                 useNativeDriver: false,
-                speed: 1,
-                bounciness: 5,
-                duration: 1000,
+                speed: 0.1,
+                bounciness: 2,
+                duration: 2000,
             }).start();
         }
     }, [show]);

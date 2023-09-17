@@ -46,12 +46,10 @@ import ProductListSummary from "../components/ProductListSummary";
 import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
 // colors
 import {
-    accent,
     background,
     black,
     bodyText,
     primaryColor,
-    receivedMessage,
     white,
     secondaryColor,
     accentLight,

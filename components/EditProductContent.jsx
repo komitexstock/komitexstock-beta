@@ -15,7 +15,7 @@ import { black, bodyText, primaryColor, secondaryColor, white } from "../style/c
 // components
 import Input from "../components/Input";
 // react hook
-import { useState } from "react";
+import { useState, useRef } from "react";
 // image picker method
 import * as ImagePicker from 'expo-image-picker';
 // icon
@@ -23,13 +23,13 @@ import GalleryBlackIcon from "../assets/icons/GalleryBlackIcon";
 import InfoIcon from "../assets/icons/InfoIcon";
 
 // Edit product modal content
-const EditProductContent = ({productId, handleUpdateProduct}) => {
+const EditProductContent = ({product_name, initialPrice, quantity, imageUrl, handleUpdateProduct}) => {
 
     // state to store product name
-    const [productName, setProductName] = useState("Maybach Sunglasses");
+    const [productName, setProductName] = useState(product_name);
 
     // state to store price value
-    const [price, setPrice] = useState(20000);
+    const [price, setPrice] = useState(initialPrice);
 
     // product name error
     const [errorProductName, setErrorProductName] = useState(false);
@@ -87,7 +87,7 @@ const EditProductContent = ({productId, handleUpdateProduct}) => {
                         <Image 
                             style={style.productImage}
                             source={!selectedImage ? 
-                                require('../assets/images/maybach-sunglasses.png') : 
+                                imageUrl : 
                                 {uri: selectedImage}
                             }
                         />
@@ -102,10 +102,10 @@ const EditProductContent = ({productId, handleUpdateProduct}) => {
                         <View style={style.productTextWrapper}>
                             <View>
                                 <Text style={style.productName}>
-                                    Maybach Sunglasses
+                                    {product_name}
                                 </Text>
                                 <Text style={style.productStock}>
-                                    7
+                                    {quantity}
                                     <Text style={style.faintText}> in stock</Text>
                                 </Text>
                                 <View style={style.lastDeliveryWrapper}>
@@ -113,12 +113,12 @@ const EditProductContent = ({productId, handleUpdateProduct}) => {
                                         <InfoIcon />
                                     </TouchableOpacity>
                                     <Text style={style.productStock}>
-                                        <Text style={style.faintText}>Last delivery </Text>
+                                        <Text style={style.faintText}>Last delivered </Text>
                                         yesterday
                                     </Text>
                                 </View>
                             </View>
-                            <Text style={style.productPrice}>₦20,000</Text>
+                            <Text style={style.productPrice}>₦{initialPrice.toLocaleString()}</Text>
                         </View>
                         <View style={style.inputContainer}>
                             {/* Product name input */}
@@ -195,6 +195,7 @@ const style = StyleSheet.create({
         width: '100%',
         height: 186,
         borderRadius: 12,
+        resizeMode: 'cover',
     },
     productTextWrapper: {
         width: '100%',

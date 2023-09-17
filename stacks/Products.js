@@ -6,10 +6,11 @@ import {
     TouchableOpacity, 
     TouchableWithoutFeedback,
     StyleSheet,
-    BackHandler
+    BackHandler,
+    Animated
 } from "react-native";
 // react hooks
-import { useState, useRef, useEffect, useLayoutEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 // icons
 import MenuIcon from "../assets/icons/MenuIcon";
 import SearchIcon from '../assets/icons/SearchIcon'
@@ -73,7 +74,7 @@ const Products = ({navigation, route}) => {
     ];
 
     // list of products
-    const products = [
+    const productsList = [
         {
             id: 1,
             product_name: "Maybach Sunglasses",
@@ -81,7 +82,7 @@ const Products = ({navigation, route}) => {
             price: 20000,
             imageUrl: require('../assets/images/maybach-sunglasses.png'),
             lowStock: false,
-            onPress: () => openModal("editProduct"),
+            onPress: () => handleEditProduct(1),
         },
         {
             id: 2,
@@ -90,7 +91,7 @@ const Products = ({navigation, route}) => {
             price: 33000,
             imageUrl: require('../assets/images/accurate-watch.png'),
             lowStock: false,
-            onPress: () => openModal("editProduct"),
+            onPress: () => handleEditProduct(2),
         },
         {
             id: 3,
@@ -99,7 +100,7 @@ const Products = ({navigation, route}) => {
             price: 35000,
             imageUrl: require('../assets/images/black-sketchers.png'),
             lowStock: true,
-            onPress: () => openModal("editProduct"),
+            onPress: () => handleEditProduct(3),
         },
         {
             id: 4,
@@ -108,7 +109,7 @@ const Products = ({navigation, route}) => {
             price: 40000,
             imageUrl: require('../assets/images/brown-clarks.png'),
             lowStock: false,
-            onPress: () => openModal("editProduct"),
+            onPress: () => handleEditProduct(4),
         },
         {
             id: 5,
@@ -117,7 +118,7 @@ const Products = ({navigation, route}) => {
             price: 25000,
             imageUrl: require('../assets/images/sneakers.png'),
             lowStock: true,
-            onPress: () => openModal("editProduct"),
+            onPress: () => handleEditProduct(5),
         },
         {
             id: 6,
@@ -126,9 +127,61 @@ const Products = ({navigation, route}) => {
             price: 32000,
             imageUrl: require('../assets/images/perfectly-useless-mornig-watch.png'),
             lowStock: false,
-            onPress: () => openModal("editProduct"),
+            onPress: () => handleEditProduct(6),
+        },
+        {
+            id: 7,
+            product_name: "Chaos Watch",
+            quantity: 15,
+            price: 30000,
+            imageUrl: require('../assets/images/Chaos-Window-Watch.jpg'),
+            lowStock: false,
+            onPress: () => handleEditProduct(7),
+        },
+        {
+            id: 8,
+            product_name: "Clarks Phantom",
+            quantity: 10,
+            price: 25000,
+            imageUrl: require('../assets/images/Clarks.jpg'),
+            lowStock: false,
+            onPress: () => handleEditProduct(8),
+        },
+        {
+            id: 9,
+            product_name: "Timberland",
+            quantity: 10,
+            price: 35000,
+            imageUrl: require('../assets/images/Timberland.jpg'),
+            lowStock: false,
+            onPress: () => handleEditProduct(9),
+        },
+        {
+            id: 10,
+            product_name: "Useless Afternoon Watch",
+            quantity: 19,
+            price: 32000,
+            imageUrl: require('../assets/images/useless-afternoon-watch.png'),
+            lowStock: false,
+            onPress: () => handleEditProduct(10),
         },
     ];
+
+    const [products, setProducts] = useState([
+        {id: "stickyLeft"},
+        {id: "stickyRight"},
+        ...productsList,
+    ]);
+
+    const [editProduct, setEditProduct] = useState({
+        id: "",
+        product_name: "",
+        quantity: 0,
+        price: 0,
+        imageUrl: "",
+    });
+
+    // console.log(editProduct);
 
     const [alert, setAlert] = useState({
         show: false,
@@ -145,34 +198,37 @@ const Products = ({navigation, route}) => {
         });
     }
 
-    // state to store edited products= parameter
-    const [editProduct, setEditProduct] = useState(false);
+    const openAlert = (type, text) => {
+        setAlert({
+            show: true,
+            type: type,
+            text: text
+        });
 
-    // modal state
-    const [modal, setModal] = useState({
-        snapPointsArray: ["50%"],
-        autoSnapAt: 0,
-        sheetTitle: "",
-        overlay: false,
-        clearFilterFunction: false,
-        modalContent: <></>
-    });
-
-    // use effect to remove add product or edit product success propmt after 3 seconds
-    useLayoutEffect(() => {
-
-        if (route.params) {
-            setMenu(false);
-            setAlert({
-                show: true,
-                type: route.params.type,
-                text: route.params.text
-            })
-        }
-        
+        // auto close alert after 4 seconds
         setTimeout(() => {
             closeAlert();
         }, 4000);
+    }
+
+    // modal state
+    const [modal, setModal] = useState({
+        snapPointsArray: ["100%"],
+        autoSnapAt: 0,
+        sheetTitle: "Edit Product",
+        overlay: false,
+        modalContent: 'edit'
+    });
+
+    // use effect to remove add product or edit product success propmt after 3 seconds
+    useEffect(() => {
+
+        if (route.params) {
+            setMenu(false);
+
+            openAlert(route.params.type, route.params.text);
+        }
+        
 
     }, [route.params]);
     
@@ -201,141 +257,11 @@ const Products = ({navigation, route}) => {
 
     }, [modal.overlay]);
 
-    // filter buttons
-    const filterButtons = [
-        {
-            id: 1,
-            title: "Status",
-            buttons: [
-                {
-                id: 1,
-                text: "All",
-                selected: true,
-                },
-                {
-                id: 2,
-                text: "Pending",
-                selected: false,
-                },
-                {
-                id: 3,
-                text: "Delivered",
-                selected: false,
-                },
-                {
-                id: 4,
-                text: "Cancelled",
-                selected: false,
-                },
-            ]
-        },
-        {
-            id: 2,
-            title: "Logistics",
-            buttons: [
-                {
-                id: 1,
-                text: "All",
-                selected: true,
-                },
-                {
-                id: 2,
-                text: "Komitex",
-                selected: false,
-                },
-                {
-                id: 3,
-                text: "Fedex",
-                selected: false,
-                },
-                {
-                id: 4,
-                text: "DHL",
-                selected: false,
-                },
-            ]
-        },
-        {
-            id: 3,
-            title: "Date",
-            buttons: [
-                {
-                id: 1,
-                text: "Today",
-                selected: true,
-                },
-                {
-                id: 2,
-                text: "Yesterday",
-                selected: false,
-                },
-                {
-                id: 3,
-                text: "Manual Selection",
-                selected: false,
-                },
-            ]
-        }
-    ];
-
     // state to store search query
     const [searchQuery, setSearchQuery] = useState("");
 
     // filter modal reference
     const modalRef = useRef(null);
-
-    // filter modal parameter
-    const filterModal = {
-        snapPointsArray: ["50%"],
-        autoSnapAt: 0,
-        sheetTitle: "Filter by",
-        overlay: true,
-        clearFilterFunction: () => {},
-        modalContent: <>
-            <View style={style.modalContent}>
-                {filterButtons.map(item => (
-                        <FilterButtonGroup
-                        buttons={item.buttons}
-                        title={item.title}
-                        key={item.id}
-                    />
-                ))}
-                <ModalButton
-                    name={"Apply"}
-                    onPress={() => {}}
-                />
-            </View>
-        </>
-    };
-
-    // search modal parameter
-    const searchModal = {
-        snapPointsArray: ["50%", "80%", "100%"],
-        autoSnapAt: 2,
-        sheetTitle: "Products",
-        overlay: true,
-        clearFilterFunction: false,
-        modalContent: <>
-            <SearchBar 
-                placeholder={"Search orders"}
-                searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
-                backgroundColor={"#f8f8f8"}
-            />
-            <BottomSheetScrollView style={style.orderSearchResults}>
-                {products.map(item => (
-                    <ProductListItem 
-                        key={item.id}
-                        product_name={item.product_name}
-                        quantity={item.quantity}
-                        price={item.price}
-                        imageUrl={item.imageUrl}
-                        onPress={item.onPress}
-                    />
-                ))}
-            </BottomSheetScrollView>
-        </>
-    };
 
     // close modal function
     const closeModal = () => {
@@ -350,47 +276,35 @@ const Products = ({navigation, route}) => {
 
     // open modal function
     const openModal = (type) => {
-        if (type === "filter") {
-            setModal({
-                ...filterModal
-            });
-            // if product is selected, set it
-        } else if (type === "search"){
-            setModal({
-                ...searchModal,
-            });
-        } else if (type === "editProduct"){
-            setModal({
-                ...editProductModal,
-            });
-        }
+        console.log("here");
+        setModal(prevModal => {
+            return {
+                ...prevModal,
+                overlay: true,
+                sheetTitle: type === "search" ? "Products" : "Edit Product",
+                modalContent: type
+            }
+        });
         modalRef.current?.present();
     }
 
-    // function to update selected product
-    const handleUpdateProduct = (productId, productName, price, imageUrl) => {
-        closeModal();
-        navigation.navigate("Products", {
-            show: true,
-            type: "Success",
-            text: "Product edited successfully!"
-        });
+    const handleEditProduct = (id) => {
+        // console.log("right here");
+        setEditProduct(() => {
+            return products.filter(product => product.id === id)[0];
+        }); // return first element of corresponding array
+        openModal("edit");
+
     }
 
-    // search modal state
-    const editProductModal = {
-        snapPointsArray: ["50%", "85%", "100%"],
-        autoSnapAt: 2,
-        sheetTitle: "",
-        overlay: true,
-        clearFilterFunction: false,
-        modalContent: <>
-            <EditProductContent 
-                handleUpdateProduct={handleUpdateProduct}
-            />        
-        </>
-    };
+    console.log(editProduct);
 
+    // function to update selected product
+    const handleUpdateProduct = () => {
+        closeModal();
+
+        openAlert("Success", "Product edited successfully!");
+    }
 
     // const menu state
     const [menu, setMenu] = useState(false);
@@ -415,30 +329,55 @@ const Products = ({navigation, route}) => {
         }
     ]
 
+    // sticky header offset
+    const stickyHeaderOffset = useRef(0);
+
+    const shadowElevation = useRef(new Animated.Value(0)).current;
+
+    // animated shadow when scroll height reaches sticky header
+    const animateHeaderOnScroll = (e) => {
+        // console.log(stickyHeaderOffset.current);
+        const yOffset = e.nativeEvent.contentOffset.y;
+        // console.log(yOffset);
+        Animated.timing(shadowElevation, {
+            toValue: yOffset > stickyHeaderOffset.current ? 3 : 0,
+            duration: 200,
+            useNativeDriver: false,
+        }).start();
+    }
+
     // render Products page
     return (
         <>
+            {/* header */}
+            <Header 
+                navigation={navigation}
+                stackName={
+                    <View style={style.header}>
+                        <Text style={style.headerText}>Komitex</Text>
+                        <VerifiedIcon />
+                    </View>
+                }
+                removeBackArrow={true}
+                inlineArrow={true}
+                icon={<MenuIcon />}
+                iconFunction={openMenu}
+                backgroundColor={background}
+            />
             <TouchableWithoutFeedback style={{flex: 1}}>
-                <FlatList 
+                <FlatList
+                    onScroll={animateHeaderOnScroll}
                     showsVerticalScrollIndicator={false}
+                    stickyHeaderIndices={[1]}
                     // list header component
                     ListHeaderComponent={
-                        <View style={style.headerWrapper}>
-                            {/* header */}
-                            <Header
-                                navigation={navigation}
-                                stackName={
-                                    <View style={style.header}>
-                                        <Text style={style.headerText}>Komitex</Text>
-                                        <VerifiedIcon />
-                                    </View>
-                                }
-                                removeBackArrow={true}
-                                inlineArrow={true}
-                                unpadded={true}
-                                icon={<MenuIcon />}
-                                iconFunction={openMenu}
-                            />
+                        <View 
+                            style={style.headerWrapper}
+                            onLayout={e => {
+                                stickyHeaderOffset.current = e.nativeEvent.layout.height + 57;
+                                // where 57 is the height of the Header component
+                            }}
+                        >
                             {/* stats */}
                             <StatWrapper>
                                 {stats.map(stat => (
@@ -460,9 +399,38 @@ const Products = ({navigation, route}) => {
                                     <Text style={style.orderButtonText}>Add Product</Text>
                                 </TouchableOpacity>
                             )}
-                            <View style={style.recentOrderHeading}>
-                                <Text style={style.recentOrderHeadingText}>Products</Text>
-                                <View style={style.actionWrapper}>
+                        </View>
+                    }
+                    contentContainerStyle={style.contentContainer}
+                    columnWrapperStyle={products.length !== 0 ? style.listContainer : null}
+                    style={style.listWrapper}
+                    keyExtractor={item => item.id}
+                    data={products}
+                    // render items in two rows if theres data, else one row
+                    numColumns={products.length !== 0 ? 2 : 1}
+                    renderItem={({ item, index }) => {
+                        if (item.id === "stickyLeft") {
+                            return (
+                                <Animated.View 
+                                    style={[
+                                        style.recentOrderHeading,
+                                        {elevation: shadowElevation}
+                                    ]}
+                                >
+                                    <View style={style.headingWrapper}>
+                                        <Text style={style.recentOrderHeadingText}>Products</Text>
+                                    </View>
+                                    
+                                </Animated.View>
+                            )
+                        } else if (item.id === "stickyRight") {
+                            return (
+                                <Animated.View 
+                                    style={[
+                                        style.actionWrapper,
+                                        {elevation: shadowElevation}
+                                    ]}
+                                >
                                     {/* open bottomsheet search modal */}
                                     <TouchableOpacity 
                                         style={style.menuIcon}
@@ -473,32 +441,33 @@ const Products = ({navigation, route}) => {
                                     {/* open bottomsheet filter modal */}
                                     <TouchableOpacity
                                         style={style.menuIcon}
-                                        onPress={() => openModal("filter")}
+                                        onPress={() => {}}
                                     >
                                         <FilterIcon />
                                     </TouchableOpacity>
+                                </Animated.View>
+                            )
+                        } else {
+                            return (
+                                <View 
+                                    style={[
+                                        index % 2 === 0 && style.productCardWrapperLeft,
+                                        index % 2 === 1 && style.productCardWrapperRight,
+                                    ]}
+                                >
+                                    <ProductCard
+                                        product_name={item.product_name}
+                                        quantity={item.quantity}
+                                        price={item.price}
+                                        imageUrl={item.imageUrl}
+                                        lowStock={item.lowStock}
+                                        onPress={item.onPress}
+                                    />
                                 </View>
-                            </View>
-                        </View>
-                    }
-                    contentContainerStyle={style.contentContainer}
-                    columnWrapperStyle={products.length !== 0 ? style.listContainer : null}
-                    style={style.listWrapper}
-                    keyExtractor={item => item.id}
-                    data={products}
-                    // render items in two rows if theres data, else one row
-                    numColumns={products.length !== 0 ? 2 : 1}
-                    renderItem={({ item }) => (
+                            )
+                        }
                         // product card
-                        <ProductCard 
-                            product_name={item.product_name}
-                            quantity={item.quantity}
-                            price={item.price}
-                            imageUrl={item.imageUrl}
-                            lowStock={item.lowStock}
-                            onPress={item.onPress}
-                        />
-                    )}
+                    }}
                     ListFooterComponent={products.length === 0 && (
                         <View style={style.noProductsContainer}>
                             <View style={style.noProductTextWrapper}>
@@ -539,22 +508,56 @@ const Products = ({navigation, route}) => {
             <CustomBottomSheet 
                 bottomSheetModalRef={modalRef}
                 showOverlay={modal.overlay}
-                closeModal={() => closeModal("filter")}
+                closeModal={closeModal}
                 snapPointsArray={modal.snapPointsArray}
                 autoSnapAt={modal.autoSnapAt}
                 sheetTitle={ modal.sheetTitle }
-                clearFilterFunction={modal.clearFilterFunction}
+                disablePanToClose={modal.modalContent === "search" ? true : false}
             >
-                { modal.modalContent }
+                { modal.modalContent === "search" && (
+                    <>
+                        <SearchBar 
+                            placeholder={"Search orders"}
+                            searchQuery={searchQuery}
+                            setSearchQuery={setSearchQuery}
+                            backgroundColor={background}
+                        />
+                        <BottomSheetScrollView showsVerticalScrollIndicator={false} style={style.orderSearchResults}>
+                            {productsList.map(item => (
+                                <ProductListItem 
+                                    key={item.id}
+                                    product_name={item.product_name}
+                                    quantity={item.quantity}
+                                    price={item.price}
+                                    imageUrl={item.imageUrl}
+                                    onPress={item.onPress}
+                                />
+                            ))}
+                        </BottomSheetScrollView>
+                    </>
+                )}
+
+                { modal.modalContent === "edit" && (
+                    <>
+                        <EditProductContent 
+                            handleUpdateProduct={handleUpdateProduct}
+                            product_name={editProduct.product_name}
+                            quantity={editProduct.quantity}
+                            imageUrl={editProduct.imageUrl}
+                            initialPrice={editProduct.price}
+                        />
+                    </>
+                )}
+                    
             </CustomBottomSheet>
 
             {/* success alert to display on addproduct or edit product */}
             { alert.show && (
                 <AlertNotice 
+                    show={alert.show}
                     type={alert.type}
                     text={alert.text}
                     closeAlert={closeAlert}
-                    show={alert.show}
                 />
             )}
 
@@ -580,20 +583,20 @@ const style = StyleSheet.create({
     listWrapper: {
         width: "100%",
         height: "100%",
-        paddingHorizontal: 20,
         marginBottom: 70,
         backgroundColor: background,
     },
     listContainer: {
         display: "flex",
         flexDirection: "row",
-        gap: 16,
         alignItems: "center",
         justifyContent: "space-between",
         marginBottom: 16,
     },
     headerWrapper: {
         width: "100%",
+        paddingBottom: 30,
+        paddingHorizontal: 20,
     },
     header: {
         display: "flex",
@@ -633,14 +636,22 @@ const style = StyleSheet.create({
         color: primaryColor,
     },
     recentOrderHeading: {
-        width: "100%",
+        paddingLeft: 20,
+        flex: 1,
         display: "flex",
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
+        marginBottom: -16,
+        paddingBottom: 10,
+        backgroundColor: background,
+    },
+    headingWrapper: {
+        display: "flex",
+        justifyContent: 'center',
+        alignItems: "center",
         height: 24,
-        marginTop: 30,
-        marginBottom: 20,
+        marginBottom: 10,
     },
     recentOrderHeadingText: {
         fontFamily: "mulish-bold",
@@ -648,11 +659,26 @@ const style = StyleSheet.create({
         fontSize: 12,
     },
     actionWrapper: {
+        paddingBottom: 20,
+        marginBottom: -16,
+        flex: 1,        
+        backgroundColor: background,
+        paddingRight: 20,
         display: "flex",
         flexDirection: "row",
         alignItems: "center",
-        justifyContent: "center",
+        justifyContent: "flex-end",
         gap: 10,
+    },
+    productCardWrapperLeft: {
+        width: "50%",
+        paddingRight: 8,
+        paddingLeft: 20,
+    },
+    productCardWrapperRight: {
+        width: "50%",
+        paddingRight: 20,
+        paddingLeft: 8,
     },
     modalContent: {
         display: "flex",

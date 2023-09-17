@@ -55,8 +55,9 @@ const ProductCard = ({product_name, quantity, price, imageUrl, lowStock, onPress
 // stylesheet
 const style = StyleSheet.create({
     productCard: {
-        minWidth: "40%",
-        maxWidth: "50%",
+        // minWidth: "40%",
+        // maxWidth: "50%",
+        width: "100%",
         height: 150,
         backgroundColor: white,
         borderRadius: 12,
@@ -84,7 +85,7 @@ const style = StyleSheet.create({
         height: "100%",
         borderTopLeftRadius: 12,
         borderTopRightRadius: 12,
-        resizeMode: "contain",
+        resizeMode: "cover",
     },
     textWrapper: {
         padding: 10,    
