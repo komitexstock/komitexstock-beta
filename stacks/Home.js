@@ -36,10 +36,9 @@ import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { accentLight, background, black, bodyText, greenLight, primaryColor, secondaryColor, white, yellowLight } from "../style/colors";
 // moment
 import moment from "moment";
-// skeleton components
-import { createShimmerPlaceholder } from "react-native-shimmer-placeholder";
-import { LinearGradient } from "expo-linear-gradient";
-import ShimmerPlaceHolder from "react-native-shimmer-placeholder";
+// home skeleton
+import HomeSkeleton from "../skeletons/HomeSkeleton";
+
 
 const Home = ({navigation}) => {
       
@@ -160,9 +159,13 @@ const Home = ({navigation}) => {
         }
     ];
 
-    const Skeleton = createShimmerPlaceholder(LinearGradient);
+    const [pageLoading, setPageLoading] = useState(true);
 
-    const [pageLoading, setPageLoading] = useState(false);
+    useEffect(() => {
+        setTimeout(() => {
+            setPageLoading(false);
+        }, 3000);
+    })
 
     // orders full list
     const orderList = [
@@ -1571,7 +1574,8 @@ const Home = ({navigation}) => {
     // render Home page
     return (
         <>
-            {!pageLoading && (
+            {/* if screen is loading render skeleton else render screen */}
+            {!pageLoading ? (
                 <TouchableWithoutFeedback 
                     onPress={() => Keyboard.dismiss()}
                 >
@@ -1675,21 +1679,7 @@ const Home = ({navigation}) => {
                         </View>
                     </ScrollView>
                 </TouchableWithoutFeedback>
-            )}
-
-            {pageLoading && (
-                <>
-                    {/* <ShimmerPlaceHolder
-                        LinearGradient={LinearGradient}
-                        visible={false}
-                    /> */}
-                    <Skeleton 
-                        height={100}
-                        width={100}
-                        style={{borderRadius: 50}}
-                    />
-                </>
-            )}
+            ) : <HomeSkeleton />}
             {/* bottomsheet */}
             <CustomBottomSheet
                 bottomSheetModalRef={bottomSheetModalRef}

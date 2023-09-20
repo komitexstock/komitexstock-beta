@@ -7,9 +7,8 @@ import {
     TouchableOpacity,
     Image,
     Dimensions,
-    LayoutAnimation,
-    UIManager,
     Linking,
+    BackHandler
 } from "react-native";
 // colors
 import {
@@ -36,7 +35,7 @@ import EmailIcon from "../assets/icons/EmailIcon";
 import PhoneIcon from "../assets/icons/PhoneIcon";
 import LocationIcon from "../assets/icons/LocationIcon";
 // react hooks
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 
 // windows width
 const windowsHeight = Dimensions.get("window").height;
@@ -442,30 +441,51 @@ const DeactivateLogistics = ({navigation}) => {
     // popUp modal ref
     const popUpBottomSheetModalRef = useRef(null);
 
+    const [popUpModalOpen, setPopUpModalOpen] = useState(false);
+
     // state to control popupModal snap points array
     const [snapPointsArray, setSnapPointsArray] = useState(["45%"])
 
     // close popup modal bottomsheet function
     const closePopUpModal = () => {
+        setPopUpModalOpen(false);
         popUpBottomSheetModalRef.current?.close();
     };
     // function to open bottom sheet modal
     const openPopUpModal = () => {
+        setPopUpModalOpen(true);
         popUpBottomSheetModalRef.current?.present();
     }
-
-    const handleAddLogisticsSuccess = () => {
-        closePopUpModal();
-        setTimeout(() => {
-            navigation.navigate("Inventory");
-        }, 1000);
-    }
-
     // function to confirm deactivation of logistics
     const handleDeactivation = () => {
         setSnapPointsArray(["38%"])
         setConfirmDeactivation(true);
     }
+
+    // use effect to close modal
+    useEffect(() => {
+        // function to run if back button is pressed
+        const backAction = () => {
+            // Run your function here
+            if (popUpModalOpen) {
+                // if modal is open, close modal
+                closePopUpModal();
+                return true;
+            } else {
+                // if modal isnt open simply navigate back
+                return false;
+            }
+        };
+    
+        // listen for onPress back button
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction
+        );
+    
+        return () => backHandler.remove();
+
+    }, [popUpModalOpen]);
     
     // render DeactivateLogistics page
     return (
