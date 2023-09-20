@@ -36,6 +36,8 @@ import FilterPill from "../components/FilterPill";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 // moment
 import moment from "moment";
+// skeleton screen
+import OrdersSkeleton from "../skeletons/OrdersSkeleton";
 
 const Orders = ({navigation}) => {
 
@@ -923,6 +925,15 @@ const Orders = ({navigation}) => {
             },
         },
     ];
+
+    // state to indicate page loading
+    const [pageLoading, setPageLoading] = useState(true);
+
+    useEffect(() => {
+        setTimeout(() => {
+            setPageLoading(false);
+        }, 3000);   
+    })
     
     // function to apply filter
     const handleApplyFilter = (filterType) => {
@@ -1776,125 +1787,128 @@ const Orders = ({navigation}) => {
 
     return (
         <>
-            {/* Header component */}
-            <Header
-                navigation={navigation}
-                stackName={"Orders"}
-                removeBackArrow={true}
-                icon={<MenuIcon />}
-                iconFunction={() => {}}
-                backgroundColor={background}
-            />
-            <TouchableWithoutFeedback style={{flex: 1}}>
-                <FlatList 
-                    // onscroll event run function
-                    onScroll={animateHeaderOnScroll}
-                    // disable flatlist vertical scroll indicator
-                    showsVerticalScrollIndicator={false}
-                    stickyHeaderIndices={[1]}
-                    // flat list header component
-                    ListHeaderComponent={
-                        <View 
-                            style={style.headerWrapper}
-                            onLayout={e => {
-                                stickyHeaderOffset.current = e.nativeEvent.layout.height + 57;
-                                // where 57 is the height of the Header component
-                            }}
-                        >
-                            <StatWrapper>
-                                {stats.map(stat => (
-                                    <StatCard
-                                        key={stat.id}
-                                        title={stat.title}
-                                        presentValue={stat.presentValue}
-                                        oldValue={stat.oldValue}
-                                        decimal={stat.decimal}
-                                        unit={stat.unit}
-                                        unitPosition={stat.unitPosition}
-                                    />
-                                ))}
-                            </StatWrapper>
-                            {/* onPress navigate to sendOrder page */}
-                            <TouchableOpacity 
-                                style={style.sendOrderButton}
-                                onPress={() => navigation.navigate("SendOrder")}
-                            >
-                                <Text style={style.orderButtonText}>Send an Order</Text>
-                            </TouchableOpacity>
-                        </View>
-                    }
-                    // pad the bottom due to presence of a bottom nav
-                    contentContainerStyle={{paddingBottom: 90}}
-                    style={style.listWrapper}
-                    keyExtractor={item => item.id}
-                    data={orders}
-                    renderItem={({ item, index }) => {
-                        // console.log(index);
-                        if (item.id === "sticky") {
-                            return (
-                                <Animated.View
-                                    style={[
-                                        style.stickyBar,
-                                        {elevation: shadowElevation}
-                                    ]}
-                                >
-                                    <View style={style.recentOrderHeading}>
-                                        <View style={style.recentOrderTextWrapper}>
-                                            <Text style={style.recentOrderHeadingText}>Recent Orders</Text>
-                                            {/* badge showing numbers of unread orders */}
-                                            <Badge number={orders.filter(order => order.newMessage).length} />
-                                        </View>
-                                        <View style={style.actionWrapper}>
-                                            {/* search button to trigger search bottomsheet */}
-                                            <TouchableOpacity 
-                                                style={style.menuIcon}
-                                                onPress={() => openModal("search")}
-                                                >
-                                                <SearchIcon />
-                                            </TouchableOpacity>
-                                            {/* filter button to trigger filter bottomsheet */}
-                                            <TouchableOpacity
-                                                style={style.menuIcon}
-                                                onPress={() => openFilter("home")}
-                                            >
-                                                <FilterIcon />
-                                            </TouchableOpacity>
-                                        </View>
-                                    </View>
-                                    <View style={style.orderPillWrapper}>
-                                        {filterParameters.map(filterParam => {
-                                            if (!filterParam.default) {
-                                                if (filterParam.value !== "Custom period") {
-                                                    return (
-                                                        <FilterPill
-                                                            key={filterParam.title}
-                                                            text={filterParam.value}
-                                                            onPress={() => handleRemoveFilter(filterParam.title)}
-                                                            background={white}
-                                                        />
-                                                    )
-                                                }
-                                            }
-                                        })}
-
-                                    </View>
-                                </Animated.View>
-                            )
-                        }
-                        return (
-                            <View style={style.orderWrapper}>
-                                <OrderListItem 
-                                    item={item} 
-                                    index={index} 
-                                    lastOrder={orders.length - 1}
-                                    firstOrder={1}
-                                    extraVerticalPadding={true} 
-                                />
-                            </View>
-                        )
-                    }}
+            {!pageLoading ? (<>
+                <Header
+                    navigation={navigation}
+                    stackName={"Orders"}
+                    removeBackArrow={true}
+                    icon={<MenuIcon />}
+                    iconFunction={() => {}}
+                    backgroundColor={background}
                 />
-            </TouchableWithoutFeedback>
+                {/* page content */}
+                <TouchableWithoutFeedback style={{flex: 1}}>
+                    <FlatList 
+                        // onscroll event run function
+                        onScroll={animateHeaderOnScroll}
+                        // disable flatlist vertical scroll indicator
+                        showsVerticalScrollIndicator={false}
+                        stickyHeaderIndices={[1]}
+                        // flat list header component
+                        ListHeaderComponent={
+                            <View 
+                                style={style.headerWrapper}
+                                onLayout={e => {
+                                    stickyHeaderOffset.current = e.nativeEvent.layout.height + 57;
+                                    // where 57 is the height of the Header component
+                                }}
+                            >
+                                <StatWrapper>
+                                    {stats.map(stat => (
+                                        <StatCard
+                                            key={stat.id}
+                                            title={stat.title}
+                                            presentValue={stat.presentValue}
+                                            oldValue={stat.oldValue}
+                                            decimal={stat.decimal}
+                                            unit={stat.unit}
+                                            unitPosition={stat.unitPosition}
+                                        />
+                                    ))}
+                                </StatWrapper>
+                                {/* onPress navigate to sendOrder page */}
+                                <TouchableOpacity 
+                                    style={style.sendOrderButton}
+                                    onPress={() => navigation.navigate("SendOrder")}
+                                >
+                                    <Text style={style.orderButtonText}>Send an Order</Text>
+                                </TouchableOpacity>
+                            </View>
+                        }
+                        // pad the bottom due to presence of a bottom nav
+                        contentContainerStyle={{paddingBottom: 90}}
+                        style={style.listWrapper}
+                        keyExtractor={item => item.id}
+                        data={orders}
+                        renderItem={({ item, index }) => {
+                            // console.log(index);
+                            if (item.id === "sticky") {
+                                return (
+                                    <Animated.View
+                                        style={[
+                                            style.stickyBar,
+                                            {elevation: shadowElevation}
+                                        ]}
+                                    >
+                                        <View style={style.recentOrderHeading}>
+                                            <View style={style.recentOrderTextWrapper}>
+                                                <Text style={style.recentOrderHeadingText}>Recent Orders</Text>
+                                                {/* badge showing numbers of unread orders */}
+                                                <Badge number={orders.filter(order => order.newMessage).length} />
+                                            </View>
+                                            <View style={style.actionWrapper}>
+                                                {/* search button to trigger search bottomsheet */}
+                                                <TouchableOpacity 
+                                                    style={style.menuIcon}
+                                                    onPress={() => openModal("search")}
+                                                    >
+                                                    <SearchIcon />
+                                                </TouchableOpacity>
+                                                {/* filter button to trigger filter bottomsheet */}
+                                                <TouchableOpacity
+                                                    style={style.menuIcon}
+                                                    onPress={() => openFilter("home")}
+                                                >
+                                                    <FilterIcon />
+                                                </TouchableOpacity>
+                                            </View>
+                                        </View>
+                                        <View style={style.orderPillWrapper}>
+                                            {filterParameters.map(filterParam => {
+                                                if (!filterParam.default) {
+                                                    if (filterParam.value !== "Custom period") {
+                                                        return (
+                                                            <FilterPill
+                                                                key={filterParam.title}
+                                                                text={filterParam.value}
+                                                                onPress={() => handleRemoveFilter(filterParam.title)}
+                                                                background={white}
+                                                            />
+                                                        )
+                                                    }
+                                                }
+                                            })}
+
+                                        </View>
+                                    </Animated.View>
+                                )
+                            }
+                            return (
+                                <View style={style.orderWrapper}>
+                                    <OrderListItem 
+                                        item={item} 
+                                        index={index} 
+                                        lastOrder={orders.length - 1}
+                                        firstOrder={1}
+                                        extraVerticalPadding={true} 
+                                    />
+                                </View>
+                            )
+                        }}
+                    />
+                </TouchableWithoutFeedback>
+            </>) : <OrdersSkeleton />}
+            {/* Header component */}
             {/* bottom sheet */}
             <CustomBottomSheet 
                 bottomSheetModalRef={modalRef}
