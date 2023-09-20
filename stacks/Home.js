@@ -1546,8 +1546,12 @@ const Home = ({navigation}) => {
         // function to run if back button is pressed
         const backAction = () => {
             // Run your function here
-            // if filter bottomsheet is opem
-            if (filter.open) {
+            // if filter bottomsheet is open
+            if (calendar.open) {
+                // close filter bottomsheet 
+                closeCalendar();
+                return true;
+            } else if (filter.open) {
                 // close filter bottomsheet 
                 closeFilter();
                 return true;
@@ -1569,7 +1573,7 @@ const Home = ({navigation}) => {
     
         return () => backHandler.remove();
 
-    }, [showOverlay, filter]);
+    }, [showOverlay, filter, calendar]);
 
     // render Home page
     return (

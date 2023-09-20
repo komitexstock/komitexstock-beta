@@ -40,6 +40,8 @@ import ImportInventory from "../assets/icons/ImportInventory";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 // helpers
 import { windowHeight } from "../utils/helpers";
+// skeleton screen
+import ProductsSkeleton from "../skeletons/ProductsSkeleton";
 
 
 const Products = ({navigation, route}) => {
@@ -165,6 +167,15 @@ const Products = ({navigation, route}) => {
         {id: "stickyRight"},
         ...productsList,
     ]);
+
+    useEffect(() => {
+        setTimeout(() => {
+            setPageLoading(false);
+        }, 2000);
+    })
+
+    // state to indicate loading state
+    const [pageLoading, setPageLoading] = useState(true);
 
     const [searchedProducts, setSearchedProducts] = useState([]);
 
@@ -787,173 +798,175 @@ const Products = ({navigation, route}) => {
     // render Products page
     return (
         <>
-            {/* header */}
-            <Header 
-                navigation={navigation}
-                stackName={
-                    <View style={style.header}>
-                        <Text style={style.headerText}>Komitex</Text>
-                        <VerifiedIcon />
-                    </View>
-                }
-                removeBackArrow={true}
-                inlineArrow={true}
-                icon={<MenuIcon />}
-                iconFunction={openMenu}
-                backgroundColor={background}
-            />
-            <TouchableWithoutFeedback style={{flex: 1}}>
-                <FlatList
-                    onScroll={animateHeaderOnScroll}
-                    showsVerticalScrollIndicator={false}
-                    stickyHeaderIndices={[1]}
-                    // list header component
-                    ListHeaderComponent={
-                        <View 
-                            style={style.headerWrapper}
-                            onLayout={e => {
-                                stickyHeaderOffset.current = e.nativeEvent.layout.height + 57;
-                                // where 57 is the height of the Header component
-                            }}
-                        >
-                            {/* stats */}
-                            <StatWrapper>
-                                {stats.map(stat => (
-                                    <StatCard
-                                        key={stat.id}
-                                        title={stat.title}
-                                        presentValue={stat.presentValue}
-                                        oldValue={stat.oldValue}
-                                        decimal={stat.decimal}
-                                    />
-                                ))}
-                            </StatWrapper>
-                            {/* Navigate to addproducts page/stack */}
-                            {products.length !== 0 && (
-                                <TouchableOpacity 
-                                    style={style.addProductButton}
-                                    onPress={() => navigation.navigate("AddProduct")}
-                                >
-                                    <Text style={style.orderButtonText}>Add Product</Text>
-                                </TouchableOpacity>
-                            )}
+            {!pageLoading ? <>
+                {/* header */}
+                <Header 
+                    navigation={navigation}
+                    stackName={
+                        <View style={style.header}>
+                            <Text style={style.headerText}>Komitex</Text>
+                            <VerifiedIcon />
                         </View>
                     }
-                    contentContainerStyle={style.contentContainer}
-                    columnWrapperStyle={products.length !== 0 ? style.listContainer : null}
-                    style={style.listWrapper}
-                    keyExtractor={item => item.id}
-                    data={products}
-                    // render items in two rows if theres data, else one row
-                    numColumns={products.length !== 0 ? 2 : 1}
-                    renderItem={({ item, index }) => {
-                        if (item.id === "stickyLeft") {
-                            return (
-                                <Animated.View 
-                                    style={[
-                                        style.recentOrderHeading,
-                                        {elevation: shadowElevation}
-                                    ]}
-                                >
-                                    <View style={style.headingWrapper}>
-                                        <Text style={style.recentOrderHeadingText}>Products</Text>
-                                        <View style={style.iconsContainer}>
-                                            {/* open bottomsheet search modal */}
-                                            <TouchableOpacity 
-                                                style={style.menuIcon}
-                                                onPress={() => openModal("search")}
-                                            >
-                                                <SearchIcon />
-                                            </TouchableOpacity>
-                                            {/* open bottomsheet filter modal */}
-                                            <TouchableOpacity
-                                                style={style.menuIcon}
-                                                onPress={() => {openFilter("products")}}
-                                            >
-                                                <FilterIcon />
-                                            </TouchableOpacity>
-                                        </View>
-                                    </View>
-                                    {filterParameters.find(filterParam => filterParam.default === false) && (
-                                        <View style={style.filterPillWrapper}>
-                                            {filterParameters.map(filterParam => {
-                                                if (!filterParam.default) {
-                                                    if (filterParam.value !== "Custom period") {
-                                                        return (
-                                                            <FilterPill
-                                                                key={filterParam.title}
-                                                                text={filterParam.value}
-                                                                onPress={() => handleRemoveFilter(filterParam.title)}
-                                                                background={white}
-                                                            />
-                                                        )
-                                                    }
-                                                }
-                                            })}
-                                        </View>
-                                    )}
-                                </Animated.View>
-                            )
-                        } else if (item.id === "stickyRight") {
-                            return (
-                                <View style={style.emptyView}/>   
-                            )
-                        } else {
-                            return (
-                                <View 
-                                    style={[
-                                        index % 2 === 0 && style.productCardWrapperLeft,
-                                        index % 2 === 1 && style.productCardWrapperRight,
-                                    ]}
-                                >
-                                    <ProductCard
-                                        product_name={item.product_name}
-                                        quantity={item.quantity}
-                                        price={item.price}
-                                        imageUrl={item.imageUrl}
-                                        onPress={item.onPress}
-                                    />
-                                </View>
-                            )
-                        }
-                        // product card
-                    }}
-                    ListFooterComponent={products.length === 0 && (
-                        <View style={style.noProductsContainer}>
-                            <View style={style.noProductTextWrapper}>
-                                <AddProduct />
-                                <Text style={style.noProductHeading}>No products in inventory... yet!</Text>
-                                <Text style={style.noProductParagraph}>
-                                    Start by adding your first product. You could as well import from an already existing inventory
-                                </Text>
-                            </View>
-                            <TouchableOpacity 
-                                style={[
-                                    style.addProductButton, 
-                                    {
-                                        backgroundColor: primaryColor,
-                                        marginTop: 0,
-                                    }
-                                ]}
-                                onPress={() => navigation.navigate("AddProduct")}
-                            >
-                                <Text style={[style.orderButtonText, {color: white}]}>Add Product</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity 
-                                style={[
-                                    style.addProductButton, 
-                                    {
-                                        marginTop: 0,
-                                    }
-                                ]}
-                                onPress={() => navigation.navigate("ImportInventory")}
-                            >
-                                <Text style={style.orderButtonText}>Import Inventory</Text>
-                            </TouchableOpacity>
-                        </View>
-                    )}
+                    removeBackArrow={true}
+                    inlineArrow={true}
+                    icon={<MenuIcon />}
+                    iconFunction={openMenu}
+                    backgroundColor={background}
                 />
-            </TouchableWithoutFeedback>
+                <TouchableWithoutFeedback style={{flex: 1}}>
+                    <FlatList
+                        onScroll={animateHeaderOnScroll}
+                        showsVerticalScrollIndicator={false}
+                        stickyHeaderIndices={[1]}
+                        // list header component
+                        ListHeaderComponent={
+                            <View 
+                                style={style.headerWrapper}
+                                onLayout={e => {
+                                    stickyHeaderOffset.current = e.nativeEvent.layout.height + 57;
+                                    // where 57 is the height of the Header component
+                                }}
+                            >
+                                {/* stats */}
+                                <StatWrapper>
+                                    {stats.map(stat => (
+                                        <StatCard
+                                            key={stat.id}
+                                            title={stat.title}
+                                            presentValue={stat.presentValue}
+                                            oldValue={stat.oldValue}
+                                            decimal={stat.decimal}
+                                        />
+                                    ))}
+                                </StatWrapper>
+                                {/* Navigate to addproducts page/stack */}
+                                {products.length !== 0 && (
+                                    <TouchableOpacity 
+                                        style={style.addProductButton}
+                                        onPress={() => navigation.navigate("AddProduct")}
+                                    >
+                                        <Text style={style.orderButtonText}>Add Product</Text>
+                                    </TouchableOpacity>
+                                )}
+                            </View>
+                        }
+                        contentContainerStyle={style.contentContainer}
+                        columnWrapperStyle={products.length !== 0 ? style.listContainer : null}
+                        style={style.listWrapper}
+                        keyExtractor={item => item.id}
+                        data={products}
+                        // render items in two rows if theres data, else one row
+                        numColumns={products.length !== 0 ? 2 : 1}
+                        renderItem={({ item, index }) => {
+                            if (item.id === "stickyLeft") {
+                                return (
+                                    <Animated.View 
+                                        style={[
+                                            style.recentOrderHeading,
+                                            {elevation: shadowElevation}
+                                        ]}
+                                    >
+                                        <View style={style.headingWrapper}>
+                                            <Text style={style.recentOrderHeadingText}>Products</Text>
+                                            <View style={style.iconsContainer}>
+                                                {/* open bottomsheet search modal */}
+                                                <TouchableOpacity 
+                                                    style={style.menuIcon}
+                                                    onPress={() => openModal("search")}
+                                                >
+                                                    <SearchIcon />
+                                                </TouchableOpacity>
+                                                {/* open bottomsheet filter modal */}
+                                                <TouchableOpacity
+                                                    style={style.menuIcon}
+                                                    onPress={() => {openFilter("products")}}
+                                                >
+                                                    <FilterIcon />
+                                                </TouchableOpacity>
+                                            </View>
+                                        </View>
+                                        {filterParameters.find(filterParam => filterParam.default === false) && (
+                                            <View style={style.filterPillWrapper}>
+                                                {filterParameters.map(filterParam => {
+                                                    if (!filterParam.default) {
+                                                        if (filterParam.value !== "Custom period") {
+                                                            return (
+                                                                <FilterPill
+                                                                    key={filterParam.title}
+                                                                    text={filterParam.value}
+                                                                    onPress={() => handleRemoveFilter(filterParam.title)}
+                                                                    background={white}
+                                                                />
+                                                            )
+                                                        }
+                                                    }
+                                                })}
+                                            </View>
+                                        )}
+                                    </Animated.View>
+                                )
+                            } else if (item.id === "stickyRight") {
+                                return (
+                                    <View style={style.emptyView}/>   
+                                )
+                            } else {
+                                return (
+                                    <View 
+                                        style={[
+                                            index % 2 === 0 && style.productCardWrapperLeft,
+                                            index % 2 === 1 && style.productCardWrapperRight,
+                                        ]}
+                                    >
+                                        <ProductCard
+                                            product_name={item.product_name}
+                                            quantity={item.quantity}
+                                            price={item.price}
+                                            imageUrl={item.imageUrl}
+                                            onPress={item.onPress}
+                                        />
+                                    </View>
+                                )
+                            }
+                            // product card
+                        }}
+                        ListFooterComponent={products.length === 0 && (
+                            <View style={style.noProductsContainer}>
+                                <View style={style.noProductTextWrapper}>
+                                    <AddProduct />
+                                    <Text style={style.noProductHeading}>No products in inventory... yet!</Text>
+                                    <Text style={style.noProductParagraph}>
+                                        Start by adding your first product. You could as well import from an already existing inventory
+                                    </Text>
+                                </View>
+                                <TouchableOpacity 
+                                    style={[
+                                        style.addProductButton, 
+                                        {
+                                            backgroundColor: primaryColor,
+                                            marginTop: 0,
+                                        }
+                                    ]}
+                                    onPress={() => navigation.navigate("AddProduct")}
+                                >
+                                    <Text style={[style.orderButtonText, {color: white}]}>Add Product</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity 
+                                    style={[
+                                        style.addProductButton, 
+                                        {
+                                            marginTop: 0,
+                                        }
+                                    ]}
+                                    onPress={() => navigation.navigate("ImportInventory")}
+                                >
+                                    <Text style={style.orderButtonText}>Import Inventory</Text>
+                                </TouchableOpacity>
+                            </View>
+                        )}
+                    />
+                </TouchableWithoutFeedback>
+            </> : <ProductsSkeleton />}
             {/* custom bottomsheet modal */}
             <CustomBottomSheet 
                 bottomSheetModalRef={modalRef}

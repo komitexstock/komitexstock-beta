@@ -12,7 +12,7 @@ const shimmerColorArray = ["#ebebeb", "#d9d9d9", "#ebebeb",];
 
 const Skeleton = createShimmerPlaceholder(LinearGradient);
 
-const WaybillSkeleton = () => {
+const ProductsSkeleton = () => {
     return (
         <ScrollView 
             showsVerticalScrollIndicator={false}
@@ -21,7 +21,7 @@ const WaybillSkeleton = () => {
             <View style={skeleton.header}>
                 <Skeleton 
                     height={25}
-                    width={73}
+                    width={100}
                     shimmerColors={shimmerColorArray}
                     style={{borderRadius: 2}}
                 />
@@ -86,49 +86,34 @@ const WaybillSkeleton = () => {
                         shimmerColors={shimmerColorArray}
                         style={{borderRadius: 2}}
                     />
+
                 </View>
             </View>
 
-            <View style={skeleton.tabsWrapper}>
+            <View style={skeleton.productList}>
                 <Skeleton 
-                    height={22}
-                    width={62}
+                    height={148}
+                    width={(windowWidth - 56) / 2}
                     shimmerColors={shimmerColorArray}
-                    style={{borderRadius: 2}}
-                />
-
+                    style={{borderRadius: 12}}
+                    />
                 <Skeleton 
-                    height={22}
-                    width={62}
+                    height={148}
+                    width={(windowWidth - 56) / 2}
                     shimmerColors={shimmerColorArray}
-                    style={{borderRadius: 2}}
-                />
-            </View>
-
-            <View style={skeleton.orderList}>
-                <Skeleton 
-                    height={50}
-                    width={windowWidth - 60}
-                    shimmerColors={shimmerColorArray}
-                    style={{borderRadius: 2}}
+                    style={{borderRadius: 12}}
                 />
                 <Skeleton 
-                    height={50}
-                    width={windowWidth - 60}
+                    height={148}
+                    width={(windowWidth - 56) / 2}
                     shimmerColors={shimmerColorArray}
-                    style={{borderRadius: 2}}
-                />
+                    style={{borderRadius: 12}}
+                    />
                 <Skeleton 
-                    height={50}
-                    width={windowWidth - 60}
+                    height={148}
+                    width={(windowWidth - 56) / 2}
                     shimmerColors={shimmerColorArray}
-                    style={{borderRadius: 2}}
-                />
-                <Skeleton 
-                    height={50}
-                    width={windowWidth - 60}
-                    shimmerColors={shimmerColorArray}
-                    style={{borderRadius: 2}}
+                    style={{borderRadius: 12}}
                 />
             </View>
         </ScrollView>
@@ -171,7 +156,7 @@ const skeleton = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         marginTop: 30,
-        marginBottom: 20,
+        marginBottom: 26,
     },
     iconsWrapper: {
         display: 'flex',
@@ -180,21 +165,15 @@ const skeleton = StyleSheet.create({
         alignItems: 'center',
         gap: 10,
     },
-    tabsWrapper: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-evenly',
-        alignItems: 'center',
-        marginBottom: 30,
-    },
-    orderList: {
+    productList: {
         width: "100%",
         display: 'flex',
-        flexDirection: 'column',
+        flexDirection: 'row',
         justifyContent: 'flex-start',
-        alignItems: 'center',
-        gap: 30,
+        alignItems: 'flex-start',
+        flexWrap: 'wrap',
+        gap: 16,
     }
 })
  
-export default WaybillSkeleton;
+export default ProductsSkeleton;

@@ -932,7 +932,7 @@ const Orders = ({navigation}) => {
     useEffect(() => {
         setTimeout(() => {
             setPageLoading(false);
-        }, 3000);   
+        }, 2000);   
     })
     
     // function to apply filter

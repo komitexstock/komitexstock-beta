@@ -76,13 +76,13 @@ const OrdersSkeleton = () => {
                 <View style={skeleton.iconsWrapper}>
                     <Skeleton 
                         height={24}
-                        width={20}
+                        width={24}
                         shimmerColors={shimmerColorArray}
                         style={{borderRadius: 2}}
                     />
                     <Skeleton 
                         height={24}
-                        width={20}
+                        width={24}
                         shimmerColors={shimmerColorArray}
                         style={{borderRadius: 2}}
                     />

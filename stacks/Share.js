@@ -1,5 +1,5 @@
 // react native components
-import { View, TouchableWithoutFeedback, Text, ScrollView, StyleSheet, Keyboard } from "react-native";
+import { View, TouchableWithoutFeedback, Text, ScrollView, StyleSheet, Keyboard, BackHandler } from "react-native";
 // components
 import SearchBar from "../components/SearchBar";
 import Header from "../components/Header";
@@ -18,6 +18,8 @@ import CalendarIcon from "../assets/icons/CalendarIcon";
 import { useState, useRef, useEffect } from "react";
 // moment
 import moment from "moment";
+// skeleton screen
+import ShareSkeleton from "../skeletons/ShareSkeleton";
 
 const Share = ({navigation}) => {
 
@@ -982,6 +984,14 @@ const Share = ({navigation}) => {
         },
     ]);
 
+    const [pageLoading, setPageLoading] = useState(true);
+
+    useEffect(() => {
+        setTimeout(() => {
+            setPageLoading(false);
+        }, 2000);
+    })
+
     const [searchQuery, setSearchQuery] = useState("");
 
     const selectOrder = (id) => {
@@ -1397,89 +1407,121 @@ const Share = ({navigation}) => {
         calendarRef.current?.close();
     }
 
+    // useEffect to listen for onPress back button and close modal
+    useEffect(() => {
+        // function to run if back button is pressed
+        const backAction = () => {
+            // Run your function here
+            // if filter bottomsheet is opem
+            if (calendar.open) {
+                // close filter bottomsheet 
+                closeCalendar();
+                return true;
+            } else if (filter.open) {
+                // close filter bottomsheet 
+                closeFilter();
+                return true;
+            } else {
+                // if modal isnt open simply navigate back
+                return false;
+            }
+        };
+    
+        // listen for onPress back button
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction
+        );
+    
+        return () => backHandler.remove();
+
+    }, [filter, calendar]);
+
     // share screen
     return (
         <>
-            <TouchableWithoutFeedback>
-                <ScrollView style={style.container} showsVerticalScrollIndicator={false}>
-                    <View 
-                        style={[
-                            style.mainWrapper,
-                            orders.filter(order => order.selected).length > 0 && {marginBottom: 100}
-                        ]}
-                    >
-                        <Header
-                            stackName={"Send to"}
-                            inlineArrow={true}
-                            removeBackArrow={true}
-                            unpadded={true}
-                            navigation={navigation}
-                        />
-                        <SearchBar 
-                            backgroundColor={white}
-                            placeholder={"Search order"}
-                            searchQuery={searchQuery}
-                            setSearchQuery={setSearchQuery}
-                            openFilter={openFilter}
-                        />
-                        {/* check if any filter has been applied, i.e it is not in its default value */}
-                        {filterParameters.find(filterParam => filterParam.default === false) && (
-                            <View style={style.searchOrderPillWrapper}>
-                                {filterParameters.map(filterParam => {
-                                    if (!filterParam.default) {
-                                        if (filterParam.value !== "Custom period") {
-                                            return (
-                                                <FilterPill
-                                                    key={filterParam.title}
-                                                    text={filterParam.value}
-                                                    onPress={() => handleRemoveFilter(filterParam.title, "search")}
-                                                    background={white}
-                                                />
-                                            )
+            {!pageLoading ? <>
+                <TouchableWithoutFeedback>
+                    <ScrollView style={style.container} showsVerticalScrollIndicator={false}>
+                        <View 
+                            style={[
+                                style.mainWrapper,
+                                orders.filter(order => order.selected).length > 0 && {marginBottom: 100}
+                            ]}
+                        >
+                            <Header
+                                stackName={"Send to"}
+                                inlineArrow={true}
+                                removeBackArrow={true}
+                                unpadded={true}
+                                navigation={navigation}
+                            />
+                            <SearchBar 
+                                backgroundColor={white}
+                                placeholder={"Search order"}
+                                searchQuery={searchQuery}
+                                setSearchQuery={setSearchQuery}
+                                openFilter={openFilter}
+                            />
+                            {/* check if any filter has been applied, i.e it is not in its default value */}
+                            {filterParameters.find(filterParam => filterParam.default === false) && (
+                                <View style={style.searchOrderPillWrapper}>
+                                    {filterParameters.map(filterParam => {
+                                        if (!filterParam.default) {
+                                            if (filterParam.value !== "Custom period") {
+                                                return (
+                                                    <FilterPill
+                                                        key={filterParam.title}
+                                                        text={filterParam.value}
+                                                        onPress={() => handleRemoveFilter(filterParam.title, "search")}
+                                                        background={white}
+                                                    />
+                                                )
+                                            }
                                         }
-                                    }
+                                    })}
+                                </View>
+                            )}
+                            <View style={style.titleWrapper}>
+                                <Text style={style.heading}>Recent</Text>
+                            </View>
+                            <View style={style.ordersWrapper}>
+                                {/* order list max 5 items */}
+                                {filterOrders('recent', orders, filterParameters).map((order) => {
+                                    return order.time === 'recent' && (
+                                        <OrderListItem
+                                            key={order.id}
+                                            item={order}
+                                            selectable={true}
+                                            selected={order.selected}
+                                            selectFunction={selectOrder}  
+                                            searchQuery={searchQuery}
+                                        />
+                                    )
                                 })}
                             </View>
-                        )}
-                        <View style={style.titleWrapper}>
-                            <Text style={style.heading}>Recent</Text>
+                            <View style={style.titleWrapper}>
+                                <Text style={style.heading}>Others</Text>
+                            </View>
+                            <View style={style.ordersWrapper}>
+                                {/* order list max 5 items */}
+                                {filterOrders('older', orders, filterParameters).map((order) => {
+                                    return order.time === 'older' && (
+                                        <OrderListItem
+                                            key={order.id}
+                                            item={order}
+                                            selectable={true}
+                                            selected={order.selected}
+                                            selectFunction={selectOrder}  
+                                            searchQuery={searchQuery}
+                                        />
+                                    )
+                                })}
+                            </View>
                         </View>
-                        <View style={style.ordersWrapper}>
-                            {/* order list max 5 items */}
-                            {filterOrders('recent', orders, filterParameters).map((order) => {
-                                return order.time === 'recent' && (
-                                    <OrderListItem
-                                        key={order.id}
-                                        item={order}
-                                        selectable={true}
-                                        selected={order.selected}
-                                        selectFunction={selectOrder}  
-                                        searchQuery={searchQuery}
-                                    />
-                                )
-                            })}
-                        </View>
-                        <View style={style.titleWrapper}>
-                            <Text style={style.heading}>Others</Text>
-                        </View>
-                        <View style={style.ordersWrapper}>
-                            {/* order list max 5 items */}
-                            {filterOrders('older', orders, filterParameters).map((order) => {
-                                return order.time === 'older' && (
-                                    <OrderListItem
-                                        key={order.id}
-                                        item={order}
-                                        selectable={true}
-                                        selected={order.selected}
-                                        selectFunction={selectOrder}  
-                                        searchQuery={searchQuery}
-                                    />
-                                )
-                            })}
-                        </View>
-                    </View>
-                </ScrollView>
-            </TouchableWithoutFeedback>
+                    </ScrollView>
+                </TouchableWithoutFeedback>
+            </> : <ShareSkeleton />}
             {/* show send button only if an order has been selected */}
             {orders.filter(order => order.selected).length > 0 && (
                 <CustomButton 
