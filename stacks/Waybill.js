@@ -45,6 +45,8 @@ import CalendarSheet from "../components/CalendarSheet";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 // moment
 import moment from "moment";
+// skeleton screen
+import WaybillSkeleton from "../skeletons/WaybillSkeleton";
 
 const Waybill = ({navigation}) => {
 
@@ -87,6 +89,14 @@ const Waybill = ({navigation}) => {
             unitPosition: "end",
         },
     ];
+
+    const [pageLoading, setPageLoading] = useState(true);
+
+    useEffect(() => {
+        setTimeout(() => {
+            setPageLoading(false);
+        }, 2000);
+    })
 
     // tabs, default as Outgoing for Merchants
     const [tab, setTab] = useState("outgoing");
@@ -1367,155 +1377,159 @@ const Waybill = ({navigation}) => {
     return (
         <>
             {/* header component */}
-            <Header
-                navigation={navigation}
-                stackName={"Waybill"}
-                removeBackArrow={true}
-                backgroundColor={background}
-                icon={<MenuIcon />}
-                iconFunction={() => {}}
-            />
-            <TouchableWithoutFeedback style={{flex: 1}}>
-                <FlatList 
-                    onScroll={animateHeaderOnScroll}
-                    showsVerticalScrollIndicator={false}
-                    stickyHeaderIndices={[1]}
-                    ListHeaderComponent={
-                        <View 
-                            style={style.headerWrapper}
-                            onLayout={e => {
-                                stickyHeaderOffset.current = e.nativeEvent.layout.height + 57;
-                                // where 57 is the height of the Header component
-                            }}
-                        >
-                            {/* stats */}
-                            <StatWrapper>
-                                {stats.map(stat => (
-                                    <StatCard
-                                        key={stat.id}
-                                        title={stat.title}
-                                        presentValue={stat.presentValue}
-                                        oldValue={stat.oldValue}
-                                        decimal={stat.decimal}
-                                        unit={stat.unit}
-                                        unitPosition={stat.unitPosition}
-                                    />
-                                ))}
-                            </StatWrapper>
-                            {/* onPress navigate to send waybill page */}
-                            <TouchableOpacity 
-                                style={style.sendOrderButton}
-                                onPress={() => navigation.navigate("SendWaybill")}
-                            >
-                                <Text style={style.orderButtonText}>Send Waybill</Text>
-                            </TouchableOpacity>
-                        </View>
-                    }
-                    contentContainerStyle={{paddingBottom: 90}}
-                    style={style.listWrapper}
-                    keyExtractor={item => item.id}
-                    data={waybill}
-                    renderItem={({ item, index }) => {
-                        if (item.id === "sticky") {
-                            return (
-                                <Animated.View 
-                                    style={[
-                                        style.stickyHeader,
-                                        {elevation: shadowElevation},
-                                    ]}
-                                >
-                                    <View style={style.recentOrderHeading}>
-                                        <Text style={style.recentOrderHeadingText}>Recent Waybills</Text>
-                                        <View style={style.actionWrapper}>
-                                            {/* trigger search modal */}
-                                            <TouchableOpacity 
-                                                style={style.menuIcon}
-                                                onPress={openModal}
-                                            >
-                                                <SearchIcon />
-                                            </TouchableOpacity>
-                                            {/* trigger filter modal */}
-                                            <TouchableOpacity
-                                                style={style.menuIcon}
-                                                onPress={openFilter}
-                                            >
-                                                <FilterIcon />
-                                            </TouchableOpacity>
-                                        </View>
-                                    </View>
-                                    {/* page tabs */}
-                                    <View style={style.tabContainer}>
-                                        <TouchableOpacity 
-                                            style={tab === "outgoing" ? style.tabButtonSelected : style.tabButton}
-                                            onPress={() => setTab("outgoing")}
-                                        >
-                                            <Text style={tab === "outgoing" ? style.tabButtonTextSelected : style.tabButtonText} >Outgoing</Text>
-                                            <Badge number={getNumberOfUnreadMessages("increment")} />
-                                        </TouchableOpacity>
-                                        <TouchableOpacity 
-                                            style={tab === "incoming" ? style.tabButtonSelected : style.tabButton}
-                                            onPress={() => setTab("incoming")}
-                                        >
-                                            <Text style={tab === "incoming" ? style.tabButtonTextSelected : style.tabButtonText} >Incoming</Text>
-                                            <Badge number={getNumberOfUnreadMessages("decrement")} />
-                                        </TouchableOpacity>
-                                    </View>
-                                    {/* check if any filter has been applied, i.e it is not in its default value */}
-                                    {filter.filterType === "outgoing" && outgoingFilter.find(filterParam => filterParam.default === false) && (
-                                        <View style={style.filterPillWrapper}>
-                                            {outgoingFilter.map(filterParam => {
-                                                if (!filterParam.default) {
-                                                    if (filterParam.value !== "Custom period") {
-                                                        return (
-                                                            <FilterPill
-                                                                key={filterParam.title}
-                                                                text={filterParam.value}
-                                                                onPress={() => handleRemoveFilter(filterParam.title, "search")}
-                                                                background={white}
-                                                            />
-                                                        )
-                                                    }
-                                                }
-                                            })}
-                                        </View>
-                                    )}
-
-                                    {/* check if any filter has been applied, i.e it is not in its default value */}
-                                    {filter.filterType === "incoming" && incomingFilter.find(filterParam => filterParam.default === false) && (
-                                        <View style={style.filterPillWrapper}>
-                                            {incomingFilter.map(filterParam => {
-                                                if (!filterParam.default) {
-                                                    if (filterParam.value !== "Custom period") {
-                                                        return (
-                                                            <FilterPill
-                                                                key={filterParam.title}
-                                                                text={filterParam.value}
-                                                                onPress={() => handleRemoveFilter(filterParam.title, "search")}
-                                                                background={white}
-                                                            />
-                                                        )
-                                                    }
-                                                }
-                                            })}
-                                        </View>
-                                    )}
-                                </Animated.View>
-                            )
-                        } else {
-                            return (
-                                <View style={style.waybillListWrapper}>
-                                    <WaybillListItem 
-                                        item={item} 
-                                        index={index}
-                                        lastWaybill={waybill.length - 1}
-                                        firstWaybill={1}
-                                    />
-                                </View>
-                            ) 
-                        }
-                    }}
+            {!pageLoading ? <>
+                {/* fixed header */}
+                <Header
+                    navigation={navigation}
+                    stackName={"Waybill"}
+                    removeBackArrow={true}
+                    backgroundColor={background}
+                    icon={<MenuIcon />}
+                    iconFunction={() => {}}
                 />
-            </TouchableWithoutFeedback>
+                {/* screen content */}
+                <TouchableWithoutFeedback style={{flex: 1}}>
+                    <FlatList 
+                        onScroll={animateHeaderOnScroll}
+                        showsVerticalScrollIndicator={false}
+                        stickyHeaderIndices={[1]}
+                        ListHeaderComponent={
+                            <View 
+                                style={style.headerWrapper}
+                                onLayout={e => {
+                                    stickyHeaderOffset.current = e.nativeEvent.layout.height + 57;
+                                    // where 57 is the height of the Header component
+                                }}
+                            >
+                                {/* stats */}
+                                <StatWrapper>
+                                    {stats.map(stat => (
+                                        <StatCard
+                                            key={stat.id}
+                                            title={stat.title}
+                                            presentValue={stat.presentValue}
+                                            oldValue={stat.oldValue}
+                                            decimal={stat.decimal}
+                                            unit={stat.unit}
+                                            unitPosition={stat.unitPosition}
+                                        />
+                                    ))}
+                                </StatWrapper>
+                                {/* onPress navigate to send waybill page */}
+                                <TouchableOpacity 
+                                    style={style.sendOrderButton}
+                                    onPress={() => navigation.navigate("SendWaybill")}
+                                >
+                                    <Text style={style.orderButtonText}>Send Waybill</Text>
+                                </TouchableOpacity>
+                            </View>
+                        }
+                        contentContainerStyle={{paddingBottom: 90}}
+                        style={style.listWrapper}
+                        keyExtractor={item => item.id}
+                        data={waybill}
+                        renderItem={({ item, index }) => {
+                            if (item.id === "sticky") {
+                                return (
+                                    <Animated.View 
+                                        style={[
+                                            style.stickyHeader,
+                                            {elevation: shadowElevation},
+                                        ]}
+                                    >
+                                        <View style={style.recentOrderHeading}>
+                                            <Text style={style.recentOrderHeadingText}>Recent Waybills</Text>
+                                            <View style={style.actionWrapper}>
+                                                {/* trigger search modal */}
+                                                <TouchableOpacity 
+                                                    style={style.menuIcon}
+                                                    onPress={openModal}
+                                                >
+                                                    <SearchIcon />
+                                                </TouchableOpacity>
+                                                {/* trigger filter modal */}
+                                                <TouchableOpacity
+                                                    style={style.menuIcon}
+                                                    onPress={openFilter}
+                                                >
+                                                    <FilterIcon />
+                                                </TouchableOpacity>
+                                            </View>
+                                        </View>
+                                        {/* page tabs */}
+                                        <View style={style.tabContainer}>
+                                            <TouchableOpacity 
+                                                style={tab === "outgoing" ? style.tabButtonSelected : style.tabButton}
+                                                onPress={() => setTab("outgoing")}
+                                            >
+                                                <Text style={tab === "outgoing" ? style.tabButtonTextSelected : style.tabButtonText} >Outgoing</Text>
+                                                <Badge number={getNumberOfUnreadMessages("increment")} />
+                                            </TouchableOpacity>
+                                            <TouchableOpacity 
+                                                style={tab === "incoming" ? style.tabButtonSelected : style.tabButton}
+                                                onPress={() => setTab("incoming")}
+                                            >
+                                                <Text style={tab === "incoming" ? style.tabButtonTextSelected : style.tabButtonText} >Incoming</Text>
+                                                <Badge number={getNumberOfUnreadMessages("decrement")} />
+                                            </TouchableOpacity>
+                                        </View>
+                                        {/* check if any filter has been applied, i.e it is not in its default value */}
+                                        {filter.filterType === "outgoing" && outgoingFilter.find(filterParam => filterParam.default === false) && (
+                                            <View style={style.filterPillWrapper}>
+                                                {outgoingFilter.map(filterParam => {
+                                                    if (!filterParam.default) {
+                                                        if (filterParam.value !== "Custom period") {
+                                                            return (
+                                                                <FilterPill
+                                                                    key={filterParam.title}
+                                                                    text={filterParam.value}
+                                                                    onPress={() => handleRemoveFilter(filterParam.title, "search")}
+                                                                    background={white}
+                                                                />
+                                                            )
+                                                        }
+                                                    }
+                                                })}
+                                            </View>
+                                        )}
+
+                                        {/* check if any filter has been applied, i.e it is not in its default value */}
+                                        {filter.filterType === "incoming" && incomingFilter.find(filterParam => filterParam.default === false) && (
+                                            <View style={style.filterPillWrapper}>
+                                                {incomingFilter.map(filterParam => {
+                                                    if (!filterParam.default) {
+                                                        if (filterParam.value !== "Custom period") {
+                                                            return (
+                                                                <FilterPill
+                                                                    key={filterParam.title}
+                                                                    text={filterParam.value}
+                                                                    onPress={() => handleRemoveFilter(filterParam.title, "search")}
+                                                                    background={white}
+                                                                />
+                                                            )
+                                                        }
+                                                    }
+                                                })}
+                                            </View>
+                                        )}
+                                    </Animated.View>
+                                )
+                            } else {
+                                return (
+                                    <View style={style.waybillListWrapper}>
+                                        <WaybillListItem 
+                                            item={item} 
+                                            index={index}
+                                            lastWaybill={waybill.length - 1}
+                                            firstWaybill={1}
+                                        />
+                                    </View>
+                                ) 
+                            }
+                        }}
+                    />
+                </TouchableWithoutFeedback>
+            </> : <WaybillSkeleton />}
             {/* bottomsheet */}
             <CustomBottomSheet 
                 bottomSheetModalRef={modalRef}

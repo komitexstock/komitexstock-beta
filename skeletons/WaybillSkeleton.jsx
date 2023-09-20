@@ -21,7 +21,7 @@ const WaybillSkeleton = () => {
             <View style={skeleton.header}>
                 <Skeleton 
                     height={25}
-                    width={65}
+                    width={73}
                     shimmerColors={shimmerColorArray}
                     style={{borderRadius: 2}}
                 />
@@ -86,17 +86,26 @@ const WaybillSkeleton = () => {
                         shimmerColors={shimmerColorArray}
                         style={{borderRadius: 2}}
                     />
-
                 </View>
             </View>
 
-            <View style={skeleton.orderList}>
+            <View style={skeleton.tabsWrapper}>
                 <Skeleton 
-                    height={50}
-                    width={windowWidth - 60}
+                    height={22}
+                    width={62}
                     shimmerColors={shimmerColorArray}
                     style={{borderRadius: 2}}
                 />
+
+                <Skeleton 
+                    height={22}
+                    width={62}
+                    shimmerColors={shimmerColorArray}
+                    style={{borderRadius: 2}}
+                />
+            </View>
+
+            <View style={skeleton.orderList}>
                 <Skeleton 
                     height={50}
                     width={windowWidth - 60}
@@ -162,7 +171,7 @@ const skeleton = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         marginTop: 30,
-        marginBottom: 26,
+        marginBottom: 20,
     },
     iconsWrapper: {
         display: 'flex',
@@ -170,6 +179,13 @@ const skeleton = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         gap: 10,
+    },
+    tabsWrapper: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+        alignItems: 'center',
+        marginBottom: 30,
     },
     orderList: {
         width: "100%",
