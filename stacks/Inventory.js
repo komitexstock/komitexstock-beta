@@ -12,16 +12,26 @@ import MenuIcon from "../assets/icons/MenuIcon";
 // colors
 import { primaryColor, secondaryColor, white, background } from "../style/colors";
 // react hooks
-import { useState } from "react";
+import { useEffect, useState } from "react";
 // components
 import LogisticsCard from "../components/LogisticsCard";
 import SearchBar from "../components/SearchBar";
 import Header from "../components/Header";
+// skeleton screen
+import InventorySkeleton from "../skeletons/InventorySkeleton";
 
 const Products = ({navigation}) => {
 
     // state to store search query
     const [searchQuery, setSearchQuery] = useState("");
+
+    const [pageLoading, setPageLoading] = useState(true);
+
+    useEffect(() => {
+        setTimeout(() => {
+            setPageLoading(false);
+        }, 2000);   
+    })
 
     // logistics list array
     const logisticsList = [
@@ -78,62 +88,64 @@ const Products = ({navigation}) => {
     // render Inventory page
     return (
         <>
-            <TouchableWithoutFeedback 
-                style={{
-                    flex: 1, 
-                }}
-            >
-                <FlatList 
-                    showsVerticalScrollIndicator={false}
-                    ListHeaderComponent={
-                        <View style={style.headerWrapper}>
-                            <Header
-                                navigation={navigation}
-                                stackName={"Inventory"}
-                                iconFunction={() => {}}
-                                icon={<MenuIcon />}
-                                removeBackArrow={true}
-                                inlineArrow={false}
-                                unpadded={true}
-                            />
+            {!pageLoading ? (
+                <TouchableWithoutFeedback 
+                    style={{
+                        flex: 1, 
+                    }}
+                >
+                    <FlatList 
+                        showsVerticalScrollIndicator={false}
+                        ListHeaderComponent={
+                            <View style={style.headerWrapper}>
+                                <Header
+                                    navigation={navigation}
+                                    stackName={"Inventory"}
+                                    iconFunction={() => {}}
+                                    icon={<MenuIcon />}
+                                    removeBackArrow={true}
+                                    inlineArrow={false}
+                                    unpadded={true}
+                                />
 
-                            {/* search bar */}
-                            <SearchBar
-                                placeholder={"Search Inventory"}
-                                searchQuery={searchQuery}
-                                setSearchQuery={setSearchQuery}
-                                backgroundColor={white}
-                                disableFIlter={true}
+                                {/* search bar */}
+                                <SearchBar
+                                    placeholder={"Search Inventory"}
+                                    searchQuery={searchQuery}
+                                    setSearchQuery={setSearchQuery}
+                                    backgroundColor={white}
+                                    disableFIlter={true}
+                                />
+                                {/* navigate to AddLogistics page/stack */}
+                                <TouchableOpacity 
+                                    style={style.sendOrderButton}
+                                    onPress={() => navigation.navigate("AddLogistics")}
+                                >
+                                    <Text style={style.orderButtonText}>Add Logistics</Text>
+                                </TouchableOpacity>
+                            </View>
+                        }
+                        columnWrapperStyle={style.listContainer}
+                        style={style.listWrapper}
+                        keyExtractor={item => item.id}
+                        data={logisticsList}
+                        // allows flatlist to render list in two columns
+                        numColumns={2}
+                        // render logistics card
+                        renderItem={({ item, index }) => (
+                            <LogisticsCard
+                                logistics={item.logistics}
+                                imageUrl={item.imageUrl}
+                                totalLocations={item.totalLocations}
+                                totalStock={item.totalStock}
+                                lowStock={item.lowStock}
+                                verified={item.verified}
+                                onPress={item.onPress}
                             />
-                            {/* navigate to AddLogistics page/stack */}
-                            <TouchableOpacity 
-                                style={style.sendOrderButton}
-                                onPress={() => navigation.navigate("AddLogistics")}
-                            >
-                                <Text style={style.orderButtonText}>Add Logistics</Text>
-                            </TouchableOpacity>
-                        </View>
-                    }
-                    columnWrapperStyle={style.listContainer}
-                    style={style.listWrapper}
-                    keyExtractor={item => item.id}
-                    data={logisticsList}
-                    // allows flatlist to render list in two columns
-                    numColumns={2}
-                    // render logistics card
-                    renderItem={({ item, index }) => (
-                        <LogisticsCard
-                            logistics={item.logistics}
-                            imageUrl={item.imageUrl}
-                            totalLocations={item.totalLocations}
-                            totalStock={item.totalStock}
-                            lowStock={item.lowStock}
-                            verified={item.verified}
-                            onPress={item.onPress}
-                        />
-                    )}
-                />
-            </TouchableWithoutFeedback>
+                        )}
+                    />
+                </TouchableWithoutFeedback>
+            ) : <InventorySkeleton />}
         </>
     );
 }

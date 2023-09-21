@@ -237,31 +237,6 @@ const Products = ({navigation, route}) => {
         
 
     }, [route.params]);
-    
-    // use effect to close modal on press of back button
-    useEffect(() => {
-        // function to run if back button is pressed
-        const backAction = () => {
-            // Run your function here
-            if (modal.overlay) {
-                // if modal is open, close modal
-                closeModal();
-                return true;
-            } else {
-                // if modal isnt open simply navigate back
-                return false;
-            }
-        };
-    
-        // listen for onPress back button
-        const backHandler = BackHandler.addEventListener(
-            'hardwareBackPress',
-            backAction
-        );
-    
-        return () => backHandler.remove();
-
-    }, [modal.overlay]);
 
     // state to store search query
     const [searchQuery, setSearchQuery] = useState("");
@@ -794,6 +769,35 @@ const Products = ({navigation, route}) => {
         setSearchedProducts(searchResult);
 
     }, [searchQuery])
+
+    // use effect to close modal on press of back button
+    useEffect(() => {
+        // function to run if back button is pressed
+        const backAction = () => {
+            // Run your function here
+            if (filter.open) {
+                // if modal is open, close modal
+                closeFilter();
+                return true;
+            } else if (modal.overlay) {
+                // if modal is open, close modal
+                closeModal();
+                return true;
+            } else {
+                // if modal isnt open simply navigate back
+                return false;
+            }
+        };
+    
+        // listen for onPress back button
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction
+        );
+    
+        return () => backHandler.remove();
+
+    }, [modal.overlay, filter]);
 
     // render Products page
     return (
