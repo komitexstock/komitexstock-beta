@@ -164,7 +164,7 @@ const Home = ({navigation}) => {
     useEffect(() => {
         setTimeout(() => {
             setPageLoading(false);
-        }, 3000);
+        }, 500);
     })
 
     // orders full list
@@ -1662,8 +1662,8 @@ const Home = ({navigation}) => {
                                     <View style={style.homeOrdersHeader}>
                                         <Text style={style.homeOrdersHeading}>Recent Orders</Text>
                                         <TouchableOpacity
-                                            // onPress={() => {navigation.navigate("Orders")}}
-                                            onPress={() => {navigation.navigate("Share")}}
+                                            onPress={() => {navigation.navigate("Orders")}}
+                                            // onPress={() => {navigation.navigate("Share")}}
                                         >
                                             <Text style={style.seeMore} >
                                                 See more

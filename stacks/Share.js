@@ -989,7 +989,7 @@ const Share = ({navigation}) => {
     useEffect(() => {
         setTimeout(() => {
             setPageLoading(false);
-        }, 2000);
+        }, 500);
     })
 
     const [searchQuery, setSearchQuery] = useState("");

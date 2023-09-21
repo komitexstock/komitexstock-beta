@@ -171,7 +171,7 @@ const Products = ({navigation, route}) => {
     useEffect(() => {
         setTimeout(() => {
             setPageLoading(false);
-        }, 2000);
+        }, 500);
     })
 
     // state to indicate loading state

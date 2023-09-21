@@ -95,7 +95,7 @@ const Waybill = ({navigation}) => {
     useEffect(() => {
         setTimeout(() => {
             setPageLoading(false);
-        }, 2000);
+        }, 500);
     })
 
     // tabs, default as Outgoing for Merchants

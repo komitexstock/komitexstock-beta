@@ -27,7 +27,7 @@ const AddLogistics = ({navigation}) => {
 
     setTimeout(() => {
         setPageLoading(false);
-    }, 2000);
+    }, 500);
 
     // logistics list
     const logisticsList = [

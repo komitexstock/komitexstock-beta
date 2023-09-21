@@ -30,7 +30,7 @@ const Products = ({navigation}) => {
     useEffect(() => {
         setTimeout(() => {
             setPageLoading(false);
-        }, 2000);   
+        }, 500);   
     })
 
     // logistics list array
