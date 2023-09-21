@@ -22,7 +22,7 @@ import Header from "../components/Header";
 import BarChart from "../components/BarChart";
 import StatWrapper from "../components/StatWrapper";
 import StatCard from "../components/StatCard";
-import LogisticsAnalyticsItem from "../components/LogisticsAnalyticsItem";
+import LocationAnalyticsItem from "../components/LocationAnalyticsItem";
 import CalendarSheet from "../components/CalendarSheet";
 // icons
 import ArrowDownSmall from '../assets/icons/ArrowDownSmall';
@@ -102,34 +102,31 @@ const ProductAnalytics = ({navigation}) => {
         },
     ];
 
-    // logistic analytics list
-    const logisticsAnalyticsList = [
+
+    // location analytics list
+    const locationAnalyticsList = [
         {
             id: 1,
-            logistics: 'Komitex Logistics',
-            numberOfDeliveries: 10,
-            totalPrice: 72500,
-            oldTotalPrice: 67000,
-            imageUrl: require('../assets/images/komitex.png'),
+            location: 'Warri',
+            numberOfDeliveries: 17,
+            totalPrice: 88500,
+            oldTotalPrice: 68000,
         },
         {
             id: 2,
-            logistics: 'DHL',
+            location: 'Sapele',
             numberOfDeliveries: 13,
             totalPrice: 49500,
-            oldTotalPrice: 67000,
-            imageUrl: require('../assets/images/dhl.png'),
+            oldTotalPrice: 48000,
         },
         {
             id: 3,
-            logistics: 'Fedex',
-            numberOfDeliveries: 7,
-            totalPrice: 70000,
-            oldTotalPrice: 67000,
-            imageUrl: require('../assets/images/fedex.png'),
+            location: 'Ughelli',
+            numberOfDeliveries: 5,
+            totalPrice: 35000,
+            oldTotalPrice: 40000,
         },
     ];
-
 
     // calendar ref
     const calendarRef = useRef(null);
@@ -241,16 +238,15 @@ const ProductAnalytics = ({navigation}) => {
                         <Text style={style.topStatHeading}>Top Locations</Text>
                         <View style={style.tabsContainer}>
                             <View style={style.tabContentList}>
-                                {/* Logistics list */}
-                                {logisticsAnalyticsList.map(item => (
-                                    <LogisticsAnalyticsItem
+                                {/* Location list */}
+                                {locationAnalyticsList.map(item => (
+                                    <LocationAnalyticsItem
                                         key={item.id}
-                                        logistics={item.logistics}
+                                        location={item.location}
                                         numberOfDeliveries={item.numberOfDeliveries}
                                         totalPrice={item.totalPrice}
                                         oldTotalPrice={item.oldTotalPrice}
-                                        imageUrl={item.imageUrl}
-                                        disableClick={true}
+                                        disableCick={true}
                                     />
                                 ))}
                             </View>

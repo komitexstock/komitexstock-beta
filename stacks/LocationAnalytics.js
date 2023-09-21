@@ -228,7 +228,7 @@ const LocationAnalytics = ({navigation}) => {
                         ))}
                     </StatWrapper>
                     <View style={style.topStatsWrapper}>
-                        <Text style={style.topStatHeading}>Top Locations</Text>
+                        <Text style={style.topStatHeading}>Top Logistics</Text>
                         <View style={style.tabsContainer}>
                             <View style={style.tabContentList}>
                                 {/* Logistics list */}
