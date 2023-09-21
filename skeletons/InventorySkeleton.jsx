@@ -1,5 +1,5 @@
 // react native components
-import { ScrollView, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 // skeleton components
 import { createShimmerPlaceholder } from "react-native-shimmer-placeholder";
 import { LinearGradient } from "expo-linear-gradient";
@@ -14,8 +14,7 @@ const Skeleton = createShimmerPlaceholder(LinearGradient);
 
 const InventorySkeleton = () => {
     return (
-        <ScrollView 
-            showsVerticalScrollIndicator={false}
+        <View 
             style={skeleton.container}
         >   
             <View style={skeleton.header}>
@@ -92,7 +91,7 @@ const InventorySkeleton = () => {
             </View>
 
             
-        </ScrollView>
+        </View>
     );
 }
 

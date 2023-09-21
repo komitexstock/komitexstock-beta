@@ -15,10 +15,19 @@ import SelectLogisticsCard from "../components/SelectLogisticsCard";
 import SearchBar from "../components/SearchBar";
 // colors
 import { bodyText, black, white, background } from "../style/colors";
+// skeleton
+import AddLogisticsSkeleton from "../skeletons/AddLogisticsSkeleton";
 
 const AddLogistics = ({navigation}) => {
 
     const [searchQuery, setSearchQuery] = useState("");
+
+    // state to indicate page loading
+    const [pageLoading, setPageLoading] = useState(true);
+
+    setTimeout(() => {
+        setPageLoading(false);
+    }, 2000);
 
     // logistics list
     const logisticsList = [
@@ -63,57 +72,60 @@ const AddLogistics = ({navigation}) => {
     // render AddLogistics page
     return (
         <>
-            <TouchableWithoutFeedback 
-                style={{
-                    flex: 1, 
-                }}
-                // onclick dismiss keyboard
-                onPress={() => Keyboard.dismiss()}
-            >
-                <FlatList 
-                    // remove vertical scroll indicator 
-                    showsVerticalScrollIndicator={false}
-                    ListHeaderComponent={
-                        <View style={style.headerWrapper}>
-                            {/* header component */}
-                            <Header
-                                navigation={navigation} 
-                                stackName={"Add Logistics"} 
-                                iconFunction={() => {}} 
-                                icon={null}
-                                unpadded={true}
+            {!pageLoading ? (
+                <TouchableWithoutFeedback 
+                    style={{
+                        flex: 1, 
+                    }}
+                    // onclick dismiss keyboard
+                    onPress={() => Keyboard.dismiss()}
+                >
+                    <FlatList 
+                        // remove vertical scroll indicator 
+                        showsVerticalScrollIndicator={false}
+                        ListHeaderComponent={
+                            <View style={style.headerWrapper}>
+                                {/* header component */}
+                                <Header
+                                    navigation={navigation} 
+                                    stackName={"Add Logistics"} 
+                                    iconFunction={() => {}} 
+                                    icon={null}
+                                    unpadded={true}
+                                />
+                                <Text style={style.headingText}>
+                                    Select a preferred logistics partner for efficient 
+                                    inventory management and timely order fulfillment.
+                                </Text>
+                                {/* logistics search bar */}
+                                <SearchBar
+                                    placeholder={"Search for a logistics or location"}
+                                    searchQuery={searchQuery}
+                                    setSearchQuery={setSearchQuery}
+                                    backgroundColor={white}
+                                    disableFIlter={true}
+                                />
+                            </View>
+                        }
+                        columnWrapperStyle={style.listContainer}
+                        style={style.listWrapper}
+                        keyExtractor={item => item.id}
+                        data={logisticsList}
+                        numColumns={2}
+                        renderItem={({ item }) => (
+                            <SelectLogisticsCard
+                                logistics={item.logistics}
+                                imageUrl={item.imageUrl}
+                                destinations={item.destinations}
+                                rating={item.rating}
+                                verified={item.verified}
+                                onPress={item.onPress}
                             />
-                            <Text style={style.headingText}>
-                                Select a preferred logistics partner for efficient 
-                                inventory management and timely order fulfillment.
-                            </Text>
-                            {/* logistics search bar */}
-                            <SearchBar
-                                placeholder={"Search for a logistics or location"}
-                                searchQuery={searchQuery}
-                                setSearchQuery={setSearchQuery}
-                                backgroundColor={white}
-                                disableFIlter={true}
-                            />
-                        </View>
-                    }
-                    columnWrapperStyle={style.listContainer}
-                    style={style.listWrapper}
-                    keyExtractor={item => item.id}
-                    data={logisticsList}
-                    numColumns={2}
-                    renderItem={({ item }) => (
-                        <SelectLogisticsCard
-                            logistics={item.logistics}
-                            imageUrl={item.imageUrl}
-                            destinations={item.destinations}
-                            rating={item.rating}
-                            verified={item.verified}
-                            onPress={item.onPress}
-                        />
-                    )}
-                />
-            </TouchableWithoutFeedback>
+                        )}
+                    />
+                </TouchableWithoutFeedback>
+            ) : <AddLogisticsSkeleton />}
+
         </>
     );
 }
