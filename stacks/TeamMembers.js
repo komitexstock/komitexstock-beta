@@ -27,11 +27,22 @@ import CautionPrompt from "../components/CautionPrompt";
 import { background, black, bodyText, white } from "../style/colors";
 // bottomsheet components
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+// skeleton screen
+import TeamMembersSkeleton from "../skeletons/TeamMembersSkeleton";
 
 const TeamMembers = ({navigation}) => {
 
     // state to control modal overlay
     const [showOverlay, setShowOverlay] = useState(false);
+
+    // page loading state
+    const [pageLoading, setPageLoading] = useState(true);
+
+    useEffect(() => {
+        setTimeout(() => {
+            setPageLoading(false);
+        }, 500);
+    })
 
     // state to control modal type
     const [modal, setModal] = useState("");
@@ -322,36 +333,38 @@ const TeamMembers = ({navigation}) => {
     // render TeamMember page
     return (
         <>
-            <FlatList 
-                showsVerticalScrollIndicator={false}
-                ListHeaderComponent={
-                    <View style={style.headerWrapper}>
-                        <Header 
-                            navigation={navigation} 
-                            stackName={"Team Members"} 
-                            iconFunction={null} 
-                            icon={null}
-                            unpadded={true}
+            {!pageLoading ? (
+                <FlatList 
+                    showsVerticalScrollIndicator={false}
+                    ListHeaderComponent={
+                        <View style={style.headerWrapper}>
+                            <Header 
+                                navigation={navigation} 
+                                stackName={"Team Members"} 
+                                iconFunction={null} 
+                                icon={null}
+                                unpadded={true}
+                            />
+                        </View>
+                    }
+                    columnWrapperStyle={style.listContainer}
+                    style={style.listWrapper}
+                    keyExtractor={item => item.id}
+                    data={memberList}
+                    numColumns={2}
+                    renderItem={({ item }) => (
+                        <TeamMemberCard
+                            imageUrl={item.imageUrl}
+                            admin={item.admin}
+                            fullname={item.fullname}
+                            role={item.role}
+                            onPress={item.onPress}
+                            addNew={item.addNew}
+                            deactivated={item.deactivated}
                         />
-                    </View>
-                }
-                columnWrapperStyle={style.listContainer}
-                style={style.listWrapper}
-                keyExtractor={item => item.id}
-                data={memberList}
-                numColumns={2}
-                renderItem={({ item }) => (
-                    <TeamMemberCard
-                        imageUrl={item.imageUrl}
-                        admin={item.admin}
-                        fullname={item.fullname}
-                        role={item.role}
-                        onPress={item.onPress}
-                        addNew={item.addNew}
-                        deactivated={item.deactivated}
-                    />
-                )}
-            />
+                    )}
+                />
+            ) : <TeamMembersSkeleton />}
             {/* custom bottomsheet */}
             <CustomBottomSheet
                 bottomSheetModalRef={bottomSheetModalRef}
