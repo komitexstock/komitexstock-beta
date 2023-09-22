@@ -27,6 +27,8 @@ import CalendarSheet from "../components/CalendarSheet";
 import ArrowDownSmall from '../assets/icons/ArrowDownSmall';
 // react hooks
 import { useState, useRef, useEffect } from "react";
+// skeleton screeen
+import LocationAnalyticsSkeleton from "../skeletons/LocationAnalyticsSkeleton";
 
 const LocationAnalytics = ({navigation}) => {
     // bar chart data
@@ -39,7 +41,15 @@ const LocationAnalytics = ({navigation}) => {
         81500,
         52900
     ];
-      
+
+    // page loading state
+    const [pageLoading, setPageLoading] = useState(true);
+
+    useEffect(() => {
+        setTimeout(() => {
+            setPageLoading(false);
+        }, 500);
+    })
     
     // bar chart x axis labels
     const labels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']; 
@@ -176,78 +186,80 @@ const LocationAnalytics = ({navigation}) => {
     // render LocationAnalytics page
     return (
         <>
-            <ScrollView
-                showsVerticalScrollIndicator={false}
-                style={style.container}
-            >
-                <View style={style.main}>
-                    {/* header component */}
-                    <Header 
-                        navigation={navigation} 
-                        stackName={"Warri"} 
-                        iconFunction={null} 
-                        icon={null} 
-                        unpadded={true}
-                    />
-                    <View style={style.chartContainer}>
-                        {/* range wrapper */}
-                        <View style={style.rangeWrapper}>
-                            <TouchableOpacity 
-                                style={style.rangeButton}
-                                onPress={handleOpenCalendar}
-                            >
-                                <Text style={style.rangeButtonText}>Lat 7 Days</Text>
-                                <ArrowDownSmall />
-                            </TouchableOpacity>
-                        </View>
-                        {/* Bar Chart component */}
-                        <BarChart
-                            chartTitle={"Total Earnings"}
-                            chartWidth={"100%"}
-                            chartHeight={232}
-                            backgroundColor={white}
-                            data={data}
-                            labels={labels}
-                            unit={"₦"}
-                            fullbar={false}
-                            rotateXAxisLabel={false}
-                            enableGrid={false}
+            {!pageLoading ? (
+                <ScrollView
+                    showsVerticalScrollIndicator={false}
+                    style={style.container}
+                >
+                    <View style={style.main}>
+                        {/* header component */}
+                        <Header 
+                            navigation={navigation} 
+                            stackName={"Warri"} 
+                            iconFunction={null} 
+                            icon={null} 
+                            unpadded={true}
                         />
-                    </View>
-                    <StatWrapper>
-                        {stats.map(stat => (
-                            <StatCard
-                                key={stat.id}
-                                title={stat.title}
-                                presentValue={stat.presentValue}
-                                oldValue={stat.oldValue}
-                                decimal={stat.decimal}
-                                unit={stat.unit}
-                                unitPosition={stat.unitPosition}
+                        <View style={style.chartContainer}>
+                            {/* range wrapper */}
+                            <View style={style.rangeWrapper}>
+                                <TouchableOpacity 
+                                    style={style.rangeButton}
+                                    onPress={handleOpenCalendar}
+                                >
+                                    <Text style={style.rangeButtonText}>Lat 7 Days</Text>
+                                    <ArrowDownSmall />
+                                </TouchableOpacity>
+                            </View>
+                            {/* Bar Chart component */}
+                            <BarChart
+                                chartTitle={"Total Earnings"}
+                                chartWidth={"100%"}
+                                chartHeight={232}
+                                backgroundColor={white}
+                                data={data}
+                                labels={labels}
+                                unit={"₦"}
+                                fullbar={false}
+                                rotateXAxisLabel={false}
+                                enableGrid={false}
                             />
-                        ))}
-                    </StatWrapper>
-                    <View style={style.topStatsWrapper}>
-                        <Text style={style.topStatHeading}>Top Logistics</Text>
-                        <View style={style.tabsContainer}>
-                            <View style={style.tabContentList}>
-                                {/* Logistics list */}
-                                {logisticsAnalyticsList.map(item => (
-                                    <LogisticsAnalyticsItem
-                                        key={item.id}
-                                        logistics={item.logistics}
-                                        numberOfDeliveries={item.numberOfDeliveries}
-                                        totalPrice={item.totalPrice}
-                                        oldTotalPrice={item.oldTotalPrice}
-                                        imageUrl={item.imageUrl}
-                                        disableClick={true}
-                                    />
-                                ))}
+                        </View>
+                        <StatWrapper>
+                            {stats.map(stat => (
+                                <StatCard
+                                    key={stat.id}
+                                    title={stat.title}
+                                    presentValue={stat.presentValue}
+                                    oldValue={stat.oldValue}
+                                    decimal={stat.decimal}
+                                    unit={stat.unit}
+                                    unitPosition={stat.unitPosition}
+                                />
+                            ))}
+                        </StatWrapper>
+                        <View style={style.topStatsWrapper}>
+                            <Text style={style.topStatHeading}>Top Logistics</Text>
+                            <View style={style.tabsContainer}>
+                                <View style={style.tabContentList}>
+                                    {/* Logistics list */}
+                                    {logisticsAnalyticsList.map(item => (
+                                        <LogisticsAnalyticsItem
+                                            key={item.id}
+                                            logistics={item.logistics}
+                                            numberOfDeliveries={item.numberOfDeliveries}
+                                            totalPrice={item.totalPrice}
+                                            oldTotalPrice={item.oldTotalPrice}
+                                            imageUrl={item.imageUrl}
+                                            disableClick={true}
+                                        />
+                                    ))}
+                                </View>
                             </View>
                         </View>
                     </View>
-                </View>
-            </ScrollView>
+                </ScrollView>
+            ) : <LocationAnalyticsSkeleton />}
             {/* calendar */}
             <CalendarSheet 
                 closeCalendar={handleCloseCalendar}

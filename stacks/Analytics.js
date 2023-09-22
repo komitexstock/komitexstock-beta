@@ -43,9 +43,11 @@ const Analytics = ({navigation}) => {
     // page loading state
     const [pageLoading, setPageLoading] = useState(true);
 
-    setTimeout(() => {
-        setPageLoading(false);
-    }, 500);
+    useEffect(() => {
+        setTimeout(() => {
+            setPageLoading(false);
+        }, 500);
+    })
 
     // order daily stat array
     const stats = [

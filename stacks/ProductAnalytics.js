@@ -28,6 +28,8 @@ import CalendarSheet from "../components/CalendarSheet";
 import ArrowDownSmall from '../assets/icons/ArrowDownSmall';
 // react hooks
 import { useState, useRef, useEffect } from "react";
+// skeleton screen
+import LogisticsAnalyticsSkeleton from "../skeletons/LogisticsAnalyticsSkeleton";
 
 const ProductAnalytics = ({navigation}) => {
     // bar chart data
@@ -40,6 +42,15 @@ const ProductAnalytics = ({navigation}) => {
         57500,
         88900
     ];
+
+    // page loading state
+    const [pageLoading, setPageLoading] = useState(true);
+
+    useEffect(() => {
+        setTimeout(() => {
+            setPageLoading(false);
+        }, 500);
+    });
     
     // bar chart x axis labels
     const labels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']; 
@@ -175,85 +186,87 @@ const ProductAnalytics = ({navigation}) => {
     // render ProductAnalytics page
     return (
         <>
-            <ScrollView
-                showsVerticalScrollIndicator={false}
-                style={style.container}
-            >
-                <View style={style.main}>
-                    {/* header component */}
-                    <Header 
-                        navigation={navigation} 
-                        stackName={
-                            <View style={style.headerWrapper}>
-                                <Image 
-                                    source={require('../assets/images/maybach-sunglasses.png')}
-                                    style={style.logisticsImage}
-                                />
-                                <Text style={style.headerText} >Maybach Sunglasses</Text>
-                            </View>
-                        } 
-                        iconFunction={null} 
-                        icon={null} 
-                        unpadded={true}
-                    />
-                    <View style={style.chartContainer}>
-                        {/* range wrapper */}
-                        <View style={style.rangeWrapper}>
-                            <TouchableOpacity 
-                                style={style.rangeButton}
-                                onPress={handleOpenCalendar}
-                            >
-                                <Text style={style.rangeButtonText}>Lat 7 Days</Text>
-                                <ArrowDownSmall />
-                            </TouchableOpacity>
-                        </View>
-                        {/* Bar Chart component */}
-                        <BarChart
-                            chartTitle={"Total Earnings"}
-                            chartWidth={"100%"}
-                            chartHeight={232}
-                            backgroundColor={white}
-                            data={data}
-                            labels={labels}
-                            unit={"₦"}
-                            fullbar={false}
-                            rotateXAxisLabel={false}
-                            enableGrid={false}
-                        />
-                    </View>
-                    <StatWrapper>
-                        {stats.map(stat => (
-                            <StatCard
-                                key={stat.id}
-                                title={stat.title}
-                                presentValue={stat.presentValue}
-                                oldValue={stat.oldValue}
-                                decimal={stat.decimal}
-                                unit={stat.unit}
-                                unitPosition={stat.unitPosition}
-                            />
-                        ))}
-                    </StatWrapper>
-                    <View style={style.topStatsWrapper}>
-                        <Text style={style.topStatHeading}>Top Locations</Text>
-                        <View style={style.tabsContainer}>
-                            <View style={style.tabContentList}>
-                                {/* Location list */}
-                                {locationAnalyticsList.map(item => (
-                                    <LocationAnalyticsItem
-                                        key={item.id}
-                                        location={item.location}
-                                        numberOfDeliveries={item.numberOfDeliveries}
-                                        totalPrice={item.totalPrice}
-                                        oldTotalPrice={item.oldTotalPrice}
-                                        disableCick={true}
+            {!pageLoading ? (
+                <ScrollView
+                    showsVerticalScrollIndicator={false}
+                    style={style.container}
+                >
+                    <View style={style.main}>
+                        {/* header component */}
+                        <Header 
+                            navigation={navigation} 
+                            stackName={
+                                <View style={style.headerWrapper}>
+                                    <Image 
+                                        source={require('../assets/images/maybach-sunglasses.png')}
+                                        style={style.logisticsImage}
                                     />
-                                ))}
+                                    <Text style={style.headerText} >Maybach Sunglasses</Text>
+                                </View>
+                            } 
+                            iconFunction={null} 
+                            icon={null} 
+                            unpadded={true}
+                        />
+                        <View style={style.chartContainer}>
+                            {/* range wrapper */}
+                            <View style={style.rangeWrapper}>
+                                <TouchableOpacity 
+                                    style={style.rangeButton}
+                                    onPress={handleOpenCalendar}
+                                >
+                                    <Text style={style.rangeButtonText}>Lat 7 Days</Text>
+                                    <ArrowDownSmall />
+                                </TouchableOpacity>
+                            </View>
+                            {/* Bar Chart component */}
+                            <BarChart
+                                chartTitle={"Total Earnings"}
+                                chartWidth={"100%"}
+                                chartHeight={232}
+                                backgroundColor={white}
+                                data={data}
+                                labels={labels}
+                                unit={"₦"}
+                                fullbar={false}
+                                rotateXAxisLabel={false}
+                                enableGrid={false}
+                            />
+                        </View>
+                        <StatWrapper>
+                            {stats.map(stat => (
+                                <StatCard
+                                    key={stat.id}
+                                    title={stat.title}
+                                    presentValue={stat.presentValue}
+                                    oldValue={stat.oldValue}
+                                    decimal={stat.decimal}
+                                    unit={stat.unit}
+                                    unitPosition={stat.unitPosition}
+                                />
+                            ))}
+                        </StatWrapper>
+                        <View style={style.topStatsWrapper}>
+                            <Text style={style.topStatHeading}>Top Locations</Text>
+                            <View style={style.tabsContainer}>
+                                <View style={style.tabContentList}>
+                                    {/* Location list */}
+                                    {locationAnalyticsList.map(item => (
+                                        <LocationAnalyticsItem
+                                            key={item.id}
+                                            location={item.location}
+                                            numberOfDeliveries={item.numberOfDeliveries}
+                                            totalPrice={item.totalPrice}
+                                            oldTotalPrice={item.oldTotalPrice}
+                                            disableCick={true}
+                                        />
+                                    ))}
+                                </View>
                             </View>
                         </View>
                     </View>
-                </View>
-            </ScrollView>
+                </ScrollView>
+            ) : <LogisticsAnalyticsSkeleton />}
             {/* calendar */}
             <CalendarSheet 
                 closeCalendar={handleCloseCalendar}
