@@ -9,6 +9,10 @@ import Header from "../components/Header";
 import LogisticsCard from "../components/LogisticsCard";
 // color
 import { black, bodyText, white, background } from "../style/colors";
+// recat hooks
+import { useState, useEffect } from "react";
+// skeleton screen
+import LogisticsSkeleton from "../skeletons/LogisticsSkeleton";
 
 const Logistics = ({navigation}) => {
 
@@ -76,42 +80,53 @@ const Logistics = ({navigation}) => {
         }
     ];
 
+    // page loading state
+    const [pageLoading, setPageLoading] = useState(true);
+
+    useEffect(() => {
+        setTimeout(() => {
+            setPageLoading(false);
+        }, 500);
+    })
+
     //  render Logistics stack
     return (
         <>
-            <FlatList 
-                // disable vertical scroll indicator
-                showsVerticalScrollIndicator={false}
-                ListHeaderComponent={
-                    <View style={style.headerWrapper}>
-                        <Header 
-                            navigation={navigation} 
-                            stackName={"Logistics"} 
-                            iconFunction={null} 
-                            icon={null} 
-                            unpadded={true}
+            {!pageLoading ? (
+                <FlatList 
+                    // disable vertical scroll indicator
+                    showsVerticalScrollIndicator={false}
+                    ListHeaderComponent={
+                        <View style={style.headerWrapper}>
+                            <Header 
+                                navigation={navigation} 
+                                stackName={"Logistics"} 
+                                iconFunction={null} 
+                                icon={null} 
+                                unpadded={true}
+                            />
+                        </View>
+                    }
+                    columnWrapperStyle={style.listContainer}
+                    style={style.listWrapper}
+                    keyExtractor={item => item.id}
+                    data={logisticsList}
+                    // render list items in two columns
+                    numColumns={2}
+                    renderItem={({ item }) => (
+                        // logistics card
+                        <LogisticsCard
+                            logistics={item.logistics}
+                            imageUrl={item.imageUrl}
+                            totalLocations={item.totalLocations}
+                            totalStock={item.totalStock}
+                            lowStock={item.lowStock}
+                            onPress={item.onPress}
+                            addNew={item.addNew}
                         />
-                    </View>
-                }
-                columnWrapperStyle={style.listContainer}
-                style={style.listWrapper}
-                keyExtractor={item => item.id}
-                data={logisticsList}
-                // render list items in two columns
-                numColumns={2}
-                renderItem={({ item }) => (
-                    // logistics card
-                    <LogisticsCard
-                        logistics={item.logistics}
-                        imageUrl={item.imageUrl}
-                        totalLocations={item.totalLocations}
-                        totalStock={item.totalStock}
-                        lowStock={item.lowStock}
-                        onPress={item.onPress}
-                        addNew={item.addNew}
-                    />
-                )}
-            />
+                    )}
+                />
+            ) : <LogisticsSkeleton />}
         </>
     );
 }

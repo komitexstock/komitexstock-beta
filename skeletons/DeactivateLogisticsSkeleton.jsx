@@ -12,76 +12,104 @@ const shimmerColorArray = ["#ebebeb", "#d9d9d9", "#ebebeb",];
 
 const Skeleton = createShimmerPlaceholder(LinearGradient);
 
-const TeamMembersSkeleton = () => {
+const DeactivateLogisticsSkeleton = () => {
     return (
         <View 
             style={skeleton.container}
         >   
             <View style={skeleton.header}>
                 <Skeleton 
-                    height={25}
-                    width={120}
+                    height={40}
+                    width={150}
                     shimmerColors={shimmerColorArray}
                     style={{borderRadius: 2}}
                 />
                 <Skeleton 
-                    height={25}
-                    width={25}
+                    height={24}
+                    width={24}
                     shimmerColors={shimmerColorArray}
                     style={{borderRadius: 2}}
                 />
             </View>
 
-            <View style={skeleton.cardWrapper}>
+            <View style={skeleton.details}>
                 <Skeleton 
-                    height={185}
+                    height={16}
+                    width={100}
+                    shimmerColors={shimmerColorArray}
+                    style={{borderRadius: 2}}
+                />
+
+                <Skeleton 
+                    height={16}
+                    width={100}
+                    shimmerColors={shimmerColorArray}
+                    style={{borderRadius: 2}}
+                />
+
+            </View>
+
+            <View style={skeleton.details}>
+                <Skeleton 
+                    height={16}
+                    width={100}
+                    shimmerColors={shimmerColorArray}
+                    style={{borderRadius: 2}}
+                />
+            </View>
+
+            <View style={skeleton.cardsWrapper}>
+                <Skeleton 
+                    height={62}
                     width={(windowWidth - 56) / 2}
                     shimmerColors={shimmerColorArray}
                     style={{borderRadius: 12}}
                 />
                 <Skeleton 
-                    height={185}
-                    width={(windowWidth - 56) / 2}
-                    shimmerColors={shimmerColorArray}
-                    style={{borderRadius: 12}}
-                />
-                <Skeleton 
-                    height={185}
-                    width={(windowWidth - 56) / 2}
-                    shimmerColors={shimmerColorArray}
-                    style={{borderRadius: 12}}
-                />
-                <Skeleton 
-                    height={185}
-                    width={(windowWidth - 56) / 2}
-                    shimmerColors={shimmerColorArray}
-                    style={{borderRadius: 12}}
-                />
-                <Skeleton 
-                    height={185}
-                    width={(windowWidth - 56) / 2}
-                    shimmerColors={shimmerColorArray}
-                    style={{borderRadius: 12}}
-                />
-                <Skeleton 
-                    height={185}
-                    width={(windowWidth - 56) / 2}
-                    shimmerColors={shimmerColorArray}
-                    style={{borderRadius: 12}}
-                />
-                <Skeleton 
-                    height={185}
-                    width={(windowWidth - 56) / 2}
-                    shimmerColors={shimmerColorArray}
-                    style={{borderRadius: 12}}
-                />
-                <Skeleton 
-                    height={185}
+                    height={62}
                     width={(windowWidth - 56) / 2}
                     shimmerColors={shimmerColorArray}
                     style={{borderRadius: 12}}
                 />
             </View>
+
+            <View style={skeleton.locationsWrapper}>
+                <Skeleton 
+                    height={13}
+                    width={88}
+                    shimmerColors={shimmerColorArray}
+                    style={{borderRadius: 2}}
+                />
+            </View>
+
+            <View style={skeleton.locationsWrapper}>
+                <Skeleton 
+                    height={200}
+                    width={windowWidth - 40}
+                    shimmerColors={shimmerColorArray}
+                    style={{borderRadius: 12}}
+                />
+            </View>
+
+            <View style={skeleton.locationsWrapper}>
+                <Skeleton 
+                    height={13}
+                    width={120}
+                    shimmerColors={shimmerColorArray}
+                    style={{borderRadius: 2}}
+                />
+            </View>
+            <View style={skeleton.buttonWrapper}>
+                <Skeleton 
+                    height={44}
+                    width={windowWidth - 40}
+                    shimmerColors={shimmerColorArray}
+                    style={{borderRadius: 12}}
+                />
+            </View>
+
+
+            
         </View>
     );
 }
@@ -91,21 +119,30 @@ const skeleton = StyleSheet.create({
     container: {
         backgroundColor: background,
         paddingHorizontal: 20,
+        paddingTop: 10,
         width: "100%",
         minHeight: "100%",
+        position: 'relative',
     },
     header: {
-        marginTop: 10,
-        display: 'flex',
         width: "100%",
+        display: 'flex',
         flexDirection: 'column-reverse',
         justifyContent: 'flex-start',
         alignItems: 'flex-start',
         gap: 20,
+        marginBottom: 8,
     },
-    cardWrapper: {
-        marginTop: 30,
-        marginBottom: 20,
+    details: {
+        width: "100%",
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 8,
+    },
+    cardsWrapper: {
+        marginTop: 16,
         width: "100%",
         display: "flex",
         flexDirection: 'row',
@@ -114,6 +151,18 @@ const skeleton = StyleSheet.create({
         flexWrap: 'wrap',
         gap: 16,
     },
+    locationsWrapper: {
+        marginTop: 20,
+    },
+    buttonWrapper: {
+        left: 0,
+        padding: 20,
+        position: 'absolute',
+        bottom: 0,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+    }
 })
  
-export default TeamMembersSkeleton;
+export default DeactivateLogisticsSkeleton;

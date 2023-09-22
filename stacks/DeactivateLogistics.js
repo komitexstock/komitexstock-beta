@@ -34,8 +34,11 @@ import VerifiedIcon from '../assets/icons/VerifiedIcon';
 import EmailIcon from "../assets/icons/EmailIcon";
 import PhoneIcon from "../assets/icons/PhoneIcon";
 import LocationIcon from "../assets/icons/LocationIcon";
+import ReportFlagIcon from "../assets/icons/ReportFlagIcon";
 // react hooks
 import { useRef, useState, useEffect } from "react";
+// skeleton screen
+import DeactivateLogisticsSkeleton from "../skeletons/DeactivateLogisticsSkeleton";
 
 // windows width
 const windowsHeight = Dimensions.get("window").height;
@@ -414,6 +417,15 @@ const DeactivateLogistics = ({navigation}) => {
         }
     ];
       
+    // page loading state
+    const [pageLoading, setPageLoading] = useState(true);
+
+    useEffect(() => {
+        setTimeout(() => {
+            setPageLoading(false);
+        }, 500);
+    })
+
     // stats array
     const stats = [
         {
@@ -490,117 +502,127 @@ const DeactivateLogistics = ({navigation}) => {
     // render DeactivateLogistics page
     return (
         <>
-            <ScrollView
-                showsVerticalScrollIndicator={false}
-                style={style.container}
-            >
-                <View style={style.main}>
-                    <View style={style.paddedContent}> 
-                        {/* header component */}
-                        <Header 
-                            navigation={navigation} 
-                            stackName={
-                                <View style={style.headerWrapper}>
-                                    <Image 
-                                        source={require('../assets/images/komitex.png')}
-                                        style={style.logisticsImage}
-                                    />
-                                    <Text style={style.headerText} >Komitex Logistics</Text>
-                                    <VerifiedIcon />
-                                </View>
-                            } 
-                            iconFunction={null} 
-                            icon={null} 
-                            unpadded={true}
-                        />
+            {!pageLoading ? (
+                <ScrollView
+                    showsVerticalScrollIndicator={false}
+                    style={style.container}
+                >
+                    <View style={style.main}>
+                        <View style={style.paddedContent}> 
+                            {/* header component */}
+                            <Header 
+                                navigation={navigation} 
+                                stackName={
+                                    <View style={style.headerWrapper}>
+                                        <Image 
+                                            source={require('../assets/images/komitex.png')}
+                                            style={style.logisticsImage}
+                                        />
+                                        <Text style={style.headerText} >Komitex Logistics</Text>
+                                        <VerifiedIcon />
+                                    </View>
+                                } 
+                                iconFunction={null} 
+                                icon={null} 
+                                unpadded={true}
+                            />
 
-                        <View style={style.contactInformationWrapper}>
-                            <View style={style.contactDetailsWrapper}>
-                                <View style={style.contactDetails}>
-                                    <EmailIcon />
-                                    <TouchableOpacity 
-                                        style={style.linkButton}
-                                        onPress= {() => Linking.openURL('mailto:Komitexlogistics@gmail.com')}
-                                    >
-                                        <Text style={style.linkText}>
-                                            Komitexlogistics@gmail.com
-                                        </Text>
-                                    </TouchableOpacity>
+                            <View style={style.contactInformationWrapper}>
+                                <View style={style.contactDetailsWrapper}>
+                                    <View style={style.contactDetails}>
+                                        <EmailIcon />
+                                        <TouchableOpacity 
+                                            style={style.linkButton}
+                                            onPress= {() => Linking.openURL('mailto:Komitexlogistics@gmail.com')}
+                                        >
+                                            <Text style={style.linkText}>
+                                                Komitexlogistics@gmail.com
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                    <View style={style.contactDetails}>
+                                        <PhoneIcon />
+                                        <TouchableOpacity 
+                                            style={style.linkButton}
+                                            onPress= {() => Linking.openURL('tel:+2348116320575')}
+                                        >
+                                            <Text style={style.linkText}>
+                                                08122266618
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </View>
                                 </View>
-                                <View style={style.contactDetails}>
-                                    <PhoneIcon />
-                                    <TouchableOpacity 
-                                        style={style.linkButton}
-                                        onPress= {() => Linking.openURL('tel:+2348116320575')}
-                                    >
-                                        <Text style={style.linkText}>
-                                            08122266618
+                                <View style={style.contactDetailsWrapper}>
+                                    <View style={style.contactDetails}>
+                                        <LocationIcon />
+                                        <Text style={style.locationText}>
+                                            200 Locations
                                         </Text>
-                                    </TouchableOpacity>
+                                    </View>
                                 </View>
                             </View>
-                            <View style={style.contactDetailsWrapper}>
-                                <View style={style.contactDetails}>
-                                    <LocationIcon />
-                                    <Text style={style.locationText}>
-                                        200 Locations
-                                    </Text>
+
+                            <StatWrapper>
+                                {stats.map(stat => (
+                                    <StatCard
+                                        key={stat.id}
+                                        title={stat.title}
+                                        presentValue={stat.presentValue}
+                                        oldValue={stat.oldValue}
+                                        decimal={stat.decimal}
+                                        unit={stat.unit}
+                                        unitPosition={stat.unitPosition}
+                                        backgroundColor={white}
+                                    />
+                                ))}
+                            </StatWrapper>
+
+                            <TouchableOpacity
+                                onPress={() => navigation.navigate('LogisticsAnalytics')}
+                            >
+                                <Text style={[style.showAll, style.smallerText]}>View Full Analytics</Text>
+                            </TouchableOpacity>
+                            
+                            <View style={style.locationsContainer}>
+                                <Text style={style.locationsHeading}>Available Locations</Text>
+                                <Text style={style.locationsParagraph}>
+                                    Find all available locations and the associated fees Komitex offers
+                                </Text>
+                                <View style={style.locationsList}>
+                                    { states.map((state, index) => {
+                                        if (index < 5) {
+                                            return (
+                                                <Accordion
+                                                    key={state.id}
+                                                    state={state.name}
+                                                    locations={state.locations}
+                                                    opened={state.opened}
+                                                />
+                                            )
+                                        }
+                                    })}
                                 </View>
+                                { states.length > 5 && (
+                                    <TouchableOpacity
+                                        onPress={() => navigation.navigate('AvailableLocations')}
+                                    >
+                                        <Text style={style.showAll}>Show all locations</Text>
+                                    </TouchableOpacity>
+                                )}
                             </View>
                         </View>
-
-                        <StatWrapper>
-                            {stats.map(stat => (
-                                <StatCard
-                                    key={stat.id}
-                                    title={stat.title}
-                                    presentValue={stat.presentValue}
-                                    oldValue={stat.oldValue}
-                                    decimal={stat.decimal}
-                                    unit={stat.unit}
-                                    unitPosition={stat.unitPosition}
-                                    backgroundColor={white}
-                                />
-                            ))}
-                        </StatWrapper>
-
-                        <TouchableOpacity
-                            onPress={() => navigation.navigate('LogisticsAnalytics')}
-                        >
-                            <Text style={[style.showAll, style.smallerText]}>View Full Analytics</Text>
-                        </TouchableOpacity>
-                        
-                        <View style={style.locationsContainer}>
-                            <Text style={style.locationsHeading}>Available Locations</Text>
-                            <Text style={style.locationsParagraph}>
-                                Find all available locations and the associated fees Komitex offers
-                            </Text>
-                            <View style={style.locationsList}>
-                                { states.map((state, index) => {
-                                    if (index < 5) {
-                                        return (
-                                            <Accordion
-                                                key={state.id}
-                                                state={state.name}
-                                                locations={state.locations}
-                                                opened={state.opened}
-                                            />
-                                        )
-                                    }
-                                })}
-                            </View>
-                            { states.length > 5 && (
-                                <TouchableOpacity
-                                    onPress={() => navigation.navigate('AvailableLocations')}
-                                >
-                                    <Text style={style.showAll}>Show all locations</Text>
-                                </TouchableOpacity>
-                            )}
+                        <View style={style.reportWrapper}>
+                            <TouchableOpacity
+                                style={style.reportButton}
+                                onPress={() => {}}
+                            >
+                                <ReportFlagIcon />
+                                <Text style={style.reportText}>Report this logistics</Text>
+                            </TouchableOpacity>
                         </View>
                     </View>
-
-                </View>
-            </ScrollView>
+                </ScrollView>
+            ) : <DeactivateLogisticsSkeleton />}
             <CustomButton
                 name="Deactive Logistics"
                 onPress={openPopUpModal}
@@ -833,6 +855,23 @@ const style = StyleSheet.create({
         alignItems: 'center',
         width: '100%',
         gap: 16,
+    },
+    reportWrapper: {
+        margin: 20,
+    },
+    reportButton: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        gap: 10,
+    },
+    reportText: {
+        color: black,
+        fontFamily: 'mulish-semibold',
+        fontSize: 12,
+        textDecorationLine: "underline",
+        textDecorationColor: black,
     }
 })
  

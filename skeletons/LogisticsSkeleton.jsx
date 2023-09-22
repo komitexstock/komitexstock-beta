@@ -12,7 +12,7 @@ const shimmerColorArray = ["#ebebeb", "#d9d9d9", "#ebebeb",];
 
 const Skeleton = createShimmerPlaceholder(LinearGradient);
 
-const TeamMembersSkeleton = () => {
+const LogisticsSkeleton = () => {
     return (
         <View 
             style={skeleton.container}
@@ -34,49 +34,49 @@ const TeamMembersSkeleton = () => {
 
             <View style={skeleton.cardWrapper}>
                 <Skeleton 
-                    height={185}
+                    height={180}
                     width={(windowWidth - 56) / 2}
                     shimmerColors={shimmerColorArray}
                     style={{borderRadius: 12}}
                 />
                 <Skeleton 
-                    height={185}
+                    height={180}
                     width={(windowWidth - 56) / 2}
                     shimmerColors={shimmerColorArray}
                     style={{borderRadius: 12}}
                 />
                 <Skeleton 
-                    height={185}
+                    height={180}
                     width={(windowWidth - 56) / 2}
                     shimmerColors={shimmerColorArray}
                     style={{borderRadius: 12}}
                 />
                 <Skeleton 
-                    height={185}
+                    height={180}
                     width={(windowWidth - 56) / 2}
                     shimmerColors={shimmerColorArray}
                     style={{borderRadius: 12}}
                 />
                 <Skeleton 
-                    height={185}
+                    height={180}
                     width={(windowWidth - 56) / 2}
                     shimmerColors={shimmerColorArray}
                     style={{borderRadius: 12}}
                 />
                 <Skeleton 
-                    height={185}
+                    height={180}
                     width={(windowWidth - 56) / 2}
                     shimmerColors={shimmerColorArray}
                     style={{borderRadius: 12}}
                 />
                 <Skeleton 
-                    height={185}
+                    height={180}
                     width={(windowWidth - 56) / 2}
                     shimmerColors={shimmerColorArray}
                     style={{borderRadius: 12}}
                 />
                 <Skeleton 
-                    height={185}
+                    height={180}
                     width={(windowWidth - 56) / 2}
                     shimmerColors={shimmerColorArray}
                     style={{borderRadius: 12}}
@@ -116,4 +116,4 @@ const skeleton = StyleSheet.create({
     },
 })
  
-export default TeamMembersSkeleton;
+export default LogisticsSkeleton;
