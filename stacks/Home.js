@@ -1664,6 +1664,7 @@ const Home = ({navigation}) => {
                                         <TouchableOpacity
                                             onPress={() => {navigation.navigate("Orders")}}
                                             // onPress={() => {navigation.navigate("Share")}}
+                                            // onPress={() => {navigation.navigate("WriteReview")}}
                                         >
                                             <Text style={style.seeMore} >
                                                 See more

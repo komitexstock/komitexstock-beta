@@ -1334,6 +1334,7 @@ const Chat = ({navigation, route}) => {
 
     // console.log(moment("today").format('DD MMMM, YYYY'));
 
+
     return (
         <>
             {/* chat header */}
