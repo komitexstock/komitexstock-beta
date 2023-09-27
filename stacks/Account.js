@@ -231,8 +231,8 @@ const Account = ({navigation, route}) => {
     
         if (!result.canceled) {
             imageType === "Profile" ? 
-            setSelectedImage(result.assets[0].uri) : 
-            setSelectedBanner(result.assets[0].uri);
+            setSelectedImage(!result.canceled[0].uri) : 
+            setSelectedBanner(!result.canceled[0].uri);
             closeModal();
         }
     };

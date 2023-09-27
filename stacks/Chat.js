@@ -26,6 +26,7 @@ import RepliedImageIcon from "../assets/icons/RepliedImageIcon";
 import RepliedDocumentIcon from "../assets/icons/RepliedDocumentIcon";
 import CloseIcon from "../assets/icons/CloseIcon";
 import CalendarIcon from "../assets/icons/CalendarIcon";
+import RemoveImageIcon from "../assets/icons/RemoveImageIcon";
 // components
 import ActionButton from "../components/ActionButton";
 import Header from "../components/Header";
@@ -60,6 +61,8 @@ import {
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 // moment
 import moment from "moment";
+// import image picker library
+import * as ImagePicker from "expo-image-picker";
 
 
 const Chat = ({navigation, route}) => {
@@ -433,6 +436,8 @@ const Chat = ({navigation, route}) => {
             });
         } 
     }
+
+    // console.log(Keyboard.isVisible())
 
     const openStackedModal = (type) => {
         stackedSheetRef.current?.present();
@@ -1201,16 +1206,6 @@ const Chat = ({navigation, route}) => {
         }
     }
 
-    const messageSenderName = (user_id, full_name, reply) => {
-        if (reply) {
-            if (userId === user_id) return "You replied"
-            return `${full_name} replied`;
-            // return "You replied"
-        } else {
-            return userId === user_id ? "Me" : full_name 
-        }
-    }
-
     const replyingSenderName = (targetMessage) => {
 
         if (accountType !== targetMessage.account_type) {
@@ -1286,13 +1281,46 @@ const Chat = ({navigation, route}) => {
         )
     }
 
+    const uploadingMesaageInput = (uploadingDataArray) => {
+        return (
+            <ScrollView 
+                showsHorizontalScrollIndicator={false} 
+                horizontal={true}
+                contentContainerStyle={style.uploadingImageContainer}
+            >
+                {uploadingDataArray.map(item => (
+                    <View style={style.uploadingImageWrapper} key={item.assetId}>
+                        <TouchableOpacity
+                            style={style.removeImageButton}
+                            onPress={() => removeImageFromUpload(item.assetId)}
+                        >
+                            <RemoveImageIcon />
+                        </TouchableOpacity>
+                        <Image style={style.uploadingImage} source={{uri: item.uri}} />
+                    </View>
+                ))}
+            </ScrollView>
+        )
+    }
+
+    // function to remiove image from upload list
+    const removeImageFromUpload = (id) => {
+        setUploading(prevUploading => {
+            // filter list
+            const newUploadList = prevUploading.filter(item => item.assetId !== id);
+            // check if list is zero
+            if (newUploadList.length === 0) return false; // return false if length is zero 
+            return newUploadList // else return the list
+        })
+    }
+
     const [reason, setReason] = useState("");
     const [errorReason, setErrorReason] = useState(false);
 
     const [errorCharge, setErrorCharge] = useState(false);
     const [errorPrice, setErrorPrice] = useState(false);
 
-        // variable to check for empty fields
+    // variable to check for empty fields
     const isAnyFieldEmpty = [
         location, 
         products, 
@@ -1333,6 +1361,22 @@ const Chat = ({navigation, route}) => {
     }
 
     // console.log(moment("today").format('DD MMMM, YYYY'));
+
+    // function to pick image from gallery
+    const pickImageAsync = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            quality: 1,
+            allowsMultipleSelection: true,
+        });
+
+        
+        if (!result.canceled) {
+            // handle selected image
+            // console.log(result);
+            setUploading(result.assets)
+            closeModal();
+        }
+    };
 
 
     return (
@@ -1454,6 +1498,7 @@ const Chat = ({navigation, route}) => {
                     </View>
                 )}
                 { replying && ReplyingMessageInput(replying) }
+                { uploading && uploadingMesaageInput(uploading) }
                 <View style={style.inputGroupWrapper}>
                     <View style={style.textInputContainer}>
                         <TextInput 
@@ -1738,6 +1783,7 @@ const Chat = ({navigation, route}) => {
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={style.uploadButton}
+                            onPress={pickImageAsync}
                         >
                             <View style={style.uploadIconWrapper}>
                                 <GalleryIcon />
@@ -1756,7 +1802,7 @@ const Chat = ({navigation, route}) => {
                 )}
             </CustomBottomSheet>
 
-            {/* bottom sheet to edit product and location */}
+            {/* bottom sheet to edit product and location, should have stack behaviour */}
             <CustomBottomSheet 
                 bottomSheetModalRef={stackedSheetRef}
                 setShowOverlay={setShowStackedOverlay}
@@ -1940,13 +1986,13 @@ const style = StyleSheet.create({
     textFieldWrapper: {
         width: "100%",
         minHeight: 64,
-        maxHeight: 170,
+        maxHeight: 200,
         backgroundColor: white,
         paddingHorizontal: 20,
         paddingVertical: 10,
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
+        alignItems: 'flex-start',
         borderTopWidth: 1,
         borderColor: background,
         justifyContent: 'center',
@@ -2088,6 +2134,42 @@ const style = StyleSheet.create({
         display: 'flex',    
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    uploadingImageContainer: {
+        // width: "100%",
+        height: 60,
+        marginBottom: 8,
+        display: 'flex',
+        flexDirection: 'row',    
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        gap: 8,
+    },
+    uploadingImageWrapper : {
+        width: 60,
+        height: 60,
+        position: 'relative',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    uploadingImage : {
+        width: 60,
+        height: 60,
+        borderRadius: 12,
+    },
+    removeImageButton: {
+        position: 'absolute',
+        zIndex: 2,
+        width: 16,
+        height: 16,
+        borderRadius: 8,
+        backgroundColor: subText,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        top: 4,
+        right: 4,
     },
 
 

@@ -66,7 +66,7 @@ const EditProductContent = ({product_name, initialPrice, quantity, imageUrl, han
         });
 
         if (!result.canceled) {
-            setSelectedImage(result.assets[0].uri);
+            setSelectedImage(!result.canceled[0].uri);
         } 
     };
 

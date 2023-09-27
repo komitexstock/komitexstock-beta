@@ -67,7 +67,7 @@ const AddProduct = ({navigation, route}) => {
         });
     
         if (!result.canceled) {
-            setSelectedImage(result.assets[0].uri);
+            setSelectedImage(!result.canceled[0].uri);
         }
     };
 
