@@ -27,6 +27,9 @@ import RepliedDocumentIcon from "../assets/icons/RepliedDocumentIcon";
 import CloseIcon from "../assets/icons/CloseIcon";
 import CalendarIcon from "../assets/icons/CalendarIcon";
 import RemoveImageIcon from "../assets/icons/RemoveImageIcon";
+import RemoveDocIcon from "../assets/icons/RemoveDocIcon";
+import UploadingImageDocIcon from "../assets/icons/UploadingImageDocIcon";
+import UploadingDocIcon from "../assets/icons/UploadingDocIcon";
 // components
 import ActionButton from "../components/ActionButton";
 import Header from "../components/Header";
@@ -63,6 +66,8 @@ import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import moment from "moment";
 // import image picker library
 import * as ImagePicker from "expo-image-picker";
+// import document picker library
+import * as DocumentPicker from 'expo-document-picker';
 
 
 const Chat = ({navigation, route}) => {
@@ -1286,9 +1291,10 @@ const Chat = ({navigation, route}) => {
             <ScrollView 
                 showsHorizontalScrollIndicator={false} 
                 horizontal={true}
-                contentContainerStyle={style.uploadingImageContainer}
+                contentContainerStyle={style.uploadingInputContainer}
             >
-                {uploadingDataArray.map(item => (
+                {/* uplaoding images from Gallery */}
+                {uploadingDataArray.uploadType === "Gallery" && uploadingDataArray.assets.map(item => (
                     <View style={style.uploadingImageWrapper} key={item.assetId}>
                         <TouchableOpacity
                             style={style.removeImageButton}
@@ -1299,6 +1305,19 @@ const Chat = ({navigation, route}) => {
                         <Image style={style.uploadingImage} source={{uri: item.uri}} />
                     </View>
                 ))}
+                {/* uploading documents */}
+                {uploadingDataArray.uploadType === "Document" && (
+                    <View style={style.uploadingDocumentWraper}>
+                        {uploadingDataArray.mimeType.includes("image") ? <UploadingImageDocIcon /> : <UploadingDocIcon />}
+                        <Text style={style.uploadingDocName}>
+                            {/* slice document name if its too long */}
+                            {uploadingDataArray.name.length > 25 ? uploadingDataArray.name.slice(0, 25) + "..." : uploadingDataArray.name}
+                        </Text>
+                        <TouchableOpacity onPress={removeDocFromUpload}>
+                            <RemoveDocIcon />
+                        </TouchableOpacity>
+                    </View>
+                )}
             </ScrollView>
         )
     }
@@ -1307,11 +1326,18 @@ const Chat = ({navigation, route}) => {
     const removeImageFromUpload = (id) => {
         setUploading(prevUploading => {
             // filter list
-            const newUploadList = prevUploading.filter(item => item.assetId !== id);
+            const newUploadList = prevUploading.assets.filter(item => item.assetId !== id);
             // check if list is zero
             if (newUploadList.length === 0) return false; // return false if length is zero 
-            return newUploadList // else return the list
+            return { // else return updated list
+                uploadType: "Gallery",
+                assets: newUploadList
+            }
         })
+    }
+
+    const removeDocFromUpload = () => {
+        setUploading(false);
     }
 
     const [reason, setReason] = useState("");
@@ -1373,10 +1399,28 @@ const Chat = ({navigation, route}) => {
         if (!result.canceled) {
             // handle selected image
             // console.log(result);
-            setUploading(result.assets)
+            setUploading({
+                uploadType: "Gallery",
+                assets: result.assets
+            })
             closeModal();
         }
     };
+
+    const pickDocAsync = async () => {
+        let result = await DocumentPicker.getDocumentAsync();
+
+        console.log(result);        
+        if (result.type === "success") {
+            setUploading({
+                uploadType: "Document",
+                ...result
+            })
+            closeModal();
+        }
+    };
+
+    // console.log(uploading);
 
 
     return (
@@ -1784,7 +1828,7 @@ const Chat = ({navigation, route}) => {
                         <TouchableOpacity
                             style={style.uploadButton}
                             onPress={pickImageAsync}
-                        >
+                            >
                             <View style={style.uploadIconWrapper}>
                                 <GalleryIcon />
                             </View>
@@ -1792,6 +1836,7 @@ const Chat = ({navigation, route}) => {
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={style.uploadButton}
+                            onPress={pickDocAsync}
                         >
                             <View style={style.uploadIconWrapper}>
                                 <DocumentIcon />
@@ -2135,9 +2180,9 @@ const style = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    uploadingImageContainer: {
+    uploadingInputContainer: {
         // width: "100%",
-        height: 60,
+        // height: 60,
         marginBottom: 8,
         display: 'flex',
         flexDirection: 'row',    
@@ -2171,7 +2216,22 @@ const style = StyleSheet.create({
         top: 4,
         right: 4,
     },
-
+    uploadingDocumentWraper: {
+        padding: 10,
+        backgroundColor: background,
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        borderRadius: 12,
+    },
+    uploadingDocName: {
+        fontFamily: 'mulish-medium',
+        color: bodyText,
+        fontSize: 10,
+        marginLeft: 12,
+        marginRight: 4,
+    },
 
     modalWrapper: {
         display: 'flex',
