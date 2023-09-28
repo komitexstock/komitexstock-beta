@@ -45,6 +45,11 @@ const CaptureImage = ({navigation, route}) => {
         await requestCameraPermissionsAsync();
     }
 
+    const [chatId, setChatId] = useState(null);
+    const [chatName, setChatName] = useState(null);
+    const [chatType, setChatType] = useState(null);
+    const [chatHeaderImage, setChatHeaderImage] = useState(null);
+
     useEffect(() => {
         requestPermission();
     }, []);
@@ -55,6 +60,13 @@ const CaptureImage = ({navigation, route}) => {
         if (route.params) {
             setOrigin(route.params.origin);
             route.params.imageType && setImageType(route.params.imageType);
+
+            if (route.params.origin === "Chat") {
+                setChatId(route.params.id);
+                setChatType(route.params.type);
+                setChatName(route.params.name);
+                setChatHeaderImage(route.params.imageUrl);
+            }
         }
         else return setOrigin("Chat");
 
@@ -113,7 +125,11 @@ const CaptureImage = ({navigation, route}) => {
     const confirmImage = () => {
         navigation.navigate(origin, {
             imageUri: picture.uri,
-            imageType: imageType
+            imageType: imageType,
+            id: chatId,
+            type: chatType,
+            name: chatName,
+            imageUrl: chatHeaderImage,
         });
     };
 
@@ -126,9 +142,9 @@ const CaptureImage = ({navigation, route}) => {
                     ref={cameraRef}
                     style={style.camera}
                     type={type}
-                    flashMode={"off"}
+                    flashMode={flashMode}
                     ratio='16:9'
-                    autoFocus={AutoFocus.auto}
+                    autoFocus={AutoFocus.on}
                     whiteBalance={WhiteBalance.cloudy}
                 >
                     <TouchableOpacity style={style.flash} onPress={toggleFlashMode}  >

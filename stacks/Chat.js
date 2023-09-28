@@ -129,7 +129,19 @@ const Chat = ({navigation, route}) => {
             openNewMessageAlert();
         }
 
-    }, [route.params.newChat]);
+        if (route.params.imageUri) {
+            setUploading({
+                uploadType: "Camera",
+                assets: [
+                    {
+                        assetId: 0, 
+                        uri: route.params.imageUri,
+                    },
+                ],
+            })
+        }
+
+    }, [route.params]);
 
     // console.log(textInput);
 
@@ -1293,8 +1305,8 @@ const Chat = ({navigation, route}) => {
                 horizontal={true}
                 contentContainerStyle={style.uploadingInputContainer}
             >
-                {/* uplaoding images from Gallery */}
-                {uploadingDataArray.uploadType === "Gallery" && uploadingDataArray.assets.map(item => (
+                {/* uplaoding images from Gallery or Camera */}
+                {["Gallery", "Camera"].includes(uploadingDataArray.uploadType) && uploadingDataArray.assets.map(item => (
                     <View style={style.uploadingImageWrapper} key={item.assetId}>
                         <TouchableOpacity
                             style={style.removeImageButton}
@@ -1419,6 +1431,18 @@ const Chat = ({navigation, route}) => {
             closeModal();
         }
     };
+
+    const navigateToCamera = () => {
+        closeModal();
+        Keyboard.dismiss();
+        navigation.navigate("CaptureImage", {
+            origin: "Chat",
+            id: id,
+            type: type,
+            name: name,
+            imageUrl: imageUrl,
+        })
+    }
 
     // console.log(uploading);
 
@@ -1819,6 +1843,7 @@ const Chat = ({navigation, route}) => {
                     <View style={style.uploadButtonsWrapper}>
                         <TouchableOpacity
                             style={style.uploadButton}
+                            onPress={navigateToCamera}
                         >
                             <View style={style.uploadIconWrapper}>
                                 <CameraPrimaryLargeIcon />
