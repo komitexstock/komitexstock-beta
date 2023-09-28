@@ -1422,7 +1422,7 @@ const Chat = ({navigation, route}) => {
     const pickDocAsync = async () => {
         let result = await DocumentPicker.getDocumentAsync();
 
-        console.log(result);        
+        // console.log(result);        
         if (result.type === "success") {
             setUploading({
                 uploadType: "Document",
@@ -2227,6 +2227,7 @@ const style = StyleSheet.create({
         width: 60,
         height: 60,
         borderRadius: 12,
+        resizeMode: 'cover',
     },
     removeImageButton: {
         position: 'absolute',

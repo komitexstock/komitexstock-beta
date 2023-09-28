@@ -5,7 +5,7 @@ import { inactivePrimaryColor, primaryColor, secondaryColor, white } from "../st
 // import react hooks
 import { useEffect, useRef } from "react";
 
-const CustomButton = ({name, onPress, backgroundColor, fixed, inactive, secondaryButton, unpadded, isLoading}) => {
+const CustomButton = ({name, onPress, backgroundColor, fixed, inactive, secondaryButton, unpadded, isLoading, shrinkWrapper}) => {
     // name => string
     // onPress => function
     // backgroundColor => string
@@ -59,7 +59,8 @@ const CustomButton = ({name, onPress, backgroundColor, fixed, inactive, secondar
             style={[ 
                 fixed ? style.fixed : style.buttonWrapper, 
                 {backgroundColor: backgroundColor}, 
-                unpadded && {paddingHorizontal: 0}
+                unpadded && {paddingHorizontal: 0},
+                shrinkWrapper && {height: 44, paddingBottom: 0},
             ]}
         >
             <TouchableOpacity 

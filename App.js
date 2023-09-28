@@ -45,6 +45,8 @@ import CaptureImage from './stacks/CaptureImage';
 import WriteReview from './stacks/WriteReview';
 import ViewImage from './stacks/ViewImage';
 import Share from './stacks/Share';
+// no session stacks
+import Login from './stacks/Login';
 // components
 import BottomNavigation from './components/BottomNavigation';
 // App context
@@ -82,6 +84,21 @@ export default function App() {
     }
 
     const Stack = createNativeStackNavigator();
+
+    const userHasSession = false; // Function to check if user has a session
+    const isFirstTime = false; // Function to check if it's the first time opening the app
+  
+    let initialRouteName = "";
+  
+    if (userHasSession) {
+      initialRouteName = "Home";
+    } else {
+      if (isFirstTime) {
+        initialRouteName = "Onboarding";
+      } else {
+        initialRouteName = "Login";
+      }
+    }
     
 
     return (
@@ -102,7 +119,18 @@ export default function App() {
                                 which is usually used when the status bar background color is darker. 
                                 "dark-content": Sets the status bar style to dark content, which is usually used when the status bar background color is lighte
                             */}
-                            <Stack.Navigator initialRouteName='Home'>
+                            <Stack.Navigator 
+                                initialRouteName={initialRouteName}
+                            >
+                                {/* no session stacks */}
+                                {/* Login stack */}
+                                <Stack.Screen 
+                                    name="Login" 
+                                    component={Login}
+                                    options={{
+                                        headerShown: false,
+                                    }} 
+                                />
                                 {/* Home Stack */}
                                 <Stack.Screen 
                                     name="Home" 
