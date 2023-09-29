@@ -127,9 +127,9 @@ const style = StyleSheet.create({
         gap: 6,
     },
     loadingBalls: {
-        borderRadius: 5,
-        width: 10,
-        height: 10,
+        borderRadius: 4,
+        width: 8,
+        height: 8,
         backgroundColor: white,
         // marginBottom: -5,
     },

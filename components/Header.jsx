@@ -6,7 +6,7 @@ import ArrowLeft from "../assets/icons/ArrowLeft";
 import { black, white } from "../style/colors";
 
 
-const Header = ({navigation, stackName, iconFunction, icon, removeBackArrow, inlineArrow, backgroundColor, unpadded, viewStyle}) => {
+const Header = ({navigation, navigateTo, stackName, iconFunction, icon, removeBackArrow, inlineArrow, backgroundColor, unpadded, viewStyle}) => {
     // stack name => string
     // iconfunction => function
     // icon => jsx component
@@ -25,7 +25,7 @@ const Header = ({navigation, stackName, iconFunction, icon, removeBackArrow, inl
             { !removeBackArrow && (
                 <TouchableOpacity
                     onPress={() => {
-                        navigation.goBack();
+                        !navigateTo ? navigation.goBack() : navigation.navigate(navigateTo); 
                     }}
                     style={style.backArrow}
                 >
@@ -44,7 +44,7 @@ const Header = ({navigation, stackName, iconFunction, icon, removeBackArrow, inl
                 { inlineArrow && (
                     <TouchableOpacity
                         onPress={() => {
-                            navigation.goBack();
+                            !navigateTo ? navigation.goBack() : navigation.navigate(navigateTo); 
                         }}
                     >
                         

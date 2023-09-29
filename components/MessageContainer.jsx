@@ -23,7 +23,6 @@ import {
     white,
     secondaryColor,
     accentLight,
-    messageSenderColors,
     subText,
     rescheduledContainer,
     cancelledContainer,

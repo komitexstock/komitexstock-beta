@@ -10,10 +10,11 @@ import {
 // components
 import Input from "../components/Input";
 import Header from "../components/Header";
-import { background, black, bodyText, primaryColor } from "../style/colors";
 import CustomButton from "../components/CustomButton";
 // react hooks
 import { useState } from "react";
+// colors
+import { background, black, bodyText, primaryColor } from "../style/colors";
 
 const Login = ({navigation}) => {
 
@@ -52,6 +53,7 @@ const Login = ({navigation}) => {
                 <Header 
                     stackName={""}
                     navigation={navigation}
+                    navigateTo={"OnBoarding"}
                 />
                 <View style={style.main}>
                     <Text style={style.headerText}>Welcome Back</Text>
@@ -134,6 +136,7 @@ const style = StyleSheet.create({
         color: primaryColor,
         textDecorationColor: primaryColor,
         textDecorationLine: 'underline',
+        fontFamily: 'mulish-bold',
     }
 })
  
