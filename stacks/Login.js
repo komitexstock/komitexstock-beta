@@ -41,6 +41,10 @@ const Login = ({navigation}) => {
 
     const handleUserLogin = () => {
         setIsLoading(true);
+
+        setTimeout(() => {
+            navigation.navigate("Home");
+        }, 3000);
     }
 
     const emptyFields = [emailAddress, password].some(

@@ -21,7 +21,7 @@ const OnBoarding = ({navigation}) => {
             id: 2,
             header: "Unlock the power of efficient deliveries",
             paragraph: "Save time and enhance customer satisfaction effortlessly.",
-            image: require("../assets/onboarding/onboarding2.png")
+            image: require("../assets/onboarding/onboarding3.png")
         },
         {
             id: 3,
