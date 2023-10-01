@@ -15,13 +15,13 @@ const OnBoarding = ({navigation}) => {
             id: 1,
             header: "Effortless Logistics management starts here",
             paragraph: "Optimize your supply chain with ease and precision.",
-            image: require("../assets/onboarding/onboarding2.png")
+            image: require("../assets/onboarding/onboarding4.png")
         },
         {
             id: 2,
             header: "Unlock the power of efficient deliveries",
             paragraph: "Save time and enhance customer satisfaction effortlessly.",
-            image: require("../assets/onboarding/onboarding3.png")
+            image: require("../assets/onboarding/onboarding5.png")
         },
         {
             id: 3,
@@ -98,6 +98,7 @@ const OnBoarding = ({navigation}) => {
                     name={"Get Started"}
                     unpadded={true}
                     shrinkWrapper={true}
+                    onPress={() => navigation.navigate("CreateAccount")}
                 />
                 <CustomButton
                     name={"Login"}

@@ -48,6 +48,7 @@ import Share from './stacks/Share';
 // no session stacks
 import Login from './stacks/Login';
 import OnBoarding from './stacks/OnBoarding';
+import CreateAccount from './stacks/CreateAccount';
 // components
 import BottomNavigation from './components/BottomNavigation';
 // App context
@@ -136,6 +137,14 @@ export default function App() {
                                 <Stack.Screen 
                                     name="OnBoarding" 
                                     component={OnBoarding}
+                                    options={{
+                                        headerShown: false,
+                                    }} 
+                                />
+                                {/* OnBoarding stack */}
+                                <Stack.Screen 
+                                    name="CreateAccount" 
+                                    component={CreateAccount}
                                     options={{
                                         headerShown: false,
                                     }} 
