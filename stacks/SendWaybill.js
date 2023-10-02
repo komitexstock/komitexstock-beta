@@ -281,7 +281,6 @@ const SendWaybill = ({navigation}) => {
                                         value={waybillDetails}
                                         multiline={true}
                                         maxRows={5}
-                                        editable={true}
                                         textAlign={"top"}
                                         height={100}
                                         keyboardType={"default"}

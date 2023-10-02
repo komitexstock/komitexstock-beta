@@ -297,15 +297,10 @@ const SendOrder = ({navigation, route}) => {
     const inputs = [
         {
             id: 1,
-            editable: true,
-            maxRows: 1,
-            multiline: false,
             value: customerName,
             onChange: updateName,
             placeholder: "Customer Name",
             label: "Customer Name",
-            textAlign: "center",
-            height: 44,
             keyboardType: "default",
             adornment: false,
             helperText: false,
@@ -314,15 +309,10 @@ const SendOrder = ({navigation, route}) => {
         },
         {
             id: 2,
-            editable: true,
-            maxRows: 1,
-            multiline: false,
             value: phoneNumber,
             onChange: updatePhoneNumber,
             placeholder: "Customer's Phone Number",
             label: "Customer's Phone Number",
-            textAlign: "center",
-            height: 44,
             keyboardType: "phone-pad",
             adornment: false,
             helperText: "Seperate multiple phone number with \",\"",
@@ -331,15 +321,10 @@ const SendOrder = ({navigation, route}) => {
         },
         {
             id: 3,
-            editable: true,
-            maxRows: 1,
-            multiline: false,
             value: address,
             onChange: updateAddress,
             placeholder: "Address",
             label: "Delivery Address",
-            textAlign: "center",
-            height: 44,
             keyboardType: "default",
             adornment: false,
             helperText: false,
@@ -348,16 +333,11 @@ const SendOrder = ({navigation, route}) => {
         },
         {
             id: 4,
-            editable: true,
-            maxRows: 1,
-            multiline: false,
             maxRows: 1,
             value: price ? price.toLocaleString() : '',
             onChange: updatePrice,
             placeholder: "Price",
             label: "Price",
-            textAlign: "center",
-            height: 44,
             keyboardType: "numeric",
             adornment: "₦",
             helperText: false,
@@ -457,7 +437,6 @@ const SendOrder = ({navigation, route}) => {
                                         value={orderDetails}
                                         multiline={true}
                                         maxRows={5}
-                                        editable={true}
                                         textAlign={"top"}
                                         height={100}
                                         keyboardType={"default"}
@@ -521,11 +500,6 @@ const SendOrder = ({navigation, route}) => {
                                                 placeholder={input.placeholder} 
                                                 onChange={input.onChange}
                                                 value={input.value}
-                                                multiline={input.multiline}
-                                                maxRows={input.maxRows}
-                                                editable={input.editable}
-                                                textAlign={input.textAlign}
-                                                height={input.height}
                                                 keyboardType={input.keyboardType}
                                                 adornment={input.adornment}
                                                 helperText={input.helperText}

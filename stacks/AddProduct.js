@@ -109,14 +109,7 @@ const AddProduct = ({navigation, route}) => {
                                 placeholder={"Type the name of the product"}
                                 onChange={(text) => setProductName(text)}
                                 value={productName}
-                                multiline={false}
-                                editable={true}
-                                minRows={1}
-                                textAlign={"center"}
-                                height={44}
-                                keyboardType={"default"}
                                 adornment={false}
-                                helperText={false}
                                 error={errorProductName}
                                 setError={setErrorProductName}
                             />
@@ -126,14 +119,8 @@ const AddProduct = ({navigation, route}) => {
                                 placeholder={"Price"}
                                 onChange={updatePrice}
                                 value={price ? price.toLocaleString() : ''}
-                                multiline={false}
-                                editable={true}
-                                minRows={1}
-                                textAlign={"center"}
-                                height={44}
                                 keyboardType={"numeric"}
                                 adornment={"₦"}
-                                helperText={false}
                                 error={errorPrice}
                                 setError={setErrorPrice}
                             />

@@ -15,17 +15,18 @@ import { background, black, bodyText, inactiveStep, primaryColor, stepLabelFont 
 import CustomButton from "../components/CustomButton";
 import Input from "../components/Input";
 // react hooks
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 // icons
 import ArrowLeft from "../assets/icons/ArrowLeft";
+import SignupCompleteIcon from "../assets/icons/SignupCompleteIcon";
 // window height
-import { windowHeight, windowWidth} from "../utils/helpers"; 
+import { windowHeight } from "../utils/helpers"; 
 
 const CreateAccount = ({navigation}) => {
 
     // total number of step in the creating account proccess
     const totalSteps = [1, 2, 3];
-    const [currentStep, setCurrentStep] = useState(1);
+    const [currentStep, setCurrentStep] = useState(4);
 
     // state to indicate loading
     const [isLoading, setIsLoading] = useState(false);
@@ -40,14 +41,111 @@ const CreateAccount = ({navigation}) => {
         setEmailAddress(text);
     }
 
-    // code
+    // state to store full code
     const [code, setCode] = useState("");
 
-    // state to code error
-    const [errorCode, setErrorCode] = useState("");
+    // ref for code segment 1
+    const segment1 = useRef(null);
+    // state for segemnt 1
+    const [code1, setCode1] = useState("");
+    
+    // ref for code segment 2
+    const segment2 = useRef(null);
+    // state for segemnt 2
+    const [code2, setCode2] = useState("");
+    
+    // ref for code segment 3
+    const segment3 = useRef(null);
+    // state for segemnt 3
+    const [code3, setCode3] = useState("");
+    
+    // ref for code segment 4
+    const segment4 = useRef(null);
+    // state for segemnt 4
+    const [code4, setCode4] = useState("");
+    
+    // ref for code segment 5
+    const segment5 = useRef(null);
+    // state for segemnt 5
+    const [code5, setCode5] = useState("");
+    
+    // ref for code segment 6
+    const segment6 = useRef(null);
+    // state for segemnt 6
+    const [code6, setCode6] = useState("");
 
-    const updateCode = (text) => {
-        setCode(text);
+    useEffect(() => {
+        setCode(code1 + code2 + code3 + code4 + code5 + code6);
+    }, [code1, code2, code3, code4, code5, code6])
+
+    // refs for code segment
+    const codeSegments = [
+        {
+            id: 1,
+            ref: segment1,
+            value: code1,
+            setValue: setCode1,
+        },
+        {
+            id: 2,
+            ref: segment2,
+            value: code2,
+            setValue: setCode2,
+        },
+        {
+            id: 3,
+            ref: segment3,
+            value: code3,
+            setValue: setCode3
+        },
+        {
+            id: 4,
+            ref: segment4,
+            value: code4,
+            setValue: setCode4,
+        },
+        {
+            id: 5,
+            ref: segment5,
+            value: code5,
+            setValue: setCode5,
+        },
+        {
+            id: 6,
+            ref: segment6,
+            value: code6,
+            setValue: setCode6,
+        },
+    ];
+
+    const [backspaceCount, setBackspaceCount] = useState(0);
+
+    const handleSegmentedInput = (id, text, prevSegment) => {
+        
+        if (prevSegment === true) {
+            setBackspaceCount(prevCount => prevCount + 1)
+            if (id !== 1 && backspaceCount === 1) {
+                codeSegments.filter(segment => segment.id === id - 1)[0].ref.current.focus();
+                codeSegments.filter(segment => segment.id === id - 1)[0].setValue("");
+                setBackspaceCount(1);
+            }
+            return;        
+        }
+
+        if (/^\d+$/.test(text)) {
+            // focus on the next input segment
+            if (id !== codeSegments.length ) {
+                codeSegments.filter(segment => segment.id === id + 1)[0].ref.current.focus();
+                setBackspaceCount(1);
+            } else {
+                setBackspaceCount(0);
+            }
+        } 
+    }
+
+    const handleFocusNextSegment = () => {
+        // console.log(codeSegments.find(segment => segment.ref.current.value === ""));
+        codeSegments.find(segment => segment.value === "").ref.current.focus();
     }
 
     // businessName
@@ -109,6 +207,16 @@ const CreateAccount = ({navigation}) => {
     }
 
     const handleSignup = () => {
+        setIsLoading(true);
+        
+        setTimeout(() => {
+            setCurrentStep(4);
+            setIsLoading(false);
+        }, 3000);
+    }
+
+    // function to navigate to home screen/stack
+    const handleNavigateHome = () => {
 
     }
 
@@ -138,7 +246,6 @@ const CreateAccount = ({navigation}) => {
         return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     };
 
-
     return (
         <>
             <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -147,31 +254,35 @@ const CreateAccount = ({navigation}) => {
                     contentContainerStyle={style.contentContainer}
                     style={[
                         style.container,
-                        {minHeight: currentStep === 3 ? windowHeight : windowHeight - 100}
+                        {minHeight: currentStep === 3 ? windowHeight : windowHeight - 100},
                     ]}
                 >
-                    <View style={style.wrapper}>
-                        <View style={style.header}>
-                            <TouchableOpacity>
-                                <ArrowLeft />
-                            </TouchableOpacity>
-                            <View style={style.stepsWrapper}>
-                                {totalSteps.map(step => (
-                                    <View 
-                                        key={step}
-                                        style={[
-                                            style.step,
-                                            {backgroundColor: currentStep >= step ? primaryColor : inactiveStep}
-                                        ]}
-                                    />
-                                ))}
+                    <View style={currentStep !== 4 ? style.wrapper : style.centerWrapper}>
+                        {/* header, doesn't show in step 4 */}
+                        { currentStep !== 4 && <>
+                            <View style={style.header}>
+                                <TouchableOpacity>
+                                    <ArrowLeft />
+                                </TouchableOpacity>
+                                <View style={style.stepsWrapper}>
+                                    {totalSteps.map(step => (
+                                        <View 
+                                            key={step}
+                                            style={[
+                                                style.step,
+                                                {backgroundColor: currentStep >= step ? primaryColor : inactiveStep}
+                                            ]}
+                                        />
+                                    ))}
+                                </View>
+                                <Text style={style.stepLabel}>
+                                    Step
+                                    <Text  style={style.activeStepLabel}> {currentStep}</Text>
+                                    /3 
+                                </Text>
                             </View>
-                            <Text style={style.stepLabel}>
-                                Step
-                                <Text  style={style.activeStepLabel}> {currentStep}</Text>
-                                /3 
-                            </Text>
-                        </View>
+                        </>}
+                        {/* step 1 content */}
                         { currentStep === 1 && <>
                             <Text style={style.headerText}>Create an account</Text>
                             <Text style={style.paragraph}>Set up your account in a few clicks</Text>
@@ -198,7 +309,7 @@ const CreateAccount = ({navigation}) => {
                                 </TouchableOpacity>
                             </View>
                         </>}
-
+                        {/* step 2 content */}
                         { currentStep === 2 && <>
                             <Text style={style.headerText}>Confirm your email</Text>
                             <Text style={style.paragraph}>
@@ -208,23 +319,31 @@ const CreateAccount = ({navigation}) => {
                                 </Text>
                             </Text>
                             <View style={style.inputWrapper}>
-                                <Input 
-                                    label={"Code"}
-                                    placeholder={"Code"}
-                                    value={code}
-                                    onChange={updateCode}
-                                    keyboardType={"numeric"}
-                                    error={errorCode}
-                                    setError={setErrorCode}
-                                />
+                                <View style={style.segementWrapper}>
+                                    {codeSegments.map(segment => (
+                                        <Input 
+                                            key={segment.id}
+                                            inputRef={segment.ref}
+                                            value={segment.value}
+                                            onChange={segment.setValue}
+                                            keyboardType={"numeric"}
+                                            segmented={true}
+                                            segmentId={segment.id}
+                                            disabled={segment.disabled}
+                                            handleSegmentedInput={handleSegmentedInput}
+                                            characterLimit={1}
+                                            handleFocusNextSegment={handleFocusNextSegment}
+                                        />
+                                    ))}
+                                </View>
                             </View>
-                            <View style={[style.footerWrapper, {justifyContent: 'center'}]}>
+                            <View style={[style.footerWrapper]}>
                                 <Text style={style.paragraph}>
                                     Resend code in {formatTime(time)}
                                 </Text>
                             </View>
                         </>}
-
+                        {/* step 3 content */}
                         { currentStep === 3 && <>
                             <Text style={style.headerText}>Add your info</Text>
                             <Text style={style.paragraph}>
@@ -245,7 +364,7 @@ const CreateAccount = ({navigation}) => {
                                     value={fullName}
                                     onChange={updateFullName}
                                     error={errorFullName}
-                                    setError={errorFullName}
+                                    setError={setErrorFullName}
                                 />
                                 <Input 
                                     label={"Phone Number"}
@@ -262,7 +381,7 @@ const CreateAccount = ({navigation}) => {
                                     value={password}
                                     onChange={updatePassword}
                                     error={errorPassword}
-                                    setError={setPassword}
+                                    setError={setErrorPassword}
                                     isPasswordInput={true}
                                     adornment={true}
                                 />
@@ -288,36 +407,60 @@ const CreateAccount = ({navigation}) => {
                                 </TouchableOpacity>
                             </View>
                         </>}
+                        {/* step 4 content */}
+                        { currentStep === 4 && <>
+                            <View style={style.successPromptWrapper}>
+                                <SignupCompleteIcon />
+                                <Text style={style.successHeading}>
+                                    Account set up complete
+                                </Text>
+                                <Text style={style.successParagraph}>
+                                    Click done and explore the full benefits of Komitex
+                                </Text>
+                            </View>
+                        </>}
                     </View>
+                    {/* step 3 button, keyboard displays over button */}
                     {currentStep === 3 && <>
                         <CustomButton
                             inactive={businessName === "" || phoneNumber === "" || password === "" || fullName === ""}
                             name={"Agree and Continue"}
                             onPress={handleSignup}
                             unpadded={true}
-                            isLoading={isLoading}
+                            isLoading={isLoading && currentStep === 3}
                             backgroundColor={background}
                         />
                     </>}
                 </ScrollView>
             </TouchableWithoutFeedback>
+            {/* step 1 button, button floats over keyboard */}
             {currentStep === 1 && <>
                 <CustomButton
                     inactive={emailAddress === ""}
                     name={"Continue"}
                     onPress={handleEmailValidation}
                     fixed={true}
-                    isLoading={isLoading}
+                    isLoading={isLoading && currentStep === 1}
                     backgroundColor={background}
                 />
             </>}
+            {/* step 2 button, button floats over keyboard */}
             {currentStep === 2 && <>
                 <CustomButton
                     inactive={code.length < 6}
                     name={"Continue"}
                     onPress={handleCodeValidation}
                     fixed={true}
-                    isLoading={isLoading}
+                    isLoading={isLoading && currentStep === 2}
+                    backgroundColor={background}
+                />
+            </>}
+            {/* step 4 button */}
+            {currentStep === 4 && <>
+                <CustomButton
+                    name={"Done"}
+                    onPress={handleNavigateHome}
+                    fixed={true}
                     backgroundColor={background}
                 />
             </>}
@@ -414,6 +557,43 @@ const style = StyleSheet.create({
         fontSize: 12,
         color: black,
         fontFamily: 'mulish-semibold'
+    },
+    segementWrapper: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        gap: 6,
+        width: '100%',
+    },
+    centerWrapper: {
+        height: '100%',
+        width: "100%",
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingBottom: 100,
+    },
+    successPromptWrapper: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'column',
+    },
+    successHeading: {
+        color: black,
+        fontSize: 20,
+        fontFamily: 'mulish-bold',
+        marginTop: 30,
+        marginBottom: 13,
+    },
+    successParagraph: {
+        color: bodyText,
+        fontSize: 12,
+        fontFamily: 'mulish-medium',
+        lineHeight: 18,
+        maxWidth: "50%",
+        textAlign: 'center',
     },
 })
  

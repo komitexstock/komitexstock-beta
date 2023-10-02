@@ -7,14 +7,14 @@ import {
     TouchableOpacity 
 } from "react-native";
 // react hooks
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 // colors
-import { black, inputBorder, inputLabel, neutral, primaryColor, white } from "../style/colors";
+import { black, cancelledText, inputBorder, inputLabel, neutral, primaryColor, white } from "../style/colors";
 // icons
 import EyeIcon from "../assets/icons/EyeIcon";
 import EyeSlashIcon from "../assets/icons/EyeSlashIcon";
 
-const Input = ({label, placeholder, onChange, value, forceBlur, multiline, editable, minRows, textAlign, height, keyboardType, adornment, helperText, characterLimit, error, setError, isPasswordInput}) => {
+const Input = ({label, inputRef, placeholder, onChange, value, forceBlur, multiline, disabled, minRows, textAlign, height, keyboardType, adornment, helperText, characterLimit, error, setError, isPasswordInput, segmented, segmentId, handleFocusNextSegment, handleSegmentedInput}) => {
     // label, placeholder, textAlign, keyboardType, helperText  => string
     // value => variable (string or int)
     // forceBlur, multiline, editable, adornment, error, isPasswordInput => Boolean
@@ -30,8 +30,18 @@ const Input = ({label, placeholder, onChange, value, forceBlur, multiline, edita
 
     const [charactersLeft, setCharactersLeft] = useState(characterLimit);
 
+    const [keyUp, setKeyUp] = useState(false);
+
+    const incomponentRef = useRef(null)
+
     // handle on text change in input
     const handleTextChange = (text) => {
+        if (segmented) {
+            handleSegmentedInput(segmentId, text);
+            onChange(text);
+            setKeyUp(true);
+            return;
+        }
         if (characterLimit) {
             setCharactersLeft(() => {
                 const characterDifference = characterLimit - text.length
@@ -45,6 +55,13 @@ const Input = ({label, placeholder, onChange, value, forceBlur, multiline, edita
         else setError(false);
     }
 
+    const handleKeyPress = (event) => {
+        if (segmented && event.nativeEvent.key === "Backspace") {
+            setKeyUp(false);
+            handleSegmentedInput(segmentId, "", true);
+        }
+    }
+
     // handle input out of focus
     const handleBlur = () => {
         setInputInFocus(false);
@@ -53,6 +70,7 @@ const Input = ({label, placeholder, onChange, value, forceBlur, multiline, edita
     // handle input in focus
     const handleFocus = () => {
         setInputInFocus(true);
+        if (segmented && !keyUp) return handleFocusNextSegment();
     }
 
     // state to indicate input is in focus
@@ -63,7 +81,12 @@ const Input = ({label, placeholder, onChange, value, forceBlur, multiline, edita
 
     // return input component
     return (
-        <View style={style.inputWrapper}>
+        <View 
+            style={[
+                style.inputWrapper,
+                segmented && {width: 40}
+            ]}
+        >
             { label && <Text style={style.label}>{label}</Text>}
             { adornment ? (
                 // if it's an adornment input
@@ -76,7 +99,7 @@ const Input = ({label, placeholder, onChange, value, forceBlur, multiline, edita
                             // if height is given use that value else use default of 44
                             height: height ? height : 44,
                             // set border as red if error is detected in input
-                            borderColor: `${error ? "rgba(180, 35, 24, 1)" : inputBorder}`
+                            borderColor: `${error ? cancelledText : inputBorder}`
                         }
                     ] : [
                         // if input is in focus
@@ -93,19 +116,20 @@ const Input = ({label, placeholder, onChange, value, forceBlur, multiline, edita
                     <Text style={style.adornment}>{adornment}</Text>
                     {/* textinput component */}
                     <TextInput
+                        ref={inputRef ? inputRef : incomponentRef}
                         onChangeText={handleTextChange}
                         keyboardType={keyboardType ? keyboardType : "default"}
-                        placeholder={placeholder}
                         style={style.adornedInput}
                         onFocus={handleFocus}
                         onBlur={handleBlur}
+                        placeholder={placeholder}
                         placeholderTextColor={neutral}
                         // if value is an array print out all its elements, usefull for phone number input
                         defaultValue={!Array.isArray(value) ? value : value.join(", ")}
                         multiline={multiline ? multiline : false}
                         numberOfLines={minRows ? minRows : 1}
                         textAlignVertical={textAlign ? textAlign : "center"}
-                        editable={editable ? editable : true}
+                        editable={disabled ? false : true}
                         secureTextEntry={isPasswordInput ?  hidePassword : false}
                     />
                     {/* if its a password input show eye icon */}
@@ -120,38 +144,50 @@ const Input = ({label, placeholder, onChange, value, forceBlur, multiline, edita
             ) : (
                 // not adornment input
                 <TextInput
+                    ref={inputRef ? inputRef : incomponentRef}
                     onChangeText={handleTextChange}
+                    onKeyPress={handleKeyPress}
+                    keyboardType={keyboardType ? keyboardType : "default"}
+                    placeholder={placeholder}
+                    placeholderTextColor={neutral}
+                    onFocus={handleFocus}
+                    onBlur={handleBlur}
+                    defaultValue={!Array.isArray(value) ? value : value.join(", ")}
+                    multiline={multiline ? multiline : false}
+                    numberOfLines={minRows ? minRows : 1}
+                    textAlignVertical={textAlign ? textAlign : "center"}
+                    editable={disabled ? false : true}
+                    maxLength={characterLimit ? characterLimit : null} 
                     style={!inputInFocus ? [
                         // style if input is not infocus
                         style.input, 
                         {
                             height: height ? height : 44,
-                            borderColor: `${error ? "rgba(180, 35, 24, 1)" : inputBorder}`
-                        }
+                            borderColor: `${error ? cancelledText : inputBorder}`,
+                        },
+                        segmented && {
+                            width: 40, 
+                            height: 40,
+                            fontSize: 16,
+                        },
                     ] : [
                         // style if input is in focus
                         style.input, 
                         style.focusedInput, 
                         {
                             height: height ? height : 44
-                        }
+                        },
+                        segmented && {
+                            width: 40, 
+                            height: 40,
+                            fontSize: 16,
+                        },
                     ]}
-                    keyboardType={keyboardType ? keyboardType : "default"}
-                    placeholder={placeholder}
-                    onFocus={handleFocus}
-                    onBlur={handleBlur}
-                    placeholderTextColor={neutral}
-                    defaultValue={!Array.isArray(value) ? value : value.join(", ")}
-                    multiline={multiline ? multiline : false}
-                    numberOfLines={minRows ? minRows : 1}
-                    textAlignVertical={textAlign ? textAlign : "center"}
-                    editable={editable ? editable : true}
-                    maxLength={characterLimit ? characterLimit : null} 
                 />
             )}
             {/* // display helper text if it's given */}
             {helperText && <Text style={style.label}>{helperText}</Text>}
-            {characterLimit && (
+            {characterLimit && !segmented && (
                 <Text style={style.limit}>{charactersLeft} character left</Text>
             )}
         </View>
@@ -196,6 +232,7 @@ const style = StyleSheet.create({
         maxHeight: 100,
         gap: 3,
         color: black,
+        fontSize: 12,
     }, 
     adornmentWrapper: {
         display: 'flex',
