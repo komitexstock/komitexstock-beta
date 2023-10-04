@@ -1,4 +1,4 @@
-import { View, Image, Text, StyleSheet, Animated, PanResponder, ScrollView } from "react-native";
+import { View, Image, Text, StyleSheet, Animated, ScrollView } from "react-native";
 import { background, black, primaryColor, secondaryColor, subText } from "../style/colors";
 import CustomButton from "../components/CustomButton";
 // react hooks
@@ -31,9 +31,19 @@ const OnBoarding = ({navigation}) => {
         },
     ];
 
+    const animatedValue = useRef(new Animated.Value(0)).current;
+
     const handleScroll = (event) => {
         const scrollOffset = event.nativeEvent.contentOffset.x;
 
+        const referenceWidth = 50; //
+        
+        Animated.spring(animatedValue, {
+            toValue: referenceWidth * (scrollOffset/ (2 * windowWidth)),
+            useNativeDriver: false,
+            friction: 5,
+        }).start()
+        
         if (scrollOffset === 0) return setStep(1);
         if (scrollOffset === windowWidth) return setStep(2);
         if (scrollOffset === windowWidth * 2) return setStep(3);
@@ -68,29 +78,15 @@ const OnBoarding = ({navigation}) => {
                 ))}
             </ScrollView>
             <View style={style.stepsWrapper}>
-                <View 
-                    style={{
-                        width: 20, 
-                        height: 4, 
-                        borderRadius: 4,
-                        backgroundColor: step === 1 ? primaryColor : secondaryColor, 
-                    }} 
-                />
-                <View 
-                    style={{
-                        width: 20, 
-                        height: 4, 
-                        borderRadius: 4,
-                        backgroundColor: step === 2 ? primaryColor : secondaryColor, 
-                    }} 
-                />
-                <View 
-                    style={{
-                        width: 20, 
-                        height: 4, 
-                        borderRadius: 4,
-                        backgroundColor: step === 3 ? primaryColor : secondaryColor, 
-                    }} 
+                <View style={style.stepsIndicatorStatic} />
+                <View style={style.stepsIndicatorStatic} />
+                <View style={style.stepsIndicatorStatic} />
+                <Animated.View 
+                    style={[
+                        style.stepsIndicatorStatic,
+                        style.stepsIndicatorDynamic,
+                        {left: animatedValue}
+                    ]} 
                 />
             </View>
             <View style={style.buttonWrapper}>
@@ -125,14 +121,29 @@ const style = StyleSheet.create({
         paddingVertical: 24,
     },
     stepsWrapper: {
-        width: "100%",
+        // width: "100%",
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        gap: 5,
+        // gap: 5,
         marginTop: 20,
         marginBottom: 40,
+        position: 'relative',
+    },
+    stepsIndicatorStatic: {
+        width: 20, 
+        height: 4,
+        borderRadius: 4,
+        marginHorizontal: 2.5,
+        backgroundColor: secondaryColor, 
+    },
+    stepsIndicatorDynamic: {
+        zIndex: 1,
+        backgroundColor: primaryColor,
+        position: 'absolute',
+        left: 0,
+        top: 0,
     },
     buttonWrapper: {
         width: "100%",

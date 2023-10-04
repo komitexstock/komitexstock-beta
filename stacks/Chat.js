@@ -218,7 +218,7 @@ const Chat = ({navigation, route}) => {
     const userId = "hjsdjkji81899";
     const companyName = "Mega Enterprise";
     const fullname = "Iffie Ovie";
-    const outOfStock = false;
+    const emptyStock = true;
 
 
     const [price, setPrice] = useState(50000);
@@ -1464,7 +1464,7 @@ const Chat = ({navigation, route}) => {
             </View>
 
             {/* out of stock indicator */}
-            { outOfStock && (
+            { emptyStock && (
                 <View style={style.indicatorWrapper}>
                     <Indicator 
                         type={"Cancelled"}

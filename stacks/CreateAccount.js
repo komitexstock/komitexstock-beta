@@ -21,12 +21,13 @@ import ArrowLeft from "../assets/icons/ArrowLeft";
 import SignupCompleteIcon from "../assets/icons/SignupCompleteIcon";
 // window height
 import { windowHeight } from "../utils/helpers"; 
+// context
 
 const CreateAccount = ({navigation}) => {
 
     // total number of step in the creating account proccess
     const totalSteps = [1, 2, 3];
-    const [currentStep, setCurrentStep] = useState(4);
+    const [currentStep, setCurrentStep] = useState(1);
 
     // state to indicate loading
     const [isLoading, setIsLoading] = useState(false);
@@ -217,7 +218,7 @@ const CreateAccount = ({navigation}) => {
 
     // function to navigate to home screen/stack
     const handleNavigateHome = () => {
-
+        navigation.navigate("Home");
     }
 
     const [time, setTime] = useState(90);
@@ -261,7 +262,7 @@ const CreateAccount = ({navigation}) => {
                         {/* header, doesn't show in step 4 */}
                         { currentStep !== 4 && <>
                             <View style={style.header}>
-                                <TouchableOpacity>
+                                <TouchableOpacity onPress={() => navigation.goBack()}>
                                     <ArrowLeft />
                                 </TouchableOpacity>
                                 <View style={style.stepsWrapper}>
@@ -421,13 +422,13 @@ const CreateAccount = ({navigation}) => {
                         </>}
                     </View>
                     {/* step 3 button, keyboard displays over button */}
-                    {currentStep === 3 && <>
+                    {currentStep === 1 && <>
                         <CustomButton
                             inactive={businessName === "" || phoneNumber === "" || password === "" || fullName === ""}
                             name={"Agree and Continue"}
                             onPress={handleSignup}
                             unpadded={true}
-                            isLoading={isLoading && currentStep === 3}
+                            isLoading={currentStep === 3 && isLoading}
                             backgroundColor={background}
                         />
                     </>}
@@ -440,23 +441,23 @@ const CreateAccount = ({navigation}) => {
                     name={"Continue"}
                     onPress={handleEmailValidation}
                     fixed={true}
-                    isLoading={isLoading && currentStep === 1}
+                    isLoading={currentStep === 1 && isLoading}
                     backgroundColor={background}
                 />
             </>}
             {/* step 2 button, button floats over keyboard */}
-            {currentStep === 2 && <>
+            {currentStep === 1 && <>
                 <CustomButton
                     inactive={code.length < 6}
                     name={"Continue"}
                     onPress={handleCodeValidation}
                     fixed={true}
-                    isLoading={isLoading && currentStep === 2}
+                    isLoading={ currentStep === 2 && isLoading}
                     backgroundColor={background}
                 />
             </>}
             {/* step 4 button */}
-            {currentStep === 4 && <>
+            {currentStep === 1 && <>
                 <CustomButton
                     name={"Done"}
                     onPress={handleNavigateHome}
