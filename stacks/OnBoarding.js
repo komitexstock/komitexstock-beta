@@ -41,7 +41,9 @@ const OnBoarding = ({navigation}) => {
         Animated.spring(animatedValue, {
             toValue: referenceWidth * (scrollOffset/ (2 * windowWidth)),
             useNativeDriver: false,
-            friction: 5,
+            friction: 6,
+            tension: 10,
+            // bounciness: 1,
         }).start()
         
         if (scrollOffset === 0) return setStep(1);
