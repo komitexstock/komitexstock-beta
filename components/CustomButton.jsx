@@ -39,19 +39,41 @@ const CustomButton = ({name, onPress, backgroundColor, fixed, inactive, secondar
     };
 
     useEffect(() => {
-        if (isLoading) {
-            animateAllBoxes();
-            setInterval(() => {
-                animateAllBoxes();
-            }, 1200);
-        }
-    }, [isLoading]);
+        
+        // if (isLoading) {
+        //     setInterval(() => {
+        //         animateAllBoxes();
+        //     }, 1200);
+        // }
+        let intervalId;
 
-    const animateAllBoxes = () => {
-        animateBox(translate1, 0);
-        setTimeout(() => animateBox(translate2), 100);
-        setTimeout(() => animateBox(translate3), 200);        
-    }
+        
+        const animateAllBoxes = () => {
+            animateBox(translate1, 0);
+            setTimeout(() => animateBox(translate2), 100);
+            setTimeout(() => animateBox(translate3), 200);        
+        }
+        
+        const startAnimation = () => {
+            animateAllBoxes()
+            intervalId = setInterval(animateAllBoxes, 1200);
+        };
+
+        const stopAnimation = () => {
+            clearInterval(intervalId);
+        };
+
+        if (isLoading) {
+            startAnimation();
+        } else {
+            stopAnimation();
+        }
+
+        return () => {
+            stopAnimation();
+        };
+
+    }, [isLoading]);
     
     // render CustomButtom component
     return (

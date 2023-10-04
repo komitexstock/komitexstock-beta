@@ -255,7 +255,7 @@ const CreateAccount = ({navigation}) => {
                     contentContainerStyle={style.contentContainer}
                     style={[
                         style.container,
-                        {minHeight: currentStep === 3 ? windowHeight : windowHeight - 100},
+                        {minHeight: currentStep === 3 ? windowHeight : windowHeight - 300},
                     ]}
                 >
                     <View style={currentStep !== 4 ? style.wrapper : style.centerWrapper}>
@@ -422,7 +422,7 @@ const CreateAccount = ({navigation}) => {
                         </>}
                     </View>
                     {/* step 3 button, keyboard displays over button */}
-                    {currentStep === 1 && <>
+                    {currentStep === 3 && <>
                         <CustomButton
                             inactive={businessName === "" || phoneNumber === "" || password === "" || fullName === ""}
                             name={"Agree and Continue"}
@@ -446,7 +446,7 @@ const CreateAccount = ({navigation}) => {
                 />
             </>}
             {/* step 2 button, button floats over keyboard */}
-            {currentStep === 1 && <>
+            {currentStep === 2 && <>
                 <CustomButton
                     inactive={code.length < 6}
                     name={"Continue"}
@@ -457,7 +457,7 @@ const CreateAccount = ({navigation}) => {
                 />
             </>}
             {/* step 4 button */}
-            {currentStep === 1 && <>
+            {currentStep === 4 && <>
                 <CustomButton
                     name={"Done"}
                     onPress={handleNavigateHome}
