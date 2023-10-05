@@ -22,6 +22,8 @@ import SignupCompleteIcon from "../assets/icons/SignupCompleteIcon";
 // window height
 import { windowHeight } from "../utils/helpers"; 
 // context
+import { FIREBASE_AUTH } from "../Firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
 const CreateAccount = ({navigation}) => {
 
@@ -33,10 +35,10 @@ const CreateAccount = ({navigation}) => {
     const [isLoading, setIsLoading] = useState(false);
 
     // email address
-    const [emailAddress, setEmailAddress] = useState("");
+    const [emailAddress, setEmailAddress] = useState("iffieovie@gmail.com");
 
     // state to email address error
-    const [errorEmailAddress, setErrorEmailAddress] = useState("");
+    const [errorEmailAddress, setErrorEmailAddress] = useState(false);
 
     const updateEmailAddress = (text) => {
         setEmailAddress(text);
@@ -153,7 +155,7 @@ const CreateAccount = ({navigation}) => {
     const [businessName, setBusinessName] = useState("");
 
     // state to email address error
-    const [errorBusinessName, setErrorBusinessName] = useState("");
+    const [errorBusinessName, setErrorBusinessName] = useState(false);
 
     const updateBusinessName = (text) => {
         setBusinessName(text);
@@ -163,7 +165,7 @@ const CreateAccount = ({navigation}) => {
     const [fullName, setFullName] = useState("");
 
     // state to fullName error
-    const [errorFullName, setErrorFullName] = useState("");
+    const [errorFullName, setErrorFullName] = useState(false);
 
     const updateFullName = (text) => {
         setFullName(text);
@@ -173,17 +175,17 @@ const CreateAccount = ({navigation}) => {
     const [phoneNumber, setPhoneNumber] = useState("");
 
     // state to phoneNumber error
-    const [errorPhoneNumber, setErrorPhoneNumber] = useState("");
+    const [errorPhoneNumber, setErrorPhoneNumber] = useState(false);
 
     const updatePhoneNumber = (text) => {
         setPhoneNumber(text);
     }
 
     // password
-    const [password, setPassword] = useState("");
+    const [password, setPassword] = useState("qwertyuiop789");
 
     // state to password error
-    const [errorPassword, setErrorPassword] = useState("");
+    const [errorPassword, setErrorPassword] = useState(false);
 
     const updatePassword = (text) => {
         setPassword(text);
@@ -207,13 +209,24 @@ const CreateAccount = ({navigation}) => {
         }, 3000);
     }
 
-    const handleSignup = () => {
+    // console.log("Email", emailAddress);
+    // console.log("Password", password);
+
+    const handleSignup = async () => {
         setIsLoading(true);
-        
-        setTimeout(() => {
-            setCurrentStep(4);
+
+        try {
+            const userCredentials = await createUserWithEmailAndPassword(FIREBASE_AUTH, emailAddress, password);
+            console.log(userCredentials);
+
+            if (userCredentials) {
+                setIsLoading(false);
+            }
+            
+        } catch (error) {
+            console.log("Error: ", error);
             setIsLoading(false);
-        }, 3000);
+        }
     }
 
     // function to navigate to home screen/stack
@@ -371,7 +384,7 @@ const CreateAccount = ({navigation}) => {
                                     label={"Phone Number"}
                                     placeholder={"Phone Number"}
                                     value={phoneNumber}
-                                    onChange={setPhoneNumber}
+                                    onChange={updatePhoneNumber}
                                     keyboardType={"numeric"}
                                     error={errorPhoneNumber}
                                     setError={setErrorPhoneNumber}
@@ -424,7 +437,8 @@ const CreateAccount = ({navigation}) => {
                     {/* step 3 button, keyboard displays over button */}
                     {currentStep === 3 && <>
                         <CustomButton
-                            inactive={businessName === "" || phoneNumber === "" || password === "" || fullName === ""}
+                            // inactive={businessName === "" || phoneNumber === "" || password === "" || fullName === ""}
+                            inactive={false}
                             name={"Agree and Continue"}
                             onPress={handleSignup}
                             unpadded={true}

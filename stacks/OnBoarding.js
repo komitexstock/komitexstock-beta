@@ -5,8 +5,20 @@ import CustomButton from "../components/CustomButton";
 import { useState, useRef } from "react";
 // import utils
 import { windowWidth, windowHeight } from "../utils/helpers";
+// USERS collection
+// import { USERS } from "../Firebase";
+// import { getDocs } from "firebase/firestore";
 
 const OnBoarding = ({navigation}) => {
+
+    // getDocs(USERS)
+    // .then(snapShot => {
+    //     let users = []
+    //     snapShot.docs.forEach(doc => {
+    //         users.push({ ...doc.data(), id: doc.id})
+    //     })
+    //     console.log(users);
+    // })
 
     const [step, setStep] = useState(1);
 
