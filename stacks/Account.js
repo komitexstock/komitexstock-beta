@@ -7,14 +7,11 @@ import {
     Image,
     TouchableOpacity,
     Linking,
-    BackHandler
 } from "react-native";
 // hooks
 import { 
     useState, 
-    useRef, 
     useEffect,
-    useLayoutEffect
 } from "react";
 // colors
 import { primaryColor, secondaryColor, background, black, bodyText, white, } from '../style/colors';
@@ -40,6 +37,8 @@ import CameraPrimaryLargeIcon from "../assets/icons/CameraPrimaryLargeIcon";
 import GalleryIcon from "../assets/icons/GalleryIcon";
 // import image picker library
 import * as ImagePicker from "expo-image-picker";
+// import global
+import { useGlobals } from "../context/AppContext";
 
 const Account = ({navigation, route}) => {
     // list of buttons in Account Page
@@ -105,6 +104,9 @@ const Account = ({navigation, route}) => {
         ],
     }
 
+    // bottomsheet ref
+    const { bottomSheetRef } = useGlobals();
+  
     // modal overlay
     const [showOverlay, setShowOverlay] = useState(false);
 
@@ -123,7 +125,7 @@ const Account = ({navigation, route}) => {
     // state to indicate what type of image is being uploade "Banner" or "Profile"
     const [imageType, setImageType] = useState("");
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         if (route.params) {
             route.params.imageType === "Profile" ? 
             setSelectedImage(route.params.imageUri) :
@@ -131,46 +133,15 @@ const Account = ({navigation, route}) => {
         }
     })
 
-    // use effect to close modal
-    // useEffect(() => {
-    //     // function to run if back button is pressed
-    //     const backAction = () => {
-    //         // Run your function here
-    //         if (showOverlay) {
-    //             // if modal is open, close modal
-    //             closeModal();
-    //             return true;
-    //         } else {
-    //             // if modal isnt open simply navigate back
-    //             return false;
-    //         }
-    //     };
-    
-    //     // listen for onPress back button
-    //     const backHandler = BackHandler.addEventListener(
-    //         'hardwareBackPress',
-    //         backAction
-    //     );
-    
-    //     return () => backHandler.remove();
-
-    // }, [showOverlay]);
-   
-    // bottom sheet ref
-    const bottomSheetModalRef = useRef(null);
-
     // close modal function
     const closeModal = () => {
-        bottomSheetModalRef.current?.close();
-        setShowOverlay(false);
+        bottomSheetRef.current?.close();
     };
 
     // open modal function
     const openModal = (type) => {
         // open bottomsheet modal
-        bottomSheetModalRef.current?.present();
-        // set overlay
-        setShowOverlay(true);
+        bottomSheetRef.current?.present();
         // set modal type
         if (type === "Notifications") {
             return setModal({
@@ -357,9 +328,7 @@ const Account = ({navigation, route}) => {
             </ScrollView>
             {/* Bottom sheet component */}
             <CustomBottomSheet 
-                bottomSheetModalRef={bottomSheetModalRef}
-                setShowOverlay={setShowOverlay}
-                showOverlay={showOverlay}
+                bottomSheetModalRef={bottomSheetRef}
                 closeModal={closeModal}
                 snapPointsArray={modal.snapPoints}
                 autoSnapAt={0}

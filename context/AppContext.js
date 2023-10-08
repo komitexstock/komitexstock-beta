@@ -1,7 +1,6 @@
-import { createContext, useState, useContext, useRef } from "react";
-import { useEffect } from "react";
+import { createContext, useState, useEffect, useContext, useRef } from "react";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
-
+// back handler
 import { BackHandler } from "react-native";
 
 const AppContext = createContext();
@@ -43,27 +42,27 @@ const AppProvider = ({children}) => {
 
             if (calendarSheetOpen) {
                 // if calendar bottom sheet is open, close it
-                calendarSheetRef?.close();
+                calendarSheetRef?.current.close();
                 return true;
                 
             } else if (filterSheetOpen) {
                 // if filter bottom sheet is open, close it
-                filterSheetRef?.close();
+                filterSheetRef?.current.close();
                 return true;
                 
             } else if (popUpSheetOpen) {
                 // if popup bottom sheet is open, close it
-                popUpSheetRef?.close();
+                popUpSheetRef?.current.close();
                 return true;
 
             } else if (stackedSheetOpen) {
                 // if stacked bottom sheet is open, close it
-                stackedSheetRef?.close();
+                stackedSheetRef?.current.close();
                 return true;
 
             } else if (bottomSheetOpen) {
                 // if bottom sheet is open, close it
-                bottomSheetRef?.close();
+                bottomSheetRef?.current.close();
                 return true;
 
             } else {
@@ -93,8 +92,22 @@ const AppProvider = ({children}) => {
 
     
     return (
-        <AppContext.Provider value={{currentStack, setBottomSheetOpen, setCalendarSheetOpen, setFilterSheetOpen, setPopUpSheetOpen, setStackedSheetOpen}}>
-            {children}
+        <AppContext.Provider 
+            value={{
+                currentStack,
+                bottomSheetRef,
+                stackedSheetRef,
+                filterSheetRef,
+                calendarSheetRef,
+                popUpSheetRef,
+                setBottomSheetOpen,
+                setCalendarSheetOpen,
+                setFilterSheetOpen,
+                setPopUpSheetOpen,
+                setStackedSheetOpen
+            }}
+        >
+           {children}
         </AppContext.Provider>
     );
 }
