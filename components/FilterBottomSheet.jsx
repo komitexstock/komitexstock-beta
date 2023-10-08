@@ -6,14 +6,13 @@ import CloseIcon from "../assets/icons/CloseIcon";
 import { bodyText, primaryColor, secondaryColor, white } from "../style/colors";
 // window height
 import { windowHeight } from "../utils/helpers";
-import {  } from "react-native-gesture-handler";
+// globals
+import { useGlobals } from "../context/AppContext";
 
 const FilterBottomSheet = ({fiterSheetRef, height, closeFilter, children, clearFilterFunction, applyFilterFunction}) => {
 
-    const handleGestureEnd = (event) => {
-        // console.log(event);
-        if (event === -1) closeFilter();
-    };
+    // set filter bottomsheet state
+    const { setFilterSheetOpen } = useGlobals();
 
     // render popup bottomsheet modal backdrop 
     const renderBackdrop = useCallback(
@@ -37,7 +36,6 @@ const FilterBottomSheet = ({fiterSheetRef, height, closeFilter, children, clearF
                 snapPoints={[height]}
                 enableContentPanningGestures={false}
                 enablePanDownToClose={false}
-                onChange={event => handleGestureEnd(event)}
                 backgroundStyle={{
                     borderRadius: 32,
                     paddingBottom: 90,
@@ -47,6 +45,10 @@ const FilterBottomSheet = ({fiterSheetRef, height, closeFilter, children, clearF
                 )}
                 stackBehavior={"push"}
                 backdropComponent={renderBackdrop}
+                onChange={(index) => {
+                    if (index === -1) return setFilterSheetOpen(false)
+                    return setFilterSheetOpen(true);
+                }}
             >
                 <View style={style.sheetTitle}>
                     <TouchableOpacity 

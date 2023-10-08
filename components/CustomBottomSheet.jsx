@@ -4,15 +4,14 @@ import { useMemo, useCallback } from "react";
 import ModalHandle from "./ModalHandle";
 import CloseIcon from "../assets/icons/CloseIcon";
 import { bodyText, primaryColor } from "../style/colors";
+// import globals
+import { useGlobals } from "../context/AppContext";
 
-const CustomBottomSheet = ({bottomSheetModalRef, showOverlay, closeModal, snapPointsArray, autoSnapAt, children, sheetTitle, sheetSubtitle, topContentPadding, stackBehavior, disablePanToClose}) => {
+const CustomBottomSheet = ({bottomSheetModalRef, snapPointsArray, autoSnapAt, children, sheetTitle, sheetSubtitle, topContentPadding, stacked, disablePanToClose}) => {
 
     const snapPoints = useMemo(() => snapPointsArray, [snapPointsArray]);
 
-    const handleGestureEnd = (event) => {
-        // console.log(event);
-        if (event === -1) closeModal();
-    };
+    const { setBottomSheetOpen, setStackedSheetOpen } = useGlobals();
 
     // render popup bottomsheet modal backdrop 
     const renderBackdrop = useCallback(
@@ -47,7 +46,6 @@ const CustomBottomSheet = ({bottomSheetModalRef, showOverlay, closeModal, snapPo
                     index={autoSnapAt}
                     snapPoints={snapPoints}
                     enablePanDownToClose={disablePanToClose ? false : true}
-                    onChange={event => handleGestureEnd(event)}
                     backgroundStyle={{
                         borderRadius: 32,
                     }}
@@ -62,8 +60,17 @@ const CustomBottomSheet = ({bottomSheetModalRef, showOverlay, closeModal, snapPo
                     )}
                     // push stackbehaviour to allow popup modal to display
                     // over other bottomsheet
-                    stackBehavior={stackBehavior ? stackBehavior : "push"}
+                    stackBehavior={stacked ? "push" : "replace"}
                     backdropComponent={renderBackdrop}
+                    onChange={(index) => {
+                        if (index === -1) {
+                            stacked && setStackedSheetOpen(false)
+                            return setBottomSheetOpen(false)
+                        } else {
+                            stacked && setStackedSheetOpen(true)
+                            return setBottomSheetOpen(true)
+                        }
+                    }}
                 >
                     <View style={styles.sheetTitle}>
                         <TouchableOpacity 

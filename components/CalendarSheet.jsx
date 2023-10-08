@@ -14,6 +14,8 @@ import NextArrowIcon from '../assets/icons/NextArrowIcon';
 // components
 import ModalButton from './ModalButton';
 import ActionButton from './ActionButton';
+// gloabl variables from App context
+import { useGlobals } from "../context/AppContext";
 
 const windowWidth = Dimensions.get("window").width;
 
@@ -26,6 +28,8 @@ const paddingHorizontal = 40;
 const calendarWidth = windowWidth - paddingHorizontal;
 
 const CalendarSheet = ({calendarRef, closeCalendar, snapPointsArray, setDate, disableActionButtons, minDate, maxDate}) => {
+
+    const { setCalendarSheetOpen } = useGlobals();
 
     // render popup bottomsheet modal backdrop 
     const renderBackdrop = useCallback(
@@ -147,6 +151,10 @@ const CalendarSheet = ({calendarRef, closeCalendar, snapPointsArray, setDate, di
                 // over other bottomsheet
                 stackBehavior="push"
                 backdropComponent={renderBackdrop}
+                onChange={(index) => {
+                    if (index === -1) return setCalendarSheetOpen(false)
+                    return setCalendarSheetOpen(true);
+                }}
             >
                 <View style={style.modalWrapper}>
                     <View style={style.calenderWrapper}>

@@ -20,7 +20,7 @@ import AccountActiveIcon from "../assets/icons/AccountActiveIcon";
 // react navigation
 import { useNavigation } from '@react-navigation/native';
 // app context
-import { useStack } from "../context/AppContext";
+import { useGlobals } from "../context/AppContext";
 // auth context
 import { useAuth } from "../context/AuthContext";
 // colors
@@ -31,12 +31,12 @@ const BottomNavigation = () => {
     const navigation = useNavigation();
 
     // get current stact
-    const { currentStack } = useStack();
+    const { currentStack } = useGlobals();
 
     // get Auth data
     const { authData } = useAuth();
 
-    console.log(authData?.account_type)
+    // console.log(authData?.account_type)
 
     // if user navigates to camera screen hide status bar
     if (currentStack === "CaptureImage") {

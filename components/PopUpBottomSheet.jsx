@@ -10,6 +10,8 @@ import ModalHandle from "./ModalHandle";
 import CloseIcon from "../assets/icons/CloseIcon";
 // colors
 import { bodyText } from "../style/colors";
+// gloabls
+import { useGlobals } from "../context/AppContext";
 
 const windowWidth = Dimensions.get("window").width;
 
@@ -22,15 +24,11 @@ const PopUpBottomSheet = ({bottomSheetModalRef, hideCloseButton, closeModal, sna
     // children => jsx
     // sheetSubtitle, sheetTitle => string
 
+    const { setPopUpSheetOpen } = useGlobals()
+
     // snapPoints
     const snapPoints = useMemo(() => snapPointsArray, [snapPointsArray]);
     // const snapPoints = snapPointsArray;
-
-    // if bottomsheet is swiped down, run closeModal
-    const handleGestureEnd = (event) => {
-        // console.log(event);
-        if (event === -1) closeModal();
-    };
 
     // render popup bottomsheet modal backdrop 
     const renderBackdrop = useCallback(
@@ -53,9 +51,6 @@ const PopUpBottomSheet = ({bottomSheetModalRef, hideCloseButton, closeModal, sna
                 index={autoSnapAt}
                 snapPoints={snapPoints}
                 enablePanDownToClose={true}
-                // listen for change in modal snappoints
-                // useful to run closeModal function
-                onChange={event => handleGestureEnd(event)}
                 backgroundStyle={{
                     borderRadius: 24,
                 }}
@@ -76,6 +71,10 @@ const PopUpBottomSheet = ({bottomSheetModalRef, hideCloseButton, closeModal, sna
                 // over other bottomsheet
                 stackBehavior="push"
                 backdropComponent={renderBackdrop}
+                onChange={(index) => {
+                    if (index === -1) return setPopUpSheetOpen(false)
+                    return setPopUpSheetOpen(true);
+                }}
             >
                 {/* sheetitle */}
                 <View style={styles.sheetTitle}>

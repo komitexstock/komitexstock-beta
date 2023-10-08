@@ -1522,6 +1522,7 @@ const Home = ({navigation}) => {
     useEffect(() => {
         // function to run if back button is pressed
         const backAction = () => {
+            console.log(bottomSheetModalRef)
             // Run your function here
             // if filter bottomsheet is open
             if (calendar.open) {
