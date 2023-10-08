@@ -132,29 +132,29 @@ const Account = ({navigation, route}) => {
     })
 
     // use effect to close modal
-    useEffect(() => {
-        // function to run if back button is pressed
-        const backAction = () => {
-            // Run your function here
-            if (showOverlay) {
-                // if modal is open, close modal
-                closeModal();
-                return true;
-            } else {
-                // if modal isnt open simply navigate back
-                return false;
-            }
-        };
+    // useEffect(() => {
+    //     // function to run if back button is pressed
+    //     const backAction = () => {
+    //         // Run your function here
+    //         if (showOverlay) {
+    //             // if modal is open, close modal
+    //             closeModal();
+    //             return true;
+    //         } else {
+    //             // if modal isnt open simply navigate back
+    //             return false;
+    //         }
+    //     };
     
-        // listen for onPress back button
-        const backHandler = BackHandler.addEventListener(
-            'hardwareBackPress',
-            backAction
-        );
+    //     // listen for onPress back button
+    //     const backHandler = BackHandler.addEventListener(
+    //         'hardwareBackPress',
+    //         backAction
+    //     );
     
-        return () => backHandler.remove();
+    //     return () => backHandler.remove();
 
-    }, [showOverlay]);
+    // }, [showOverlay]);
    
     // bottom sheet ref
     const bottomSheetModalRef = useRef(null);

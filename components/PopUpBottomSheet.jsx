@@ -34,10 +34,11 @@ const PopUpBottomSheet = ({bottomSheetModalRef, hideCloseButton, closeModal, sna
     const renderBackdrop = useCallback(
         props => (
           <BottomSheetBackdrop
-            {...props}
-            disappearsOnIndex={-1}
-            appearsOnIndex={0}
-            opacity={0.3}
+                {...props}
+                disappearsOnIndex={-1}
+                appearsOnIndex={0}
+                opacity={0.3}
+                onPress={closeModal}
           />
         ),
         []

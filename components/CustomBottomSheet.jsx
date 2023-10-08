@@ -7,7 +7,7 @@ import { bodyText, primaryColor } from "../style/colors";
 // import globals
 import { useGlobals } from "../context/AppContext";
 
-const CustomBottomSheet = ({bottomSheetModalRef, snapPointsArray, autoSnapAt, children, sheetTitle, sheetSubtitle, topContentPadding, stacked, disablePanToClose}) => {
+const CustomBottomSheet = ({bottomSheetModalRef, closeModal, snapPointsArray, autoSnapAt, children, sheetTitle, sheetSubtitle, topContentPadding, stacked, disablePanToClose}) => {
 
     const snapPoints = useMemo(() => snapPointsArray, [snapPointsArray]);
 
