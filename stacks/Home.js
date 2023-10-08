@@ -16,6 +16,7 @@ import QuickOrderIcon from "../assets/icons/QuickOrderIcon";
 import QuickAnalyticsIcon from "../assets/icons/AnalyticsIcon";
 import QuickInventoryIcon from "../assets/icons/QuickInventoryIcon";
 import QuickWaybiillIcon from "../assets/icons/QuickWaybillIcon";
+import QuickStockTransferIcon from "../assets/icons/QuickStockTransferIcon";
 import CalendarIcon from "../assets/icons/CalendarIcon";
 // components
 import OrderListItem from "../components/OrderListItem";
@@ -38,7 +39,7 @@ import { accentLight, background, black, bodyText, greenLight, primaryColor, sec
 import moment from "moment";
 // home skeleton
 import HomeSkeleton from "../skeletons/HomeSkeleton";
-
+// storage
 
 const Home = ({navigation}) => {
       
@@ -158,6 +159,31 @@ const Home = ({navigation}) => {
             },
         }
     ];
+
+    const accountType = "Logistics";
+
+    const userData = {
+        account_type: "Logistics",
+        business_name: "Komitex Logistics",
+        full_name: "Iffie Okomite",
+        email: "Komitexlogistics@gmai.com",
+    }
+
+    // const setItem = async () => {
+    //     await AsyncStorage.setItem("@user", JSON.stringify(userData));
+    // }
+
+    // const getItem = async () => {
+    //     const data = await AsyncStorage.getItem("@user");
+    //     const parsedData = JSON.parse(data);
+    //     console.log(parsedData.account_type);
+    // }
+
+    // getItem();
+
+    // setItem();
+    // const [user, setUser] = useState(getItem());
+    // console.log(user.account_type);
 
     const [pageLoading, setPageLoading] = useState(true);
 
@@ -1196,55 +1222,6 @@ const Home = ({navigation}) => {
                 },
             ]
         },
-        // {
-        //     title: "Warehouse",
-        //     value: "All",
-        //     default: true,
-        //     buttons: [
-        //         {
-        //             text: "All",
-        //             selected: true,
-        //             onPress: () => {
-        //                 handleFilterParameters("Warehouse", "All")
-        //             }
-        //         },
-        //         {
-        //             text: "Warri",
-        //             selected: false,
-        //             onPress: () => {
-        //                 handleFilterParameters("Warehouse", "Warri")
-        //             }
-        //         },
-        //         {
-        //             text: "Asaba",
-        //             selected: false,
-        //             onPress: () => {
-        //                 handleFilterParameters("Warehouse", "Asaba")
-        //             }
-        //         },
-        //         {
-        //             text: "Benin",
-        //             selected: false,
-        //             onPress: () => {
-        //                 handleFilterParameters("Warehouse", "Benin")
-        //             }
-        //         },
-        //         {
-        //             text: "Sapele",
-        //             selected: false,
-        //             onPress: () => {
-        //                 handleFilterParameters("Warehouse", "Sapele")
-        //             }
-        //         },
-        //         {
-        //             text: "Abraka",
-        //             selected: false,
-        //             onPress: () => {
-        //                 handleFilterParameters("Warehouse", "Abraka")
-        //             }
-        //         },
-        //     ]
-        // },
         {
             title: "Period",
             value: "Today",
@@ -1575,6 +1552,78 @@ const Home = ({navigation}) => {
 
     }, [showOverlay, filter, calendar]);
 
+    const merchantQuickButtons = [
+        {
+            id: 1,
+            screen: "SendOrder",
+            icon: <QuickOrderIcon />,
+            background: secondaryColor,
+            mainText: "Send an Order",
+            subText: "Make fast deliveries to your customers",
+        },
+        {
+            id: 2,
+            screen: "Inventory",
+            icon: <QuickInventoryIcon />,
+            background: accentLight,
+            mainText: "Manage Inventory",
+            subText: "Review and add to your stores inventory",
+        },
+        {
+            id: 3,
+            screen: "SendWaybill",
+            icon: <QuickWaybiillIcon />,
+            background: yellowLight,
+            mainText: "Send Waybill",
+            subText: "Restock your inventory with your preferred partner",
+        },
+        {
+            id: 4,
+            screen: "Analytics",
+            icon: <QuickAnalyticsIcon />,
+            background: greenLight,
+            mainText: "View Analytics",
+            subText: "Easily view your business growth and analytics",
+        },
+    ];
+
+    const logisticsQuickButtons = [
+        {
+            id: 1,
+            screen: "SendOrder",
+            icon: <QuickOrderIcon />,
+            background: secondaryColor,
+            mainText: "Pick up & Delivery",
+            subText: "Easily schedule a pick up and drop off ",
+        },
+        {
+            id: 2,
+            screen: "Inventory",
+            icon: <QuickStockTransferIcon />,
+            background: accentLight,
+            mainText: "Stock Transfer",
+            subText: "Manage warehouse inventory transfers",
+        },
+        {
+            id: 3,
+            screen: "SendWaybill",
+            icon: <QuickWaybiillIcon />,
+            background: yellowLight,
+            mainText: "Send Waybill",
+            subText: "Restock your inventory with your preferred partner",
+        },
+        {
+            id: 4,
+            screen: "Analytics",
+            icon: <QuickAnalyticsIcon />,
+            background: greenLight,
+            mainText: "View Analytics",
+            subText: "Easily view your business growth and analytics",
+        },
+    ];
+
+    const quickButtons = accountType === "Merchant" ? merchantQuickButtons : logisticsQuickButtons;
+
     // render Home page
     return (
         <>
@@ -1621,41 +1670,20 @@ const Home = ({navigation}) => {
                                 {/* quick action buttons */}
                                 <View style={style.quickAccessWrapper}>
                                     {/* quick order */}
-                                    <TouchableOpacity 
-                                        style={style.quickOrder}
-                                        onPress={() => {navigation.navigate("SendOrder")}}
-                                    >
-                                        <QuickOrderIcon />
-                                        <Text style={style.quickActionHeading}>Send an Order</Text>
-                                        <Text style={style.quickActionParagraph}>Make fast deliveries to your customers</Text>
-                                    </TouchableOpacity>
-                                    {/* quick inventory */}
-                                    <TouchableOpacity 
-                                        style={style.quickInventory}
-                                        onPress={() => {navigation.navigate("Inventory")}}    
-                                    >
-                                        <QuickInventoryIcon />
-                                        <Text style={style.quickActionHeading}>Manage Inventory</Text>
-                                        <Text style={style.quickActionParagraph}>Review and add to your stores inventory</Text>
-                                    </TouchableOpacity>
-                                    {/* quick waybill */}
-                                    <TouchableOpacity 
-                                        style={style.quickWaybill}
-                                        onPress={() => {navigation.navigate("SendWaybill")}}
-                                    >
-                                        <QuickWaybiillIcon />
-                                        <Text style={style.quickActionHeading}>Send Waybill</Text>
-                                        <Text style={style.quickActionParagraph}>Restock your inventory with your preferred partner</Text>
-                                    </TouchableOpacity>
-                                    {/* quick analytics */}
-                                    <TouchableOpacity 
-                                        style={style.quickAnalytics}
-                                        onPress={() => {navigation.navigate("Analytics")}}
-                                    >
-                                        <QuickAnalyticsIcon />
-                                        <Text style={style.quickActionHeading}>View Analytics</Text>
-                                        <Text style={style.quickActionParagraph}>Easily view your business growth and analytics</Text>
-                                    </TouchableOpacity>
+                                    {quickButtons.map(button => (
+                                        <TouchableOpacity 
+                                            key={button.id}
+                                            onPress={() => {navigation.navigate(button.screen)}}
+                                            style={[
+                                                style.quickActionButton,
+                                                {backgroundColor: button.background}
+                                            ]}
+                                        >
+                                            {button.icon}
+                                            <Text style={style.quickActionHeading}>{button.mainText}</Text>
+                                            <Text style={style.quickActionParagraph}>{button.subText}</Text>
+                                        </TouchableOpacity>
+                                    ))}
                                 </View>
                                 {/* recent orders */}
                                 <View style={style.homeOrders}>
@@ -1953,6 +1981,17 @@ const style = StyleSheet.create({
         justifyContent: 'space-between',
         gap: 20,
         marginBottom: 15,
+    },
+    quickActionButton: {
+        width: '45%',
+        height: 100,
+        flexGrow: 1,
+        borderRadius: 12,
+        display: 'flex',
+        flexDirection: 'column',
+        padding: 15,
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
     },
     quickOrder: {
         width: '45%',

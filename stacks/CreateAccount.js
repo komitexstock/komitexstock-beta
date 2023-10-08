@@ -22,10 +22,13 @@ import SignupCompleteIcon from "../assets/icons/SignupCompleteIcon";
 // window height
 import { windowHeight } from "../utils/helpers"; 
 // context
+// import { useAuth } from "../context/AuthContext";
 import { FIREBASE_AUTH } from "../Firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 
 const CreateAccount = ({navigation}) => {
+
+    const signup = useAuth
 
     // total number of step in the creating account proccess
     const totalSteps = [1, 2, 3];
@@ -214,6 +217,8 @@ const CreateAccount = ({navigation}) => {
 
     const handleSignup = async () => {
         setIsLoading(true);
+
+
 
         try {
             const userCredentials = await createUserWithEmailAndPassword(FIREBASE_AUTH, emailAddress, password);

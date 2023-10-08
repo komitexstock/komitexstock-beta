@@ -4,7 +4,7 @@ import { useNavigation, useIsFocused } from "@react-navigation/native";
 
 const AppContext = createContext();
 
-export const useStack = () => useContext(AppContext).currentStack;
+export const useStack = () => useContext(AppContext);
 
 const AppProvider = ({children}) => {
 

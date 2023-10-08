@@ -21,6 +21,8 @@ import AccountActiveIcon from "../assets/icons/AccountActiveIcon";
 import { useNavigation } from '@react-navigation/native';
 // app context
 import { useStack } from "../context/AppContext";
+// auth context
+import { useAuth } from "../context/AuthContext";
 // colors
 import { white, neutral, primaryColor } from "../style/colors";
 
@@ -28,7 +30,13 @@ const BottomNavigation = () => {
 
     const navigation = useNavigation();
 
-    const currentStack = useStack();
+    // get current stact
+    const { currentStack } = useStack();
+
+    // get Auth data
+    const { authData } = useAuth();
+
+    console.log(authData?.account_type)
 
     // if user navigates to camera screen hide status bar
     if (currentStack === "CaptureImage") {
@@ -38,7 +46,7 @@ const BottomNavigation = () => {
     }
 
     // stack where navigation should be visible
-    const visibleNavigation = ["Home", "Orders", "Waybill", "Inventory", "Products", "Account"]; 
+    const visibleNavigation = ["Home", "Orders", "Waybill", "Inventory", "Warehouse", "Products", "Account"]; 
 
     if (!visibleNavigation.includes(currentStack)) return (<></>);
     else return (
@@ -78,13 +86,16 @@ const BottomNavigation = () => {
             </TouchableOpacity>
             <TouchableOpacity 
                 style={style.navButton}
-                onPress={() => {navigation.navigate("Inventory")}}
+                onPress={() => {
+                    if (authData?.account_type === "Merchant") return navigation.navigate("Inventory");
+                    return navigation.navigate("Warehouse");
+                }}
             >                
-                {["Inventory", "Products"].includes(currentStack) ? (<InventoryActiveIcon />) : (<InventoryIcon />)}
+                {["Inventory", "Products", "Warehouse"].includes(currentStack) ? (<InventoryActiveIcon />) : (<InventoryIcon />)}
                 <Text 
                     style={currentStack === "Inventory" ? style.activeText : style.inactiveText}
                 >
-                    Inventory
+                    {authData?.account_type === "Merchant" ? "Inventory" : "Warehouse"}
                 </Text>
             </TouchableOpacity>
             <TouchableOpacity 

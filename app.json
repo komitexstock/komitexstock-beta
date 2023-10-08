@@ -23,7 +23,11 @@
         "foregroundImage": "./assets/images/komitex.png",
         "backgroundColor": "#07427C"
       },
-      "package": "com.komitexstock.komitexstockbeta"
+      "package": "com.komitexstock.komitexstockbeta",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "favicon": "./assets/images/komitex.png"
@@ -46,6 +50,7 @@
           "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera."
         }
       ]
-    ]
+    ],
+    "owner": "komitexstock"
   }
 }
