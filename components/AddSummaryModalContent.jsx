@@ -5,11 +5,11 @@ import { accent, background, black, bodyText, primaryColor, white } from "../sty
 // icons
 import InfoIconWhite from "../assets/icons/InfoIconWhite";
 // components
-import ModalButton from "../components/ModalButton";
 import ProductListSummary from "./ProductListSummary";
+import CustomButton from "./CustomButton";
 
 
-const AddSummaryModalContent = ({logistics, products, customerName, location, phoneNumber, price, address, waybillDetails, shipperLocation, receiverLocation, type, onPress}) => {
+const AddSummaryModalContent = ({logistics, products, customerName, location, phoneNumber, price, address, waybillDetails, shipperLocation, receiverLocation, type, onPress, isLoading}) => {
     // logisitcs => object | business_name(string), company_id(string), verified(boolean), imageUrl
     // products => array of object | product_name, quantity
     // customerName, location, address, waybillDetails, shipperLocation, receiverLocation => string
@@ -110,17 +110,13 @@ const AddSummaryModalContent = ({logistics, products, customerName, location, ph
                     </>}
                 </View>
             </View>
-            { type === "order" ? (
-                <ModalButton 
-                    name={"Confirm Order"}
-                    onPress={onPress}
-                />
-            ) : (
-                <ModalButton 
-                    name={"Confirm Waybill"}
-                    onPress={onPress}
-                />
-            )}
+            <CustomButton
+                name={type === "order" ? "Confirm Order" : "Confirm Waybill"}
+                shrinkWrapper={true}
+                onPress={onPress}
+                unpadded={true}
+                isLoading={isLoading}
+            />
         </View>
     );
 }

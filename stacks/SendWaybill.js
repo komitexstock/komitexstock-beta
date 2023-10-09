@@ -31,12 +31,6 @@ const SendWaybill = ({navigation}) => {
     // state to store order details
     const [ waybillDetails, setWaybilldetails] = useState(null);
     
-    // state to store shipper location
-    const [ shipperLocation, setShipperLocation] = useState(null);
-    
-    // state to store shipper location
-    const [ receiverLocation, setReceiverLocation] = useState(null);
-    
     // state to store selected logistics
     const [logistics, setLogistics] = useState(null);
 
@@ -91,7 +85,6 @@ const SendWaybill = ({navigation}) => {
       bottomSheetModalRef.current?.close();
       setShowOverlay(false);
       if (modal.type === "Logistics") setSelectLogisticsActive(false);
-      else if (modal.type === "Location") setSelectLocationActive(false);
     };
 
     // function to open bottom sheet modal
@@ -114,8 +107,6 @@ const SendWaybill = ({navigation}) => {
     const isAnyFieldEmpty = [
             logistics, 
             waybillDetails,
-            shipperLocation,
-            receiverLocation,
             products, 
         ].some((item) => {
             return item === null || item === '' || item === undefined || item === 0 || item === NaN || (Array.isArray(item) && item.length === 0);
@@ -180,16 +171,6 @@ const SendWaybill = ({navigation}) => {
         setWaybilldetails(text)
     }
     
-    // function to update shipperLocation
-    const updateShipperLocation = (text) => {
-        setShipperLocation(text)
-    }
-
-    // function to update receiverLocation
-    const updateReceiverLocation = (text) => {
-        setReceiverLocation(text)
-    }
-
     // function to handle selected logistics
     const handleSelectedLogistics = (data) => {
         closeModal();
@@ -199,13 +180,6 @@ const SendWaybill = ({navigation}) => {
     // state to indicate error in waybill details
     const [errorWaybillDetails, setErrorWaybillDetails] = useState(false);
 
-    // state to indicate error in shipper location
-    const [errorShipperLocation, setErrorShipperLocation] = useState(false);
-
-    // state to indicate error in shipper location
-    const [errorReceiverLocation, setErrorReceiverLocation] = useState(false);
-
-    // 
     const handleConfirmWaybill = () => {
         closeModal();
         navigation.navigate("Chat", {
@@ -255,24 +229,6 @@ const SendWaybill = ({navigation}) => {
                                         active={selectLogisticsActive}
                                         inputFor={"Logistics"}
                                     />
-                                    {/* shippers location */}
-                                    <Input 
-                                        label={"Shipper's Location"} 
-                                        placeholder={"Waybill origin e.g Jibowu"} 
-                                        onChange={updateShipperLocation}
-                                        value={shipperLocation}
-                                        error={errorShipperLocation}
-                                        setError={setErrorShipperLocation}
-                                    />
-                                    {/* receivers location */}
-                                    <Input 
-                                        label={"Receiver's Location"} 
-                                        placeholder={"Waybill destination e.g Warri"} 
-                                        onChange={updateReceiverLocation}
-                                        value={receiverLocation}
-                                        error={errorReceiverLocation}
-                                        setError={setErrorReceiverLocation}
-                                    />
                                     {/* waybill details */}
                                     <Input 
                                         label={"Waybill Details"} 
@@ -294,7 +250,7 @@ const SendWaybill = ({navigation}) => {
                                                 <TouchableOpacity
                                                     onPress={() => openModal("Products", "Select Products", null, 0)}
                                                 >
-                                                    <Text style={style.addProduct}>+Selected Product</Text>
+                                                    <Text style={style.addProduct}>+Select Product</Text>
                                                 </TouchableOpacity>
                                                 <TouchableOpacity
                                                     onPress={() => navigation.navigate("AddProduct")}
@@ -356,8 +312,6 @@ const SendWaybill = ({navigation}) => {
                         logistics={logistics}
                         products={products}
                         waybillDetails={waybillDetails}
-                        shipperLocation={shipperLocation}
-                        receiverLocation={receiverLocation}
                         type={"waybill"}
                         onPress={handleConfirmWaybill}
                     />

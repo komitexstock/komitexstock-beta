@@ -23,7 +23,7 @@ import OrderListItem from "../components/OrderListItem";
 import CustomBottomSheet from "../components/CustomBottomSheet";
 import SearchBar from "../components/SearchBar";
 import Header from "../components/Header";
-import ModalButton from "../components/ModalButton";
+import CustomButton from "../components/CustomButton";
 import FilterBottomSheet from "../components/FilterBottomSheet";
 import FilterButtonGroup from "../components/FilterButtonGroup";
 import SelectInput from "../components/SelectInput";
@@ -1787,21 +1787,27 @@ const Home = ({navigation}) => {
                             </Text>
                         </View>
                         <View style={style.modalButtonWrapper}>
-                            <ModalButton
+                            {/* navigate to write review screen buttton */}
+                            <CustomButton
+                                // secondaryButton={true}
                                 name={"Write a Review"}
+                                shrinkWrapper={true}
+                                unpadded={true}
                                 onPress={() => {
                                     closeModal();
                                     navigation.navigate("WriteReview");
                                 }}
                             />
-                            <ModalButton
-                                name={"Maybe Later"}
+                            {/* maybe later button */}
+                            <CustomButton
                                 secondaryButton={true}
+                                name={"Maybe Later"}
+                                shrinkWrapper={true}
+                                unpadded={true}
                                 onPress={() => {
                                     closeModal();
                                 }}
                             />
-
                         </View>
                     </View> 
                 }

@@ -1,11 +1,18 @@
+// recat native components
 import { TouchableOpacity, StyleSheet, View, Text } from "react-native";
+// bottom sheet components
 import { BottomSheetModal, BottomSheetBackdrop, BottomSheetScrollView } from "@gorhom/bottom-sheet";
+// react hooks
 import { useCallback } from "react";
+// components
 import ModalHandle from "./ModalHandle";
+import CustomButton from "./CustomButton";
+// icons
 import CloseIcon from "../assets/icons/CloseIcon";
+// colors
 import { bodyText, primaryColor, secondaryColor, white } from "../style/colors";
 // window height
-import { windowHeight } from "../utils/helpers";
+import { windowHeight, windowWidth } from "../utils/helpers";
 // globals
 import { useGlobals } from "../context/AppContext";
 
@@ -69,16 +76,23 @@ const FilterBottomSheet = ({fiterSheetRef, height, closeFilter, children, clearF
                     {children}
                 </BottomSheetScrollView>
                 <View style={style.filterButtonsWrapper}>
-                    <TouchableOpacity onPress={clearFilterFunction} style={style.clearFilterButton}>
-                        <Text style={style.clearFilterText}>
-                            Clear All
-                        </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={applyFilterFunction} style={style.applyFilterButton}>
-                        <Text style={style.applyFilterText}>
-                            Apply
-                        </Text>
-                    </TouchableOpacity>
+                    {/* clear all */}
+                    <CustomButton
+                        secondaryButton={true}
+                        name={"Clear All"}
+                        shrinkWrapper={true}
+                        onPress={clearFilterFunction}
+                        unpadded={true}
+                        wrapperStyle={{width: (windowWidth - 56) / 2}}
+                    />
+                    {/* apply */}
+                    <CustomButton
+                        name={"Apply"}
+                        shrinkWrapper={true}
+                        onPress={applyFilterFunction}
+                        unpadded={true}
+                        wrapperStyle={{width: (windowWidth - 56) / 2}}
+                    />
                 </View>
             </BottomSheetModal>
         </View>

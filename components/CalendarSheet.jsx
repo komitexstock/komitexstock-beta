@@ -12,7 +12,7 @@ import { primaryColor, white, bodyText, subText, neutral } from '../style/colors
 import PrevArrowIcon from '../assets/icons/PrevArrowIcon';
 import NextArrowIcon from '../assets/icons/NextArrowIcon';
 // components
-import ModalButton from './ModalButton';
+import CustomButton from "./CustomButton";
 import ActionButton from './ActionButton';
 // gloabl variables from App context
 import { useGlobals } from "../context/AppContext";
@@ -194,9 +194,12 @@ const CalendarSheet = ({calendarRef, closeCalendar, snapPointsArray, setDate, di
                                     ))}
                                 </View>
                             )}
-                            <ModalButton 
+                            {/* modal button to apply calendar selected date */}
+                            <CustomButton
                                 name={"Apply"}
+                                shrinkWrapper={true}
                                 onPress={handleSelectedDate}
+                                unpadded={true}
                             />
                         </View>
                     </View>

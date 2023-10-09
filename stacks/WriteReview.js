@@ -14,9 +14,8 @@ import Input from "../components/Input";
 import PopUpBottomSheet from "../components/PopUpBottomSheet";
 import SuccessPrompt from "../components/SuccessPrompt";
 // react hooks
-import { useEffect, useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { background, black, bodyText, neutral } from "../style/colors";
-import ModalButton from "../components/ModalButton";
 import CustomButton from "../components/CustomButton";
 // icons
 import StarActiveIcon from "../assets/icons/StarActiveIcon";
@@ -165,9 +164,6 @@ const WriteReview = ({navigation}) => {
                                 characterLimit={1000} 
                             />
                         </View>
-                        {/* <ModalButton
-                            name={"Submit"}
-                        /> */}
                         <CustomButton
                             name={"Submit"}
                             unpadded={true}
@@ -194,8 +190,10 @@ const WriteReview = ({navigation}) => {
                     <Text style={style.popUpParagraph}>
                         Thanks for your review! We value your feedback to improve our services
                     </Text>
-                    <ModalButton
+                    <CustomButton
                         name={"Done"}
+                        unpadded={true}
+                        shrinkWrapper={true}
                         onPress={handleSubmitReviewSuccess}
                     />
                 </View>

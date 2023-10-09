@@ -27,7 +27,6 @@ import Accordion from "../components/Accordion";
 import CustomButton from "../components/CustomButton";
 import PopUpBottomSheet from "../components/PopUpBottomSheet";
 import SuccessPrompt from "../components/SuccessPrompt";
-import ModalButton from "../components/ModalButton";
 import CautionPrompt from "../components/CautionPrompt";
 // icons
 import VerifiedIcon from '../assets/icons/VerifiedIcon';
@@ -649,14 +648,18 @@ const DeactivateLogistics = ({navigation}) => {
                             Are you sure you want to deactivate Komitex Logistics
                         </Text>
                         <View style={style.popUpButtonWrapper}>
-                            <ModalButton
+                            <CustomButton
                                 name={"Yes, deactivate"}
+                                shrinkWrapper={true}
                                 onPress={handleDeactivation}
+                                unpadded={true}
                             />
-                            <ModalButton
-                                name={"No, cancel"}
-                                onPress={closePopUpModal}
+                            <CustomButton
                                 secondaryButton={true}
+                                name={"No, cancel"}
+                                shrinkWrapper={true}
+                                onPress={closePopUpModal}
+                                unpadded={true}
                             />
                         </View>
                     </View>
@@ -670,12 +673,14 @@ const DeactivateLogistics = ({navigation}) => {
                         <Text style={style.popUpParagraph}>
                             You have successfully deactivated Komitex Logistics
                         </Text>
-                        <ModalButton
+                        <CustomButton
                             name={"Done"}
+                            shrinkWrapper={true}
                             onPress={() => {
                                 closePopUpModal();
                                 navigation.goBack();
                             }}
+                            unpadded={true}
                         />
                     </View>
                 )}

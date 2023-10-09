@@ -14,13 +14,15 @@ import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { black, bodyText, primaryColor, secondaryColor, white } from "../style/colors";
 // components
 import Input from "../components/Input";
+import CustomButton from "./CustomButton";
 // react hook
-import { useState, useRef } from "react";
+import { useState } from "react";
 // image picker method
 import * as ImagePicker from 'expo-image-picker';
 // icon
 import GalleryBlackIcon from "../assets/icons/GalleryBlackIcon";
 import InfoIcon from "../assets/icons/InfoIcon";
+import { windowWidth } from "../utils/helpers";
 
 // Edit product modal content
 const EditProductContent = ({product_name, initialPrice, quantity, imageUrl, handleUpdateProduct}) => {
@@ -146,13 +148,22 @@ const EditProductContent = ({product_name, initialPrice, quantity, imageUrl, han
                     </View>
                     <View style={style.actionButtonsWrapper}>
                         {/* delete product */}
-                        <TouchableOpacity style={style.delete}>
-                            <Text style={style.deleteText}>Delete</Text>
-                        </TouchableOpacity>
-                        {/* save product changes */}
-                        <TouchableOpacity style={[style.save]} onPress={handleUpdateProduct}>
-                            <Text style={style.saveText}>Save</Text>
-                        </TouchableOpacity>
+                        <CustomButton
+                            secondaryButton={true}
+                            name={"Delete"}
+                            shrinkWrapper={true}
+                            onPress={() => {}}
+                            unpadded={true}
+                            wrapperStyle={{width: (windowWidth - 56) / 2}}
+                        />
+                        {/* save button */}
+                        <CustomButton
+                            name={"Save"}
+                            shrinkWrapper={true}
+                            onPress={() => {}}
+                            unpadded={true}
+                            wrapperStyle={{width: (windowWidth - 56) / 2}}
+                        />
                     </View>
                 </View>
             </BottomSheetScrollView>

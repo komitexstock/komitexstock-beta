@@ -15,8 +15,9 @@ import KeyIcon from "../assets/icons/KeyIcon";
 import Header from "../components/Header";
 import AccountButtons from "../components/AccountButtons";
 import CustomBottomSheet from "../components/CustomBottomSheet";
+import CustomButton from "../components/CustomButton";
 import Input from "../components/Input";
-import ModalButton from "../components/ModalButton"
+import { windowHeight } from "../utils/helpers";
 // colors
 import { background } from "../style/colors";
 
@@ -213,7 +214,7 @@ const Security = ({navigation}) => {
                 setShowOverlay={setShowOverlay}
                 showOverlay={showOverlay}
                 closeModal={closeModal}
-                snapPointsArray={["80%"]}
+                snapPointsArray={[0.6 * windowHeight]}
                 autoSnapAt={0}
                 sheetTitle={"Change Password"}
             >
@@ -239,10 +240,12 @@ const Security = ({navigation}) => {
                             ))}
                         </View>
                         {/* update password */}
-                        <ModalButton 
-                            onPress={() => {}}
+                        <CustomButton
                             name={"Update Password"}
-                            emptyFeilds={emptyFields}
+                            shrinkWrapper={true}
+                            onPress={() => {}}
+                            unpadded={true}
+                            inactive={emptyFields}
                         />
                     </View >
                 </TouchableWithoutFeedback>

@@ -563,6 +563,7 @@ const SendOrder = ({navigation, route}) => {
                         address={address}
                         type={"order"}
                         onPress={handleConfirmOrder}
+                        isLoading={isLoading && processOrderResponse}
                     />
                 )}
             </CustomBottomSheet>

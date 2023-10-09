@@ -11,10 +11,8 @@ import {
 import FilterIcon from "../assets/icons/FilterIcon";
 // components
 import OrderListItem from "../components/OrderListItem";
-import CustomBottomSheet from "../components/CustomBottomSheet";
 import Header from "../components/Header";
 import FilterButtonGroup from "../components/FilterButtonGroup";
-import ModalButton from "../components/ModalButton";
 // react hooks
 import { useState, useRef, useEffect } from "react";
 // colors and global style
@@ -282,7 +280,7 @@ const Notifications = ({navigation}) => {
     };
 
     // open bottom sheet modal function
-    const opemModal = () => {
+    const openModal = () => {
       bottomSheetModalRef.current?.present();
       setShowOverlay(true);
     }
@@ -346,7 +344,7 @@ const Notifications = ({navigation}) => {
                 <Header 
                     navigation={navigation} 
                     stackName={"Notifications"} 
-                    iconFunction={opemModal} 
+                    iconFunction={openModal} 
                     icon={<FilterIcon />} 
                     iconExist={true} 
                     unpadded={true}
@@ -373,32 +371,7 @@ const Notifications = ({navigation}) => {
                 </View>
             </View>
             {/* Filter notifications bottomsheet */}
-            <CustomBottomSheet 
-                bottomSheetModalRef={bottomSheetModalRef}
-                setShowOverlay={setShowOverlay}
-                showOverlay={showOverlay}
-                closeModal={closeModal}
-                snapPointsArray={["40%"]}
-                autoSnapAt={0}
-                sheetTitle={"Filter by"}
-                clearFilterFunction={() => {}} 
-            >
-                <View style={style.modalContent}>
-                    {/* filter notifications button */}
-                    {filterButtons.map(item => (
-                        <FilterButtonGroup
-                            buttons={item.buttons}
-                            title={item.title}
-                            key={item.id}
-                        />
-                    ))}
-                    {/* modal button */}
-                    <ModalButton
-                        name={"Apply"}
-                        onPress={() => {}}
-                    />
-                </View>
-            </CustomBottomSheet>
+            
         </ScrollView>
     );
 }

@@ -29,7 +29,6 @@ import CustomButton from "../components/CustomButton";
 import ReviewCard from "../components/ReviewCard";
 import PopUpBottomSheet from "../components/PopUpBottomSheet";
 import SuccessPrompt from "../components/SuccessPrompt";
-import ModalButton from "../components/ModalButton";
 // icons
 import VerifiedIcon from '../assets/icons/VerifiedIcon';
 import EmailIcon from "../assets/icons/EmailIcon";
@@ -780,9 +779,11 @@ const LogisticsDetails = ({navigation}) => {
                     <Text style={style.popUpParagraph}>
                         Hi Raymond, You have successfully linked your store to Komitex Logistics
                     </Text>
-                    <ModalButton
+                    <CustomButton
                         name={"Done"}
+                        shrinkWrapper={true}
                         onPress={handleAddLogisticsSuccess}
+                        unpadded={true}
                     />
                 </View>
             </PopUpBottomSheet>

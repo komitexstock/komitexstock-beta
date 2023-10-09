@@ -24,6 +24,7 @@ import StatWrapper from "../components/StatWrapper";
 import StatCard from "../components/StatCard";
 import OrderListItem from "../components/OrderListItem";
 import CustomBottomSheet from "../components/CustomBottomSheet";
+import CustomButton from "../components/CustomButton"
 import SelectInput from "../components/SelectInput";
 import FilterButtonGroup from "../components/FilterButtonGroup";
 import SearchBar from "../components/SearchBar";
@@ -1827,12 +1828,14 @@ const Orders = ({navigation}) => {
                                     ))}
                                 </StatWrapper>
                                 {/* onPress navigate to sendOrder page */}
-                                <TouchableOpacity 
-                                    style={style.sendOrderButton}
+                                <CustomButton
+                                    secondaryButton={true}
+                                    name={"Send an Order"}
+                                    shrinkWrapper={true}
                                     onPress={() => navigation.navigate("SendOrder")}
-                                >
-                                    <Text style={style.orderButtonText}>Send an Order</Text>
-                                </TouchableOpacity>
+                                    unpadded={true}
+                                    wrapperStyle={{marginTop: 22}}
+                                />
                             </View>
                         }
                         // pad the bottom due to presence of a bottom nav
@@ -2046,16 +2049,6 @@ const style = StyleSheet.create({
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-    },
-    sendOrderButton: {
-        height: 44,
-        width: "100%",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: 'center',
-        backgroundColor: secondaryColor,
-        borderRadius: 12,
-        marginTop: 22,
     },
     orderButtonText: {
         fontFamily: "mulish-semibold",

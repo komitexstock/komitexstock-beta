@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 // components
 import SearchBar from "./SearchBar";
 import ProductCheckItem from "./ProductCheckItem";
+import CustomButton from "./CustomButton";
 // react hook
 import { useState } from "react";
 // bottomsheet components
@@ -115,14 +116,13 @@ const AddProductsModalContent = ({addProducts, selectedProducts, action}) => {
                         />
                     ))}
                 </BottomSheetScrollView>
-                <View style={style.fixedButton}>
-                    <TouchableOpacity 
-                        style={style.button}
-                        onPress={action ? action : updateProductSelection}
-                    >
-                        <Text style={style.buttonText}>Done</Text>
-                    </TouchableOpacity>
-                </View>
+                <CustomButton
+                    // secondaryButton={true}
+                    name={"Done"}
+                    shrinkWrapper={true}
+                    onPress={action ? action : updateProductSelection}
+                    unpadded={true}
+                />
             </View>
         </>
     );

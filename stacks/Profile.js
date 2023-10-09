@@ -14,7 +14,7 @@ import {
 import AccountButtons from "../components/AccountButtons";
 import Header from "../components/Header";
 import Input from "../components/Input";
-import ModalButton from "../components/ModalButton";
+import CustomButton from "../components/CustomButton"
 import CustomBottomSheet from "../components/CustomBottomSheet";
 // react hooks
 import { useState, useRef, useEffect } from "react";
@@ -23,31 +23,19 @@ import PhoneIcon from "../assets/icons/PhoneIcon";
 import SmsIcon from "../assets/icons/SmsIcon";
 import EmailIcon from "../assets/icons/EmailIcon";
 import { background, black, bodyText } from "../style/colors";
-// bottom sheet component
-import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+// utils
 
 const Profile = ({navigation}) => {
 
-    // state to store first name input value
-    const [firstName, setFirstName] = useState("");
+    // state to store full name input value
+    const [fullName, setFullName] = useState("");
 
-    // state to store error in first name input value
-    const [errorFirstName, setErrorFirstName] = useState(false);
+    // state to store error in full name input value
+    const [errorFullName, setErrorFullName] = useState(false);
 
-    // function to update first name
-    const updateFirstName = (text) => {
-        setFirstName(text);
-    }
-
-    // state to store last name input value
-    const [lastName, setLastName] = useState("");
-
-    // state to store error in last name input value
-    const [errorLastName, setErrorLastName] = useState(false);
-
-    // function to update last name
-    const updateLastName = (text) => {
-        setLastName(text);
+    // function to update full name
+    const updateFullName = (text) => {
+        setFullName(text);
     }
 
     // state to store phone number input value
@@ -165,8 +153,7 @@ const Profile = ({navigation}) => {
 
     // validation to check for empty input fields
     const fullNameEmptyFields = [
-        firstName, 
-        lastName,
+        fullName, 
         ].some(
             (item) => item === null || item === ''
     );
@@ -216,7 +203,7 @@ const Profile = ({navigation}) => {
                 setShowOverlay={setShowOverlay}
                 showOverlay={showOverlay}
                 closeModal={closeModal}
-                snapPointsArray={modal === "Help & Support" ? ["40%"] : ["55%"]}
+                snapPointsArray={modal === "Help & Support" ? ["40%"] : ["50%"]}
                 autoSnapAt={0}
                 sheetTitle={modal}
             >   
@@ -240,30 +227,23 @@ const Profile = ({navigation}) => {
                     >   
                         <View style={style.modalWrapper}>
                             <View style={style.inputWrapper}>
-                                {/* first name input */}
+                                {/* full name input */}
                                 <Input 
-                                    label={"First Name"}
-                                    placeholder={"First Name"}
-                                    value={firstName}
-                                    onChange={updateFirstName}
-                                    error={errorFirstName}
-                                    setError={setErrorFirstName}
-                                />
-                                {/* last name input */}
-                                <Input 
-                                    label={"Last Name"}
-                                    placeholder={"Last Name"}
-                                    value={lastName}
-                                    onChange={updateLastName}
-                                    error={errorLastName}
-                                    setError={setErrorLastName}
+                                    label={"Full Name"}
+                                    placeholder={"Full Name"}
+                                    value={fullName}
+                                    onChange={updateFullName}
+                                    error={errorFullName}
+                                    setError={setErrorFullName}
                                 />
                             </View>
                             {/* modal button to save changes */}
-                            <ModalButton
+                            <CustomButton
                                 name={"Save Changes"}
+                                inactive={fullNameEmptyFields}
+                                shrinkWrapper={true}
                                 onPress={() => {}}
-                                emptyFeilds={fullNameEmptyFields}
+                                unpadded={true}
                             />
                         </View>
                     </TouchableWithoutFeedback>
@@ -288,10 +268,13 @@ const Profile = ({navigation}) => {
                                     setError={setErrorPhoneNumber}
                                 />
                             </View>
-                            <ModalButton
-                                name={"Continue"}
+                            {/* modal button to save changes */}
+                            <CustomButton
+                                name={"Save Changes"}
+                                inactive={phoneNumber === ''}
+                                shrinkWrapper={true}
                                 onPress={() => {}}
-                                emptyFeilds={phoneNumber === ''}
+                                unpadded={true}
                             />
                         </View>
                     </TouchableWithoutFeedback>
@@ -360,6 +343,7 @@ const style = StyleSheet.create({
         justifyContent: 'flex-start',
         alignItems: 'center',
         gap: 20,
+        marginBottom: 20,
     },
     modalText: {
         fontFamily: "mulish-regular",

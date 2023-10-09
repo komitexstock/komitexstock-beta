@@ -107,9 +107,6 @@ const Account = ({navigation, route}) => {
     // bottomsheet ref
     const { bottomSheetRef } = useGlobals();
   
-    // modal overlay
-    const [showOverlay, setShowOverlay] = useState(false);
-
     // modal state
     const [modal, setModal] = useState({
         type: "Notifications",

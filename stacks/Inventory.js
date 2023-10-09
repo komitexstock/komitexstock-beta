@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import LogisticsCard from "../components/LogisticsCard";
 import SearchBar from "../components/SearchBar";
 import Header from "../components/Header";
+import CustomButton from "../components/CustomButton";
 // skeleton screen
 import InventorySkeleton from "../skeletons/InventorySkeleton";
 
@@ -117,12 +118,14 @@ const Products = ({navigation}) => {
                                     disableFIlter={true}
                                 />
                                 {/* navigate to AddLogistics page/stack */}
-                                <TouchableOpacity 
-                                    style={style.sendOrderButton}
+                                <CustomButton
+                                    secondaryButton={true}
+                                    name={"Add Logistics"}
+                                    shrinkWrapper={true}
                                     onPress={() => navigation.navigate("AddLogistics")}
-                                >
-                                    <Text style={style.orderButtonText}>Add Logistics</Text>
-                                </TouchableOpacity>
+                                    unpadded={true}
+                                    wrapperStyle={{marginBottom: 22}}
+                                />
                             </View>
                         }
                         columnWrapperStyle={style.listContainer}

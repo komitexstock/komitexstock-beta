@@ -33,9 +33,9 @@ import Header from "../components/Header";
 import FilterBottomSheet from "../components/FilterBottomSheet";
 import FilterButtonGroup from "../components/FilterButtonGroup";
 import FilterPill from "../components/FilterPill";
-import ModalButton from "../components/ModalButton";
 import Menu from "../components/Menu";
 import ImportInventory from "../assets/icons/ImportInventory";
+import CustomButton from "../components/CustomButton";
 // bottomsheet component
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 // helpers
@@ -846,12 +846,14 @@ const Products = ({navigation, route}) => {
                                 </StatWrapper>
                                 {/* Navigate to addproducts page/stack */}
                                 {products.length !== 0 && (
-                                    <TouchableOpacity 
-                                        style={style.addProductButton}
+                                    <CustomButton
+                                        secondaryButton={true}
+                                        name={"Add product"}
+                                        shrinkWrapper={true}
                                         onPress={() => navigation.navigate("AddProduct")}
-                                    >
-                                        <Text style={style.orderButtonText}>Add Product</Text>
-                                    </TouchableOpacity>
+                                        unpadded={true}
+                                        wrapperStyle={{marginTop: 22}}
+                                    />
                                 )}
                             </View>
                         }
@@ -934,7 +936,7 @@ const Products = ({navigation, route}) => {
                             }
                             // product card
                         }}
-                        ListFooterComponent={products.length === 0 && (
+                        ListFooterComponent={products.length <= 2 && (
                             <View style={style.noProductsContainer}>
                                 <View style={style.noProductTextWrapper}>
                                     <AddProduct />
@@ -943,29 +945,19 @@ const Products = ({navigation, route}) => {
                                         Start by adding your first product. You could as well import from an already existing inventory
                                     </Text>
                                 </View>
-                                <TouchableOpacity 
-                                    style={[
-                                        style.addProductButton, 
-                                        {
-                                            backgroundColor: primaryColor,
-                                            marginTop: 0,
-                                        }
-                                    ]}
+                                <CustomButton
+                                    name={"Add product"}
+                                    shrinkWrapper={true}
                                     onPress={() => navigation.navigate("AddProduct")}
-                                >
-                                    <Text style={[style.orderButtonText, {color: white}]}>Add Product</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity 
-                                    style={[
-                                        style.addProductButton, 
-                                        {
-                                            marginTop: 0,
-                                        }
-                                    ]}
+                                    unpadded={true}
+                                />
+                                <CustomButton
+                                    secondaryButton={true}
+                                    name={"Import Inventory"}
+                                    shrinkWrapper={true}
                                     onPress={() => navigation.navigate("ImportInventory")}
-                                >
-                                    <Text style={style.orderButtonText}>Import Inventory</Text>
-                                </TouchableOpacity>
+                                    unpadded={true}
+                                />
                             </View>
                         )}
                     />
@@ -1231,6 +1223,7 @@ const style = StyleSheet.create({
         flexDirection: 'column',
         gap: 16,
         minHeight: "50%",
+        paddingHorizontal: 20,
     },
     noProductTextWrapper: {
         width: '100%',

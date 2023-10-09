@@ -32,6 +32,7 @@ import { useState, useRef, useEffect } from "react";
 import StatWrapper from "../components/StatWrapper";
 import StatCard from "../components/StatCard";
 import CustomBottomSheet from "../components/CustomBottomSheet";
+import CustomButton from "../components/CustomButton";
 import SearchBar from "../components/SearchBar";
 import WaybillListItem from "../components/WaybillListItem";
 import FilterPill from "../components/FilterPill";
@@ -1416,12 +1417,14 @@ const Waybill = ({navigation}) => {
                                     ))}
                                 </StatWrapper>
                                 {/* onPress navigate to send waybill page */}
-                                <TouchableOpacity 
-                                    style={style.sendOrderButton}
+                                <CustomButton
+                                    secondaryButton={true}
+                                    name={"Send Waybill"}
+                                    shrinkWrapper={true}
                                     onPress={() => navigation.navigate("SendWaybill")}
-                                >
-                                    <Text style={style.orderButtonText}>Send Waybill</Text>
-                                </TouchableOpacity>
+                                    unpadded={true}
+                                    wrapperStyle={{marginTop: 22}}
+                                />
                             </View>
                         }
                         contentContainerStyle={{paddingBottom: 90}}

@@ -13,7 +13,7 @@ import { useState, useRef, useEffect } from "react";
 // components
 import Header from "../components/Header";
 import CustomBottomSheet from "../components/CustomBottomSheet";
-import ModalButton from "../components/ModalButton";
+import CustomButton from "../components/CustomButton";
 import Input from "../components/Input";
 import SelectInput from "../components/SelectInput";
 import Indicator from "../components/Indicator";
@@ -29,6 +29,8 @@ import { background, black, bodyText, white } from "../style/colors";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 // skeleton screen
 import TeamMembersSkeleton from "../skeletons/TeamMembersSkeleton";
+// utils
+import { windowHeight } from "../utils/helpers";
 
 const TeamMembers = ({navigation}) => {
 
@@ -113,7 +115,7 @@ const TeamMembers = ({navigation}) => {
         setShowOverlay(true);
         setModal(type);
 
-        type === "Add" ? setBottomSheetSnapPoints(["70%"]) : setBottomSheetSnapPoints(["60%"]);
+        type === "Add" ? setBottomSheetSnapPoints([0.7 * windowHeight]) : setBottomSheetSnapPoints(["60%"]);
     }
 
     // function to close Popup modal
@@ -330,6 +332,14 @@ const TeamMembers = ({navigation}) => {
         })
     }
 
+    const handleUpdateRole = () => {
+        openPopUpModal("UpdateSuccess");
+    }
+
+    const handleDeactivateUser = () => {
+        openPopUpModal("Deactivate");
+    }
+
     // render TeamMember page
     return (
         <>
@@ -407,12 +417,14 @@ const TeamMembers = ({navigation}) => {
                                 </View>
                             </TouchableWithoutFeedback>
                         </BottomSheetScrollView>
-                        <ModalButton
+                        <CustomButton
                             name={"Add New Team Member"}
+                            shrinkWrapper={true}
                             onPress={() => {
                                 openPopUpModal("AddSuccess")
                             }}
-                            emptyFeilds={emptyFields}
+                            inactive={emptyFields}
+                            unpadded={true}
                         />
                     </>
                 )}
@@ -441,21 +453,19 @@ const TeamMembers = ({navigation}) => {
                             />
                         </View>
                         <View style={style.modalButtonsWrapper}>
-                            <ModalButton
+                            <CustomButton
                                 name={"Update Role"}
-                                onPress={() => {
-                                    openPopUpModal("UpdateSuccess")
-                                }}
-                                />
-                            <ModalButton
-                                name={"Deactivate User"}
-                                onPress={() => {
-                                    openPopUpModal("Deactivate");
-                                }}
-                                secondaryButton={true}
-                                topMargin={true}
+                                shrinkWrapper={true}
+                                onPress={handleUpdateRole}
+                                unpadded={true}
                             />
-
+                            <CustomButton
+                                secondaryButton={true}
+                                name={"Deactivate User"}
+                                shrinkWrapper={true}
+                                onPress={handleDeactivateUser}
+                                unpadded={true}
+                            />
                         </View>
                     </View>
                 )}
@@ -495,15 +505,18 @@ const TeamMembers = ({navigation}) => {
                             Are you sure you want to deactivate Felix Jones
                         </Text>
                         <View style={style.popUpButtonWrapper}>
-                            <ModalButton
+                            <CustomButton
                                 name={"Yes, deactivate"}
+                                shrinkWrapper={true}
                                 onPress={handleDeactivation}
+                                unpadded={true}
                             />
-                            <ModalButton
-                                name={"No, cancel"}
-                                onPress={closePopUpModal}
+                            <CustomButton
                                 secondaryButton={true}
-                                topMargin={true}
+                                name={"No, cancel"}
+                                shrinkWrapper={true}
+                                onPress={closePopUpModal}
+                                unpadded={true}
                             />
                         </View>
                     </View>
@@ -519,9 +532,11 @@ const TeamMembers = ({navigation}) => {
                         <Text style={style.popUpParagraph}>
                             You have successfully deactivated Felix Jones
                         </Text>
-                        <ModalButton
+                        <CustomButton
                             name={"Done"}
+                            shrinkWrapper={true}
                             onPress={closeAllModal}
+                            unpadded={true}
                         />
                     </View>
                 }
@@ -536,9 +551,11 @@ const TeamMembers = ({navigation}) => {
                         <Text style={style.popUpParagraph}>
                             Hi Raymond, you have successfully added {firstName + ' ' + lastName } to your team
                         </Text>
-                        <ModalButton
+                        <CustomButton
                             name={"Done"}
+                            shrinkWrapper={true}
                             onPress={closeAllModal}
+                            unpadded={true}
                         />
                     </View>
                 }
@@ -553,9 +570,11 @@ const TeamMembers = ({navigation}) => {
                         <Text style={style.popUpParagraph}>
                             You have successfully updated Felix Johnson role to a {editRole}
                         </Text>
-                        <ModalButton
+                        <CustomButton
                             name={"Done"}
+                            shrinkWrapper={true}
                             onPress={closeAllModal}
+                            unpadded={true}
                         />
                     </View>
                 }
@@ -599,7 +618,7 @@ const style = StyleSheet.create({
     modalWrapper: {
         width: "100%",
         flex: 1,
-        minHeight: "100%",
+        height: "100%",
         display: "flex",
         flexDirection: 'column',
         justifyContent: 'space-between',
@@ -632,6 +651,15 @@ const style = StyleSheet.create({
         fontSize: 10,
         color: bodyText,
         marginBottom: 24,
+    },
+    modalButtonsWrapper: {
+        width: "100%",
+        display: "flex",
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
+        gap: 16,
+        background: 'red',
     },
     modalContainer: {
         width: "100%",
@@ -676,6 +704,7 @@ const style = StyleSheet.create({
         justifyContent: 'flex-end',
         alignItems: 'center',
         width: '100%',
+        gap: 16,
     }
 })
  

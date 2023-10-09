@@ -41,7 +41,7 @@ import AddProductsModalContent from "../components/AddProductsModalContent";
 import AddLocationModalContent from "../components/AddLocationModalContent";
 import CalendarSheet from "../components/CalendarSheet";
 import Product from "../components/Product";
-import ModalButton from "../components/ModalButton";
+import CustomButton from "../components/CustomButton";
 import Input from "../components/Input";
 import SelectInput from "../components/SelectInput";
 import MessageContainer from "../components/MessageContainer";
@@ -1693,10 +1693,13 @@ const Chat = ({navigation, route}) => {
                                 
                             </View>
                         </BottomSheetScrollView>
-                        <ModalButton
+                        <CustomButton
+                            // secondaryButton={true}
                             name={"Done"}
-                            emptyFeilds={isAnyFieldEmpty}
+                            shrinkWrapper={true}
+                            inactive={isAnyFieldEmpty}
                             onPress={submitEditOrder}
+                            unpadded={true}
                         />
                     </>
                 )}
@@ -1752,10 +1755,13 @@ const Chat = ({navigation, route}) => {
                                 
                             </View>
                         </BottomSheetScrollView>
-                        <ModalButton
+                        <CustomButton
+                            // secondaryButton={true}
                             name={"Done"}
-                            emptyFeilds={!rescheduleDate ? true : false}
+                            shrinkWrapper={true}
+                            inactive={!rescheduleDate ? true : false}
                             onPress={submitRescheduledOrder}
+                            unpadded={true}
                         />
                     </>
                 )}
@@ -1799,10 +1805,13 @@ const Chat = ({navigation, route}) => {
                                 
                             </View>
                         </BottomSheetScrollView>
-                        <ModalButton
+                        <CustomButton
+                            // secondaryButton={true}
                             name={"Done"}
-                            emptyFeilds={!reason ? true : false}
+                            shrinkWrapper={true}
+                            inactive={!reason ? true : false}
                             onPress={submitCancelledOrder}
+                            unpadded={true}
                         />
                     </>
                 )}
@@ -1882,7 +1891,7 @@ const Chat = ({navigation, route}) => {
                 autoSnapAt={0}
                 sheetTitle={stackedModal.type}
                 topContentPadding={8}
-                stackBehavior={"push"}
+                stacked={true}
             >
                 {stackedModal.type === "Products" && (
                     <AddProductsModalContent 
