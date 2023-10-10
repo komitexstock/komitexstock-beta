@@ -30,6 +30,7 @@ export const pendingContainer = "#FEF0C7";
 export const pendingText = "#DC6803";
 export const checkBoxBorder = "#828282";
 export const overlay = "#0000004D";
+export const filterIndicator = "#D84D3A";
 export const rescheduledContainer = "#2222220D";
 export const messageSenderColors = [
     '#FF0000', // Red

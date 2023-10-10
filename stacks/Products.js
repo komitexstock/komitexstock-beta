@@ -929,6 +929,7 @@ const Products = ({navigation, route}) => {
                             setSearchQuery={setSearchQuery}
                             backgroundColor={background}
                             openFilter={() => openFilter("search")}
+                            filterParams={searchFilterParameters}
                         />
                         
                         {searchFilterParameters.find(filterParam => filterParam.default === false) && (

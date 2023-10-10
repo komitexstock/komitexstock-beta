@@ -1573,7 +1573,7 @@ const Home = ({navigation}) => {
                                     stackName={
                                         <View style={style.headerTextContainer}>
                                             <Text style={style.paragraph}>Welcome back!</Text>
-                                            <Text style={style.heading}> Abayomi Daniel</Text>
+                                            <Text style={style.heading}>{authData?.full_name}</Text>
                                         </View>
                                     }
                                     removeBackArrow={true}
@@ -1658,6 +1658,7 @@ const Home = ({navigation}) => {
                             setSearchQuery={setSearchQuery}
                             backgroundColor={background}
                             openFilter={openFilter}
+                            filterParams={filterParameters}
                         />
 
                         {/* check if any filter has been applied, i.e it is not in its default value */}

@@ -7,9 +7,11 @@ import ClearSearch from "../assets/icons/ClearSearch";
 // react hooks
 import { useState } from "react";
 // colors
-import { black } from "../style/colors";
+import { background, black, inputLabel } from "../style/colors";
+// components
+import OpenFilterButton from "./OpenFilterButton";
 
-const SearchBar = ({placeholder, searchQuery, setSearchQuery, backgroundColor, disableFIlter, openFilter}) => {
+const SearchBar = ({placeholder, searchQuery, setSearchQuery, filterParams, backgroundColor, disableFIlter, openFilter}) => {
 
     // function to update search query
     const handleSearchQuery = (text) => {
@@ -29,7 +31,7 @@ const SearchBar = ({placeholder, searchQuery, setSearchQuery, backgroundColor, d
                     inputMode="search"
                     value={searchQuery}
                     onChangeText={handleSearchQuery}
-                    placeholderTextColor={"#837f7f"}
+                    placeholderTextColor={inputLabel}
                 />
                 {/* clear search button, only visible when search bar isn't empty */}
                 { searchQuery !== '' && (
@@ -42,15 +44,12 @@ const SearchBar = ({placeholder, searchQuery, setSearchQuery, backgroundColor, d
                 )}
             </View>
             { !disableFIlter && 
-                <TouchableOpacity 
+                <OpenFilterButton
                     onPress={openFilter}
-                    style={[
-                        style.filterButton, 
-                        {backgroundColor: backgroundColor}
-                    ]}
-                >
-                    <FilterIcon />
-                </TouchableOpacity>
+                    filterParams={filterParams}
+                    filterSearch={true}
+                    background={backgroundColor}
+                />
             }
         </View>
     );
@@ -78,7 +77,7 @@ const style = StyleSheet.create({
         paddingVertical: 10,
         gap: 10,
         borderRadius: 12,
-        backgroundColor: "#f8f8f8",
+        backgroundColor: background,
     },
     searchInput: {
         fontFamily: "mulish-semibold",
@@ -87,7 +86,7 @@ const style = StyleSheet.create({
         color: black,
     },
     filterButton: {
-        backgroundColor: "#f8f8f8",
+        backgroundColor: background,
         width: 40,
         height: 40,
         display: 'flex',

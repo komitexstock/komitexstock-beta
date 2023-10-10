@@ -10,7 +10,7 @@ import {
     Keyboard,
 } from "react-native";
 // colors
-import { background, blackOut, bodyText, primaryColor, white } from "../style/colors";
+import { background, blackOut, bodyText, primaryColor, secondaryColor, white } from "../style/colors";
 // icons
 import MenuIcon from "../assets/icons/MenuIcon";
 import SearchIcon from '../assets/icons/SearchIcon'
@@ -32,6 +32,7 @@ import Header from "../components/Header";
 import FilterBottomSheet from "../components/FilterBottomSheet";
 import CalendarSheet from "../components/CalendarSheet";
 import FilterPill from "../components/FilterPill";
+import OpenFilterButton from "../components/OpenFilterButton";
 // bottomsheet components
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 // moment
@@ -1811,13 +1812,10 @@ const Orders = ({navigation}) => {
                                                     >
                                                     <SearchIcon />
                                                 </TouchableOpacity>
-                                                {/* filter button to trigger filter bottomsheet */}
-                                                <TouchableOpacity
-                                                    style={style.menuIcon}
+                                                <OpenFilterButton
                                                     onPress={() => openFilter("home")}
-                                                >
-                                                    <FilterIcon />
-                                                </TouchableOpacity>
+                                                    filterParams={filterParameters}
+                                                />
                                             </View>
                                         </View>
                                         <View style={style.orderPillWrapper}>
@@ -1871,6 +1869,7 @@ const Orders = ({navigation}) => {
                     setSearchQuery={setSearchQuery}
                     backgroundColor={background}
                     openFilter={() => openFilter("search")}
+                    filterParams={searchFilterParameters}
                 />
 
                 {/* check if any filter has been applied, i.e it is not in its default value */}

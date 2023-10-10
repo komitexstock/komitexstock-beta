@@ -42,6 +42,7 @@ import FilterBottomSheet from "../components/FilterBottomSheet";
 import SelectInput from "../components/SelectInput";
 import FilterButtonGroup from "../components/FilterButtonGroup";
 import CalendarSheet from "../components/CalendarSheet";
+import OpenFilterButton from "../components/OpenFilterButton";
 // bottomsheet component
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 // moment
@@ -1362,12 +1363,16 @@ const Waybill = ({navigation}) => {
                                                     <SearchIcon />
                                                 </TouchableOpacity>
                                                 {/* trigger filter modal */}
-                                                <TouchableOpacity
+                                                {/* <TouchableOpacity
                                                     style={style.menuIcon}
                                                     onPress={openFilter}
                                                 >
                                                     <FilterIcon />
-                                                </TouchableOpacity>
+                                                </TouchableOpacity> */}
+                                                <OpenFilterButton
+                                                    onPress={openFilter}
+                                                    filterParams={tab === "outgoing" ? outgoingFilter : incomingFilter}
+                                                />
                                             </View>
                                         </View>
                                         {/* page tabs */}
@@ -1460,6 +1465,7 @@ const Waybill = ({navigation}) => {
                     setSearchQuery={setSearchQuery}
                     backgroundColor={background}
                     openFilter={openFilter}
+                    filterParams={searchFilter}
                 />
                 {/* check if any filter has been applied, i.e it is not in its default value */}
                 {searchFilter.find(filterParam => filterParam.default === false) && (
