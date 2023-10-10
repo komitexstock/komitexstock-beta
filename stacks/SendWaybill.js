@@ -25,21 +25,32 @@ import ArrowDown from "../assets/icons/ArrowDown";
 import { useState, useRef, useEffect } from "react";
 // colors
 import { accentLight, background, black, primaryColor } from "../style/colors";
+// globals
+import { useGlobals } from "../context/AppContext";
 
 const SendWaybill = ({navigation}) => {
 
-    // state to store order details
-    const [ waybillDetails, setWaybilldetails] = useState(null);
-    
+    // bottom sheet ref
+    const { bottomSheetRef, bottomSheetOpen } = useGlobals();
+
     // state to store selected logistics
     const [logistics, setLogistics] = useState(null);
+    
+    // state to store chosen warehouse
+    const [warehouse, setWarehouse] = useState(null);
+
+    
+    // state to store order details
+    const [ waybillDetails, setWaybilldetails] = useState(null);
 
     const [products, setProducts] = useState([]);
 
     // state to indicate if select logistics input is active
     const [selectLogisticsActive, setSelectLogisticsActive] = useState(false);
-    // state to indicate if select logistics input is active
     
+    // state to indicate if select warehouse input is active
+    const [selectWarehouseActive, setSelectWarehouseActive] = useState(false);
+
 
     // state to control the type of modal to show in the bottom sheet
     const [modal, setModal] = useState({
@@ -49,48 +60,16 @@ const SendWaybill = ({navigation}) => {
         openAtIndex: 0,
     });
     
-    // state to control modal overlay
-    const [showOverlay, setShowOverlay] = useState(false);
-
-    // use effect to close modal onPress of back button if modal is open
-    useEffect(() => {
-        // function to run if back button is pressed
-        const backAction = () => {
-            // Run your function here
-            if (showOverlay) {
-                // if modal is open, close modal
-                closeModal();
-                return true;
-            } else {
-                // if modal isnt open simply navigate back
-                return false;
-            }
-        };
-    
-        // listen for onPress back button
-        const backHandler = BackHandler.addEventListener(
-            'hardwareBackPress',
-            backAction
-        );
-    
-        return () => backHandler.remove();
-
-    }, [showOverlay]);
-    
-    // modal ref
-    const bottomSheetModalRef = useRef(null);
-
     // close modal function
     const closeModal = () => {
-      bottomSheetModalRef.current?.close();
-      setShowOverlay(false);
-      if (modal.type === "Logistics") setSelectLogisticsActive(false);
+      bottomSheetRef.current?.close();
+      if (type === "Logistics") return setSelectLogisticsActive(false);
+      if (type === "Warehouse") return setSelectLogisticsActive(false);
     };
 
     // function to open bottom sheet modal
     const openModal = (type, title, subtitle, openAtIndex) => {
-        bottomSheetModalRef.current?.present();
-        setShowOverlay(true);
+        bottomSheetRef.current?.present();
         Keyboard.dismiss();
         setModal({
             type: type,
@@ -98,10 +77,18 @@ const SendWaybill = ({navigation}) => {
             subtitle: subtitle,
             openAtIndex: openAtIndex
         });
-        if (type === "Logistics") {
-            setSelectLogisticsActive(true);
-        }
+        if (type === "Logistics") return setSelectLogisticsActive(true);
+        if (type === "Warehouse") return setSelectLogisticsActive(true);
+
     }
+
+    // remove active states of select input
+    useEffect(() => {
+        if (!bottomSheetOpen) {
+            if (modal.type === "Logistics") return setSelectLogisticsActive(false);
+            if (modal.type === "Warehouse") return setSelectLogisticsActive(false);
+        }
+    }, [bottomSheetOpen])
 
     // check if any field is empty
     const isAnyFieldEmpty = [
@@ -229,6 +216,16 @@ const SendWaybill = ({navigation}) => {
                                         active={selectLogisticsActive}
                                         inputFor={"Logistics"}
                                     />
+                                    {/* select warehouse input */}
+                                    <SelectInput 
+                                        label={"Select Warehouse"} 
+                                        placeholder={"Choose a destination warehouse"} 
+                                        value={warehouse}
+                                        onPress={() => {}}
+                                        icon={<ArrowDown />}
+                                        active={selectWarehouseActive}
+                                        inputFor={"String"}
+                                    />
                                     {/* waybill details */}
                                     <Input 
                                         label={"Waybill Details"} 
@@ -286,8 +283,7 @@ const SendWaybill = ({navigation}) => {
             </TouchableWithoutFeedback>
             {/* bottom sheet */}
             <CustomBottomSheet
-                bottomSheetModalRef={bottomSheetModalRef}
-                showOverlay={showOverlay}
+                bottomSheetModalRef={bottomSheetRef}
                 closeModal={closeModal}
                 snapPointsArray={["40%", "80%"]}
                 autoSnapAt={modal.openAtIndex}

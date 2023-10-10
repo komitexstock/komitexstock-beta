@@ -4,10 +4,9 @@ import {
     TouchableWithoutFeedback,
     StyleSheet,
     Keyboard,
-    BackHandler
 } from "react-native";
 // react hooks
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 // icons
 import ThumbPrintIcon from "../assets/icons/ThumbPrintIcon";
 import KeyIcon from "../assets/icons/KeyIcon";
@@ -20,8 +19,13 @@ import Input from "../components/Input";
 import { windowHeight } from "../utils/helpers";
 // colors
 import { background } from "../style/colors";
+// globals
+import { useGlobals } from "../context/AppContext";
 
 const Security = ({navigation}) => {
+
+    // bottomsheet ref
+    const { bottomSheetRef } = useGlobals();
 
     // state to store and update if face ID unlock or thumprint unlock is enabled
     const [isEnabled, setIsEnabled] = useState(false);
@@ -56,47 +60,14 @@ const Security = ({navigation}) => {
         },
     ];    
 
-    // modal overlay
-    const [showOverlay, setShowOverlay] = useState(false);
-
-    // use effect to close modal
-    useEffect(() => {
-        // function to run if back button is pressed
-        const backAction = () => {
-            // Run your function here
-            if (showOverlay) {
-                // if modal is open, close modal
-                closeModal();
-                return true;
-            } else {
-                // if modal isnt open simply navigate back
-                return false;
-            }
-        };
-    
-        // listen for onPress back button
-        const backHandler = BackHandler.addEventListener(
-            'hardwareBackPress',
-            backAction
-        );
-    
-        return () => backHandler.remove();
-
-    }, [showOverlay]);
-    
-    // bottom sheet ref
-    const bottomSheetModalRef = useRef(null);
-
     // close modal function
     const closeModal = () => {
-      bottomSheetModalRef.current?.close();
-      setShowOverlay(false);
+        bottomSheetRef.current?.close();
     };
 
     // open modal function
     const openModal = () => {
-      bottomSheetModalRef.current?.present();
-      setShowOverlay(true);
+        bottomSheetRef.current?.present();
     }
 
     // state to store current password
@@ -210,9 +181,7 @@ const Security = ({navigation}) => {
             </TouchableWithoutFeedback>
             {/* bottomsheet modal */}
             <CustomBottomSheet 
-                bottomSheetModalRef={bottomSheetModalRef}
-                setShowOverlay={setShowOverlay}
-                showOverlay={showOverlay}
+                bottomSheetModalRef={bottomSheetRef}
                 closeModal={closeModal}
                 snapPointsArray={[0.6 * windowHeight]}
                 autoSnapAt={0}

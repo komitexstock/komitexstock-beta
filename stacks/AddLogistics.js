@@ -8,13 +8,13 @@ import {
     Keyboard
 } from "react-native";
 // react hooks
-import { useState, useRef } from "react";
+import { useState } from "react";
 // components
 import Header from "../components/Header";
 import SelectLogisticsCard from "../components/SelectLogisticsCard";
 import SearchBar from "../components/SearchBar";
 // colors
-import { bodyText, black, white, background } from "../style/colors";
+import { bodyText, white, background } from "../style/colors";
 // skeleton
 import AddLogisticsSkeleton from "../skeletons/AddLogisticsSkeleton";
 

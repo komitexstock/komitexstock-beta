@@ -48,8 +48,13 @@ import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import moment from "moment";
 // skeleton screen
 import WaybillSkeleton from "../skeletons/WaybillSkeleton";
+// globals
+import { useGlobals } from "../context/AppContext";
 
 const Waybill = ({navigation}) => {
+
+    // bottom sheet refs
+    const { bottomSheetRef, filterSheetRef, calendarSheetRef, calendarSheetOpen} = useGlobals();
 
     // stata array
     const stats = [
@@ -105,44 +110,18 @@ const Waybill = ({navigation}) => {
     // state to store searchQuery
     const [searchQuery, setSearchQuery] = useState("");
 
-    // search modal refernce
-    const modalRef = useRef(null);
-
-    // modal state
-    const [modal, setModal] = useState({
-        open: false,
-    });
-
     // close search modal bottomsheet function
     const closeModal = () => {
-        modalRef.current?.close();
-
-        setModal({
-            open: false,
-        });
-
-        setFilter(prevFilter => {
-            return {
-                ...prevFilter,
-                filterType: tab,
-            }
-        })
+        bottomSheetRef.current?.close();
+        // reset filter type
+        setFilterType(tab)
     };
     
     // open search modal bottomsheet function
     const openModal = () => {
-        // update modal state
-        setModal({
-            open: true,
-        });
-        // set filter as search
-        setFilter(prevFilter => {
-            return {
-                ...prevFilter,
-                filterType: "search",
-            }
-        })
-        modalRef.current?.present();
+        // set filter as search filter
+        setFilterType("search")
+        bottomSheetRef.current?.present();
     }
 
     // list of outgoing waybill
@@ -463,33 +442,18 @@ const Waybill = ({navigation}) => {
     }
 
     // filter state
-    const [filter, setFilter] = useState({
-        open: false,
-        filterType: "outgoing",
-    })
+    const [filterType, setFilterType] = useState("outgoing")
 
-    // filter bottom sheef ref
-    const filterSheetRef = useRef(null);
 
     // open filter function
     const openFilter = () => {
         Keyboard.dismiss();
-        setFilter(prevFilter => {
-            return {
-                ...prevFilter,
-                open: true,
-            }
-        })
         filterSheetRef.current?.present()
     }
     
     const closeFilter = () => {
         // close filter bottomsheet
         filterSheetRef.current?.close()
-        setFilter({
-            ...filter,
-            open: false,
-        })
     }
 
     // function to apply filter
@@ -653,7 +617,7 @@ const Waybill = ({navigation}) => {
     
     // function to remove filter
     const handleRemoveFilter = (title) => {
-        if (filter.filterType === "incoming") {
+        if (filterType === "incoming") {
             setIncomingFilter(prevParamters => {
                 return prevParamters.map(filterParam => {
                     if (filterParam.title === title) {
@@ -680,7 +644,7 @@ const Waybill = ({navigation}) => {
                     }
                 })
             });
-        } else if (filter.filterType === "outgoing") {
+        } else if (filterType === "outgoing") {
             setOutgoingFilter(prevParamters => {
                 return prevParamters.map(filterParam => {
                     if (filterParam.title === title) {
@@ -707,7 +671,7 @@ const Waybill = ({navigation}) => {
                     }
                 })
             });
-        } else if (filter.filterType === "search") {
+        } else if (filterType === "search") {
             setSearchFilter(prevParamters => {
                 return prevParamters.map(filterParam => {
                     if (filterParam.title === title) {
@@ -1150,7 +1114,6 @@ const Waybill = ({navigation}) => {
             return searchFilter.find(filterParam => filterParam.title === title).value
         }
     }
-
     
     // previous date
     const prevDate = new Date();
@@ -1171,11 +1134,7 @@ const Waybill = ({navigation}) => {
     // variable to indicate end date input active state
     const [activeEndDate, setActiveEndDate] = useState(false);
 
-    // calendar ref
-    const calendarRef = useRef(null);
-
     const [calendar, setCalendar] = useState({
-        open: false,
         setDate: setStartDate,
         maxDate: false,
         minDate: false,
@@ -1183,8 +1142,6 @@ const Waybill = ({navigation}) => {
 
     // function to setEnd date as today if start date is selected as today
     useEffect(() => {
-        // console.log(startDate);
-        // console.log(today);
         if (moment(startDate).format('DD MMMM, YYYY') === moment(today).format('DD MMMM, YYYY')) {
             setEndDate(today);
         }
@@ -1194,7 +1151,6 @@ const Waybill = ({navigation}) => {
         if (inputType === "StartDate") {
             setActiveStartDate(true);
             setCalendar({
-                open: true,
                 setDate: setStartDate,
                 maxDate: endDate ? moment(endDate).subtract(1, 'days') : today,
                 minDate: false
@@ -1202,23 +1158,18 @@ const Waybill = ({navigation}) => {
         } else {
             setActiveEndDate(true);
             setCalendar({
-                open: true,
                 setDate: setEndDate,
                 maxDate: today,
                 minDate: startDate ? moment(startDate).add(1, 'days') : startDate,
             });
         }
-        calendarRef.current?.present();
+        calendarSheetRef.current?.present();
     }
 
     const closeCalendar = () => {
         setActiveEndDate(false);
         setActiveStartDate(false);
-        setCalendar({
-            ...calendar,
-            open: false,
-        })
-        calendarRef.current?.close();
+        calendarSheetRef.current?.close();
     }
 
     const updateWaybillList = (tab) => {
@@ -1284,22 +1235,7 @@ const Waybill = ({navigation}) => {
 
     // implement filter in outgoing waybill list
     useEffect(() => {
-        if (tab === "outgoing") {
-            setFilter(prevFilter => {
-                return {
-                    ...prevFilter,
-                    filterType: tab,
-                }
-            })
-        } else {
-            setFilter(prevFilter => {
-                return {
-                    ...prevFilter,
-                    filterType: tab,
-                }
-            })
-        }
-
+        setFilterType(tab);
         updateWaybillList(tab);
     }, [incomingFilter, outgoingFilter, tab]);
     
@@ -1340,40 +1276,14 @@ const Waybill = ({navigation}) => {
         setSearchedWaybill([
             ...newWaybillList
         ]);
-    }, [getFilterValue("Status", "search"), getFilterValue("Logistics", "search"), getFilterValue("Period", "search"), searchQuery]);
+    }, [incomingFilter, outgoingFilter, searchFilter, searchQuery]);
 
-    // use effect to close modal if 
-    // back button is pressed and modal is opened
     useEffect(() => {
-        // function to run if back button is pressed
-        const backAction = () => {
-            // Run your function here
-            if (calendar.open) {
-                closeCalendar();
-                return true;        
-            }else if (filter.open) {
-                closeFilter();
-                return true;
-            } else if (modal.overlay) {
-                // if modal is open, close modal
-                closeModal();
-                return true;
-            } else {
-                // if modal isnt open simply navigate back
-                return false;
-            }
-        };
-    
-        // listen for onPress back button
-        const backHandler = BackHandler.addEventListener(
-            'hardwareBackPress',
-            backAction
-        );
-    
-        return () => backHandler.remove();
-
-    }, [modal, filter, calendar]);
-
+        if (!calendarSheetOpen) {
+            setActiveEndDate(false);
+            setActiveStartDate(false);
+        }
+    }, [calendarSheetOpen])
 
     return (
         <>
@@ -1389,7 +1299,7 @@ const Waybill = ({navigation}) => {
                     iconFunction={() => {}}
                 />
                 {/* screen content */}
-                <TouchableWithoutFeedback style={{flex: 1}}>
+                <TouchableWithoutFeedback>
                     <FlatList 
                         onScroll={animateHeaderOnScroll}
                         showsVerticalScrollIndicator={false}
@@ -1434,6 +1344,7 @@ const Waybill = ({navigation}) => {
                         renderItem={({ item, index }) => {
                             if (item.id === "sticky") {
                                 return (
+                                    // animated view to animated shadow when a scroll offset is met
                                     <Animated.View 
                                         style={[
                                             style.stickyHeader,
@@ -1477,7 +1388,7 @@ const Waybill = ({navigation}) => {
                                             </TouchableOpacity>
                                         </View>
                                         {/* check if any filter has been applied, i.e it is not in its default value */}
-                                        {filter.filterType === "outgoing" && outgoingFilter.find(filterParam => filterParam.default === false) && (
+                                        {filterType === "outgoing" && outgoingFilter.find(filterParam => filterParam.default === false) && (
                                             <View style={style.filterPillWrapper}>
                                                 {outgoingFilter.map(filterParam => {
                                                     if (!filterParam.default) {
@@ -1497,7 +1408,7 @@ const Waybill = ({navigation}) => {
                                         )}
 
                                         {/* check if any filter has been applied, i.e it is not in its default value */}
-                                        {filter.filterType === "incoming" && incomingFilter.find(filterParam => filterParam.default === false) && (
+                                        {filterType === "incoming" && incomingFilter.find(filterParam => filterParam.default === false) && (
                                             <View style={style.filterPillWrapper}>
                                                 {incomingFilter.map(filterParam => {
                                                     if (!filterParam.default) {
@@ -1535,9 +1446,8 @@ const Waybill = ({navigation}) => {
             </> : <WaybillSkeleton />}
             {/* bottomsheet */}
             <CustomBottomSheet 
-                bottomSheetModalRef={modalRef}
-                showOverlay={modal.overlay}
-                closeModal={() => closeModal()}
+                bottomSheetModalRef={bottomSheetRef}
+                closeModal={closeModal}
                 snapPointsArray={["100%"]}
                 autoSnapAt={0}
                 sheetTitle={"Waybills"}
@@ -1579,6 +1489,7 @@ const Waybill = ({navigation}) => {
                             lastWaybill={searchedWaybill.length - 1}
                             firstWaybill={0}
                             searchQuery={searchQuery}
+                            sideFunctions={closeModal}
                         />
                     ))}
                 </BottomSheetScrollView>
@@ -1589,18 +1500,18 @@ const Waybill = ({navigation}) => {
                 closeFilter={closeFilter}
                 clearFilterFunction={handleClearAllFilter}
                 applyFilterFunction={() => {
-                    if (filter.filterType === "search") {
+                    if (filterType === "search") {
                         return handleApplyFilter("search");
-                    } else if (filter.filterType === "incoming") {
+                    } else if (filterType === "incoming") {
                         return handleApplyFilter("incoming");
-                    } else if (filter.filterType === "outgoing") {
+                    } else if (filterType === "outgoing") {
                         return handleApplyFilter("outgoing");
                         
                     }
                 }}
                 height={"80%"}
             >
-                {filter.filterType === "incoming" && incomingFilter.map(item => (
+                {filterType === "incoming" && incomingFilter.map(item => (
                     <FilterButtonGroup
                         buttons={item.buttons}
                         title={item.title}
@@ -1608,7 +1519,7 @@ const Waybill = ({navigation}) => {
                     />
                 ))}
 
-                {filter.filterType === "outgoing" && outgoingFilter.map(item => (
+                {filterType === "outgoing" && outgoingFilter.map(item => (
                     <FilterButtonGroup
                         buttons={item.buttons}
                         title={item.title}
@@ -1616,7 +1527,7 @@ const Waybill = ({navigation}) => {
                     />
                 ))}
 
-                {filter.filterType === "search" && searchFilter.map(item => (
+                {filterType === "search" && searchFilter.map(item => (
                     <FilterButtonGroup
                         buttons={item.buttons}
                         title={item.title}
@@ -1649,13 +1560,13 @@ const Waybill = ({navigation}) => {
             </FilterBottomSheet>
             {/* calnedar */}
             <CalendarSheet 
+                calendarRef={calendarSheetRef} 
                 closeCalendar={closeCalendar}
                 setDate={calendar.setDate}
                 disableActionButtons={true}
                 snapPointsArray={["60%"]}
                 minDate={calendar.minDate}
                 maxDate={calendar.maxDate}
-                calendarRef={calendarRef} 
             />
         </>
     );

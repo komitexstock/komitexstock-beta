@@ -39,6 +39,8 @@ import LocationIcon from "../assets/icons/LocationIcon";
 import { useRef, useState } from "react";
 // skeleton
 import LogisticsDetailsSkeleton from "../skeletons/LogisticsDetailsSkeleton";
+// globals
+import { useGlobals } from "../context/AppContext";
 
 // windows width
 const windowsWidth = Dimensions.get("window").width;
@@ -50,6 +52,8 @@ if (Platform.OS === 'android') {
 
 const LogisticsDetails = ({navigation}) => {
 
+    // calendar sheet
+    const { popUpSheetRef } = useGlobals();
 
     // states and delivery locations
     const states = [
@@ -550,18 +554,17 @@ const LogisticsDetails = ({navigation}) => {
         }
     };
 
-    // popUp modal ref
-    const popUpBottomSheetModalRef = useRef(null);
-
     // close popup modal bottomsheet function
     const closePopUpModal = () => {
-        popUpBottomSheetModalRef.current?.close();
+        popUpSheetRef.current?.close();
     };
+
     // function to open bottom sheet modal
     const openPopUpModal = () => {
-        popUpBottomSheetModalRef.current?.present();
+        popUpSheetRef.current?.present();
     }
 
+    // handle add logistics 
     const handleAddLogistics = () => {
         openPopUpModal();
     }
@@ -764,7 +767,7 @@ const LogisticsDetails = ({navigation}) => {
             ) : <LogisticsDetailsSkeleton />}
             {/* pop up modal */}
             <PopUpBottomSheet
-                bottomSheetModalRef={popUpBottomSheetModalRef}
+                bottomSheetModalRef={popUpSheetRef}
                 closeModal={handleAddLogisticsSuccess}
                 snapPointsArray={["40%"]}
                 autoSnapAt={0}

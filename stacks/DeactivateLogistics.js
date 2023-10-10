@@ -35,14 +35,18 @@ import PhoneIcon from "../assets/icons/PhoneIcon";
 import LocationIcon from "../assets/icons/LocationIcon";
 import ReportFlagIcon from "../assets/icons/ReportFlagIcon";
 // react hooks
-import { useRef, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 // skeleton screen
 import DeactivateLogisticsSkeleton from "../skeletons/DeactivateLogisticsSkeleton";
+// globals
+import { useGlobals } from "../context/AppContext";
 
 // windows width
 const windowsHeight = Dimensions.get("window").height;
 
 const DeactivateLogistics = ({navigation}) => {
+
+    const { popUpSheetRef } = useGlobals();
 
     // states and delivery locations
     const states = [
@@ -449,23 +453,17 @@ const DeactivateLogistics = ({navigation}) => {
 
     const [confirmDeactivation, setConfirmDeactivation] = useState(false);
 
-    // popUp modal ref
-    const popUpBottomSheetModalRef = useRef(null);
-
-    const [popUpModalOpen, setPopUpModalOpen] = useState(false);
 
     // state to control popupModal snap points array
     const [snapPointsArray, setSnapPointsArray] = useState(["45%"])
 
     // close popup modal bottomsheet function
     const closePopUpModal = () => {
-        setPopUpModalOpen(false);
-        popUpBottomSheetModalRef.current?.close();
+        popUpSheetRef.current?.close();
     };
     // function to open bottom sheet modal
     const openPopUpModal = () => {
-        setPopUpModalOpen(true);
-        popUpBottomSheetModalRef.current?.present();
+        popUpSheetRef.current?.present();
     }
     // function to confirm deactivation of logistics
     const handleDeactivation = () => {
@@ -473,31 +471,6 @@ const DeactivateLogistics = ({navigation}) => {
         setConfirmDeactivation(true);
     }
 
-    // use effect to close modal
-    useEffect(() => {
-        // function to run if back button is pressed
-        const backAction = () => {
-            // Run your function here
-            if (popUpModalOpen) {
-                // if modal is open, close modal
-                closePopUpModal();
-                return true;
-            } else {
-                // if modal isnt open simply navigate back
-                return false;
-            }
-        };
-    
-        // listen for onPress back button
-        const backHandler = BackHandler.addEventListener(
-            'hardwareBackPress',
-            backAction
-        );
-    
-        return () => backHandler.remove();
-
-    }, [popUpModalOpen]);
-    
     // render DeactivateLogistics page
     return (
         <>
@@ -630,7 +603,7 @@ const DeactivateLogistics = ({navigation}) => {
             />
             {/* pop up modal */}
             <PopUpBottomSheet
-                bottomSheetModalRef={popUpBottomSheetModalRef}
+                bottomSheetModalRef={popUpSheetRef}
                 closeModal={closePopUpModal}
                 snapPointsArray={snapPointsArray}
                 autoSnapAt={0}

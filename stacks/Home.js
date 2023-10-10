@@ -7,7 +7,6 @@ import {
     TouchableWithoutFeedback, 
     Keyboard, 
     ScrollView,
-    BackHandler,
 } from "react-native";
 // icons
 import NotificationIcon from "../assets/icons/NotificationIcon";
@@ -39,10 +38,18 @@ import { accentLight, background, black, bodyText, greenLight, primaryColor, sec
 import moment from "moment";
 // home skeleton
 import HomeSkeleton from "../skeletons/HomeSkeleton";
-// storage
+// globals
+import { useGlobals } from "../context/AppContext";
+// auth data
+import { useAuth } from "../context/AuthContext"
 
 const Home = ({navigation}) => {
+
+    const { authData } = useAuth();
       
+    // sheef refs
+    const { bottomSheetRef, filterSheetRef, calendarSheetRef, calendarSheetOpen } = useGlobals();
+
     // order list
     const orders = [
         {
@@ -160,31 +167,7 @@ const Home = ({navigation}) => {
         }
     ];
 
-    const accountType = "Logistics";
-
-    const userData = {
-        account_type: "Logistics",
-        business_name: "Komitex Logistics",
-        full_name: "Iffie Okomite",
-        email: "Komitexlogistics@gmai.com",
-    }
-
-    // const setItem = async () => {
-    //     await AsyncStorage.setItem("@user", JSON.stringify(userData));
-    // }
-
-    // const getItem = async () => {
-    //     const data = await AsyncStorage.getItem("@user");
-    //     const parsedData = JSON.parse(data);
-    //     console.log(parsedData.account_type);
-    // }
-
-    // getItem();
-
-    // setItem();
-    // const [user, setUser] = useState(getItem());
-    // console.log(user.account_type);
-
+    // page loading state
     const [pageLoading, setPageLoading] = useState(true);
 
     useEffect(() => {
@@ -1078,21 +1061,15 @@ const Home = ({navigation}) => {
         },
     ];
 
+    // searched orders
     const [searchedOrders, setSearchedOrders] = useState([]);
-
-    // state to control overlay
-    const [showOverlay, setShowOverlay] = useState(false);
 
     // state to hold search query
     const [searchQuery, setSearchQuery] = useState("");
 
-    // bottom sheet ref
-    const bottomSheetModalRef = useRef(null);
-
     // close bottom sheet functiom
     const closeModal = () => {
-        bottomSheetModalRef.current?.close();
-        setShowOverlay(false);
+        bottomSheetRef.current?.close();
     };
     
     // open bottom sheet functiom
@@ -1104,8 +1081,7 @@ const Home = ({navigation}) => {
             snapPointsArray: ["100%"],
             autoSnapAt: 0,
         });
-        bottomSheetModalRef.current?.present();
-        setShowOverlay(true);
+        bottomSheetRef.current?.present();
     }
 
     const [modal, setModal] = useState({
@@ -1124,8 +1100,7 @@ const Home = ({navigation}) => {
     //             snapPointsArray: ["45%"],
     //             autoSnapAt: 0,
     //         });
-    //         bottomSheetModalRef.current?.present();
-    //         setShowOverlay(true);
+    //         bottomSheetRef.current?.present();
     //     }, 5000);
     // }, [])
 
@@ -1281,29 +1256,15 @@ const Home = ({navigation}) => {
         }
     ]);
 
-    // filter bottom sheef ref
-    const filterSheetRef = useRef(null);
-
-    // filter state
-    const [filter, setFilter] = useState({
-        open: false,
-    })
-
     // open filter function
     const openFilter = () => {
         Keyboard.dismiss();
-        setFilter({
-            open: true,
-        })
         filterSheetRef.current?.present()
     }
     
     const closeFilter = () => {
         // close filter bottomsheet
         filterSheetRef.current?.close()
-        setFilter({
-            open: false,
-        })
     }
 
     // function to setEnd date as today if start date is selected as today
@@ -1314,6 +1275,16 @@ const Home = ({navigation}) => {
             setEndDate(today);
         }
     }, [startDate])
+
+    // to disable avtive states for date inputs if back button is pressed
+    // ...when calendar sheet if open
+    useEffect(() => {
+        if (!calendarSheetOpen) {
+            setActiveEndDate(false);
+            setActiveStartDate(false);
+        }
+
+    }, [calendarSheetOpen])
 
     // function to apply filter
     const handleApplyFilter = () => {
@@ -1466,7 +1437,6 @@ const Home = ({navigation}) => {
 
     // variable to store start date
     const [startDate, setStartDate] = useState(today);
-
     // variable to indicate start date input active state
     const [activeStartDate, setActiveStartDate] = useState(false);
     
@@ -1475,11 +1445,8 @@ const Home = ({navigation}) => {
     // variable to indicate end date input active state
     const [activeEndDate, setActiveEndDate] = useState(false);
 
-    // calendar ref
-    const calendarRef = useRef(null);
-
+    // calendar state
     const [calendar, setCalendar] = useState({
-        open: false,
         setDate: setStartDate,
         maxDate: false,
         minDate: false,
@@ -1490,7 +1457,6 @@ const Home = ({navigation}) => {
         if (inputType === "StartDate") {
             setActiveStartDate(true);
             setCalendar({
-                open: true,
                 setDate: setStartDate,
                 maxDate: endDate ? moment(endDate).subtract(1, 'days') : today,
                 minDate: false
@@ -1498,60 +1464,20 @@ const Home = ({navigation}) => {
         } else {
             setActiveEndDate(true);
             setCalendar({
-                open: true,
                 setDate: setEndDate,
                 maxDate: today,
                 minDate: startDate ? moment(startDate).add(1, 'days') : startDate,
             });
         }
-        calendarRef.current?.present();
+        calendarSheetRef.current?.present();
     }
 
     // close calendar
     const closeCalendar = () => {
         setActiveEndDate(false);
         setActiveStartDate(false);
-        setCalendar({
-            ...calendar,
-            open: false,
-        })
-        calendarRef.current?.close();
+        calendarSheetRef.current?.close();
     }
-
-    // useEffect to listen for onPress back button and close modal
-    useEffect(() => {
-        // function to run if back button is pressed
-        const backAction = () => {
-            console.log(bottomSheetModalRef)
-            // Run your function here
-            // if filter bottomsheet is open
-            if (calendar.open) {
-                // close filter bottomsheet 
-                closeCalendar();
-                return true;
-            } else if (filter.open) {
-                // close filter bottomsheet 
-                closeFilter();
-                return true;
-            } else if (showOverlay) {
-                // if modal is open, close modal
-                closeModal();
-                return true;
-            } else {
-                // if modal isnt open simply navigate back
-                return false;
-            }
-        };
-    
-        // listen for onPress back button
-        const backHandler = BackHandler.addEventListener(
-            'hardwareBackPress',
-            backAction
-        );
-    
-        return () => backHandler.remove();
-
-    }, [showOverlay, filter, calendar]);
 
     const merchantQuickButtons = [
         {
@@ -1623,7 +1549,7 @@ const Home = ({navigation}) => {
         },
     ];
 
-    const quickButtons = accountType === "Merchant" ? merchantQuickButtons : logisticsQuickButtons;
+    const quickButtons = authData?.account_type === "Merchant" ? merchantQuickButtons : logisticsQuickButtons;
 
     // render Home page
     return (
@@ -1662,7 +1588,7 @@ const Home = ({navigation}) => {
                                         style={style.searchInput}
                                         onPress={openModal}
                                     >
-                                        <Text style={style.searchPlaceholder}>Search Komitex Stocks</Text>
+                                        <Text style={style.searchPlaceholder}>Search Komitex</Text>
                                     </TouchableOpacity>
                                 </View>
                                 <View>
@@ -1716,9 +1642,7 @@ const Home = ({navigation}) => {
             ) : <HomeSkeleton />}
             {/* bottomsheet */}
             <CustomBottomSheet
-                bottomSheetModalRef={bottomSheetModalRef}
-                setShowOverlay={setShowOverlay}
-                showOverlay={showOverlay}
+                bottomSheetModalRef={bottomSheetRef}
                 closeModal={closeModal}
                 snapPointsArray={modal.snapPointsArray}
                 autoSnapAt={modal.autoSnapAt} // search bottomsheet auto snap at fullscreen
@@ -1860,7 +1784,7 @@ const Home = ({navigation}) => {
                 snapPointsArray={["60%"]}
                 minDate={calendar.minDate}
                 maxDate={calendar.maxDate}
-                calendarRef={calendarRef} 
+                calendarRef={calendarSheetRef} 
             />
         </>
     );

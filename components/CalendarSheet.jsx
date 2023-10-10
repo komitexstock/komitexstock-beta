@@ -48,7 +48,6 @@ const CalendarSheet = ({calendarRef, closeCalendar, snapPointsArray, setDate, di
     // temporary date variable
     const [tempDate, setTempDate] = useState("");
 
-
     // update date variable
     const onDateChange = (date) => {
         setTempDate(date);
@@ -119,6 +118,15 @@ const CalendarSheet = ({calendarRef, closeCalendar, snapPointsArray, setDate, di
         
         return formattedDate;
     }
+
+    const handleOnSheetChange = (index) => {
+        if (index === -1) {
+            setCalendarSheetOpen(false);
+            setTempDate("");
+            return;
+        }
+        return setCalendarSheetOpen(true);
+    }
    
     // render PopUpBottomSheet component
     return (
@@ -151,10 +159,7 @@ const CalendarSheet = ({calendarRef, closeCalendar, snapPointsArray, setDate, di
                 // over other bottomsheet
                 stackBehavior="push"
                 backdropComponent={renderBackdrop}
-                onChange={(index) => {
-                    if (index === -1) return setCalendarSheetOpen(false)
-                    return setCalendarSheetOpen(true);
-                }}
+                onChange={(index) => handleOnSheetChange(index)}
             >
                 <View style={style.modalWrapper}>
                     <View style={style.calenderWrapper}>
@@ -200,6 +205,7 @@ const CalendarSheet = ({calendarRef, closeCalendar, snapPointsArray, setDate, di
                                 shrinkWrapper={true}
                                 onPress={handleSelectedDate}
                                 unpadded={true}
+                                inactive={tempDate === ""}
                             />
                         </View>
                     </View>

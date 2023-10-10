@@ -6,7 +6,6 @@ import {
     TouchableOpacity, 
     TouchableWithoutFeedback,
     StyleSheet,
-    BackHandler,
     Animated,
     Keyboard
 } from "react-native";
@@ -42,9 +41,14 @@ import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { windowHeight } from "../utils/helpers";
 // skeleton screen
 import ProductsSkeleton from "../skeletons/ProductsSkeleton";
+// globals
+import { useGlobals } from "../context/AppContext";
 
 
 const Products = ({navigation, route}) => {
+
+    // bottomsheet ref
+    const { bottomSheetRef, filterSheetRef } = useGlobals();
 
     // stats array
     const stats = [
@@ -222,7 +226,6 @@ const Products = ({navigation, route}) => {
         snapPointsArray: ["100%"],
         autoSnapAt: 0,
         sheetTitle: "Edit Product",
-        overlay: false,
         modalContent: 'edit'
     });
 
@@ -231,28 +234,17 @@ const Products = ({navigation, route}) => {
 
         if (route.params) {
             setMenu(false);
-
             openAlert(route.params.type, route.params.text);
         }
-        
 
     }, [route.params]);
 
     // state to store search query
     const [searchQuery, setSearchQuery] = useState("");
 
-    // filter modal reference
-    const modalRef = useRef(null);
-
     // close modal function
     const closeModal = () => {
-        setModal(prevModal => {
-            return {
-                ...prevModal,
-                overlay: false,
-            }
-        });
-        modalRef.current?.close();
+        bottomSheetRef.current?.close();
     };
 
     // open modal function
@@ -261,12 +253,11 @@ const Products = ({navigation, route}) => {
         setModal(prevModal => {
             return {
                 ...prevModal,
-                overlay: true,
                 sheetTitle: type === "search" ? "Products" : "Edit Product",
                 modalContent: type
             }
         });
-        modalRef.current?.present();
+        bottomSheetRef.current?.present();
     }
 
     const handleEditProduct = (id) => {
@@ -328,31 +319,18 @@ const Products = ({navigation, route}) => {
     }
 
     // filter state
-    const [filter, setFilter] = useState({
-        open: false,
-        filterType: "products",
-    })
-
-    // filter bottom sheef ref
-    const filterSheetRef = useRef(null);
+    const [filterType, setFilterType] = useState("products")
 
     // open filter function
-    const openFilter = (filterType) => {
+    const openFilter = (type) => {
         Keyboard.dismiss();
-        setFilter({
-            open: true,
-            filterType: filterType,
-        })
+        setFilterType(type)
         filterSheetRef.current?.present()
     }
     
     const closeFilter = () => {
         // close filter bottomsheet
         filterSheetRef.current?.close()
-        setFilter({
-            ...filter,
-            open: false,
-        })
     }
 
     // function to apply filter
@@ -770,35 +748,6 @@ const Products = ({navigation, route}) => {
 
     }, [searchQuery])
 
-    // use effect to close modal on press of back button
-    useEffect(() => {
-        // function to run if back button is pressed
-        const backAction = () => {
-            // Run your function here
-            if (filter.open) {
-                // if modal is open, close modal
-                closeFilter();
-                return true;
-            } else if (modal.overlay) {
-                // if modal is open, close modal
-                closeModal();
-                return true;
-            } else {
-                // if modal isnt open simply navigate back
-                return false;
-            }
-        };
-    
-        // listen for onPress back button
-        const backHandler = BackHandler.addEventListener(
-            'hardwareBackPress',
-            backAction
-        );
-    
-        return () => backHandler.remove();
-
-    }, [modal.overlay, filter]);
-
     // render Products page
     return (
         <>
@@ -965,8 +914,7 @@ const Products = ({navigation, route}) => {
             </> : <ProductsSkeleton />}
             {/* custom bottomsheet modal */}
             <CustomBottomSheet 
-                bottomSheetModalRef={modalRef}
-                showOverlay={modal.overlay}
+                bottomSheetModalRef={bottomSheetRef}
                 closeModal={closeModal}
                 snapPointsArray={modal.snapPointsArray}
                 autoSnapAt={modal.autoSnapAt}
@@ -1035,10 +983,10 @@ const Products = ({navigation, route}) => {
                 fiterSheetRef={filterSheetRef}
                 closeFilter={closeFilter}
                 clearFilterFunction={handleClearAllFilter}
-                applyFilterFunction={filter.filterType === "search" ? () => handleApplyFilter("search") : handleApplyFilter}
+                applyFilterFunction={filterType === "search" ? () => handleApplyFilter("search") : handleApplyFilter}
                 height={"60%"}
             >
-                {filter.filterType === "products" && filterParameters.map(item => (
+                {filterType === "products" && filterParameters.map(item => (
                     <FilterButtonGroup
                         buttons={item.buttons}
                         title={item.title}
@@ -1046,7 +994,7 @@ const Products = ({navigation, route}) => {
                     />
                 ))}
 
-                {filter.filterType === "search" && searchFilterParameters.map(item => (
+                {filterType === "search" && searchFilterParameters.map(item => (
                     <FilterButtonGroup
                         buttons={item.buttons}
                         title={item.title}

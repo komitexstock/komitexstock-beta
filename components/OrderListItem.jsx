@@ -25,9 +25,7 @@ const OrderListItem = ({item, index, firstOrder, lastOrder, selectable, selected
             return selectFunction(item.id);
         } else {
             if (sideFunctions) sideFunctions();
-            return setTimeout(() => {
-                item.navigateToChat();
-            }, 250);
+            return item.navigateToChat();
         }
     }
 

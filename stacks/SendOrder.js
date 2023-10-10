@@ -25,11 +25,16 @@ import AlertNotice from "../components/AlertNotice";
 import ArrowDown from "../assets/icons/ArrowDown";
 import InfoIcon from "../assets/icons/InfoIcon";
 // react hooks
-import { useState, useRef, useEffect, useLayoutEffect } from "react";
+import { useState, useEffect } from "react";
 // colors
 import { accentLight, background, black, primaryColor, white } from "../style/colors";
+// globals
+import { useGlobals } from "../context/AppContext";
 
 const SendOrder = ({navigation, route}) => {
+
+    // bottom sheet ref
+    const { bottomSheetRef, bottomSheetOpen } = useGlobals();
 
     // state to store order details
     const [ orderDetails, setOrderdetails] = useState(null);
@@ -77,7 +82,7 @@ const SendOrder = ({navigation, route}) => {
     // price
     const [price, setPrice] = useState(50000);
     
-
+    // response from chatGPT
     const [processOrderResponse, setProcessOrderResponse] = useState(false);
 
     // state to indicate if select logistics input is active
@@ -97,49 +102,15 @@ const SendOrder = ({navigation, route}) => {
         openAtIndex: 0,
     });
     
-    // state to control modal overlay
-    const [showOverlay, setShowOverlay] = useState(false);
-
-    // use effect to close modal when back button is pressed and modal is open
-    useEffect(() => {
-        // function to run if back button is pressed
-        const backAction = () => {
-            // Run your function here
-            if (showOverlay) {
-                // if modal is open, close modal
-                closeModal();
-                return true;
-            } else {
-                // if modal isnt open simply navigate back
-                return false;
-            }
-        };
-    
-        // listen for onPress back button
-        const backHandler = BackHandler.addEventListener(
-            'hardwareBackPress',
-            backAction
-        );
-    
-        return () => backHandler.remove();
-
-    }, [showOverlay]);
-    
-    // modal ref
-    const bottomSheetModalRef = useRef(null);
-
     // close modal function
     const closeModal = () => {
-      bottomSheetModalRef.current?.close();
-      setShowOverlay(false);
+      bottomSheetRef.current?.close();
       if (modal.type === "Logistics") setSelectLogisticsActive(false);
       else if (modal.type === "Location") setSelectLocationActive(false);
     };
 
     // function to open bottom sheet modal
     const openModal = (type, title, subtitle, openAtIndex) => {
-        bottomSheetModalRef.current?.present();
-        setShowOverlay(true);
         Keyboard.dismiss();
         setModal({
             type: type,
@@ -149,7 +120,16 @@ const SendOrder = ({navigation, route}) => {
         });
         if (type === "Logistics") setSelectLogisticsActive(true);
         else if (type === "Location") setSelectLocationActive(true);   
+        bottomSheetRef.current?.present();
     }
+
+    // use effect to disable active state for dropdown
+    useEffect(() => {
+        if (!bottomSheetOpen) {
+            if (modal.type === "Logistics") setSelectLogisticsActive(false);
+            else if (modal.type === "Location") setSelectLocationActive(false);
+        }
+    }, [bottomSheetOpen])
 
     // function to check if logistics or orderdetails are empty
     const emptyLogisticsAndOrderDetails = [
@@ -363,7 +343,7 @@ const SendOrder = ({navigation, route}) => {
 
     
     // use effect to remove add product propmt after 3 seconds
-    useLayoutEffect(() => {
+    useEffect(() => {
         if (route.params) {
             setAlert({
                 show: true,
@@ -525,8 +505,7 @@ const SendOrder = ({navigation, route}) => {
             </TouchableWithoutFeedback>
             {/* bottom sheet  */}
             <CustomBottomSheet
-                bottomSheetModalRef={bottomSheetModalRef}
-                showOverlay={showOverlay}
+                bottomSheetModalRef={bottomSheetRef}
                 closeModal={closeModal}
                 snapPointsArray={["40%", "60%", "80%"]}
                 autoSnapAt={modal.openAtIndex}

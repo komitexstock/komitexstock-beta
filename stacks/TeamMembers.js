@@ -31,11 +31,13 @@ import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import TeamMembersSkeleton from "../skeletons/TeamMembersSkeleton";
 // utils
 import { windowHeight } from "../utils/helpers";
+// globals
+import { useGlobals } from "../context/AppContext";
 
 const TeamMembers = ({navigation}) => {
 
-    // state to control modal overlay
-    const [showOverlay, setShowOverlay] = useState(false);
+    // bottoms sheef refs
+    const { bottomSheetRef, popUpSheetRef, popUpSheetOpen } = useGlobals();
 
     // page loading state
     const [pageLoading, setPageLoading] = useState(true);
@@ -59,60 +61,20 @@ const TeamMembers = ({navigation}) => {
         popUpVisible: false,
     });
 
-    // use effect to close modal onPress back button if modal is open
-    useEffect(() => {
-        // function to run if back button is pressed
-        const backAction = () => {
-            // if pop up is visible
-            if(popUp.popUpVisible) {
-                // close pop up
-                closePopUpModal();
-                return true;
-            } else {
-                if (showOverlay) {
-                    // if modal is open, close modal
-                    closeModal();
-                    return true;
-                } else {
-                    // if modal isnt open simply navigate back
-                    return false;
-                }
-            }
-
-        };
-    
-        // listen for onPress back button
-        const backHandler = BackHandler.addEventListener(
-            'hardwareBackPress',
-            backAction
-        );
-    
-        return () => backHandler.remove();
-
-    }, [showOverlay, popUp.popUpVisible]);
-
     // state to prompt user to confirm deactivation
     const [roleInputActive, setRoleInputActive] = useState(false);
-
-    // modal ref
-    const bottomSheetModalRef = useRef(null);
 
     // bottomsheet snap points
     const [bottomSheetSnapPoints, setBottomSheetSnapPoints] = useState(["60%"]);
 
-    // popUp modal ref
-    const popUpBottomSheetModalRef = useRef(null);
-
     // function to close modal
     const closeModal = () => {
-        bottomSheetModalRef.current?.close();
-        setShowOverlay(false);
+        bottomSheetRef.current?.close();
     };
 
     // function to open bottom sheet modal
     const openModal = (type) => {
-        bottomSheetModalRef.current?.present();
-        setShowOverlay(true);
+        bottomSheetRef.current?.present();
         setModal(type);
 
         type === "Add" ? setBottomSheetSnapPoints([0.7 * windowHeight]) : setBottomSheetSnapPoints(["60%"]);
@@ -120,14 +82,8 @@ const TeamMembers = ({navigation}) => {
 
     // function to close Popup modal
     const closePopUpModal = () => {
-        popUpBottomSheetModalRef.current?.close();
+        popUpSheetRef.current?.close();
         setRoleInputActive(false);
-        setPopUp(prevPopUp => {
-            return {
-                ...prevPopUp,
-                popUpVisible: false
-            }
-        })
     };
 
     // function to close all bottomsheet moda;
@@ -144,7 +100,7 @@ const TeamMembers = ({navigation}) => {
     // function to open bottom sheet popup
     const openPopUpModal = (type) => {
         setForceBlur(true);
-        popUpBottomSheetModalRef.current?.present();
+        popUpSheetRef.current?.present();
         if (type === "Add" || type === "Edit") {
             setRoleInputActive(true);
             setPopUp({
@@ -154,7 +110,6 @@ const TeamMembers = ({navigation}) => {
                 centered: true,
                 closeModal: closePopUpModal,
                 hideCloseButton: true,
-                popUpVisible: true,
             });
         } else if (type === "AddSuccess" || type === "UpdateSuccess") {
             setPopUp({
@@ -164,7 +119,6 @@ const TeamMembers = ({navigation}) => {
                 centered: false,
                 closeModal: closeAllModal,
                 hideCloseButton: false,
-                popUpVisible: true,
             });
         } else if (type === "Deactivate") {
             setPopUp({
@@ -174,10 +128,16 @@ const TeamMembers = ({navigation}) => {
                 centered: false,
                 closeModal: closePopUpModal,
                 hideCloseButton: false,
-                popUpVisible: true,
             })
         }
     }
+
+    // set role select button as inactive if back button is pressed and role modal is opened
+    useEffect(() => {
+        if (!popUpSheetOpen) {
+            setRoleInputActive(false);
+        }
+    }, [popUpSheetOpen])
 
     // list of members
     const memberList = [
@@ -377,8 +337,7 @@ const TeamMembers = ({navigation}) => {
             ) : <TeamMembersSkeleton />}
             {/* custom bottomsheet */}
             <CustomBottomSheet
-                bottomSheetModalRef={bottomSheetModalRef}
-                showOverlay={showOverlay}
+                bottomSheetModalRef={bottomSheetRef}
                 closeModal={closeModal}
                 snapPointsArray={bottomSheetSnapPoints}
                 autoSnapAt={0}
@@ -472,7 +431,7 @@ const TeamMembers = ({navigation}) => {
             </CustomBottomSheet>
             {/* popup bottom sheet */}
             <PopUpBottomSheet
-                bottomSheetModalRef={popUpBottomSheetModalRef}
+                bottomSheetModalRef={popUpSheetRef}
                 closeModal={popUp.closeModal}
                 snapPointsArray={popUp.snapPoints}
                 autoSnapAt={0}

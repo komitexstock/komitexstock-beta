@@ -6,12 +6,11 @@ import {
     TouchableOpacity, 
     TouchableWithoutFeedback,
     StyleSheet,
-    BackHandler,
     Animated,
     Keyboard,
 } from "react-native";
 // colors
-import { background, blackOut, bodyText, primaryColor, secondaryColor, white } from "../style/colors";
+import { background, blackOut, bodyText, primaryColor, white } from "../style/colors";
 // icons
 import MenuIcon from "../assets/icons/MenuIcon";
 import SearchIcon from '../assets/icons/SearchIcon'
@@ -39,8 +38,13 @@ import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import moment from "moment";
 // skeleton screen
 import OrdersSkeleton from "../skeletons/OrdersSkeleton";
+// globals
+import { useGlobals } from "../context/AppContext";
 
 const Orders = ({navigation}) => {
+
+    // bottom sheet refs
+    const { bottomSheetRef, filterSheetRef, calendarSheetRef, calendarSheetOpen} = useGlobals();
 
     // orders full list
     const orderList = [
@@ -1611,55 +1615,30 @@ const Orders = ({navigation}) => {
             unitPosition: "end",
         },
     ];
-
     
-    // console.log(filterParameters[0].value)
-    // console.log(searchQuery);
-
-    // search modal refernce
-    const modalRef = useRef(null);
-
-    // state to store modal parameters
-    const [modalOpen, setModalOpen] = useState(false)
-
     // close modal function
     const closeModal = () => {
-        setModalOpen(false);
-        modalRef.current?.close();
+        bottomSheetRef.current?.close();
     };
 
     // open modal function
     const openModal = () => {
-        setModalOpen(true);
-        modalRef.current?.present();
+        bottomSheetRef.current?.present();
     }
 
     // filter state
-    const [filter, setFilter] = useState({
-        open: false,
-        filterType: "home",
-    })
-
-    // filter bottom sheef ref
-    const filterSheetRef = useRef(null);
+    const [filterType, setFilterType] = useState("home")
 
     // open filter function
-    const openFilter = (filterType) => {
+    const openFilter = (type) => {
         Keyboard.dismiss();
-        setFilter({
-            open: true,
-            filterType: filterType,
-        })
+        setFilterType(type)
         filterSheetRef.current?.present()
     }
     
     const closeFilter = () => {
         // close filter bottomsheet
         filterSheetRef.current?.close()
-        setFilter({
-            ...filter,
-            open: false,
-        })
     }
 
     // sticky header offset
@@ -1698,11 +1677,8 @@ const Orders = ({navigation}) => {
     // variable to indicate end date input active state
     const [activeEndDate, setActiveEndDate] = useState(false);
 
-    // calendar ref
-    const calendarRef = useRef(null);
-
+    // calendar state
     const [calendar, setCalendar] = useState({
-        open: false,
         setDate: setStartDate,
         maxDate: false,
         minDate: false,
@@ -1721,7 +1697,6 @@ const Orders = ({navigation}) => {
         if (inputType === "StartDate") {
             setActiveStartDate(true);
             setCalendar({
-                open: true,
                 setDate: setStartDate,
                 maxDate: endDate ? moment(endDate).subtract(1, 'days') : today,
                 minDate: false
@@ -1729,62 +1704,31 @@ const Orders = ({navigation}) => {
         } else {
             setActiveEndDate(true);
             setCalendar({
-                open: true,
                 setDate: setEndDate,
                 maxDate: today,
                 minDate: startDate ? moment(startDate).add(1, 'days') : startDate,
             });
         }
-        calendarRef.current?.present();
+        calendarSheetRef.current?.present();
     }
 
     const closeCalendar = () => {
         setActiveEndDate(false);
         setActiveStartDate(false);
-        setCalendar({
-            ...calendar,
-            open: false,
-        })
-        calendarRef.current?.close();
+        calendarSheetRef.current?.close();
     }
+
+    useEffect(() => {
+        if (!calendarSheetOpen) {
+            setActiveEndDate(false);
+            setActiveStartDate(false);
+        };
+    }, [])
 
     // function to set startDate and endDate based on range provided
     const handleSetTimeRange = (range) => {
 
     }
-
-    // use effect to close modal if back button is pressed
-    useEffect(() => {
-        // function to run if back button is pressed
-        const backAction = () => {
-            // Run your function here
-            if (calendar.open) { //if calendar is open, close it
-                closeCalendar();
-                return true;
-            }else if (filter.open) {
-                // if modal is open, close modal
-                closeFilter();
-                return true;
-            }else if (modalOpen) {
-                // if modal is open, close modal
-                closeModal();
-                return true;
-            } else {
-                // if modal isnt open simply navigate back
-                return false;
-            }
-        };
-    
-        // listen for onPress back button
-        const backHandler = BackHandler.addEventListener(
-            'hardwareBackPress',
-            backAction
-        );
-    
-        return () => backHandler.remove();
-
-    }, [modalOpen, calendar.open, filter.open]);
-    
 
     return (
         <>
@@ -1914,8 +1858,7 @@ const Orders = ({navigation}) => {
             {/* Header component */}
             {/* bottom sheet */}
             <CustomBottomSheet 
-                bottomSheetModalRef={modalRef}
-                showOverlay={modalOpen}
+                bottomSheetModalRef={bottomSheetRef}
                 closeModal={closeModal}
                 snapPointsArray={["100%"]}
                 autoSnapAt={0}
@@ -1972,10 +1915,10 @@ const Orders = ({navigation}) => {
                 fiterSheetRef={filterSheetRef}
                 closeFilter={closeFilter}
                 clearFilterFunction={handleClearAllFilter}
-                applyFilterFunction={filter.filterType === "search" ? () => handleApplyFilter("search") : handleApplyFilter}
+                applyFilterFunction={filterType === "search" ? () => handleApplyFilter("search") : handleApplyFilter}
                 height={"80%"}
             >
-                {filter.filterType === "home" && filterParameters.map(item => (
+                {filterType === "home" && filterParameters.map(item => (
                     <FilterButtonGroup
                         buttons={item.buttons}
                         title={item.title}
@@ -1983,7 +1926,7 @@ const Orders = ({navigation}) => {
                     />
                 ))}
 
-                {filter.filterType === "search" && searchFilterParameters.map(item => (
+                {filterType === "search" && searchFilterParameters.map(item => (
                     <FilterButtonGroup
                         buttons={item.buttons}
                         title={item.title}
@@ -2022,7 +1965,7 @@ const Orders = ({navigation}) => {
                 snapPointsArray={["60%"]}
                 minDate={calendar.minDate}
                 maxDate={calendar.maxDate}
-                calendarRef={calendarRef} 
+                calendarRef={calendarSheetRef} 
             />
         </>
     );

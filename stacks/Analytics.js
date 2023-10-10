@@ -5,7 +5,6 @@ import {
     ScrollView,
     StyleSheet,
     TouchableOpacity,
-    BackHandler
 } from "react-native";
 // colors
 import {
@@ -28,12 +27,18 @@ import CalendarSheet from "../components/CalendarSheet";
 // icons
 import ArrowDownSmall from '../assets/icons/ArrowDownSmall';
 // react hooks
-import {useState, useRef, useEffect} from "react";
+import {useState, useEffect} from "react";
 // skeleton screen
 import AnalyticsSkeleton from "../skeletons/AnalyticsSkeleton";
+// globals
+import { useGlobals } from "../context/AppContext";
 
 
 const Analytics = ({navigation}) => {
+
+    // calendar ref
+    const { calendarSheetRef } = useGlobals();
+
     // bar chart data
     const data = [57000, 99000, 58000, 81500, 0, 67000, 39000];
     
@@ -191,46 +196,13 @@ const Analytics = ({navigation}) => {
     // state to control tabs
     const [tabs, setTabs] = useState("Logistics");
 
-    // calendar ref
-    const calendarRef = useRef(null);
-
-    // state to save calendar open or closed state
-    const [openCalendar, setOpenCalendar] = useState(false);
-
-    const handleOpenCalendar = () => {
-        setOpenCalendar(true);
-        calendarRef.current?.present();
+    const openCalendar = () => {
+        calendarSheetRef.current?.present();
     }
     
-    const handleCloseCalendar = () => {
-        setOpenCalendar(false);
-        calendarRef.current?.close();
+    const closeCalendar = () => {
+        calendarSheetRef.current?.close();
     }
-
-    // use effect to close calendar modal
-    useEffect(() => {
-        // function to run if back button is pressed
-        const backAction = () => {
-            // Run your function here
-            if (openCalendar) {
-                // if calendar is open, close it
-                handleCloseCalendar();
-                return true;
-            } else {
-                // if modal isnt open simply navigate back
-                return false;
-            }
-        };
-    
-        // listen for onPress back button
-        const backHandler = BackHandler.addEventListener(
-            'hardwareBackPress',
-            backAction
-        );
-    
-        return () => backHandler.remove();
-
-    }, [openCalendar]);
 
     const [date, setDate] = useState("");
 
@@ -256,7 +228,7 @@ const Analytics = ({navigation}) => {
                             <View style={style.rangeWrapper}>
                                 <TouchableOpacity 
                                     style={style.rangeButton}
-                                    onPress={handleOpenCalendar}
+                                    onPress={openCalendar}
                                 >
                                     <Text style={style.rangeButtonText}>Last 7 Days</Text>
                                     <ArrowDownSmall />
@@ -381,12 +353,12 @@ const Analytics = ({navigation}) => {
             ) : <AnalyticsSkeleton />}
             {/* calendar */}
             <CalendarSheet 
-                closeCalendar={handleCloseCalendar}
+                closeCalendar={closeCalendar}
                 setDate={setDate}
                 disableActionButtons={false}
                 snapPointsArray={["70%"]}
                 maxDate={new Date()}
-                calendarRef={calendarRef} 
+                calendarRef={calendarSheetRef} 
             />
         </>
     );

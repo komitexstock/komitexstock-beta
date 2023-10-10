@@ -1,9 +1,7 @@
 // react native components
 import { 
     View, 
-    Text, 
     FlatList, 
-    TouchableOpacity, 
     TouchableWithoutFeedback,
     StyleSheet
 } from "react-native";

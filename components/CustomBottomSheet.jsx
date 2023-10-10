@@ -27,6 +27,21 @@ const CustomBottomSheet = ({bottomSheetModalRef, closeModal, snapPointsArray, au
         []
     );
 
+    const handleOpenSheetStates = (index) => {
+        // if sheet is closed
+        if (index === -1) {
+            // if its a stacked sheet
+            if (stacked) return setStackedSheetOpen(false);
+            // if it's a regular bottomsheet
+            return setBottomSheetOpen(false)
+        } else { // else if sheet is opened
+            // if its a stacked sheet
+            if (stacked) return setStackedSheetOpen(true);
+            // if it's a regular bottomsheet
+            return setBottomSheetOpen(true)
+        }
+    }
+
     return (
         <>
             {/* {showOverlay && (
@@ -62,15 +77,7 @@ const CustomBottomSheet = ({bottomSheetModalRef, closeModal, snapPointsArray, au
                     // over other bottomsheet
                     stackBehavior={stacked ? "push" : "replace"}
                     backdropComponent={renderBackdrop}
-                    onChange={(index) => {
-                        if (index === -1) {
-                            stacked && setStackedSheetOpen(false)
-                            return setBottomSheetOpen(false)
-                        } else {
-                            stacked && setStackedSheetOpen(true)
-                            return setBottomSheetOpen(true)
-                        }
-                    }}
+                    onChange={(index) => handleOpenSheetStates(index)}
                 >
                     <View style={styles.sheetTitle}>
                         <TouchableOpacity 

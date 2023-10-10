@@ -40,13 +40,7 @@ const CustomButton = ({name, onPress, backgroundColor, fixed, inactive, secondar
 
     useEffect(() => {
         
-        // if (isLoading) {
-        //     setInterval(() => {
-        //         animateAllBoxes();
-        //     }, 1200);
-        // }
         let intervalId;
-
         
         const animateAllBoxes = () => {
             animateBox(translate1, 0);
@@ -74,6 +68,12 @@ const CustomButton = ({name, onPress, backgroundColor, fixed, inactive, secondar
         };
 
     }, [isLoading]);
+
+    const handleOnPress = () => {
+        if (isLoading) return () => {};
+        if (inactive) return () => {};
+        return onPress();
+    }
     
     // render CustomButtom component
     return (
@@ -97,7 +97,7 @@ const CustomButton = ({name, onPress, backgroundColor, fixed, inactive, secondar
                     },
                     buttonStyle && buttonStyle
                 ]}
-                onPress={inactive ? () => {} : onPress}
+                onPress={handleOnPress}
             >   
                 { isLoading ? (
                     <>

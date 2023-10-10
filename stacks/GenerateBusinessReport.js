@@ -4,29 +4,35 @@ import {
     Text, 
     StyleSheet,
     TouchableOpacity, 
-    BackHandler,
-    Dimensions
 } from "react-native";
 // components
 import Header from "../components/Header";
 import CustomButton from "../components/CustomButton";
+import SuccessPrompt from "../components/SuccessPrompt";
 import SelectInput from "../components/SelectInput";
 import CalendarSheet from "../components/CalendarSheet";
 import CustomBottomSheet from "../components/CustomBottomSheet";
+import PopUpBottomSheet from "../components/PopUpBottomSheet";
 // colors
 import { background, black, bodyText} from "../style/colors";
 // icons
 import ArrowDown from "../assets/icons/ArrowDown";
 import CalendarIcon from "../assets/icons/CalendarIcon";
 // react hooks
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 // import moment
 import moment from "moment";
 // helpers
 import { windowHeight } from "../utils/helpers";
-
+// globals
+import { useGlobals } from "../context/AppContext";
 
 const GenerateBusinessReport = ({navigation}) => {
+
+    // bottomsheets refs
+    const { bottomSheetRef, popUpSheetRef, calendarSheetRef, calendarSheetOpen, bottomSheetOpen } = useGlobals();
+
+    const [isLoading, setIsLoading] = useState(false);
 
     // modal overlay
     const [showOverlay, setShowOverlay] = useState(false);
@@ -62,21 +68,17 @@ const GenerateBusinessReport = ({navigation}) => {
     // today.setDate(today.getDate());
 
 
-    // calendar ref
-    const calendarRef = useRef(null);
-
+    // calendar state
     const [calendar, setCalendar] = useState({
-        open: false,
         setDate: setStartDate,
         maxDate: false,
         minDate: false,
     });
 
-    const hanldeOpenCalendar = (inputType) => {
+    const openCalendar = (inputType) => {
         if (inputType === "StartDate") {
             setActiveStartDate(true);
             setCalendar({
-                open: true,
                 setDate: setStartDate,
                 maxDate: endDate ? moment(endDate).subtract(1, 'days') : prevDate,
                 minDate: false
@@ -84,23 +86,18 @@ const GenerateBusinessReport = ({navigation}) => {
         } else {
             setActiveEndDate(true);
             setCalendar({
-                open: true,
                 setDate: setEndDate,
                 maxDate: today,
                 minDate: startDate ? moment(startDate).add(1, 'days') : startDate,
             });
         }
-        calendarRef.current?.present();
+        calendarSheetRef.current?.present();
     }
 
-    const handleCloseCalendar = () => {
+    const closeCalendar = () => {
         setActiveEndDate(false);
         setActiveStartDate(false);
-        setCalendar({
-            ...calendar,
-            open: false,
-        })
-        calendarRef.current?.close();
+        calendarSheetRef.current?.close();
     }
 
     // check for empty fields
@@ -112,51 +109,49 @@ const GenerateBusinessReport = ({navigation}) => {
             (item) => item === null || item === ''
     );
 
-    // use effect to close modal
-    useEffect(() => {
-        // function to run if back button is pressed
-        const backAction = () => {
-            // Run your function here
-            if (showOverlay) {
-                // if modal is open, close modal
-                closeModal();
-                return true;
-            } else if (calendar.open) { //if calendar is open, close it
-                handleCloseCalendar();
-                return true;
-            } else {
-                // if modal isnt open simply navigate back
-                return false;
-            }
-        };
-    
-        // listen for onPress back button
-        const backHandler = BackHandler.addEventListener(
-            'hardwareBackPress',
-            backAction
-        );
-    
-        return () => backHandler.remove();
-
-    }, [showOverlay, calendar]);
-    
-    // bottom sheet ref
-    const bottomSheetModalRef = useRef(null);
-
     // close modal function
     const closeModal = () => {
-        bottomSheetModalRef.current?.close();
-        setShowOverlay(false);
+        bottomSheetRef.current?.close();
         setActiveFormat(false);
     };
 
     // open modal function
-    const openModal = (type) => {
+    const openModal = () => {
         // open bottomsheet modal
-        bottomSheetModalRef.current?.present();
-        // set overlay
-        setShowOverlay(true);
+        bottomSheetRef.current?.present();
+        setActiveFormat(true);
     }
+
+    // close popup modal bottomsheet function
+    const closePopUpModal = () => {
+        popUpSheetRef.current?.close();
+    };
+    // function to open bottom sheet modal
+    const openPopUpModal = () => {
+        popUpSheetRef.current?.present();
+    }
+
+    const handleGenerateBusinessReport = () => {
+        setIsLoading(true);
+
+        setTimeout(() => {
+            setIsLoading(false);
+            openPopUpModal();
+        }, 3000);
+    }
+
+    // check if calendar sheet is closed and disable active state for date inputs
+    useEffect(() => {
+        if (!calendarSheetOpen) {
+            setActiveEndDate(false);
+            setActiveStartDate(false);
+        }
+
+        if (!bottomSheetOpen) {
+            setActiveFormat(false);
+        }
+
+    }, [calendarSheetOpen, bottomSheetOpen])
     
     // render GenerateBusinessReport page
     return (
@@ -182,7 +177,7 @@ const GenerateBusinessReport = ({navigation}) => {
                             label={"Start Date"} 
                             placeholder={"DD MMMM, YYYY"} 
                             value={startDate}
-                            onPress={() => {hanldeOpenCalendar("StartDate")}}
+                            onPress={() => {openCalendar("StartDate")}}
                             icon={<CalendarIcon />}
                             active={activeStartDate}
                             inputFor={"Date"}
@@ -193,7 +188,7 @@ const GenerateBusinessReport = ({navigation}) => {
                             label={"End Date"}
                             placeholder={"DD MMMM, YYYY"}
                             value={endDate}
-                            onPress={() => {hanldeOpenCalendar("EndDate")}}
+                            onPress={() => {openCalendar("EndDate")}}
                             icon={<CalendarIcon />}
                             active={activeEndDate}
                             inputFor={"Date"}
@@ -204,10 +199,7 @@ const GenerateBusinessReport = ({navigation}) => {
                             label={"Format"}
                             placeholder={"Select Format"}
                             value={format}
-                            onPress={() => {
-                                openModal();
-                                setActiveFormat(true);
-                            }}
+                            onPress={openModal}
                             icon={<ArrowDown />}
                             active={activeFormat}
                             inputFor={"String"}
@@ -218,24 +210,26 @@ const GenerateBusinessReport = ({navigation}) => {
             {/* Add Product button, disables on empty fields */}
             <CustomButton 
                 name={"Generate"}
-                onPress={() => {}}
+                onPress={handleGenerateBusinessReport}
+                isLoading={isLoading}
                 backgroundColor={background}
                 fixed={false}
                 inactive={emptyFields}
             />
             {/* calendar */}
             <CalendarSheet 
-                closeCalendar={handleCloseCalendar}
+                closeCalendar={closeCalendar}
                 setDate={calendar.setDate}
                 disableActionButtons={true}
                 snapPointsArray={["60%"]}
                 minDate={calendar.minDate}
                 maxDate={calendar.maxDate}
-                calendarRef={calendarRef} 
+                calendarRef={calendarSheetRef} 
             />
 
+            {/* custome bottom sheet */}
             <CustomBottomSheet 
-                bottomSheetModalRef={bottomSheetModalRef}
+                bottomSheetModalRef={bottomSheetRef}
                 setShowOverlay={setShowOverlay}
                 showOverlay={showOverlay}
                 closeModal={closeModal}
@@ -262,6 +256,37 @@ const GenerateBusinessReport = ({navigation}) => {
                     </TouchableOpacity>
                 </View>
             </CustomBottomSheet>
+
+            {/* pop up modal */}
+            <PopUpBottomSheet
+                bottomSheetModalRef={popUpSheetRef}
+                closeModal={closePopUpModal}
+                snapPointsArray={[320]}
+                autoSnapAt={0}
+                sheetTitle={false}
+                sheetSubtitle={false}
+            >   
+                {/* // modal content to acknowledge deactivation */}
+                <View style={style.popUpContent}>
+                    <SuccessPrompt />
+                    <Text style={style.popUpHeading}>
+                        Report Generated Successfully
+                    </Text>
+                    <Text style={style.popUpParagraph}>
+                        Your report has been sent to &nbsp;
+                        <Text  style={style.boldParagraph}>
+                            raymondreddington@komitex.ng
+                        </Text>
+                    </Text>
+                    <CustomButton
+                        name={"Done"}
+                        shrinkWrapper={true}
+                        onPress={closePopUpModal}
+                        unpadded={true}
+                    />
+                </View>
+            </PopUpBottomSheet>
+
         </>
     );
 }
@@ -318,6 +343,32 @@ const style = StyleSheet.create({
         color: black,
         fontSize: 12,
         fontFamily: 'mulish-medium',
+    },
+    popUpContent: {
+        flex: 1,
+        height: "100%",
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: 20,
+        paddingBottom: 20,
+    },
+    popUpHeading: {
+        fontSize: 16,
+        fontFamily: 'mulish-bold',
+        textAlign: 'center',
+        color:  black,
+    },
+    popUpParagraph: {
+        fontSize: 12,
+        fontFamily: 'mulish-medium',
+        textAlign: 'center',
+        color: bodyText,
+        lineHeight: 15,
+    },
+    boldParagraph: {
+        fontFamily: 'mulish-bold',
     }
 })
  

@@ -20,8 +20,13 @@ import CustomButton from "../components/CustomButton";
 // icons
 import StarActiveIcon from "../assets/icons/StarActiveIcon";
 import StarInactiveIcon from "../assets/icons/StarInactiveIcon";
+// gobals
+import { useGlobals } from "../context/AppContext";
 
 const WriteReview = ({navigation}) => {
+
+    // popup sheet ref
+    const { popUpSheetRef } = useGlobals();
 
     const [deliverySpeedRating, setDeliverySpeedRating] = useState(0);
     const [inventoryManagementRating, setInventoryManagementRating] = useState(0);
@@ -87,16 +92,13 @@ const WriteReview = ({navigation}) => {
             (item) => item === 0 || item === ''
     );
 
-    // popUp modal ref
-    const popUpBottomSheetModalRef = useRef(null);
-
     // close popup modal bottomsheet function
     const closePopUpModal = () => {
-        popUpBottomSheetModalRef.current?.close();
+        popUpSheetRef.current?.close();
     };
     // function to open bottom sheet modal
     const openPopUpModal = () => {
-        popUpBottomSheetModalRef.current?.present();
+        popUpSheetRef.current?.present();
     }
 
     const handleSubmitReview = () => {
@@ -175,7 +177,7 @@ const WriteReview = ({navigation}) => {
             </TouchableWithoutFeedback>
             {/* pop up modal */}
             <PopUpBottomSheet
-                bottomSheetModalRef={popUpBottomSheetModalRef}
+                bottomSheetModalRef={popUpSheetRef}
                 closeModal={handleSubmitReviewSuccess}
                 snapPointsArray={["40%"]}
                 autoSnapAt={0}

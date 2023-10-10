@@ -15,11 +15,8 @@ const WaybillListItem = ({item, index, firstWaybill, lastWaybill, sideFunctions,
     const handleOnPress = () => {
         if (sideFunctions) {
             sideFunctions();
-            return setTimeout(() => {
-                item.navigateToChat();
-            }, 250);
         } else {
-            item.navigateToChat();
+            return item.navigateToChat();
         }
     }
 

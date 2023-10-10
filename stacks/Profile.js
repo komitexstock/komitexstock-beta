@@ -8,7 +8,6 @@ import {
     StyleSheet,
     Linking,
     Keyboard,
-    BackHandler
 } from "react-native";
 // compoents
 import AccountButtons from "../components/AccountButtons";
@@ -17,15 +16,19 @@ import Input from "../components/Input";
 import CustomButton from "../components/CustomButton"
 import CustomBottomSheet from "../components/CustomBottomSheet";
 // react hooks
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 // icons
 import PhoneIcon from "../assets/icons/PhoneIcon";
 import SmsIcon from "../assets/icons/SmsIcon";
 import EmailIcon from "../assets/icons/EmailIcon";
 import { background, black, bodyText } from "../style/colors";
-// utils
+// globals
+import { useGlobals } from "../context/AppContext";
 
 const Profile = ({navigation}) => {
+
+    // bottomsheet ref
+    const { bottomSheetRef } = useGlobals();
 
     // state to store full name input value
     const [fullName, setFullName] = useState("");
@@ -84,50 +87,16 @@ const Profile = ({navigation}) => {
     // state to store modal parameters
     const [modal, setModal] = useState("")
 
-    // modal overlay
-    const [showOverlay, setShowOverlay] = useState(false);
-   
-    // bottom sheet ref
-    const bottomSheetModalRef = useRef(null);
-
     // close modal function
     const closeModal = () => {
-        bottomSheetModalRef.current?.close();
-        setShowOverlay(false);
+        bottomSheetRef.current?.close();
     };
 
     // open modal function
     const openModal = (type) => {
         setModal(type);
-        bottomSheetModalRef.current?.present();
-        setShowOverlay(true);
+        bottomSheetRef.current?.present();
     }
-
-    // use effect to close modal when back button is prressed
-    useEffect(() => {
-        // function to run if back button is pressed
-        const backAction = () => {
-            // Run your function here
-            if (showOverlay) {
-                // if modal is open, close modal
-                closeModal();
-                return true;
-            } else {
-                // if modal isnt open simply navigate back
-                return false;
-            }
-        };
-    
-        // listen for onPress back button
-        const backHandler = BackHandler.addEventListener(
-            'hardwareBackPress',
-            backAction
-        );
-    
-        return () => backHandler.remove();
-
-    }, [showOverlay]);
-
 
     // support button list to populate support bottomsheet
     const supportButtons = [
@@ -199,9 +168,7 @@ const Profile = ({navigation}) => {
             </TouchableWithoutFeedback>
             {/* bottomsheet modal */}
             <CustomBottomSheet 
-                bottomSheetModalRef={bottomSheetModalRef}
-                setShowOverlay={setShowOverlay}
-                showOverlay={showOverlay}
+                bottomSheetModalRef={bottomSheetRef}
                 closeModal={closeModal}
                 snapPointsArray={modal === "Help & Support" ? ["40%"] : ["50%"]}
                 autoSnapAt={0}

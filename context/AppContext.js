@@ -84,7 +84,7 @@ const AppProvider = ({children}) => {
     // function to listen for change in navigation, and update currentStack
     useEffect(() => {
         const unsubscribe = navigation.addListener('state', () => {
-          setCurrentStack(navigation.getCurrentRoute().name);
+            setCurrentStack(navigation.getCurrentRoute().name);
         });
     
         return unsubscribe;
@@ -100,6 +100,9 @@ const AppProvider = ({children}) => {
                 filterSheetRef,
                 calendarSheetRef,
                 popUpSheetRef,
+                bottomSheetOpen,
+                calendarSheetOpen,
+                popUpSheetOpen,
                 setBottomSheetOpen,
                 setCalendarSheetOpen,
                 setFilterSheetOpen,

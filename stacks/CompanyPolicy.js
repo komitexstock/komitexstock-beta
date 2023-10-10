@@ -48,9 +48,7 @@ const CompanyPolicy = ({navigation}) => {
                 },
             ]  
         },
-    ]
-
-    
+    ];  
 
     return (
         <ScrollView style={style.container} showsHorizontalScrollIndicator={false}>

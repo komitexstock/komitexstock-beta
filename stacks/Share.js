@@ -15,13 +15,17 @@ import { background, bodyText, white } from "../style/colors";
 // icons
 import CalendarIcon from "../assets/icons/CalendarIcon";
 // react hooks
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 // moment
 import moment from "moment";
 // skeleton screen
 import ShareSkeleton from "../skeletons/ShareSkeleton";
+// globals
+import { useGlobals } from "../context/AppContext";
 
 const Share = ({navigation}) => {
+
+    const { filterSheetRef, calendarSheetRef, calendarSheetOpen } = useGlobals();
 
     // order list
     const [orders, setOrders] = useState([
@@ -1214,29 +1218,15 @@ const Share = ({navigation}) => {
         }
     }
 
-    // filter bottom sheef ref
-    const filterSheetRef = useRef(null);
-
-    // filter state
-    const [filter, setFilter] = useState({
-        open: false,
-    })
-
     // open filter function
     const openFilter = () => {
         Keyboard.dismiss();
-        setFilter({
-            open: true,
-        })
         filterSheetRef.current?.present()
     }
     
+    // close filter bottomsheet
     const closeFilter = () => {
-        // close filter bottomsheet
         filterSheetRef.current?.close()
-        setFilter({
-            open: false,
-        })
     }
 
     // function to setEnd date as today if start date is selected as today
@@ -1364,11 +1354,7 @@ const Share = ({navigation}) => {
     // variable to indicate end date input active state
     const [activeEndDate, setActiveEndDate] = useState(false);
 
-    // calendar ref
-    const calendarRef = useRef(null);
-
     const [calendar, setCalendar] = useState({
-        open: false,
         setDate: setStartDate,
         maxDate: false,
         minDate: false,
@@ -1379,7 +1365,6 @@ const Share = ({navigation}) => {
         if (inputType === "StartDate") {
             setActiveStartDate(true);
             setCalendar({
-                open: true,
                 setDate: setStartDate,
                 maxDate: endDate ? moment(endDate).subtract(1, 'days') : today,
                 minDate: false
@@ -1387,55 +1372,28 @@ const Share = ({navigation}) => {
         } else {
             setActiveEndDate(true);
             setCalendar({
-                open: true,
                 setDate: setEndDate,
                 maxDate: today,
                 minDate: startDate ? moment(startDate).add(1, 'days') : startDate,
             });
         }
-        calendarRef.current?.present();
+        calendarSheetRef.current?.present();
     }
 
     // close calendar
     const closeCalendar = () => {
         setActiveEndDate(false);
         setActiveStartDate(false);
-        setCalendar({
-            ...calendar,
-            open: false,
-        })
-        calendarRef.current?.close();
+        calendarSheetRef.current?.close();
     }
 
-    // useEffect to listen for onPress back button and close modal
+    // disable active states of select input if calendar is closed with back button
     useEffect(() => {
-        // function to run if back button is pressed
-        const backAction = () => {
-            // Run your function here
-            // if filter bottomsheet is opem
-            if (calendar.open) {
-                // close filter bottomsheet 
-                closeCalendar();
-                return true;
-            } else if (filter.open) {
-                // close filter bottomsheet 
-                closeFilter();
-                return true;
-            } else {
-                // if modal isnt open simply navigate back
-                return false;
-            }
-        };
-    
-        // listen for onPress back button
-        const backHandler = BackHandler.addEventListener(
-            'hardwareBackPress',
-            backAction
-        );
-    
-        return () => backHandler.remove();
-
-    }, [filter, calendar]);
+        if (!calendarSheetOpen) {
+            setActiveEndDate(false);
+            setActiveStartDate(false);
+        }
+    }, [calendarSheetOpen])
 
     // share screen
     return (
@@ -1580,7 +1538,7 @@ const Share = ({navigation}) => {
                 snapPointsArray={["60%"]}
                 minDate={calendar.minDate}
                 maxDate={calendar.maxDate}
-                calendarRef={calendarRef} 
+                calendarRef={calendarSheetRef} 
             />
         </>
 
