@@ -6,14 +6,12 @@ import {
     TouchableOpacity, 
     TouchableWithoutFeedback,
     StyleSheet,
-    BackHandler,
     Animated,
     Keyboard
 } from "react-native";
 // icons
 import MenuIcon from "../assets/icons/MenuIcon";
 import SearchIcon from '../assets/icons/SearchIcon'
-import FilterIcon from '../assets/icons/FilterIcon';
 import CalendarIcon from "../assets/icons/CalendarIcon";
 // colors
 import {
@@ -1334,7 +1332,7 @@ const Waybill = ({navigation}) => {
                                     shrinkWrapper={true}
                                     onPress={() => navigation.navigate("SendWaybill")}
                                     unpadded={true}
-                                    wrapperStyle={{marginTop: 22}}
+                                    wrapperStyle={{marginTop: 22, marginBottom: 20}}
                                 />
                             </View>
                         }
@@ -1622,7 +1620,7 @@ const style = StyleSheet.create({
         alignItems: "center",
         justifyContent: "space-between",
         height: 24,
-        marginTop: 8,
+        marginTop: 10,
         marginBottom: 20,
     },
     recentOrderHeadingText: {

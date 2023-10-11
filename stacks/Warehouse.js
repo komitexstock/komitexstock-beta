@@ -10,6 +10,7 @@ import {
 import React from 'react'
 // icons
 import SearchIcon from '../assets/icons/SearchIcon'
+import MenuIcon from "../assets/icons/MenuIcon";
 // component
 import Header from '../components/Header'
 import CustomButton from '../components/CustomButton'
@@ -17,11 +18,12 @@ import SearchBar from '../components/SearchBar';
 import Badge from '../components/Badge'
 import StatCard from '../components/StatCard';
 import StatWrapper from '../components/StatWrapper';
-import OpenFilterButton from '../components/OpenFilterButton'
+import OpenFilterButton from '../components/OpenFilterButton';
+import WarehouseCard from '../components/WarehouseCard';
 // react hooks
 import { useState } from 'react';
 // colors
-import { background, black, neutral, primaryColor, white } from '../style/colors';
+import { background, black, bodyText, neutral, primaryColor, subText, white } from '../style/colors';
 // utils
 import { windowHeight, windowWidth } from '../utils/helpers';
 
@@ -48,17 +50,99 @@ const Warehouse = ({navigation}) => {
         },
     ];
 
+    // warehouses
     const warehouses = [
-        {id: 1},
-        {id: 2},
-        {id: 3},
-        {id: 4},
-        {id: 5},
-        {id: 6},
-        {id: 7},
-        {id: 8},
-        {id: 9},
-    ]
+        {
+            id: 1,
+            warehouse_name: "Warri",
+            inventories_count: 12,
+            address: "276 PTI road",
+            onPress: () => {},
+            onPressMenu: () => {},
+            add_new: false,
+        },
+        {
+            id: 2,
+            warehouse_name: "Isoko",
+            inventories_count: 3,
+            address: "123 Isoko Street",
+            onPress: () => {},
+            onPressMenu: () => {},
+            add_new: false,
+        },
+        {
+            id: 3,
+            warehouse_name: "Asaba",
+            inventories_count: 7,
+            address: "456 Asaba Avenue",
+            onPress: () => {},
+            onPressMenu: () => {},
+            add_new: false,
+        },
+        {
+            id: 4,
+            warehouse_name: "Kwale",
+            inventories_count: 4,
+            address: "789 Kwale Road",
+            onPress: () => {},
+            onPressMenu: () => {},
+            add_new: false,
+        },
+        {
+            id: 5,
+            warehouse_name: "Agbor",
+            inventories_count: 6,
+            address: "101 Agbor Lane",
+            onPress: () => {},
+            onPressMenu: () => {},
+            add_new: false,
+        },
+        {
+            id: 6,
+            warehouse_name: "Benin",
+            inventories_count: 8,
+            address: "654 Benin Street",
+            onPress: () => {},
+            onPressMenu: () => {},
+            add_new: false,
+        },
+        {
+            id: 7,
+            warehouse_name: "Auchi",
+            inventories_count: 2,
+            address: "222 Auchi Road",
+            onPress: () => {},
+            onPressMenu: () => {},
+            add_new: false,
+        },
+        {
+            id: 8,
+            warehouse_name: "Ekpoma",
+            inventories_count: 3,
+            address: "333 Ekpoma Street",
+            onPress: () => {},
+            onPressMenu: () => {},
+            add_new: false,
+        },
+        {
+            id: 9,
+            warehouse_name: "Ekpoma",
+            inventories_count: 5,
+            address: "333 Ekpoma Street",
+            onPress: () => {},
+            onPressMenu: () => {},
+            add_new: false,
+        },
+        {
+            id: 10,
+            warehouse_name: null,
+            inventories_count: null,
+            address: null,
+            onPress: () => {},
+            onPressMenu: () => {},
+            add_new: true,
+        },
+    ];
 
     // search Query
     const [searchQuery, setSearchQuery] = useState("");
@@ -85,7 +169,7 @@ const Warehouse = ({navigation}) => {
                     showsVerticalScrollIndicator={false}
                     columnWrapperStyle={styles.columnWrapper}
                     onScroll={animateHeaderOnScroll}
-                    stickyHeaderIndices={[1]}
+                    // stickyHeaderIndices={[1]}
                     numColumns={2}
                     data={warehouses}
                     keyExtractor={item => item.id}
@@ -103,13 +187,6 @@ const Warehouse = ({navigation}) => {
                                     />
                                 ))}
                             </StatWrapper>
-                            {/* <SearchBar
-                                disableFilter={true}
-                                searchQuery={searchQuery}
-                                setSearchQuery={setSearchQuery}
-                                backgroundColor={white}
-                                placeholder={"Search"}
-                            /> */}
                             <View style={styles.mainButtonWrapper}>
                                 <CustomButton 
                                     name={"Stock Transfer"}
@@ -149,10 +226,16 @@ const Warehouse = ({navigation}) => {
                             </View>
                         </View>
                     )}
-                    renderItem={(item) => (
-                        <View style={styles.warehouseCard}></View>
+                    renderItem={({item}) => (
+                        <WarehouseCard
+                            warehouseName={item.warehouse_name}
+                            inventoryCount={item.inventories_count}
+                            address={item.address}
+                            onPress={item.onPress}
+                            onPressMenu={item.onPressMenu}
+                            addNew={item.add_new}
+                        />
                     )}
-
                 />
             </TouchableWithoutFeedback>
         </>
@@ -172,13 +255,12 @@ const styles = StyleSheet.create({
     },
     columnWrapper: {
         width: "100%",
-        backgroundColor: 'red',
         display: "flex",
         flexDirection: "row",
         gap: 16,
         alignItems: "flex-start",
         justifyContent: "flex-start",
-        marginTop: 16,
+        marginBottom: 16,
         paddingHorizontal: 20,
     },
     headerComponent: {
@@ -247,7 +329,52 @@ const styles = StyleSheet.create({
     warehouseCard: {
         height: 120,
         width: (windowWidth - 56) / 2,
-        backgroundColor: "teal",
+        backgroundColor: white,
         borderRadius: 12,
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "flex-start",
+        flexDirection: 'column',
+        padding: 12,
+        position: 'relative',
+    },
+    warehouseTopWrapper: {
+        display: "flex",
+        flexDirection: 'column',
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        width: "100%",
+        gap: 4,
+    },
+    warehouseAddress: {
+        color: subText,
+        fontSize: 10,
+        fontFamily: "mulish-regular",
+        lineHeight: 13,
+    },
+    warehouseName: {
+        color: black,
+        fontFamily: 'mulish-bold',
+        fontSize: 12,
+    },
+    warehouseInventoryCount: {
+        color: bodyText,
+        fontFamily: "mulish-regular",
+        fontSize: 10,
+    },
+    moreOptionsButton: {
+        position: 'absolute',
+        width: 20,
+        height: 20,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        right: 16,
+        top: 16,
+        transform: [
+            {
+                rotate: '90deg'
+            }
+        ] 
     }
 })

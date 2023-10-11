@@ -13,6 +13,7 @@ import Indicator from '../components/Indicator';
 // icons
 import AddIcon from '../assets/icons/AddIcon';
 import VerifiedIcon from "../assets/icons/VerifiedIcon";
+import { black, secondaryColor, subText, white } from "../style/colors";
 
 const maxCardWidth = Dimensions.get("window").width/2 - 28;
 const LogisticsCard = ({logistics, imageUrl, totalLocations, totalStock, lowStock, onPress, addNew, verified}) => {
@@ -59,7 +60,7 @@ const style = StyleSheet.create({
         minWidth: "40%",
         maxWidth: maxCardWidth,
         height: 180,
-        backgroundColor: "#ffffff",
+        backgroundColor: white,
         borderRadius: 12,
         flex: 1,
         padding: 12,
@@ -91,22 +92,22 @@ const style = StyleSheet.create({
     },
     logistics: {
         fontFamily: "mulish-semibold",
-        color: "#222222",
+        color: black,
         fontSize: 12,
     },
     location: {
         fontFamily: "mulish-regular",
-        color: "rgba(34, 34, 34, 0.6)",
+        color: subText,
         fontSize: 10,
     },
     items: {
         fontFamily: "mulish-semibold",
-        color: "rgba(34, 34, 34, 1)",
+        color: black,
         fontSize: 10,
     },
     faintText: {
         fontFamily: "mulish-semibold",
-        color: "rgba(34, 34, 34, 0.6)",
+        color: subText,
         fontSize: 10,
     },
     addNewCardWrapper: {
@@ -118,7 +119,7 @@ const style = StyleSheet.create({
         minWidth: "40%",
         maxWidth: maxCardWidth,
         height: 180,
-        backgroundColor: "#ffffff",
+        backgroundColor: white,
         borderRadius: 12,
         flex: 1,
         padding: 12,
@@ -130,8 +131,7 @@ const style = StyleSheet.create({
         height: 40,
         width: 40,
         borderRadius: 20,
-        backgroundColor: 'rgba(7, 66, 124, 0.05)',
-        
+        backgroundColor: secondaryColor,
     },
     addNewText: {
         marginBottom: 26,
@@ -139,7 +139,7 @@ const style = StyleSheet.create({
         fontFamily: 'mulish-semibold',
         width: "100%",
         textAlign: 'left',
-        color: "#222222"
+        color: black
     }
 })
  
