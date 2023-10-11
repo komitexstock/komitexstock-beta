@@ -1,17 +1,15 @@
 // react native components
-import { View, TextInput, StyleSheet, TouchableOpacity } from "react-native";
+import { View, TextInput, StyleSheet, TouchableOpacity, Text } from "react-native";
 // icons
 import SearchIcon from "../assets/icons/SearchIcon";
-import FilterIcon from "../assets/icons/FilterIcon";
 import ClearSearch from "../assets/icons/ClearSearch";
 // react hooks
-import { useState } from "react";
 // colors
-import { background, black, inputLabel } from "../style/colors";
+import { background, black, bodyText, inputLabel } from "../style/colors";
 // components
 import OpenFilterButton from "./OpenFilterButton";
 
-const SearchBar = ({placeholder, searchQuery, setSearchQuery, filterParams, backgroundColor, disableFilter, openFilter}) => {
+const SearchBar = ({placeholder, searchQuery, setSearchQuery, filterParams, backgroundColor, disableFilter, openFilter, button, onPress}) => {
 
     // function to update search query
     const handleSearchQuery = (text) => {
@@ -25,14 +23,23 @@ const SearchBar = ({placeholder, searchQuery, setSearchQuery, filterParams, back
                 {/* search icon */}
                 <SearchIcon />
                 {/* search bar text input */}
-                <TextInput 
-                    style={style.searchInput}
-                    placeholder={placeholder}
-                    inputMode="search"
-                    value={searchQuery}
-                    onChangeText={handleSearchQuery}
-                    placeholderTextColor={inputLabel}
-                />
+                { !button ? (
+                    <TextInput 
+                        style={style.searchInput}
+                        placeholder={placeholder}
+                        inputMode="search"
+                        value={searchQuery}
+                        onChangeText={handleSearchQuery}
+                        placeholderTextColor={inputLabel}
+                    />
+                ) : (
+                    <TouchableOpacity 
+                        onPress={onPress}
+                        style={style.searchButton}
+                    >
+                        <Text style={style.searchButtonText}>{placeholder}</Text>
+                    </TouchableOpacity>
+                )}
                 {/* clear search button, only visible when search bar isn't empty */}
                 { searchQuery !== '' && (
                     <TouchableOpacity
@@ -94,6 +101,15 @@ const style = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 12,
+    },
+    searchButton: {
+        flex: 1,
+    },
+    searchButtonText: {
+        color: inputLabel,
+        fontSize: 12,
+        fontFamily: 'mulish-semibold',
+        marginBottom: 1,
     }
 })
  

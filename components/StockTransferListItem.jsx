@@ -1,7 +1,6 @@
 // react native component
 import { 
     TouchableOpacity,
-    Image,
     View,
     Text,
     StyleSheet
@@ -10,23 +9,18 @@ import {
 import Indicator from './Indicator';
 import Mark from './Mark';
 // icons
-import SelectedOrderIcon from '../assets/icons/SelectedOrderIcon';
 // colors
-import { background, black, bodyText, orderDate, white } from '../style/colors';
+import { black, bodyText, orderDate, white } from '../style/colors';
 // import helper functions
 import { windowWidth } from '../utils/helpers';
 
-const OrderListItem = ({item, index, firstOrder, lastOrder, selectable, selected, selectFunction, extraVerticalPadding, sideFunctions, searchQuery}) => {
+const StockTransferListItem = ({item, index, firstOrder, lastOrder, sideFunctions, searchQuery}) => {
     // lenght, index => int
     // item => object
 
     const handleOnPress = () => {
-        if (selectable) {
-            return selectFunction(item.id);
-        } else {
-            if (sideFunctions) sideFunctions();
-            return item.navigateToChat();
-        }
+        if (sideFunctions) sideFunctions();
+        return item?.onPress();
     }
 
     const highlightSearchtext = (text) => {
@@ -72,46 +66,29 @@ const OrderListItem = ({item, index, firstOrder, lastOrder, selectable, selected
         <TouchableOpacity 
             style={[
                 style.orderWrapper,
-                selectable && {backgroundColor: 'transparent'},
-                selectable && selected && style.selected,
                 // unique style for first order in order list array
                 // add borderRadius to top of first order
                 index === firstOrder && style.firstOrderWrapper, 
                 // unique style for last order in order list array
                 // add borderRadius to bottom of last order
                 index === lastOrder && style.lastOrderWrapper,
-
-                extraVerticalPadding && style.extraVerticalPadding
             ]}
             // navigate to chat on press order
             onPress={handleOnPress}
-            activeOpacity={selectable ? 0.8 : 0.5}
         >
-            {/* logistics image */}
-            <View style={style.orderImageContainer}>
-                <Image 
-                    source={item.imageUrl}
-                    style={style.orderImage}
-                />
-                { selectable && selected && (
-                    <View style={style.selectedIconWrapper}> 
-                        <SelectedOrderIcon />
-                    </View>
-                )}
-            </View>
             {/* order info */}
             <View style={style.orderInfo}>
                 <Text 
                     style={[
                         style.orderMainText,
                         // if order has a new message make text have a color with higher opacity
-                        {color: item.newMessage ? black : bodyText},
+                        { color: item.newMessage ? black : bodyText},
                         // if order has a new message make font have a higher weight
-                        {fontFamily: item.newMessage ? 'mulish-bold' : 'mulish-regular'},
-                        searchQuery && {color: bodyText, fontFamily: 'mulish-regular'},
+                        { fontFamily: item.newMessage ? 'mulish-bold' : 'mulish-regular' },
+                        searchQuery && {color: bodyText, fontFamily: 'mulish-regular' },
                     ]}
                 >
-                    {highlightSearchtext(item.name)}, {highlightSearchtext(item.location)}
+                    {highlightSearchtext(item?.origin_warehouse)}, {highlightSearchtext(item?.destination_warehouse)}
                 </Text>
                 <Text 
                     style={[
@@ -123,9 +100,9 @@ const OrderListItem = ({item, index, firstOrder, lastOrder, selectable, selected
                     {item.products.map((product, index) => {
                         // seperate list of products by commas ','
                         if (index !== 0) {
-                            return highlightSearchtext(", "+ product.product_name + " x " + product.quantity);
+                            return highlightSearchtext(", "+ product.product_name + " (" + product.quantity) + ")";
                         } else {
-                            return highlightSearchtext(product.product_name + " x " + product.quantity);
+                            return highlightSearchtext(product.product_name + " (" + product.quantity) + ")";
                         }
                     })}
                 </Text>
@@ -134,10 +111,6 @@ const OrderListItem = ({item, index, firstOrder, lastOrder, selectable, selected
                 </Text>
             </View>
             <View style={style.orderPriceContainer}>
-                  <Text style={style.orderPrice}>
-                    {/* display price as a string with comma seperator using .toLocaleString function */}
-                    ₦{item.price.toLocaleString()}.<Text style={style.decimal}>00</Text>
-                </Text>
                 <Indicator type={item.status} text={item.status} />
             </View>
         </TouchableOpacity>
@@ -153,42 +126,28 @@ const style = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         width: "100%",
-        height: 70,
+        height: 92,
         gap: 12,
         backgroundColor: white,
-    },
-    extraVerticalPadding: {
-        paddingVertical: 15,
-    },
-    selected: {
-        backgroundColor: background,
-        borderRadius: 12,
+        paddingBottom: 20,
     },
     firstOrderWrapper: {
         borderTopStartRadius: 12,
         borderTopEndRadius: 12,
-        paddintTop: 5,
     },  
     lastOrderWrapper: {
         borderBottomStartRadius: 12,
         borderBottomEndRadius: 12,
-        paddintBottom: 5,
-    },
-    orderImageContainer: {
-        position: 'relative',
-    },
-    orderImage: {
-        width: 40,
-        height: 40,
-        borderRadius: 8,
-    },
-    selectedIconWrapper: {
-        position: 'absolute',
-        bottom: 0,
-        right: 0,  
     },
     orderInfo: {
-        width: windowWidth - 194,
+        height: "100%",
+        // width: windowWidth - 130,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+        gap: 4,
+        alignSelf: 'stretch',
     },
     orderMainText: {
         fontFamily: 'mulish-bold',
@@ -196,7 +155,7 @@ const style = StyleSheet.create({
     },
     orderSubText: {
         fontFamily: 'mulish-regular',
-        fontSize: 12,
+        fontSize: 10,
     },
     orderDatetime: {
         fontFamily: 'mulish-regular',
@@ -220,4 +179,4 @@ const style = StyleSheet.create({
     },
 })
  
-export default OrderListItem;
+export default StockTransferListItem;

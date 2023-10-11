@@ -17,6 +17,7 @@ export const greenLight = "#0398550D";
 export const neutral = "#B1B2B2"; // mostly uses for inactive bottom navigation text
 export const cameraButton = "#B1B2B24D";
 export const inputLabel = "#837F7F";
+export const orderDate = "#868686";
 export const inputBorder = "#E7E5E5";
 export const listSeparator = "#F4F4F4"
 export const toolTipBackground = "#333333";

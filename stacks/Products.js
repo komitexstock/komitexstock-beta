@@ -14,6 +14,7 @@ import { useState, useRef, useEffect } from "react";
 // icons
 import MenuIcon from "../assets/icons/MenuIcon";
 import SearchIcon from '../assets/icons/SearchIcon'
+import FilterIcon from '../assets/icons/FilterIcon';
 import AddProduct from "../assets/icons/AddProduct";
 import VerifiedIcon from "../assets/icons/VerifiedIcon";
 // colors
@@ -751,7 +752,7 @@ const Products = ({navigation, route}) => {
     // render Products page
     return (
         <>
-            {!pageLoading ? <>1
+            {!pageLoading ? <>
                 {/* header */}
                 <Header 
                     navigation={navigation}
@@ -834,7 +835,7 @@ const Products = ({navigation, route}) => {
                                                 </TouchableOpacity>
                                                 {/* open bottomsheet filter modal */}
                                                 <OpenFilterButton
-                                                    onPress={() => openFilter("products")}
+                                                    onPress={() => {openFilter("products")}}
                                                     filterParams={filterParameters}
                                                 />
                                             </View>

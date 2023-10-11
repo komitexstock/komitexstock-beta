@@ -10,12 +10,11 @@ import {
     Keyboard,
 } from "react-native";
 // colors
-import { background, blackOut, bodyText, primaryColor, secondaryColor, white } from "../style/colors";
+import { background, blackOut, bodyText, primaryColor, white } from "../style/colors";
 // icons
 import MenuIcon from "../assets/icons/MenuIcon";
 import SearchIcon from '../assets/icons/SearchIcon'
 import CalendarIcon from "../assets/icons/CalendarIcon";
-import FilterIcon from '../assets/icons/FilterIcon';
 // react hooks
 import { useState, useRef, useEffect } from "react";
 // components
