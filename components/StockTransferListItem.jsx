@@ -9,10 +9,11 @@ import {
 import Indicator from './Indicator';
 import Mark from './Mark';
 // icons
+import StockTransferDirectionIcon from '../assets/icons/StockTransferDirectionIcon';
 // colors
 import { black, bodyText, orderDate, white } from '../style/colors';
 // import helper functions
-import { windowWidth } from '../utils/helpers';
+
 
 const StockTransferListItem = ({item, index, firstOrder, lastOrder, sideFunctions, searchQuery}) => {
     // lenght, index => int
@@ -88,7 +89,7 @@ const StockTransferListItem = ({item, index, firstOrder, lastOrder, sideFunction
                         searchQuery && {color: bodyText, fontFamily: 'mulish-regular' },
                     ]}
                 >
-                    {highlightSearchtext(item?.origin_warehouse)}, {highlightSearchtext(item?.destination_warehouse)}
+                    {highlightSearchtext(item?.origin_warehouse)} <StockTransferDirectionIcon /> {highlightSearchtext(item?.destination_warehouse)}
                 </Text>
                 <Text 
                     style={[
@@ -152,6 +153,10 @@ const style = StyleSheet.create({
     orderMainText: {
         fontFamily: 'mulish-bold',
         fontSize: 12,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'baseline',
     },
     orderSubText: {
         fontFamily: 'mulish-regular',
