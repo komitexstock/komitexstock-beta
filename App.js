@@ -34,6 +34,8 @@ import AddLogistics from './stacks/AddLogistics';
 import AvailableLocations from './stacks/AvailableLocations';
 import AddProduct from './stacks/AddProduct';
 import ImportInventory from './stacks/ImportInventory';
+// warehouse related stacks
+import Warehouse from './stacks/Warehouse';
 // account related stacks
 import Account from './stacks/Account';
 import Profile from './stacks/Profile';
@@ -306,6 +308,11 @@ export default function App() {
                                             <Stack.Screen 
                                                 name="SendWaybill" 
                                                 component={SendWaybill}
+                                            />
+                                            {/* Warehouse stack */}
+                                            <Stack.Screen 
+                                                name="Warehouse" 
+                                                component={Warehouse}
                                             />
                                         </Stack.Group>
                                     )}

@@ -147,7 +147,7 @@ const ImportInventory = ({navigation}) => {
                         searchQuery={searchQuery} 
                         setSearchQuery={setSearchQuery} 
                         backgroundColor={white}
-                        disableFIlter={true}
+                        disableFilter={true}
                     />
                     <View style={style.modalContent}>
                         {/* if products list has some selected products */}

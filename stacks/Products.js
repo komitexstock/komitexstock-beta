@@ -14,7 +14,6 @@ import { useState, useRef, useEffect } from "react";
 // icons
 import MenuIcon from "../assets/icons/MenuIcon";
 import SearchIcon from '../assets/icons/SearchIcon'
-import FilterIcon from '../assets/icons/FilterIcon';
 import AddProduct from "../assets/icons/AddProduct";
 import VerifiedIcon from "../assets/icons/VerifiedIcon";
 // colors
@@ -35,6 +34,7 @@ import FilterPill from "../components/FilterPill";
 import Menu from "../components/Menu";
 import ImportInventory from "../assets/icons/ImportInventory";
 import CustomButton from "../components/CustomButton";
+import OpenFilterButton from "../components/OpenFilterButton";
 // bottomsheet component
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 // helpers
@@ -751,7 +751,7 @@ const Products = ({navigation, route}) => {
     // render Products page
     return (
         <>
-            {!pageLoading ? <>
+            {!pageLoading ? <>1
                 {/* header */}
                 <Header 
                     navigation={navigation}
@@ -833,12 +833,10 @@ const Products = ({navigation, route}) => {
                                                     <SearchIcon />
                                                 </TouchableOpacity>
                                                 {/* open bottomsheet filter modal */}
-                                                <TouchableOpacity
-                                                    style={style.menuIcon}
-                                                    onPress={() => {openFilter("products")}}
-                                                >
-                                                    <FilterIcon />
-                                                </TouchableOpacity>
+                                                <OpenFilterButton
+                                                    onPress={() => openFilter("products")}
+                                                    filterParams={filterParameters}
+                                                />
                                             </View>
                                         </View>
                                         {filterParameters.find(filterParam => filterParam.default === false) && (

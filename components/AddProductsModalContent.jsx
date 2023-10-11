@@ -97,7 +97,7 @@ const AddProductsModalContent = ({addProducts, selectedProducts, action}) => {
                 searchQuery={searchQuery} 
                 setSearchQuery={setSearchQuery} 
                 backgroundColor={background}
-                disableFIlter={true}
+                disableFilter={true}
             />
             <View>
                 <Text style={style.modalHeading}>Available Products</Text>

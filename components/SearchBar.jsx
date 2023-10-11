@@ -11,7 +11,7 @@ import { background, black, inputLabel } from "../style/colors";
 // components
 import OpenFilterButton from "./OpenFilterButton";
 
-const SearchBar = ({placeholder, searchQuery, setSearchQuery, filterParams, backgroundColor, disableFIlter, openFilter}) => {
+const SearchBar = ({placeholder, searchQuery, setSearchQuery, filterParams, backgroundColor, disableFilter, openFilter}) => {
 
     // function to update search query
     const handleSearchQuery = (text) => {
@@ -43,7 +43,7 @@ const SearchBar = ({placeholder, searchQuery, setSearchQuery, filterParams, back
                     </TouchableOpacity>
                 )}
             </View>
-            { !disableFIlter && 
+            { !disableFilter && 
                 <OpenFilterButton
                     onPress={openFilter}
                     filterParams={filterParams}

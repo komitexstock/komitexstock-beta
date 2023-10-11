@@ -113,7 +113,7 @@ const Products = ({navigation}) => {
                                     searchQuery={searchQuery}
                                     setSearchQuery={setSearchQuery}
                                     backgroundColor={white}
-                                    disableFIlter={true}
+                                    disableFilter={true}
                                 />
                                 {/* navigate to AddLogistics page/stack */}
                                 <CustomButton

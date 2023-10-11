@@ -88,7 +88,7 @@ const BottomNavigation = () => {
                 style={style.navButton}
                 onPress={() => {
                     if (authData?.account_type === "Merchant") return navigation.navigate("Inventory");
-                    return navigation.navigate("Inventory");
+                    return navigation.navigate("Warehouse");
                 }}
             >                
                 {["Inventory", "Products", "Warehouse"].includes(currentStack) ? (<InventoryActiveIcon />) : (<InventoryIcon />)}

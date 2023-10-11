@@ -1363,12 +1363,6 @@ const Waybill = ({navigation}) => {
                                                     <SearchIcon />
                                                 </TouchableOpacity>
                                                 {/* trigger filter modal */}
-                                                {/* <TouchableOpacity
-                                                    style={style.menuIcon}
-                                                    onPress={openFilter}
-                                                >
-                                                    <FilterIcon />
-                                                </TouchableOpacity> */}
                                                 <OpenFilterButton
                                                     onPress={openFilter}
                                                     filterParams={tab === "outgoing" ? outgoingFilter : incomingFilter}
