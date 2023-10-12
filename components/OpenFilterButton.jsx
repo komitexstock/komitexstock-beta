@@ -49,9 +49,9 @@ const styles = StyleSheet.create({
         borderRadius: 12
     },
     indicator: {
-        width: 5,
-        height: 5,
-        borderRadius: 2.5,
+        width: 6,
+        height: 6,
+        borderRadius: 3,
         backgroundColor: filterIndicator,
         borderWidth: 1,
         borderColor: background,

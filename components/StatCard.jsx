@@ -60,7 +60,7 @@ const style = StyleSheet.create({
     },
     statTitle: {
         fontFamily: "mulish-regular",
-        fontSize: 8,
+        fontSize: 10,
     },
     
     statValueWrapper: {

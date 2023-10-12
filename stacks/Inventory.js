@@ -3,23 +3,51 @@ import {
     View, 
     FlatList, 
     TouchableWithoutFeedback,
-    StyleSheet
+    StyleSheet,
+    Text
 } from "react-native";
 // icons
 import MenuIcon from "../assets/icons/MenuIcon";
 // colors
-import { primaryColor, secondaryColor, white, background } from "../style/colors";
+import { primaryColor, secondaryColor, white, background, black, subText, verticalRule } from "../style/colors";
 // react hooks
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 // components
 import LogisticsCard from "../components/LogisticsCard";
 import SearchBar from "../components/SearchBar";
 import Header from "../components/Header";
 import CustomButton from "../components/CustomButton";
+import StatCard from "../components/StatCard";
+import Avatar from "../components/Avatar";
+import StatWrapper from "../components/StatWrapper";
 // skeleton screen
 import InventorySkeleton from "../skeletons/InventorySkeleton";
+// auth
+import { useAuth } from "../context/AuthContext"
+import { windowWidth } from "../utils/helpers";
 
 const Products = ({navigation}) => {
+
+    // auth data
+    const { authData } = useAuth();
+
+    // stats array
+    const stats = [
+        {
+            id: 1,
+            title: "Total Inventories",
+            presentValue: 10,
+            oldValue: null,
+            decimal: false,
+        },
+        {
+            id: 2,
+            title: "Total Products",
+            presentValue: 215,
+            oldValue: null,
+            decimal: false,
+        },
+    ];
 
     // state to store search query
     const [searchQuery, setSearchQuery] = useState("");
@@ -82,12 +110,119 @@ const Products = ({navigation}) => {
                 navigation.navigate("Products");
             }
         },
+        {
+            id: 5,
+            logistics: "Amazon Logistics",
+            imageUrl: require('../assets/images/amazon.png'),
+            totalLocations: 20,
+            totalStock: 68,
+            lowStock: false,
+            verified: true,
+            onPress: () => {
+                navigation.navigate("Products");
+            }
+        },
+        {
+            id: 6,
+            logistics: "On Trac",
+            imageUrl: require('../assets/images/ontrac.png'),
+            totalLocations: 17,
+            totalStock: 43,
+            lowStock: false,
+            verified: true,
+            onPress: () => {
+                navigation.navigate("Products");
+            }
+        },
+        {
+            id: 7,
+            logistics: "Laser Ship",
+            imageUrl: require('../assets/images/lasership.png'),
+            totalLocations: 18,
+            totalStock: 425,
+            lowStock: false,
+            verified: true,
+            onPress: () => {
+                navigation.navigate("Products");
+            }
+        },
+        {
+            id: 8,
+            logistics: "Tranex",
+            imageUrl: require('../assets/images/tranex.png'),
+            totalLocations: 30,
+            totalStock: 72,
+            lowStock: false,
+            verified: false,
+            onPress: () => {
+                navigation.navigate("Products");
+            }
+        },
     ];
+
+    const [inventories, setInventories] = useState(() => {
+        if (authData.account_type === "Logistics") {
+            return [
+                {id: "stickyLeft"},
+                {id: "stickyRight"},
+                ...logisticsList
+            ];
+        } else {
+            return logisticsList;
+        }
+    });
+
+    // sticky header offset
+    const stickyHeaderOffset = useRef(0);
+    const [scrollOffset, setScrollOffset] = useState(0);
+
+    // animated shadow when scroll height reaches sticky header
+    const animateHeaderOnScroll = (e) => {
+        const yOffset = e.nativeEvent.contentOffset.y;
+        setScrollOffset(yOffset);
+    }
+
+    const targetOffset = authData.account_type === "Logistics" ? 0 : 0;
+
+    // console.log(scrollOffset);
 
     // render Inventory page
     return (
         <>
-            {!pageLoading ? (
+            {!pageLoading ? (<>
+                <Header
+                    navigation={navigation}
+                    stackName={authData.account_type === "Merchant" ? "Inventory" : ""}
+                    removeBackArrow={true}
+                    inlineArrow={authData.account_type !== "Merchant"}
+                    backgroundColor={background}
+                />
+                {authData.account_type !== "Merchant" && (
+                    <View style={style.warehouseBannerWrapper}>
+                        <View style={style.warehouseBanner}>
+                            <View style={style.warehoseInfo}>
+                                <Text style={style.warehouseName}>Warri</Text>
+                                <Text style={style.warehouseAddress}>
+                                    16 Ekpan junction, delta state, Nigeria
+                                </Text>
+                            </View>
+                            <View style={style.verticalRule} />
+                            <View style={style.warehoseManagerInfo}>
+                                <Avatar 
+                                    fullname={"Abiodun Johnson"}
+                                />
+                                <View style={style.managerText}>
+                                    <Text style={style.managerTitle}>
+                                        Warehouse Manager
+                                    </Text>
+                                    <Text style={style.managerName}>
+                                        Abiodun Johnson
+                                    </Text>
+                                </View>
+                            </View>
+                        </View>
+                    </View>
+                )}
                 <TouchableWithoutFeedback 
                     style={{
                         flex: 1, 
@@ -95,58 +230,102 @@ const Products = ({navigation}) => {
                 >
                     <FlatList 
                         showsVerticalScrollIndicator={false}
+                        onScroll={animateHeaderOnScroll}
+                        stickyHeaderIndices={authData.account_type === "Logistics" ? [1] : [0]}
                         ListHeaderComponent={
-                            <View style={style.headerWrapper}>
-                                <Header
-                                    navigation={navigation}
-                                    stackName={"Inventory"}
-                                    iconFunction={() => {}}
-                                    icon={<MenuIcon />}
-                                    removeBackArrow={true}
-                                    inlineArrow={false}
-                                    unpadded={true}
-                                />
+                            <View 
+                                style={[
+                                    style.headerWrapper,
+                                    // if account is merchant and scroll height is greater than offset activate shadow
+                                    authData.account_type === "Merchant" && scrollOffset > stickyHeaderOffset.current && {elevation: 3}
+                                ]}
+                                onLayout={e => {
 
-                                {/* search bar */}
-                                <SearchBar
-                                    placeholder={"Search Inventory"}
-                                    searchQuery={searchQuery}
-                                    setSearchQuery={setSearchQuery}
-                                    backgroundColor={white}
-                                    disableFilter={true}
-                                />
-                                {/* navigate to AddLogistics page/stack */}
-                                <CustomButton
-                                    secondaryButton={true}
-                                    name={"Add Logistics"}
-                                    shrinkWrapper={true}
-                                    onPress={() => navigation.navigate("AddLogistics")}
-                                    unpadded={true}
-                                    wrapperStyle={{marginBottom: 22}}
-                                />
+                                    stickyHeaderOffset.current = authData.account_type === "Logistics" ? e.nativeEvent.layout.height : 0;
+                                }}
+                            >
+                                { authData.account_type === "Merchant" ? (<>
+                                    {/* search bar */}
+                                    <SearchBar
+                                        placeholder={"Search inventory"}
+                                        searchQuery={searchQuery}
+                                        setSearchQuery={setSearchQuery}
+                                        backgroundColor={white}
+                                        disableFilter={true}
+                                    />
+                                    {/* navigate to AddLogistics page/stack */}
+                                    <CustomButton
+                                        secondaryButton={true}
+                                        name={"Add Logistics"}
+                                        shrinkWrapper={true}
+                                        onPress={() => navigation.navigate("AddLogistics")}
+                                        unpadded={true}
+                                        wrapperStyle={{marginBottom: 22}}
+                                    />
+                                </>) : (<>
+                                    {/* stats */}
+                                    <StatWrapper containerStyle={{marginBottom: 30}}>
+                                        {stats.map(stat => (
+                                            <StatCard
+                                                key={stat.id}
+                                                title={stat.title}
+                                                presentValue={stat.presentValue}
+                                                oldValue={stat.oldValue}
+                                                decimal={stat.decimal}
+                                            />
+                                        ))}
+                                    </StatWrapper>
+                                </>)}
                             </View>
                         }
                         columnWrapperStyle={style.listContainer}
                         style={style.listWrapper}
                         keyExtractor={item => item.id}
-                        data={logisticsList}
+                        data={inventories}
                         // allows flatlist to render list in two columns
                         numColumns={2}
                         // render logistics card
-                        renderItem={({ item, index }) => (
-                            <LogisticsCard
-                                logistics={item.logistics}
-                                imageUrl={item.imageUrl}
-                                totalLocations={item.totalLocations}
-                                totalStock={item.totalStock}
-                                lowStock={item.lowStock}
-                                verified={item.verified}
-                                onPress={item.onPress}
-                            />
-                        )}
+                        renderItem={({ item, index }) => {
+                            if (item.id === "stickyLeft") {
+                                return (
+                                    <View 
+                                        style={[
+                                            style.stickyHeader,
+                                            // if account is logistics and scroll height is greater than offset activate shadow
+                                            authData.account_type !== "Merchant" && scrollOffset > stickyHeaderOffset.current && {elevation: 3}
+                                        ]}
+                                    >
+                                        {/* search bar */}
+                                        <SearchBar
+                                            placeholder={"Search inventory"}
+                                            searchQuery={searchQuery}
+                                            setSearchQuery={setSearchQuery}
+                                            backgroundColor={white}
+                                            disableFilter={true}
+                                        />
+                                    </View>
+                                )
+                            } else if (item.id === "stickyRight") {
+                                return <></>
+                            } else {
+                                return (
+                                    <View style={index % 2 === 0 ? style.leftCard : style.rightCard}>
+                                        <LogisticsCard
+                                            logistics={item.logistics}
+                                            imageUrl={item.imageUrl}
+                                            totalLocations={item.totalLocations}
+                                            totalStock={item.totalStock}
+                                            lowStock={item.lowStock}
+                                            verified={item.verified}
+                                            onPress={item.onPress}
+                                        />
+                                    </View>
+                                )   
+                            }
+                        }}
                     />
                 </TouchableWithoutFeedback>
-            ) : <InventorySkeleton />}
+            </>) : <InventorySkeleton />}
         </>
     );
 }
@@ -156,7 +335,7 @@ const style = StyleSheet.create({
     listWrapper: {
         width: "100%",
         height: "100%",
-        paddingHorizontal: 20,
+        // paddingHorizontal: 20,
         marginBottom: 70,
         backgroundColor: background,
     },
@@ -173,21 +352,82 @@ const style = StyleSheet.create({
         display: "flex",
         flexDirection: 'column',
         justifyContent: 'flex-start',
+        backgroundColor: background,
+        paddingHorizontal: 20,
     },
-    sendOrderButton: {
-        height: 44,
+    stickyHeader: {
+        paddingHorizontal: 20,
         width: "100%",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: 'center',
-        backgroundColor: secondaryColor,
-        borderRadius: 12,
-        marginBottom: 22,
+        backgroundColor: background,
     },
-    orderButtonText: {
-        fontFamily: "mulish-semibold",
-        fontSize: 16,
-        color: primaryColor,
+    leftCard: {
+        width: (windowWidth - 16)/2,
+        display: "flex",
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+    },
+    rightCard: {
+        width: (windowWidth - 16)/2,
+        display: "flex",
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+    },
+    warehouseBannerWrapper: {
+        backgroundColor: background,
+        paddingBottom: 16,
+    },
+    warehouseBanner: {
+        height: 63,
+        width: "100%",
+        backgroundColor: white,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        paddingHorizontal: 20,
+        paddingVertical: 12,
+        gap: 20,
+    },
+    warehoseInfo: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
+        gap: 4,
+    },
+    warehouseName: {
+        color: black,
+        fontSize: 12,
+        fontFamily: 'mulish-bold'
+    },
+    warehouseAddress: {
+        color: subText,
+        fontSize: 10,
+        fontFamily: "mulish-regular",
+        maxWidth: 120,
+    },
+    verticalRule: {
+        width: 1,
+        height: 43,
+        backgroundColor: verticalRule,
+    },
+    warehoseManagerInfo: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        gap: 8,
+    },
+    managerTitle: {
+        color: subText,
+        fontSize: 10,
+        fontFamily: 'mulish-medium',
+        marginBottom: 4,
+    },
+    managerName: {
+        color: black,
+        fontSize: 10,
+        fontFamily: 'mulish-semibold'
     },
 })
  

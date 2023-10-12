@@ -415,7 +415,7 @@ const Warehouse = ({navigation}) => {
                                         style={[
                                             index % 2 === 0 ? styles.leftCard : styles.rightCard,
                                         ]}
-                                    > 
+                                    >
                                         <WarehouseCard
                                             warehouseName={item.warehouse_name}
                                             inventoriesCount={item.inventories_count}

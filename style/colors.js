@@ -25,6 +25,7 @@ export const deliveredContainer = "#D1FADF";
 export const deliveredText = "#039855";
 export const cancelledContainer = "#FEF3F2";
 export const inactiveStep = "#F1F1F1";
+export const verticalRule = "#EEEEEE";
 export const stepLabelFont = "#968E8E";
 export const cancelledText = "#B42318";
 export const pendingContainer = "#FEF0C7";

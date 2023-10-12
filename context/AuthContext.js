@@ -30,14 +30,6 @@ const AuthProvider = ({children}) => {
 	useEffect(() => {
 		setLoading(true);
 
-		// onAuthStateChanged(FIREBASE_AUTH, (user) => {
-		// 	if (user) {
-		// 		// setSession(true);
-		// 	} else {
-		// 		// setSession(false);
-		// 	}
-		// });
-		
 		const userData = {
 			account_type: "Logistics",
 			business_name: "Komitex Logistics",

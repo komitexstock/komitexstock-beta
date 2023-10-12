@@ -794,17 +794,6 @@ const Products = ({navigation, route}) => {
                                         />
                                     ))}
                                 </StatWrapper>
-                                {/* Navigate to addproducts page/stack */}
-                                {products.length !== 0 && (
-                                    <CustomButton
-                                        secondaryButton={true}
-                                        name={"Add product"}
-                                        shrinkWrapper={true}
-                                        onPress={() => navigation.navigate("AddProduct")}
-                                        unpadded={true}
-                                        wrapperStyle={{marginTop: 22}}
-                                    />
-                                )}
                             </View>
                         }
                         contentContainerStyle={style.contentContainer}

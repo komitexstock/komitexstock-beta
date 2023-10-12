@@ -1,10 +1,10 @@
 // recat native components
 import { View, StyleSheet } from "react-native";
 
-const StatWrapper = ({children}) => {
+const StatWrapper = ({children, containerStyle}) => {
     return (
         // render StatWrapper component
-        <View style={style.statsWrapper}>
+        <View style={[style.statsWrapper, containerStyle]}>
             {/* render children */}
             {children}
         </View>
