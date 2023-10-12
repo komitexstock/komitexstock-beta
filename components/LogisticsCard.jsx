@@ -10,13 +10,14 @@ import {
 from "react-native";
 // component
 import Indicator from '../components/Indicator';
+import Avatar from "./Avatar";
 // icons
 import AddIcon from '../assets/icons/AddIcon';
 import VerifiedIcon from "../assets/icons/VerifiedIcon";
 import { black, secondaryColor, subText, white } from "../style/colors";
 
 const maxCardWidth = Dimensions.get("window").width/2 - 28;
-const LogisticsCard = ({logistics, imageUrl, totalLocations, totalStock, lowStock, onPress, addNew, verified}) => {
+const LogisticsCard = ({logistics, merchant, imageUrl, totalLocations, totalProducts, totalStock, lowStock, onPress, addNew, verified}) => {
     return (
         <>   
             { !addNew ? (
@@ -26,18 +27,20 @@ const LogisticsCard = ({logistics, imageUrl, totalLocations, totalStock, lowStoc
                 >   
                     <View style={style.primaryWrapper}>
                         <View style={style.imageContainer}>
-                            <Image 
-                                source={imageUrl} 
-                                style={style.image} 
+                            <Avatar
+                                fullname={merchant ? merchant : logistics}
+                                squared={true}
+                                imageUrl={imageUrl}
                             />
-                            {   lowStock && <Indicator text={"Low Stock"} type={"Pending"} />
-                            }
+                            {lowStock && <Indicator text={"Low Stock"} type={"Pending"} />}
                         </View>
                         <View style={style.logisticsWrapper}>
-                            <Text style={style.logistics}>{logistics}</Text>
+                            {logistics && <Text style={style.logistics}>{logistics}</Text>}
+                            {merchant && <Text style={style.logistics}>{merchant}</Text>}
                             { verified && <VerifiedIcon />}
                         </View>
-                        <Text style={style.location}>{totalLocations} Locations</Text>
+                        {totalLocations && <Text style={style.location}>{totalLocations} Locations</Text>}
+                        {totalProducts && <Text style={style.location}>{totalProducts} Products</Text>}
                     </View>
                     <View style={style.secondaryWrapper}>
                         <Text style={style.items}>{totalStock} items <Text style={style.faintText}>in stock</Text></Text>

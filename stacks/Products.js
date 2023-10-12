@@ -14,11 +14,10 @@ import { useState, useRef, useEffect } from "react";
 // icons
 import MenuIcon from "../assets/icons/MenuIcon";
 import SearchIcon from '../assets/icons/SearchIcon'
-import FilterIcon from '../assets/icons/FilterIcon';
 import AddProduct from "../assets/icons/AddProduct";
 import VerifiedIcon from "../assets/icons/VerifiedIcon";
 // colors
-import { background, black, bodyText, primaryColor, secondaryColor, white } from "../style/colors";
+import { background, black, bodyText, primaryColor, secondaryColor, subText, white } from "../style/colors";
 // components
 import StatWrapper from "../components/StatWrapper";
 import StatCard from "../components/StatCard";
@@ -32,6 +31,7 @@ import Header from "../components/Header";
 import FilterBottomSheet from "../components/FilterBottomSheet";
 import FilterButtonGroup from "../components/FilterButtonGroup";
 import FilterPill from "../components/FilterPill";
+import Avatar from "../components/Avatar";
 import Menu from "../components/Menu";
 import ImportInventory from "../assets/icons/ImportInventory";
 import CustomButton from "../components/CustomButton";
@@ -44,9 +44,14 @@ import { windowHeight } from "../utils/helpers";
 import ProductsSkeleton from "../skeletons/ProductsSkeleton";
 // globals
 import { useGlobals } from "../context/AppContext";
+// auth data
+import { useAuth } from "../context/AuthContext";
 
 
 const Products = ({navigation, route}) => {
+
+    // auth data
+    const { authData } = useAuth();
 
     // bottomsheet ref
     const { bottomSheetRef, filterSheetRef } = useGlobals();
@@ -756,18 +761,41 @@ const Products = ({navigation, route}) => {
                 {/* header */}
                 <Header 
                     navigation={navigation}
-                    stackName={
+                    stackName={ authData.account_type === "Merchant" && (
                         <View style={style.header}>
                             <Text style={style.headerText}>Komitex</Text>
                             <VerifiedIcon />
                         </View>
-                    }
+                    )}
                     removeBackArrow={true}
                     inlineArrow={true}
                     icon={<MenuIcon />}
                     iconFunction={openMenu}
                     backgroundColor={background}
                 />
+                {/* Merchant Banner */}
+                {authData.account_type !== "Merchant" && (
+                    <View style={style.warehouseBannerWrapper}>
+                        <View style={style.warehouseBanner}>
+                            <Avatar 
+                                fullname={"Abiodun Johnson"}
+                                imageUrl={require('../assets/images/style_bazaar.png')}
+                                smallerSize={true}
+                            />
+                            <View style={style.managerText}>
+                                <View style={style.merchantBusinessNameWrapper}>
+                                    <Text style={style.merchantBusinessName}>
+                                        Style Bazaar
+                                    </Text>
+                                    <VerifiedIcon />
+                                </View>
+                                <Text style={style.merchantFullname}>
+                                    Jon Snow
+                                </Text>
+                            </View>
+                        </View>
+                    </View>
+                )}
                 <TouchableWithoutFeedback style={{flex: 1}}>
                     <FlatList
                         onScroll={animateHeaderOnScroll}
@@ -1061,16 +1089,49 @@ const style = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
     },
-    addProductButton: {
-        height: 44,
-        width: "100%",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: 'center',
-        backgroundColor: secondaryColor,
-        borderRadius: 12,
-        marginTop: 22,
+    warehouseBannerWrapper: {
+        backgroundColor: background,
+        paddingBottom: 16,
     },
+    warehouseBanner: {
+        height: 63,
+        width: "100%",
+        backgroundColor: white,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        paddingHorizontal: 20,
+        paddingVertical: 12,
+        gap: 8,
+    },
+    managerText: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
+        gap: 4,
+    },
+    merchantFullname: {
+        color: subText,
+        fontSize: 10,
+        fontFamily: 'mulish-medium',
+        marginBottom: 4,
+    },
+    merchantBusinessNameWrapper: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        height: 15,
+        gap: 2,
+    },
+    merchantBusinessName: {
+        color: black,
+        fontSize: 12,
+        fontFamily: 'mulish-semibold',
+    },
+
     orderButtonText: {
         fontFamily: "mulish-semibold",
         fontSize: 16,

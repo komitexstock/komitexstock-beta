@@ -1,7 +1,7 @@
 import { View, Text, Image, StyleSheet } from "react-native";
 import { primaryColor, secondaryColor } from "../style/colors";
 
-const Avatar = ({imageUrl, fullname, smallerSize}) => {
+const Avatar = ({imageUrl, fullname, smallerSize, squared}) => {
     // imageUrl => string | path to image
     // fullname => string
 
@@ -17,14 +17,18 @@ const Avatar = ({imageUrl, fullname, smallerSize}) => {
         <View 
             style={[
                 style.avatarWrapper,
-                smallerSize && {width: 30, height: 30},
+                smallerSize && {width: 32, height: 32, borderRadius: 16},
+                squared && {borderRadius: 8}
             ]}
         >
             {/* display image if its given */}
             {imageUrl ? (
                 <Image
                     source={imageUrl}
-                    style={style.avatarImage}
+                    style={[
+                        style.avatarImage,
+                        squared && {borderRadius: 8}
+                    ]}
                 />
             ):(
                 // else display initials

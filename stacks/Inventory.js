@@ -160,12 +160,64 @@ const Products = ({navigation}) => {
         },
     ];
 
+    // logistics list array
+    const merchantList = [
+        {
+            id: 1,
+            merchant: "Style Bazaar",
+            imageUrl: require('../assets/images/style_bazaar.png'),
+            totalProducts: 17,
+            totalStock: 25,
+            lowStock: true,
+            verified: true,
+            onPress: () => {
+                navigation.navigate("Products");
+            }
+        },
+        {
+            id: 2,
+            merchant: "Luxe Living Ltd",
+            imageUrl: require('../assets/images/luxe_living_finds.png'),
+            totalProducts: 15,
+            totalStock: 17,
+            lowStock: false,
+            verified: true,
+            onPress: () => {
+                navigation.navigate("Products");
+            }
+        },
+        {
+            id: 3,
+            merchant: "Eco Savvy Emporium",
+            imageUrl: require('../assets/images/eco_savvy_emporium.png'),
+            totalProducts: 11,
+            totalStock: 9,
+            lowStock: false,
+            verified: true,
+            onPress: () => {
+                navigation.navigate("Products");
+            }
+        },
+        {
+            id: 4,
+            merchant: "Tech Treasure Haven",
+            imageUrl: null,
+            totalProducts: 5,
+            totalStock: 7,
+            lowStock: false,
+            verified: false,
+            onPress: () => {
+                navigation.navigate("Products");
+            }
+        },
+    ];
+
     const [inventories, setInventories] = useState(() => {
         if (authData.account_type === "Logistics") {
             return [
                 {id: "stickyLeft"},
                 {id: "stickyRight"},
-                ...logisticsList
+                ...merchantList
             ];
         } else {
             return logisticsList;
@@ -181,10 +233,6 @@ const Products = ({navigation}) => {
         const yOffset = e.nativeEvent.contentOffset.y;
         setScrollOffset(yOffset);
     }
-
-    const targetOffset = authData.account_type === "Logistics" ? 0 : 0;
-
-    // console.log(scrollOffset);
 
     // render Inventory page
     return (
@@ -311,9 +359,11 @@ const Products = ({navigation}) => {
                                 return (
                                     <View style={index % 2 === 0 ? style.leftCard : style.rightCard}>
                                         <LogisticsCard
-                                            logistics={item.logistics}
+                                            logistics={item?.logistics}
+                                            merchant={item?.merchant}
                                             imageUrl={item.imageUrl}
-                                            totalLocations={item.totalLocations}
+                                            totalLocations={item?.totalLocations}
+                                            totalProducts={item?.totalProducts}
                                             totalStock={item.totalStock}
                                             lowStock={item.lowStock}
                                             verified={item.verified}
