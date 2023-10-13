@@ -45,14 +45,14 @@ const SelectInput = ({label, labelIcon, placeholder, onPress, icon, value, activ
                     { inputFor === "Location" && (
                         <>
                             {/* render location specific value */}
-                            {value ? `${value.location} (₦${value.charge})` : placeholder}
+                            {value ? `${value?.location} (₦${value?.charge})` : placeholder}
                         </>
                     )}
 
                     { inputFor === "Logistics" && (
                         <>
                             {/* render logistics specific value */}
-                            {value ? value.business_name : placeholder} 
+                            {value ? value?.business_name : placeholder} 
                         </>
                     )}
 
@@ -66,7 +66,7 @@ const SelectInput = ({label, labelIcon, placeholder, onPress, icon, value, activ
                     { inputFor === "Date" && (
                         <>
                             {/* render any other String */}
-                            {value ? moment(value).format('DD MMMM, YYYY') : placeholder} 
+                            {value ? moment(value)?.format('DD MMMM, YYYY') : placeholder} 
                         </>
                     )}
                     {/* if value is present show value, else show placeholder */}

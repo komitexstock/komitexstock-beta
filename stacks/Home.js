@@ -1482,70 +1482,70 @@ const Home = ({navigation}) => {
     const merchantQuickButtons = [
         {
             id: 1,
-            screen: "SendOrder",
             icon: <QuickOrderIcon />,
             background: secondaryColor,
             mainText: "Send an Order",
             subText: "Make fast deliveries to your customers",
+            onPress: () => navigation.navigate("SendOrder"),
         },
         {
             id: 2,
-            screen: "Inventory",
             icon: <QuickInventoryIcon />,
             background: accentLight,
             mainText: "Manage Inventory",
             subText: "Review and add to your stores inventory",
+            onPress: () => navigation.navigate("Inventory"),
         },
         {
             id: 3,
-            screen: "SendWaybill",
             icon: <QuickWaybiillIcon />,
             background: yellowLight,
             mainText: "Send Waybill",
             subText: "Restock your inventory with your preferred partner",
+            onPress: () => navigation.navigate("SendWaybill"),
         },
         {
             id: 4,
-            screen: "Analytics",
             icon: <QuickAnalyticsIcon />,
             background: greenLight,
             mainText: "View Analytics",
             subText: "Easily view your business growth and analytics",
+            onPress: () => navigation.navigate("Analytics"),
         },
     ];
 
     const logisticsQuickButtons = [
         {
             id: 1,
-            screen: "SendOrder",
             icon: <QuickOrderIcon />,
             background: secondaryColor,
             mainText: "Pick up & Delivery",
             subText: "Easily schedule a pick up and drop off ",
+            onPress: () => {}
         },
         {
             id: 2,
-            screen: "Inventory",
             icon: <QuickStockTransferIcon />,
             background: accentLight,
             mainText: "Stock Transfer",
             subText: "Manage warehouse inventory transfers",
+            onPress: () => navigation.navigate("StockTransfer"),
         },
         {
             id: 3,
-            screen: "SendWaybill",
             icon: <QuickWaybiillIcon />,
             background: yellowLight,
             mainText: "Send Waybill",
             subText: "Restock your inventory with your preferred partner",
+            onPress: () => navigation.navigate("SendWaybill"),
         },
         {
             id: 4,
-            screen: "Analytics",
             icon: <QuickAnalyticsIcon />,
             background: greenLight,
             mainText: "View Analytics",
             subText: "Easily view your business growth and analytics",
+            onPress: () => navigation.navigate("Analytics"),
         },
     ];
 
@@ -1600,7 +1600,7 @@ const Home = ({navigation}) => {
                                     {quickButtons.map(button => (
                                         <TouchableOpacity 
                                             key={button.id}
-                                            onPress={() => {navigation.navigate(button.screen)}}
+                                            onPress={button.onPress}
                                             style={[
                                                 style.quickActionButton,
                                                 {backgroundColor: button.background}

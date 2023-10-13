@@ -357,7 +357,7 @@ const Warehouse = ({navigation}) => {
                                     name={"Stock Transfer"}
                                     shrinkWrapper={true}
                                     secondaryButton={true}
-                                    onPress={() => {}}
+                                    onPress={() => {navigation.navigate("StockTransfer")}}
                                     unpadded={true}
                                 />
                             </View>

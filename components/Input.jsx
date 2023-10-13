@@ -126,7 +126,7 @@ const Input = ({label, inputRef, placeholder, onChange, value, forceBlur, multil
                         placeholderTextColor={neutral}
                         // if value is an array print out all its elements, usefull for phone number input
                         defaultValue={!Array.isArray(value) ? value : value.join(", ")}
-                        multiline={multiline ? multiline : false}
+                        multiline={multiline}
                         numberOfLines={minRows ? minRows : 1}
                         textAlignVertical={textAlign ? textAlign : "center"}
                         editable={disabled ? false : true}
@@ -153,7 +153,7 @@ const Input = ({label, inputRef, placeholder, onChange, value, forceBlur, multil
                     onFocus={handleFocus}
                     onBlur={handleBlur}
                     defaultValue={!Array.isArray(value) ? value : value.join(", ")}
-                    multiline={multiline ? multiline : false}
+                    multiline={multiline}
                     numberOfLines={minRows ? minRows : 1}
                     textAlignVertical={textAlign ? textAlign : "center"}
                     editable={disabled ? false : true}
