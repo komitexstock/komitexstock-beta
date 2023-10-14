@@ -36,6 +36,8 @@ import AddProduct from './stacks/AddProduct';
 import ImportInventory from './stacks/ImportInventory';
 // warehouse related stacks
 import Warehouse from './stacks/Warehouse';
+import AddWarehouse from './stacks/AddWarehouse';
+import EditWarehouse from './stacks/EditWarehouse';
 import StockTransfer from './stacks/StockTransfer';
 import StockTransferProducts from './stacks/StockTransferProducts';
 import StockTransferSummary from './stacks/StockTransferSummary';
@@ -316,6 +318,16 @@ export default function App() {
                                             <Stack.Screen 
                                                 name="Warehouse" 
                                                 component={Warehouse}
+                                            />
+                                            {/* AddWarehosue stack */}
+                                            <Stack.Screen 
+                                                name="AddWarehouse" 
+                                                component={AddWarehouse}
+                                            />
+                                            {/* EditWarehosue stack */}
+                                            <Stack.Screen 
+                                                name="EditWarehouse" 
+                                                component={EditWarehouse}
                                             />
                                             {/* StockTransfer stack */}
                                             <Stack.Screen 

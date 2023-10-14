@@ -30,7 +30,7 @@ const Warehouse = ({navigation, route}) => {
 
 
     // tab state
-    const [tab, setTab] = useState(route.params.tab ? route.params.tab : "warehouse")
+    const [tab, setTab] = useState(route.params?.tab ? route.params.tab : "warehouse")
 
     // stats array
     const stats = [
@@ -59,8 +59,8 @@ const Warehouse = ({navigation, route}) => {
             warehouse_name: "Warri",
             inventories_count: 12,
             address: "276 PTI road",
-            onPress: () => {navigation.navigate("Inventory")},
-            onPressMenu: () => {},
+            onPress: () => navigation.navigate("Inventory"),
+            onPressMenu: () => navigation.navigate("EditWarehouse"),
             add_new: false,
         },
         {
@@ -68,7 +68,7 @@ const Warehouse = ({navigation, route}) => {
             warehouse_name: "Isoko",
             inventories_count: 3,
             address: "123 Isoko Street",
-            onPress: () => {navigation.navigate("Inventory")},
+            onPress: () => navigation.navigate("Inventory"),
             onPressMenu: () => {},
             add_new: false,
         },
@@ -77,7 +77,7 @@ const Warehouse = ({navigation, route}) => {
             warehouse_name: "Asaba",
             inventories_count: 7,
             address: "456 Asaba Avenue",
-            onPress: () => {navigation.navigate("Inventory")},
+            onPress: () => navigation.navigate("Inventory"),
             onPressMenu: () => {},
             add_new: false,
         },
@@ -86,7 +86,7 @@ const Warehouse = ({navigation, route}) => {
             warehouse_name: "Kwale",
             inventories_count: 4,
             address: "789 Kwale Road",
-            onPress: () => {navigation.navigate("Inventory")},
+            onPress: () => navigation.navigate("Inventory"),
             onPressMenu: () => {},
             add_new: false,
         },
@@ -95,7 +95,7 @@ const Warehouse = ({navigation, route}) => {
             warehouse_name: "Agbor",
             inventories_count: 6,
             address: "101 Agbor Lane",
-            onPress: () => {navigation.navigate("Inventory")},
+            onPress: () => navigation.navigate("Inventory"),
             onPressMenu: () => {},
             add_new: false,
         },
@@ -104,7 +104,7 @@ const Warehouse = ({navigation, route}) => {
             warehouse_name: "Benin",
             inventories_count: 8,
             address: "654 Benin Street",
-            onPress: () => {navigation.navigate("Inventory")},
+            onPress: () => navigation.navigate("Inventory"),
             onPressMenu: () => {},
             add_new: false,
         },
@@ -113,7 +113,7 @@ const Warehouse = ({navigation, route}) => {
             warehouse_name: "Auchi",
             inventories_count: 2,
             address: "222 Auchi Road",
-            onPress: () => {navigation.navigate("Inventory")},
+            onPress: () => navigation.navigate("Inventory"),
             onPressMenu: () => {},
             add_new: false,
         },
@@ -122,7 +122,7 @@ const Warehouse = ({navigation, route}) => {
             warehouse_name: "Ekpoma",
             inventories_count: 3,
             address: "333 Ekpoma Street",
-            onPress: () => {navigation.navigate("Inventory")},
+            onPress: () => navigation.navigate("Inventory"),
             onPressMenu: () => {},
             add_new: false,
         },
@@ -131,7 +131,7 @@ const Warehouse = ({navigation, route}) => {
             warehouse_name: "Ekpoma",
             inventories_count: 5,
             address: "333 Ekpoma Street",
-            onPress: () => {navigation.navigate("Inventory")},
+            onPress: () => navigation.navigate("Inventory"),
             onPressMenu: () => {},
             add_new: false,
         },
@@ -140,7 +140,7 @@ const Warehouse = ({navigation, route}) => {
             warehouse_name: null,
             inventories_count: null,
             address: null,
-            onPress: () => {navigation.navigate("Inventory")},
+            onPress: () => navigation.navigate("AddWarehouse"),
             onPressMenu: () => {},
             add_new: true,
         },
