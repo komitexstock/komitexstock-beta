@@ -17,7 +17,14 @@ const StockTransferSummary = ({navigation, route}) => {
     const [isLoading, setIsLoading] = useState(false);
 
     const handleTransferStock = () => {
+        setIsLoading(true)
 
+        setTimeout(() => {
+            setIsLoading(false);
+            navigation.navigate("Warehouse", {
+                tab: "stock transfer",
+            });
+        }, 2000);
     }
 
     return (
@@ -45,7 +52,7 @@ const StockTransferSummary = ({navigation, route}) => {
                         </View>
                         <Text style={style.infoHeading}>Additional details</Text>
                         <Text style={style.additionalDetails}>
-                            {additionalDetails}
+                            {additionalDetails ? additionalDetails : "N/A"}
                         </Text>
                     </View>
                     <View style={style.productsWrapper}>
@@ -135,6 +142,7 @@ const style = StyleSheet.create({
         lineHeight: 15,
         color: black,
         fontFamily: 'mulish-medium',
+        maxWidth: 240,
     },
     productsWrapper: {
         width: "100%",

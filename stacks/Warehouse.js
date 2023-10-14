@@ -26,10 +26,11 @@ import { background, black, neutral, primaryColor, white } from '../style/colors
 // utils
 import { windowHeight, windowWidth } from '../utils/helpers';
 
-const Warehouse = ({navigation}) => {
+const Warehouse = ({navigation, route}) => {
+
 
     // tab state
-    const [tab, setTab] = useState("warehouse")
+    const [tab, setTab] = useState(route.params.tab ? route.params.tab : "warehouse")
 
     // stats array
     const stats = [

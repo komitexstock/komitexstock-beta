@@ -59,7 +59,7 @@ const MerchantProduct = ({id, productName, merchant, availableQuantity, imageUrl
                         {productName}
                     </Text>
                     <Text style={style.merchantName}>
-                        {merchant} {'\u2022'} {availableQuantity} available
+                        {merchant} {!summary && '\u2022' + availableQuantity + "available"}
                     </Text>
                 </View>
             </TouchableOpacity>
