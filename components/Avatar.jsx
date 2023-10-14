@@ -7,7 +7,7 @@ const Avatar = ({imageUrl, fullname, smallerSize, squared}) => {
 
     // get initails of fullnames e.g John Doe returns JD
     const initials = fullname
-    .split(' ')
+    ?.split(' ')
     .map(name => name.charAt(0))
     .join('')
     .toUpperCase();

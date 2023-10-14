@@ -70,7 +70,7 @@ const Header = ({navigation, navigateTo, stackName, iconFunction, icon, removeBa
 // stylesheet
 const style = StyleSheet.create({
     header: {
-        maxHeight: 75,
+        // maxHeight: 75,
         minHeight: 25,
         width: "100%",
         display: 'flex',
@@ -95,6 +95,8 @@ const style = StyleSheet.create({
         fontSize: 20,
         color: black,
         flex: 1,
+        lineHeight: 25,
+        maxWidth: 245,
     },
     filter: {
         width: 24,

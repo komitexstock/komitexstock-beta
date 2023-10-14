@@ -82,6 +82,7 @@ const StockTransfer = ({navigation}) => {
     // state to control list of selectable warehouse in bottomsheet 
     const [modalContent, setModalContent] = useState(null);
 
+    // search query
     const [searchQuery, setSearchQuery] = useState(null);
 
     const openModal = (type) => {
@@ -149,7 +150,7 @@ const StockTransfer = ({navigation}) => {
                             <Input 
                                 label={"Additional Details"}
                                 multiline={true}
-                                height={100}
+                                height={64}
                                 textAlign={"top"}
                                 minRows={4}
                                 placeholder={"Input additional details here..."}
@@ -165,7 +166,11 @@ const StockTransfer = ({navigation}) => {
                         unpadded={true}
                         backgroundColor={background}
                         inactive={originWarehouse === null || destinationWarehouse === null}
-                        onPress={() => navigation.navigate("StockTransferProducts")}
+                        onPress={() => navigation.navigate("StockTransferProducts", {
+                            originWarehouse,
+                            destinationWarehouse,
+                            additionalDetails,
+                        })}
                     />
                 </View>
             </TouchableWithoutFeedback>

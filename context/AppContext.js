@@ -86,7 +86,7 @@ const AppProvider = ({children}) => {
         const unsubscribe = navigation.addListener('state', () => {
             setCurrentStack(navigation.getCurrentRoute().name);
         });
-    
+
         return unsubscribe;
     }, [isFocused, navigation]);
 

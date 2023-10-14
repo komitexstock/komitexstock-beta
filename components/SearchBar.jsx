@@ -41,7 +41,7 @@ const SearchBar = ({placeholder, searchQuery, setSearchQuery, filterParams, back
                     </TouchableOpacity>
                 )}
                 {/* clear search button, only visible when search bar isn't empty */}
-                { searchQuery !== '' && (
+                { searchQuery && (
                     <TouchableOpacity
                         style={style.clearSearch}
                         onPress={() => setSearchQuery("")}
