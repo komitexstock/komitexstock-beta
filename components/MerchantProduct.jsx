@@ -12,27 +12,31 @@ import { background, black, subText, white } from "../style/colors";
 // components
 import Avatar from "./Avatar";
 import CheckBox from "./CheckBox";
-import { windowWidth } from "../utils/helpers";
+// import react native components
+import { useRef, useState } from "react";
 
-const MerchantProduct = ({id, productName, merchant, availableQuantity, imageUrl, quantity, selected, selectProduct, removeProduct, increaseQuantity, decreaseQuantity, handleQuantityKeyUp}) => {
+const MerchantProduct = ({id, productName, merchant, availableQuantity, imageUrl, quantity, selected, selectProduct, removeProduct, increaseQuantity, decreaseQuantity, handleQuantityKeyUp, summary}) => {
     // product => object
     // removeProduct, increaseQuantity, decreaseQuantity => function
 
     const handleOnChangeText = (text) => {
-        // const { text } = event.nativeEvent;
-        // console.log(text);
         handleQuantityKeyUp(text, id);
     }
 
     // render MerchantProduct component, 
     // used as product input in sending order of sending waybill
     return (
-        <View style={[style.productItem]}>
+        <View 
+            style={[
+                style.productItem,
+                summary && {paddingVertical: 6, paddingHorizontal: 0}
+            ]}
+        >
             {/* <View style={style.productInfoWrapper}>
 
             </View> */}
             {/* check box */}
-            {selectProduct && (
+            {!summary && selectProduct && (
                 <CheckBox 
                     value={selected}
                     onPress={selectProduct}
@@ -44,6 +48,7 @@ const MerchantProduct = ({id, productName, merchant, availableQuantity, imageUrl
             <TouchableOpacity 
                 style={style.productDetailsWrapper}
                 onPress={selectProduct}
+                activeOpacity={summary && 1}
             >
                 <Avatar
                     imageUrl={imageUrl}
@@ -62,36 +67,43 @@ const MerchantProduct = ({id, productName, merchant, availableQuantity, imageUrl
 
             {/* Product quantity wrapper */}
             <View style={style.productQuantityWrapper}>
-                <View style={style.productQuantityContainer}>
-                    {/* reduce quantity button */}
-                    <TouchableOpacity 
-                        style={style.quantityButton}
-                        onPress={decreaseQuantity}
-                    >
-                        <Text style={style.quantityButtonText}>-</Text>
-                    </TouchableOpacity>
-                    {/* input quantity */}
-                    <TextInput 
-                        keyboardType="numeric"
-                        defaultValue={String(quantity)}
-                        style={style.quantityInput}
-                        onChangeText={handleOnChangeText}
-                    />
-                    {/* increase quantity button */}
-                    <TouchableOpacity 
-                        style={style.quantityButton}
-                        onPress={increaseQuantity}
-                    >
-                        <Text style={style.quantityButtonText}>+</Text>
-                    </TouchableOpacity>
-                </View>
+                {!summary && (
+                    <View style={style.productQuantityContainer}>
+                        {/* reduce quantity button */}
+                        <TouchableOpacity 
+                            style={style.quantityButton}
+                            onPress={decreaseQuantity}
+                        >
+                            <Text style={style.quantityButtonText}>-</Text>
+                        </TouchableOpacity>
+                        {/* input quantity */}
+                        <TextInput 
+                            keyboardType="numeric"
+                            value={String(quantity)}
+                            style={style.quantityInput}
+                            onChangeText={handleOnChangeText}
+                        />
+                        {/* increase quantity button */}
+                        <TouchableOpacity 
+                            style={style.quantityButton}
+                            onPress={increaseQuantity}
+                        >
+                            <Text style={style.quantityButtonText}>+</Text>
+                        </TouchableOpacity>
+                    </View>
+                )}
                 {/* remove product */}
-                {removeProduct && (
+                {!summary && removeProduct && (
                     <TouchableOpacity
                         onPress={removeProduct}
                     >
                         <ClearSearch />
                     </TouchableOpacity>
+                )}
+                {summary && (
+                    <Text style={style.summaryText}>
+                        Qty {quantity}
+                    </Text>
                 )}
             </View>
         </View>
@@ -189,7 +201,13 @@ const style = StyleSheet.create({
     quantityInput: {
         fontFamily: "mulish-regular",
         textAlign: "center",
+        maxWidth: 30,
     },
+    summaryText: {
+        fontSize: 12,
+        color: black,
+        fontFamily: "mulish-medium",
+    }
 })
  
 export default MerchantProduct;

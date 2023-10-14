@@ -38,6 +38,7 @@ import ImportInventory from './stacks/ImportInventory';
 import Warehouse from './stacks/Warehouse';
 import StockTransfer from './stacks/StockTransfer';
 import StockTransferProducts from './stacks/StockTransferProducts';
+import StockTransferSummary from './stacks/StockTransferSummary';
 // account related stacks
 import Account from './stacks/Account';
 import Profile from './stacks/Profile';
@@ -325,6 +326,11 @@ export default function App() {
                                             <Stack.Screen 
                                                 name="StockTransferProducts" 
                                                 component={StockTransferProducts}
+                                            />
+                                            {/* StockTransferProducts stack */}
+                                            <Stack.Screen 
+                                                name="StockTransferSummary" 
+                                                component={StockTransferSummary}
                                             />
                                         </Stack.Group>
                                     )}

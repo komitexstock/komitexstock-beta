@@ -78,6 +78,42 @@ const StockTransferProducts = ({navigation, route}) => {
             image_url: require("../assets/images/accurate-watch.png"),
             selected: false,
         },
+        {
+            id: 7,
+            product_name: "Black Sketchers",
+            merchant: "Tech Haven",
+            available_quantity: 9,
+            quantity: 1,
+            image_url: require('../assets/images/black-sketchers.png'),
+            selected: false,
+        },
+        {
+            id: 8,
+            product_name: "Brown Clarks",
+            merchant: "Tech Haven",
+            available_quantity: 9,
+            quantity: 1,
+            image_url: require('../assets/images/brown-clarks.png'),
+            selected: false,
+        },
+        {
+            id: 9,
+            product_name: "Perfectly Useless Morning Watch",
+            merchant: "Tech Haven",
+            available_quantity: 9,
+            quantity: 1,
+            image_url: require('../assets/images/perfectly-useless-mornig-watch.png'),
+            selected: false,
+        },
+        {
+            id: 10,
+            product_name: "Useless Afternoon Watch",
+            merchant: "Tech Haven",
+            available_quantity: 9,
+            quantity: 1,
+            image_url: require('../assets/images/useless-afternoon-watch.png'),
+            selected: false,
+        },
     ]);
 
     // selected products
@@ -116,7 +152,7 @@ const StockTransferProducts = ({navigation, route}) => {
     }
 
     const setQuantity = (id, setProducts, increase, textInput) => {
-        
+
         setProducts(prevProducts => {
             return prevProducts.map(product => {
                 if (product.id === id) {
@@ -143,9 +179,11 @@ const StockTransferProducts = ({navigation, route}) => {
     }
 
     const handleQuantityKeyUp = (text, id) => {
-        if (!text) return;
+        let textInput;
+        // console.log(text);
+        if (!text) textInput = 1;
+        else textInput = parseInt(text);
 
-        let textInput = parseInt(text);
         // that means we should edit the avaialble list
         if (bottomSheetOpen) return setQuantity(id, setAvailableProducts, true, textInput);
         return setQuantity(id, setSelectedProducts, true, textInput);
@@ -203,8 +241,9 @@ const StockTransferProducts = ({navigation, route}) => {
         <>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <ScrollView 
+                    style={style.container}
                     contentContainerStyle={style.contentContainer}
-                    showsHorizontalScrollIndicator={false}
+                    showsVerticalScrollIndicator={false}
                 >
                     <View style={style.mainWrapper}>
                         <Header
@@ -223,9 +262,9 @@ const StockTransferProducts = ({navigation, route}) => {
                                 onPress={openModal}
                             />
                         </View>
-                        {selectedProducts.length > 0 && (
-                            <Text style={style.headingText}>Selected Products ({selectedProducts?.length})</Text>
-                        )}
+                        <Text style={style.headingText}>Selected Products ({selectedProducts?.length})</Text>
+                        {/* {selectedProducts.length > 0 && (
+                        )} */}
                         <View style={style.productList}>
                             { selectedProducts.map(product => (
                                 <MerchantProduct
@@ -245,20 +284,19 @@ const StockTransferProducts = ({navigation, route}) => {
                             ))}
                         </View>
                     </View>
-                    <CustomButton
-                        name={"Continue"}
-                        unpadded={true}
-                        backgroundColor={background}
-                        inactive={selectedProducts.length === 0}
-                        onPress={() => navigation.navigate("Summary", {
-                            originWarehouse,
-                            destinationWarehouse,
-                            additionalDetails,
-                            selectedProducts,
-                        })}
-                    />
                 </ScrollView>
             </TouchableWithoutFeedback>
+            <CustomButton
+                name={"Continue"}
+                backgroundColor={white}
+                inactive={selectedProducts.length === 0}
+                onPress={() => navigation.navigate("StockTransferSummary", {
+                    originWarehouse,
+                    destinationWarehouse,
+                    additionalDetails,
+                    selectedProducts,
+                })}
+            />
             <CustomBottomSheet
                 sheetTitle={"Select products"}
                 bottomSheetModalRef={bottomSheetRef}
@@ -313,14 +351,16 @@ export default StockTransferProducts
 
 const style = StyleSheet.create({
     contentContainer: {
-        backgroundColor: background,
         paddingHorizontal: 20,
         display: 'flex',
         justifyContent: "space-between",
         flexDirection: 'column',
         alignItems: 'center',
-        height: windowHeight,
         width: "100%",
+    },
+    container: {
+        height: windowHeight,
+        backgroundColor: background,
     },
     mainWrapper: {
         width: "100%",
@@ -342,5 +382,6 @@ const style = StyleSheet.create({
         alignItems: 'center',
         width: "100%",
         gap: 10,
+        paddingBottom: 20,
     }
 })
