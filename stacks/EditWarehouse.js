@@ -8,6 +8,7 @@ import Input from '../components/Input';
 import CustomButton from '../components/CustomButton';
 import CustomBottomSheet from '../components/CustomBottomSheet';
 import SearchBar from '../components/SearchBar';
+import SuccessPopUp from '../components/SuccessPopUp';
 // bottomsheet components
 import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 // globals
@@ -25,7 +26,7 @@ const EditWarehouse = ({navigation}) => {
     const [isLoading, setIsLoading] = useState(false);
 
     // bottomsheet refs
-    const { bottomSheetRef, bottomSheetOpen } = useGlobals();
+    const { bottomSheetRef, bottomSheetOpen, popUpSheetRef } = useGlobals();
 
     // warehouse name 
     const [warehouseName, setWarehouseName] = useState("Warri");
@@ -103,10 +104,23 @@ const EditWarehouse = ({navigation}) => {
         
         setTimeout(() => {
             setIsLoading(false);
-            navigation.navigate("Warehouse", {
-                editSuccessfull: true,
-            })    
+            openPopUpModal();
         }, 3000);
+    }
+
+    // open pop up modal
+    const openPopUpModal = () => {
+        popUpSheetRef?.current?.present();
+    }
+
+    // close pop up modal
+    const closePopUpModal = () => {
+        popUpSheetRef?.current?.close();
+
+    }
+
+    const handleConfirmEditWarehouse = () => {
+        navigation.navigate("Warehouse");
     }
 
 
@@ -203,6 +217,16 @@ const EditWarehouse = ({navigation}) => {
                     </View>
                 </BottomSheetScrollView>
             </CustomBottomSheet>
+            <SuccessPopUp
+                popUpSheetRef={popUpSheetRef}
+                closeModal={closePopUpModal}
+                heading={"Warehouse updated successfully"}
+                height={320}
+                paragraph={<>
+                    You have successfully updated your warehouse details
+                </>}
+                primaryFunction={handleConfirmEditWarehouse}
+            />
         </>
     )
 }
@@ -268,4 +292,9 @@ const style = StyleSheet.create({
         fontSize: 12,
         lineHeight: 15,
     },
+    boldText: {
+        color: black,
+        fontSize: 12,
+        fontFamily: "mulish-bold",
+    }
 })

@@ -23,6 +23,8 @@ const AppProvider = ({children}) => {
     const calendarSheetRef = useRef(null);
     // popup bottom sheet ref
     const popUpSheetRef = useRef(null);
+    // popup bottom sheet ref
+    const SuccessPopUpSheetRef = useRef(null);
 
     // state to keep track if bottomsheet is open
     const [bottomSheetOpen, setBottomSheetOpen] = useState(false);
@@ -34,6 +36,8 @@ const AppProvider = ({children}) => {
     const [calendarSheetOpen, setCalendarSheetOpen] = useState(false);
     // state to keep track if pop up bottomsheet is open
     const [popUpSheetOpen, setPopUpSheetOpen] = useState(false);
+    // state to keep track if pop up bottomsheet is open
+    const [successPopUpSheetOpen, setSuccessPopUpSheetOpen] = useState(false);
 
     // useEffect to listen for onPress back button and close opened bottomsheets
     useEffect(() => {

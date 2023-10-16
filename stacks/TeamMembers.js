@@ -6,10 +6,9 @@ import {
     StyleSheet,
     TouchableWithoutFeedback,
     Keyboard,
-    BackHandler
 } from "react-native";
 // react hooks
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 // components
 import Header from "../components/Header";
 import CustomBottomSheet from "../components/CustomBottomSheet";

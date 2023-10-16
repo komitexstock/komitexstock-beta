@@ -8,6 +8,7 @@ import Input from '../components/Input';
 import CustomButton from '../components/CustomButton';
 import CustomBottomSheet from '../components/CustomBottomSheet';
 import SearchBar from '../components/SearchBar';
+import SuccessPopUp from '../components/SuccessPopUp';
 // bottomsheet components
 import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 // globals
@@ -20,7 +21,7 @@ import { windowHeight } from '../utils/helpers';
 const AddWarehouse = ({navigation}) => {
 
     // bottomsheet refs
-    const { bottomSheetRef, bottomSheetOpen } = useGlobals();
+    const { bottomSheetRef, bottomSheetOpen, popUpSheetRef } = useGlobals();
 
     // warehouse name 
     const [warehouseName, setWarehouseName] = useState("");
@@ -75,6 +76,25 @@ const AddWarehouse = ({navigation}) => {
     const closeModal = () => {
         bottomSheetRef?.current?.close();
         setActiveSelectedManager(false);
+    }
+    
+    // open pop up modal
+    const openPopUpModal = () => {
+        popUpSheetRef?.current?.present();
+    }
+
+    // close pop up modal
+    const closePopUpModal = () => {
+        popUpSheetRef?.current?.close();
+
+    }
+
+    const handleCreateWarehouse = () => {
+        openPopUpModal();
+    }
+
+    const handleConfirmAddWarehouse = () => {
+        navigation.navigate("Warehouse");
     }
     
     // disable active states for select input if back button is pressed
@@ -139,7 +159,7 @@ const AddWarehouse = ({navigation}) => {
                         unpadded={true}
                         backgroundColor={background}
                         inactive={selectedManager === null || warehouseName === "" || warehouseAddress === ""}
-                        onPress={() => {}}
+                        onPress={handleCreateWarehouse}
                     />
                 </View>
             </TouchableWithoutFeedback>
@@ -177,6 +197,17 @@ const AddWarehouse = ({navigation}) => {
                     </View>
                 </BottomSheetScrollView>
             </CustomBottomSheet>
+            <SuccessPopUp
+                popUpSheetRef={popUpSheetRef}
+                closeModal={closePopUpModal}
+                heading={"New warehouse created"}
+                height={320}
+                paragraph={<>
+                    You have successfully created a new warehouse: 
+                    <Text style={style.boldText}> 3.{warehouseName}</Text>
+                </>}
+                primaryFunction={handleConfirmAddWarehouse}
+            />
         </>
     )
 }
@@ -242,4 +273,9 @@ const style = StyleSheet.create({
         fontSize: 12,
         lineHeight: 15,
     },
+    boldText: {
+        color: black,
+        fontSize: 12,
+        fontFamily: "mulish-bold",
+    }
 })

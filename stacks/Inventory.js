@@ -213,7 +213,7 @@ const Products = ({navigation}) => {
     ];
 
     const [inventories, setInventories] = useState(() => {
-        if (authData.account_type === "Logistics") {
+        if (authData?.account_type === "Logistics") {
             return [
                 {id: "stickyLeft"},
                 {id: "stickyRight"},
@@ -240,12 +240,12 @@ const Products = ({navigation}) => {
             {!pageLoading ? (<>
                 <Header
                     navigation={navigation}
-                    stackName={authData.account_type === "Merchant" ? "Inventory" : ""}
+                    stackName={authData?.account_type === "Merchant" ? "Inventory" : ""}
                     removeBackArrow={true}
-                    inlineArrow={authData.account_type !== "Merchant"}
+                    inlineArrow={authData?.account_type !== "Merchant"}
                     backgroundColor={background}
                 />
-                {authData.account_type !== "Merchant" && (
+                {authData?.account_type !== "Merchant" && (
                     <View style={style.warehouseBannerWrapper}>
                         <View style={style.warehouseBanner}>
                             <View style={style.warehoseInfo}>
@@ -279,20 +279,20 @@ const Products = ({navigation}) => {
                     <FlatList 
                         showsVerticalScrollIndicator={false}
                         onScroll={animateHeaderOnScroll}
-                        stickyHeaderIndices={authData.account_type === "Logistics" ? [1] : [0]}
+                        stickyHeaderIndices={authData?.account_type === "Logistics" ? [1] : [0]}
                         ListHeaderComponent={
                             <View 
                                 style={[
                                     style.headerWrapper,
                                     // if account is merchant and scroll height is greater than offset activate shadow
-                                    authData.account_type === "Merchant" && scrollOffset > stickyHeaderOffset.current && {elevation: 3}
+                                    authData?.account_type === "Merchant" && scrollOffset > stickyHeaderOffset.current && {elevation: 3}
                                 ]}
                                 onLayout={e => {
 
                                     stickyHeaderOffset.current = authData.account_type === "Logistics" ? e.nativeEvent.layout.height : 0;
                                 }}
                             >
-                                { authData.account_type === "Merchant" ? (<>
+                                { authData?.account_type === "Merchant" ? (<>
                                     {/* search bar */}
                                     <SearchBar
                                         placeholder={"Search inventory"}
@@ -340,7 +340,7 @@ const Products = ({navigation}) => {
                                         style={[
                                             style.stickyHeader,
                                             // if account is logistics and scroll height is greater than offset activate shadow
-                                            authData.account_type !== "Merchant" && scrollOffset > stickyHeaderOffset.current && {elevation: 3}
+                                            authData?.account_type !== "Merchant" && scrollOffset > stickyHeaderOffset.current && {elevation: 3}
                                         ]}
                                     >
                                         {/* search bar */}
