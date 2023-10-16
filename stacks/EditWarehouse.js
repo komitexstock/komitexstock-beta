@@ -1,4 +1,12 @@
-import { StyleSheet, TouchableWithoutFeedback, Text, View, Keyboard, TouchableOpacity } from 'react-native'
+import {
+    StyleSheet,
+    TouchableWithoutFeedback,
+    Text,
+    View,
+    Keyboard,
+    TouchableOpacity,
+    Modal,
+} from 'react-native'
 // react hooks
 import React, { useEffect, useState, useRef } from 'react'
 // import 
@@ -9,6 +17,7 @@ import CustomButton from '../components/CustomButton';
 import CustomBottomSheet from '../components/CustomBottomSheet';
 import SearchBar from '../components/SearchBar';
 import SuccessPopUp from '../components/SuccessPopUp';
+import SuccessSheet from '../components/SuccessSheet';
 // bottomsheet components
 import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 // globals
@@ -26,7 +35,7 @@ const EditWarehouse = ({navigation}) => {
     const [isLoading, setIsLoading] = useState(false);
 
     // bottomsheet refs
-    const { bottomSheetRef, bottomSheetOpen, popUpSheetRef } = useGlobals();
+    const { bottomSheetRef, bottomSheetOpen, successSheetRef } = useGlobals();
 
     // warehouse name 
     const [warehouseName, setWarehouseName] = useState("Warri");
@@ -97,7 +106,7 @@ const EditWarehouse = ({navigation}) => {
         editCount.current += 1;
     }, [warehouseAddress, warehouseName, selectedManager])
 
-    console.log(editCount.current);
+    // console.log(editCount.current);
 
     const handleSaveChanges = () => {
         setIsLoading(true);
@@ -110,16 +119,17 @@ const EditWarehouse = ({navigation}) => {
 
     // open pop up modal
     const openPopUpModal = () => {
-        popUpSheetRef?.current?.present();
+        successSheetRef?.current?.present();
     }
 
     // close pop up modal
     const closePopUpModal = () => {
-        popUpSheetRef?.current?.close();
+        successSheetRef?.current?.close();
 
     }
 
     const handleConfirmEditWarehouse = () => {
+        closePopUpModal();
         navigation.navigate("Warehouse");
     }
 
@@ -217,9 +227,8 @@ const EditWarehouse = ({navigation}) => {
                     </View>
                 </BottomSheetScrollView>
             </CustomBottomSheet>
-            <SuccessPopUp
-                popUpSheetRef={popUpSheetRef}
-                closeModal={closePopUpModal}
+            <SuccessSheet
+                successSheetRef={successSheetRef}
                 heading={"Warehouse updated successfully"}
                 height={320}
                 paragraph={<>
@@ -296,5 +305,14 @@ const style = StyleSheet.create({
         color: black,
         fontSize: 12,
         fontFamily: "mulish-bold",
+    },
+    modalWrapper: {
+        width: "100%",
+        height: 400,
+        backgroundColor: 'red',
+    },
+    modal: {
+        height: 500,
+        backgroundColor: "transparent",
     }
 })

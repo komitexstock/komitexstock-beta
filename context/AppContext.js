@@ -24,7 +24,7 @@ const AppProvider = ({children}) => {
     // popup bottom sheet ref
     const popUpSheetRef = useRef(null);
     // popup bottom sheet ref
-    const SuccessPopUpSheetRef = useRef(null);
+    const successSheetRef = useRef(null);
 
     // state to keep track if bottomsheet is open
     const [bottomSheetOpen, setBottomSheetOpen] = useState(false);
@@ -36,8 +36,8 @@ const AppProvider = ({children}) => {
     const [calendarSheetOpen, setCalendarSheetOpen] = useState(false);
     // state to keep track if pop up bottomsheet is open
     const [popUpSheetOpen, setPopUpSheetOpen] = useState(false);
-    // state to keep track if pop up bottomsheet is open
-    const [successPopUpSheetOpen, setSuccessPopUpSheetOpen] = useState(false);
+    // state to keep track if success up bottomsheet is open
+    const [successSheetOpen, setSuccessSheetOpen] = useState(false);
 
     // useEffect to listen for onPress back button and close opened bottomsheets
     useEffect(() => {
@@ -57,6 +57,10 @@ const AppProvider = ({children}) => {
             } else if (popUpSheetOpen) {
                 // if popup bottom sheet is open, close it
                 popUpSheetRef?.current.close();
+                return true;
+
+            } else if (successSheetOpen) {
+                // if succes bottom sheet is open disable back buttons
                 return true;
 
             } else if (stackedSheetOpen) {
@@ -83,7 +87,7 @@ const AppProvider = ({children}) => {
     
         return () => backHandler.remove();
 
-    }, [bottomSheetOpen, stackedSheetOpen, filterSheetOpen, calendarSheetOpen, popUpSheetOpen]);
+    }, [bottomSheetOpen, stackedSheetOpen, filterSheetOpen, successSheetOpen, calendarSheetOpen, popUpSheetOpen]);
 
     // function to listen for change in navigation, and update currentStack
     useEffect(() => {
@@ -104,6 +108,7 @@ const AppProvider = ({children}) => {
                 filterSheetRef,
                 calendarSheetRef,
                 popUpSheetRef,
+                successSheetRef,
                 bottomSheetOpen,
                 calendarSheetOpen,
                 popUpSheetOpen,
@@ -111,7 +116,8 @@ const AppProvider = ({children}) => {
                 setCalendarSheetOpen,
                 setFilterSheetOpen,
                 setPopUpSheetOpen,
-                setStackedSheetOpen
+                setStackedSheetOpen,
+                setSuccessSheetOpen,
             }}
         >
            {children}

@@ -105,7 +105,7 @@ const TeamMembers = ({navigation}) => {
             setPopUp({
                 type: type,
                 title: "Select Role",
-                snapPoints: ["30%"],
+                snapPoints: [250],
                 centered: true,
                 closeModal: closePopUpModal,
                 hideCloseButton: true,

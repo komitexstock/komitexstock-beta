@@ -13,11 +13,11 @@ import { black, bodyText } from "../style/colors";
 // globals
 import { useGlobals } from "../context/AppContext";
 // components
-import CautionPrompt from '../components/CautionPrompt';
-import SuccessPrompt from '../components/SuccessPrompt';
-import CustomButton from '../components/CustomButton';
+import CautionPrompt from './CautionPrompt';
+import SuccessPrompt from './SuccessPrompt';
+import CustomButton from './CustomButton';
 
-const SuccessPopUpSheet = ({ref, closeModal, height, heading, paragraph, secondaryFunction, primaryFunction, secondaryButtonText, primaryButtonText}) => {
+const SuccessSheet = ({successSheetRef, caution, height, heading, paragraph, secondaryFunction, primaryFunction, secondaryButtonText, primaryButtonText}) => {
     // bottomsheet modal ref => useRef variable for bottomsheet modal ref
     // hideCloseButton, centered => boolean
     // closeModal => function
@@ -26,21 +26,22 @@ const SuccessPopUpSheet = ({ref, closeModal, height, heading, paragraph, seconda
     // children => jsx
     // sheetSubtitle, sheetTitle => string
 
-    const { setPopUpSheetOpen } = useGlobals()
+    const { setSuccessSheetOpen } = useGlobals()
 
-    const modalHeight = useMemo(() => height, [height]);
+    // return default height of 320 if height prop is not given
+    const modalHeight = useMemo(() => height ? height : 320, [height]);
     // const snapPoints = snapPointsArray;
 
     // render popup bottomsheet modal backdrop 
     const renderBackdrop = useCallback(
         props => (
-          <BottomSheetBackdrop
+            <BottomSheetBackdrop
                 {...props}
                 disappearsOnIndex={-1}
                 appearsOnIndex={0}
                 opacity={0.3}
-                onPress={closeModal}
-          />
+                onPress={primaryFunction}
+            />
         ),
         []
     );
@@ -49,7 +50,7 @@ const SuccessPopUpSheet = ({ref, closeModal, height, heading, paragraph, seconda
     return (
         <View style={style.container}>
             <BottomSheetModal
-                ref={ref}
+                ref={successSheetRef}
                 index={0}
                 snapPoints={[modalHeight]}
                 enablePanDownToClose={false}
@@ -69,8 +70,8 @@ const SuccessPopUpSheet = ({ref, closeModal, height, heading, paragraph, seconda
                     <ModalHandle />
                 )}
                 onChange={(index) => {
-                    if (index === -1) return setPopUpSheetOpen(false)
-                    return setPopUpSheetOpen(true);
+                    if (index === -1) return setSuccessSheetOpen(false)
+                    return setSuccessSheetOpen(true);
                 }}
             >
                 {/* sheetitle */}
@@ -78,7 +79,7 @@ const SuccessPopUpSheet = ({ref, closeModal, height, heading, paragraph, seconda
                     {/* display close icon by default */}
                     <TouchableOpacity 
                         style={style.closeButtonWrapper} 
-                        onPress={closeModal}
+                        onPress={primaryFunction}
                     >
                         <CloseIcon />
                     </TouchableOpacity>
@@ -95,6 +96,7 @@ const SuccessPopUpSheet = ({ref, closeModal, height, heading, paragraph, seconda
                         <View style={style.popUpButtonWrapper}>
                             { secondaryFunction && (
                                 <CustomButton
+                                    secondaryButton={true}
                                     name={secondaryButtonText}
                                     shrinkWrapper={true}
                                     onPress={secondaryFunction}
@@ -102,7 +104,6 @@ const SuccessPopUpSheet = ({ref, closeModal, height, heading, paragraph, seconda
                                 />
                             )}
                             <CustomButton
-                                secondaryButton={true}
                                 name={primaryButtonText ? primaryButtonText : "Done"}
                                 shrinkWrapper={true}
                                 onPress={primaryFunction}
@@ -185,4 +186,4 @@ const style = StyleSheet.create({
     }
 });
 
-export default SuccessPopUpSheet;
+export default SuccessSheet;

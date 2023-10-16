@@ -1,5 +1,5 @@
 // react native components
-import { TouchableOpacity, StyleSheet, View, Text, Dimensions } from "react-native";
+import { TouchableOpacity, StyleSheet, View, Text } from "react-native";
 // bottomsheet components
 import { BottomSheetModal, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 // react hooks
@@ -12,8 +12,8 @@ import CloseIcon from "../assets/icons/CloseIcon";
 import { bodyText } from "../style/colors";
 // gloabls
 import { useGlobals } from "../context/AppContext";
+import { windowHeight, windowWidth } from "../utils/helpers";
 
-const windowWidth = Dimensions.get("window").width;
 
 const PopUpBottomSheet = ({bottomSheetModalRef, hideCloseButton, closeModal, snapPointsArray, autoSnapAt, children, sheetTitle, sheetSubtitle, centered}) => {
     // bottomsheet modal ref => useRef variable for bottomsheet modal ref
@@ -59,10 +59,14 @@ const PopUpBottomSheet = ({bottomSheetModalRef, hideCloseButton, closeModal, sna
                     borderRadius: 24,
                     marginHorizontal: 20,
                     // styling to center modal
-                    marginTop: centered ? -windowWidth/1.3 : 0,
-                    marginBottom: centered ? windowWidth/1.3 : 0,
+                    transform: [
+                        // {translateX: -windowWidth * 0.7},
+                        {translateY: centered ?-windowHeight * 0.3 : 0},
+                    ],
                 }}
                 style={{
+                    position: "relative",
+                    top: 0,
                 }}
                 // change the default bottomsheet handle
                 handleComponent={() => (

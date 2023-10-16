@@ -8,7 +8,7 @@ import Input from '../components/Input';
 import CustomButton from '../components/CustomButton';
 import CustomBottomSheet from '../components/CustomBottomSheet';
 import SearchBar from '../components/SearchBar';
-import SuccessPopUp from '../components/SuccessPopUp';
+import SuccessSheet from '../components/SuccessSheet';
 // bottomsheet components
 import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 // globals
@@ -20,8 +20,11 @@ import { windowHeight } from '../utils/helpers';
 
 const AddWarehouse = ({navigation}) => {
 
+    // isloading state
+    const [isLoading, setIsLoading] = useState(false);
+
     // bottomsheet refs
-    const { bottomSheetRef, bottomSheetOpen, popUpSheetRef } = useGlobals();
+    const { bottomSheetRef, bottomSheetOpen, popUpSheetRef, successSheetRef } = useGlobals();
 
     // warehouse name 
     const [warehouseName, setWarehouseName] = useState("");
@@ -80,7 +83,8 @@ const AddWarehouse = ({navigation}) => {
     
     // open pop up modal
     const openPopUpModal = () => {
-        popUpSheetRef?.current?.present();
+        // popUpSheetRef?.current?.present();
+        successSheetRef?.current?.present();
     }
 
     // close pop up modal
@@ -90,10 +94,16 @@ const AddWarehouse = ({navigation}) => {
     }
 
     const handleCreateWarehouse = () => {
-        openPopUpModal();
+        setIsLoading(true);
+
+        setTimeout(() => {
+            setIsLoading(false);
+            openPopUpModal();
+        }, 3000);
     }
 
     const handleConfirmAddWarehouse = () => {
+        popUpSheetRef?.current?.close();
         navigation.navigate("Warehouse");
     }
     
@@ -157,6 +167,7 @@ const AddWarehouse = ({navigation}) => {
                     <CustomButton
                         name={"Create Warehouse"}
                         unpadded={true}
+                        isLoading={isLoading}
                         backgroundColor={background}
                         inactive={selectedManager === null || warehouseName === "" || warehouseAddress === ""}
                         onPress={handleCreateWarehouse}
@@ -197,14 +208,13 @@ const AddWarehouse = ({navigation}) => {
                     </View>
                 </BottomSheetScrollView>
             </CustomBottomSheet>
-            <SuccessPopUp
-                popUpSheetRef={popUpSheetRef}
-                closeModal={closePopUpModal}
+            <SuccessSheet
+                successSheetRef={successSheetRef}
                 heading={"New warehouse created"}
                 height={320}
                 paragraph={<>
                     You have successfully created a new warehouse: 
-                    <Text style={style.boldText}> 3.{warehouseName}</Text>
+                    <Text style={style.boldText}> {warehouseName}</Text>
                 </>}
                 primaryFunction={handleConfirmAddWarehouse}
             />
