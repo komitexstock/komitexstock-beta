@@ -103,7 +103,7 @@ const AddWarehouse = ({navigation}) => {
     }
 
     const handleConfirmAddWarehouse = () => {
-        popUpSheetRef?.current?.close();
+        closePopUpModal();
         navigation.navigate("Warehouse");
     }
     

@@ -113,23 +113,22 @@ const EditWarehouse = ({navigation}) => {
         
         setTimeout(() => {
             setIsLoading(false);
-            openPopUpModal();
+            openSuccessModal();
         }, 3000);
     }
 
     // open pop up modal
-    const openPopUpModal = () => {
+    const openSuccessModal = () => {
         successSheetRef?.current?.present();
     }
 
     // close pop up modal
-    const closePopUpModal = () => {
+    const closeSuccessModal = () => {
         successSheetRef?.current?.close();
-
     }
 
     const handleConfirmEditWarehouse = () => {
-        closePopUpModal();
+        closeSuccessModal();
         navigation.navigate("Warehouse");
     }
 

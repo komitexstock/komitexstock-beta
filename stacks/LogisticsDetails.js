@@ -27,8 +27,6 @@ import StatCard from "../components/StatCard";
 import Accordion from "../components/Accordion";
 import CustomButton from "../components/CustomButton";
 import ReviewCard from "../components/ReviewCard";
-import PopUpBottomSheet from "../components/PopUpBottomSheet";
-import SuccessPrompt from "../components/SuccessPrompt";
 // icons
 import VerifiedIcon from '../assets/icons/VerifiedIcon';
 import EmailIcon from "../assets/icons/EmailIcon";
@@ -54,7 +52,7 @@ if (Platform.OS === 'android') {
 const LogisticsDetails = ({navigation}) => {
 
     // calendar sheet
-    const { popUpSheetRef, successSheetRef } = useGlobals();
+    const { successSheetRef } = useGlobals();
 
     // states and delivery locations
     const states = [
@@ -559,23 +557,23 @@ const LogisticsDetails = ({navigation}) => {
     };
 
     // close popup modal bottomsheet function
-    const closePopUpModal = () => {
-        popUpSheetRef.current?.close();
+    const closeSuccessModal = () => {
+        successSheetRef.current?.close();
     };
 
     // function to open bottom sheet modal
-    const openPopUpModal = () => {
-        popUpSheetRef.current?.present();
+    const openSuccessModal = () => {
+        successSheetRef.current?.present();
     }
 
     // handle add logistics 
     const handleAddLogistics = () => {
-        openPopUpModal();
+        openSuccessModal();
     }
     
 
     const handleAddLogisticsSuccess = () => {
-        closePopUpModal();
+        closeSuccessModal();
         navigation.navigate("Inventory");
     }
     

@@ -13,6 +13,7 @@ import SelectInput from "../components/SelectInput";
 import CalendarSheet from "../components/CalendarSheet";
 import CustomBottomSheet from "../components/CustomBottomSheet";
 import PopUpBottomSheet from "../components/PopUpBottomSheet";
+import SuccessSheet from "../components/SuccessSheet";
 // colors
 import { background, black, bodyText} from "../style/colors";
 // icons
@@ -30,7 +31,7 @@ import { useGlobals } from "../context/AppContext";
 const GenerateBusinessReport = ({navigation}) => {
 
     // bottomsheets refs
-    const { bottomSheetRef, popUpSheetRef, calendarSheetRef, calendarSheetOpen, bottomSheetOpen } = useGlobals();
+    const { bottomSheetRef, popUpSheetRef, successSheetRef, calendarSheetRef, calendarSheetOpen, bottomSheetOpen } = useGlobals();
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -123,12 +124,12 @@ const GenerateBusinessReport = ({navigation}) => {
     }
 
     // close popup modal bottomsheet function
-    const closePopUpModal = () => {
-        popUpSheetRef.current?.close();
+    const closeSuccessModal = () => {
+        successSheetRef.current?.close();
     };
     // function to open bottom sheet modal
-    const openPopUpModal = () => {
-        popUpSheetRef.current?.present();
+    const openSuccessModal = () => {
+        successSheetRef.current?.present();
     }
 
     const handleGenerateBusinessReport = () => {
@@ -136,7 +137,7 @@ const GenerateBusinessReport = ({navigation}) => {
 
         setTimeout(() => {
             setIsLoading(false);
-            openPopUpModal();
+            openSuccessModal();
         }, 3000);
     }
 
@@ -257,36 +258,19 @@ const GenerateBusinessReport = ({navigation}) => {
                 </View>
             </CustomBottomSheet>
 
-            {/* pop up modal */}
-            <PopUpBottomSheet
-                bottomSheetModalRef={popUpSheetRef}
-                closeModal={closePopUpModal}
-                snapPointsArray={[320]}
-                autoSnapAt={0}
-                sheetTitle={false}
-                sheetSubtitle={false}
-            >   
-                {/* // modal content to acknowledge deactivation */}
-                <View style={style.popUpContent}>
-                    <SuccessPrompt />
-                    <Text style={style.popUpHeading}>
-                        Report Generated Successfully
+            {/* success up modal */}
+            <SuccessSheet
+                successSheetRef={successSheetRef}
+                heading={"Report Generated Successfully"}
+                height={320}
+                paragraph={<>
+                    Your report has been sent to &nbsp;
+                    <Text  style={style.boldParagraph}>
+                        raymondreddington@komitex.ng
                     </Text>
-                    <Text style={style.popUpParagraph}>
-                        Your report has been sent to &nbsp;
-                        <Text  style={style.boldParagraph}>
-                            raymondreddington@komitex.ng
-                        </Text>
-                    </Text>
-                    <CustomButton
-                        name={"Done"}
-                        shrinkWrapper={true}
-                        onPress={closePopUpModal}
-                        unpadded={true}
-                    />
-                </View>
-            </PopUpBottomSheet>
-
+                </>}
+                primaryFunction={closeSuccessModal}
+            />
         </>
     );
 }

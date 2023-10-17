@@ -29,7 +29,7 @@ import SelectInput from "../components/SelectInput";
 import CalendarSheet from "../components/CalendarSheet";
 import FilterPill from "../components/FilterPill";
 // react hooks
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 // bottomsheet component
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 // colors

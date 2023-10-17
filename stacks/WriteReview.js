@@ -11,10 +11,9 @@ import {
 // components
 import Header from "../components/Header";
 import Input from "../components/Input";
-import PopUpBottomSheet from "../components/PopUpBottomSheet";
-import SuccessPrompt from "../components/SuccessPrompt";
+import SuccessSheet from "../components/SuccessSheet";
 // react hooks
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { background, black, bodyText, neutral } from "../style/colors";
 import CustomButton from "../components/CustomButton";
 // icons
@@ -26,7 +25,7 @@ import { useGlobals } from "../context/AppContext";
 const WriteReview = ({navigation}) => {
 
     // popup sheet ref
-    const { popUpSheetRef } = useGlobals();
+    const { popUpSheetRef, successSheetRef } = useGlobals();
 
     const [deliverySpeedRating, setDeliverySpeedRating] = useState(0);
     const [inventoryManagementRating, setInventoryManagementRating] = useState(0);
@@ -93,21 +92,21 @@ const WriteReview = ({navigation}) => {
     );
 
     // close popup modal bottomsheet function
-    const closePopUpModal = () => {
-        popUpSheetRef.current?.close();
+    const closeSuccessModal = () => {
+        successSheetRef.current?.close();
     };
     // function to open bottom sheet modal
-    const openPopUpModal = () => {
-        popUpSheetRef.current?.present();
+    const openSuccessModal = () => {
+        successSheetRef.current?.present();
     }
 
     const handleSubmitReview = () => {
-        openPopUpModal();
+        openSuccessModal();
     }
     
 
     const handleSubmitReviewSuccess = () => {
-        closePopUpModal();
+        closeSuccessModal();
         navigation.navigate("Home");
     }
 
@@ -175,31 +174,16 @@ const WriteReview = ({navigation}) => {
                     </View>
                 </ScrollView>
             </TouchableWithoutFeedback>
-            {/* pop up modal */}
-            <PopUpBottomSheet
-                bottomSheetModalRef={popUpSheetRef}
-                closeModal={handleSubmitReviewSuccess}
-                snapPointsArray={["40%"]}
-                autoSnapAt={0}
-                sheetTitle={false}
-                sheetSubtitle={false}
-            >   
-                <View style={style.popUpContent}>
-                    <SuccessPrompt />
-                    <Text style={style.popUpHeading}>
-                        Review submitted for Komitex Logistics
-                    </Text>
-                    <Text style={style.popUpParagraph}>
-                        Thanks for your review! We value your feedback to improve our services
-                    </Text>
-                    <CustomButton
-                        name={"Done"}
-                        unpadded={true}
-                        shrinkWrapper={true}
-                        onPress={handleSubmitReviewSuccess}
-                    />
-                </View>
-            </PopUpBottomSheet>
+            {/* success sheet */}
+            <SuccessSheet
+                successSheetRef={successSheetRef}
+                heading={"Review submitted for Komitex Logistics"}
+                height={320}
+                paragraph={<>
+                    Thanks for your review! We value your feedback to improve our services
+                </>}
+                primaryFunction={handleSubmitReviewSuccess}
+            />
         </>
     );
 }
