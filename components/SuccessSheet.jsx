@@ -94,6 +94,12 @@ const SuccessSheet = ({successSheetRef, caution, height, heading, paragraph, sec
                             {paragraph}
                         </Text>
                         <View style={style.popUpButtonWrapper}>
+                            <CustomButton
+                                name={primaryButtonText ? primaryButtonText : "Done"}
+                                shrinkWrapper={true}
+                                onPress={primaryFunction}
+                                unpadded={true}
+                            />
                             { secondaryFunction && (
                                 <CustomButton
                                     secondaryButton={true}
@@ -103,12 +109,6 @@ const SuccessSheet = ({successSheetRef, caution, height, heading, paragraph, sec
                                     unpadded={true}
                                 />
                             )}
-                            <CustomButton
-                                name={primaryButtonText ? primaryButtonText : "Done"}
-                                shrinkWrapper={true}
-                                onPress={primaryFunction}
-                                unpadded={true}
-                            />
                         </View>
                     </View>
                 </View>

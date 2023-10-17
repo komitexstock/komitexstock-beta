@@ -22,6 +22,7 @@ import SelectRolePopUpContent from "../components/SelectRolePopUpContent";
 import TeamMemberCard from "../components/TeamMemberCard";
 import SuccessPrompt from "../components/SuccessPrompt";
 import CautionPrompt from "../components/CautionPrompt";
+import SuccessSheet from "../components/SuccessSheet";
 // colors
 import { background, black, bodyText, white } from "../style/colors";
 // bottomsheet components
@@ -32,11 +33,16 @@ import TeamMembersSkeleton from "../skeletons/TeamMembersSkeleton";
 import { windowHeight } from "../utils/helpers";
 // globals
 import { useGlobals } from "../context/AppContext";
+// useAuth
+import { useAuth } from "../context/AuthContext";
 
-const TeamMembers = ({navigation}) => {
+const TeamMembers = ({ navigation }) => {
+
+    // auth data
+    const { authData } = useAuth();
 
     // bottoms sheef refs
-    const { bottomSheetRef, popUpSheetRef, popUpSheetOpen } = useGlobals();
+    const { bottomSheetRef, successSheetRef, popUpSheetRef, popUpSheetOpen } = useGlobals();
 
     // page loading state
     const [pageLoading, setPageLoading] = useState(true);
@@ -89,6 +95,7 @@ const TeamMembers = ({navigation}) => {
     const closeAllModal = () => {
         closeModal();
         closePopUpModal();
+        closeSuccessModal();
         // reset all inputs
         setFirstName("");
         setLastName("");
@@ -100,35 +107,90 @@ const TeamMembers = ({navigation}) => {
     const openPopUpModal = (type) => {
         setForceBlur(true);
         popUpSheetRef.current?.present();
-        if (type === "Add" || type === "Edit") {
-            setRoleInputActive(true);
-            setPopUp({
-                type: type,
-                title: "Select Role",
-                snapPoints: [250],
-                centered: true,
-                closeModal: closePopUpModal,
-                hideCloseButton: true,
-            });
-        } else if (type === "AddSuccess" || type === "UpdateSuccess") {
-            setPopUp({
-                type: type,
-                title: "",
-                snapPoints: ["38%"],
-                centered: false,
-                closeModal: closeAllModal,
-                hideCloseButton: false,
-            });
-        } else if (type === "Deactivate") {
-            setPopUp({
-                type: type,
-                title: "",
-                snapPoints: ["45%"],
-                centered: false,
-                closeModal: closePopUpModal,
-                hideCloseButton: false,
-            })
+        setRoleInputActive(true);
+        setPopUp({
+            type: type,
+        });
+    }
+
+    // succes modal state
+    const [successModal, setSuccessModal] = useState({
+        heading: '',
+        height: 320,
+        paragragh: <></>,
+        caution: false,
+        primaryFunction: () => {},
+        primaryButtonText: '',
+        secondaryFunction: () => {},
+        secondaryButtonText: '',
+    })
+
+    // function to open success modal
+    const openSuccessModal = (type) => {
+        successSheetRef.current?.present();
+
+        switch (type) {
+            case "Deactivate":
+                setSuccessModal({
+                    heading: 'Deactivte User',
+                    height: 381,
+                    paragragh: <>
+                        Are you sure you want to deactivate 
+                        <Text style={style.boldText}> Felix Jones</Text>
+                    </>,
+                    caution: true,
+                    primaryFunction: () => openSuccessModal("Confirmed"),
+                    primaryButtonText: 'Yes, deactivate',
+                    secondaryFunction: closeSuccessModal,
+                    secondaryButtonText: 'No, cancel',
+                })
+                break;
+        
+            case "Confirmed":
+                setSuccessModal({
+                    heading: 'Felix Jones Succesfully Deactivated',
+                    height: 320,
+                    paragragh: <>
+                        You have successfully deactivated 
+                        <Text style={style.boldText}> Felix Jones</Text>
+                    </>,
+                    primaryFunction: closeAllModal,
+                })
+                break;
+
+            case "UpdateSuccess":
+                setSuccessModal({
+                    heading: 'Role Updated Succesfully',
+                    height: 320,
+                    paragragh: <>
+                        You have successfully updated Felix Johnson role to a
+                        <Text style={style.boldText}> {editRole}</Text>
+                    </>,
+                    primaryFunction: closeAllModal,
+                })
+                break;
+
+            case "AddSuccess":
+                setSuccessModal({
+                    heading: <>{firstName + ' ' + lastName } Succesfully Added</>,
+                    height: 320,
+                    paragragh: <>
+                        Hi {authData?.full_name}, you have successfully added   
+                        <Text style={style.boldText}> {firstName + ' ' + lastName} </Text>
+                        to your team
+                    </>,
+                    primaryFunction: closeAllModal,
+                })
+                break;
+        
+            default:
+                break;
         }
+    }
+
+    // function to close success modal
+    const closeSuccessModal = () => {
+        successSheetRef.current?.close();
     }
 
     // set role select button as inactive if back button is pressed and role modal is opened
@@ -279,24 +341,14 @@ const TeamMembers = ({navigation}) => {
             (item) => item === null || item === ''
     );
 
-    // function confirm deactivation
-    const handleDeactivation = () => {
-        setPopUp({
-            type: "Confirmed",
-            title: "",
-            centered: false,
-            snapPoints: ["38%"],
-            closeModal: closeAllModal,
-            popUpVisible: true
-        })
-    }
-
+    // function to update role
     const handleUpdateRole = () => {
-        openPopUpModal("UpdateSuccess");
+        openSuccessModal("UpdateSuccess");
     }
 
+    // function to confirm deactivation
     const handleDeactivateUser = () => {
-        openPopUpModal("Deactivate");
+        openSuccessModal("Deactivate");
     }
 
     // render TeamMember page
@@ -379,13 +431,14 @@ const TeamMembers = ({navigation}) => {
                             name={"Add New Team Member"}
                             shrinkWrapper={true}
                             onPress={() => {
-                                openPopUpModal("AddSuccess")
+                                openSuccessModal("AddSuccess")
                             }}
                             inactive={emptyFields}
                             unpadded={true}
                         />
                     </>
                 )}
+
                 {/* edit existing member role modal content */}
                 {modal === "Edit" && (
                     <View style={style.modalWrapper}>
@@ -427,16 +480,17 @@ const TeamMembers = ({navigation}) => {
                         </View>
                     </View>
                 )}
+
             </CustomBottomSheet>
             {/* popup bottom sheet */}
             <PopUpBottomSheet
                 bottomSheetModalRef={popUpSheetRef}
-                closeModal={popUp.closeModal}
-                snapPointsArray={popUp.snapPoints}
+                closeModal={closePopUpModal}
+                snapPointsArray={[250]}
                 autoSnapAt={0}
-                sheetTitle={popUp.title}
-                hideCloseButton={popUp.hideCloseButton}
-                centered={popUp.centered}
+                sheetTitle={"Select Role"}
+                hideCloseButton={true}
+                centered={true}
             >   
                 {/* select role pop up for editing team member role */}
                 { popUp.type === "Edit" && 
@@ -451,92 +505,20 @@ const TeamMembers = ({navigation}) => {
                         hanldeRoleSelect={hanldeRoleSelect}
                     />
                 }
-
-                {/* deactivation confirmation popup */}
-                { popUp.type === "Deactivate" &&
-                    <View style={style.popUpContent}>
-                        <CautionPrompt />
-                        <Text style={style.popUpHeading}>
-                            Deactivate User
-                        </Text>
-                        <Text style={style.popUpParagraph}>
-                            Are you sure you want to deactivate Felix Jones
-                        </Text>
-                        <View style={style.popUpButtonWrapper}>
-                            <CustomButton
-                                name={"Yes, deactivate"}
-                                shrinkWrapper={true}
-                                onPress={handleDeactivation}
-                                unpadded={true}
-                            />
-                            <CustomButton
-                                secondaryButton={true}
-                                name={"No, cancel"}
-                                shrinkWrapper={true}
-                                onPress={closePopUpModal}
-                                unpadded={true}
-                            />
-                        </View>
-                    </View>
-                }
-
-                {/* deactivation confirmed popup */}
-                { popUp.type === "Confirmed" &&  
-                    <View style={style.popUpContent}>
-                        <SuccessPrompt />
-                        <Text style={style.popUpHeading}>
-                            Felix Jones Succesfully Deactivated
-                        </Text>
-                        <Text style={style.popUpParagraph}>
-                            You have successfully deactivated Felix Jones
-                        </Text>
-                        <CustomButton
-                            name={"Done"}
-                            shrinkWrapper={true}
-                            onPress={closeAllModal}
-                            unpadded={true}
-                        />
-                    </View>
-                }
-
-                {/* new member added successfully modal popup */}
-                { popUp.type === "AddSuccess" &&  
-                    <View style={style.popUpContent}>
-                        <SuccessPrompt />
-                        <Text style={style.popUpHeading}>
-                            {firstName + ' ' + lastName } Succesfully Added
-                        </Text>
-                        <Text style={style.popUpParagraph}>
-                            Hi Raymond, you have successfully added {firstName + ' ' + lastName } to your team
-                        </Text>
-                        <CustomButton
-                            name={"Done"}
-                            shrinkWrapper={true}
-                            onPress={closeAllModal}
-                            unpadded={true}
-                        />
-                    </View>
-                }
-
-                {/* existing member role updated successfully modal popup */}
-                { popUp.type === "UpdateSuccess" &&  
-                    <View style={style.popUpContent}>
-                        <SuccessPrompt />
-                        <Text style={style.popUpHeading}>
-                            Role Updated Succesfully
-                        </Text>
-                        <Text style={style.popUpParagraph}>
-                            You have successfully updated Felix Johnson role to a {editRole}
-                        </Text>
-                        <CustomButton
-                            name={"Done"}
-                            shrinkWrapper={true}
-                            onPress={closeAllModal}
-                            unpadded={true}
-                        />
-                    </View>
-                }
             </PopUpBottomSheet>
+            {/* success bottom sheet */}
+            {/* success up modal */}
+            <SuccessSheet
+                successSheetRef={successSheetRef}
+                heading={successModal?.heading}
+                height={successModal?.height}
+                paragraph={successModal?.paragragh}
+                caution={successModal?.caution}
+                primaryFunction={successModal?.primaryFunction}
+                primaryButtonText={successModal?.primaryButtonText}
+                secondaryFunction={successModal?.secondaryFunction}
+                secondaryButtonText={successModal?.secondaryButtonText}
+            />
         </>
     );
 }
@@ -663,7 +645,11 @@ const style = StyleSheet.create({
         alignItems: 'center',
         width: '100%',
         gap: 16,
+    },
+    boldText: {
+        fontFamily: "mulish-semibold",
     }
+
 })
  
 export default TeamMembers;
