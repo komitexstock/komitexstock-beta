@@ -490,12 +490,11 @@ const DeactivateLogistics = ({navigation}) => {
                                             source={require('../assets/images/komitex.png')}
                                             style={style.logisticsImage}
                                         />
-                                        <Text style={style.headerText} >Komitex Logistics</Text>
+                                        <Text style={style.headerText}>Komitex Logistics</Text>
                                         <VerifiedIcon />
                                     </View>
-                                } 
-                                iconFunction={null} 
-                                icon={null} 
+                                }  
+                                component={true} 
                                 unpadded={true}
                             />
 

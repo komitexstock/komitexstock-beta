@@ -6,7 +6,7 @@ import ArrowLeft from "../assets/icons/ArrowLeft";
 import { black, white } from "../style/colors";
 
 
-const Header = ({navigation, navigateTo, stackName, iconFunction, icon, removeBackArrow, inlineArrow, backgroundColor, unpadded, viewStyle}) => {
+const Header = ({navigation, navigateTo, stackName, iconFunction, icon, removeBackArrow, inlineArrow, backgroundColor, unpadded, viewStyle, component}) => {
     // stack name => string
     // iconfunction => function
     // icon => jsx component
@@ -52,7 +52,11 @@ const Header = ({navigation, navigateTo, stackName, iconFunction, icon, removeBa
                     </TouchableOpacity>
                 )}
                 {/* Stack name */}
-                <Text style={style.headerText}>{stackName}</Text>
+                {component ? <>
+                    {stackName}
+                </> : <>
+                    <Text style={style.headerText}>{stackName}</Text>
+                </>}
                 {/* right aligned icon usually a menu icon */}
                 { icon && (
                     <TouchableOpacity

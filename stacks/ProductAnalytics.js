@@ -178,8 +178,7 @@ const ProductAnalytics = ({navigation}) => {
                                     <Text style={style.headerText} >Maybach Sunglasses</Text>
                                 </View>
                             } 
-                            iconFunction={null} 
-                            icon={null} 
+                            component={true} 
                             unpadded={true}
                         />
                         <View style={style.chartContainer}>

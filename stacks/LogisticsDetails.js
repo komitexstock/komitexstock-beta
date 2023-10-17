@@ -35,8 +35,9 @@ import EmailIcon from "../assets/icons/EmailIcon";
 import PhoneIcon from "../assets/icons/PhoneIcon";
 import StarIcon from "../assets/icons/StarIcon";
 import LocationIcon from "../assets/icons/LocationIcon";
+import SuccessSheet from "../components/SuccessSheet";
 // react hooks
-import { useRef, useState } from "react";
+import { useState } from "react";
 // skeleton
 import LogisticsDetailsSkeleton from "../skeletons/LogisticsDetailsSkeleton";
 // globals
@@ -53,7 +54,7 @@ if (Platform.OS === 'android') {
 const LogisticsDetails = ({navigation}) => {
 
     // calendar sheet
-    const { popUpSheetRef } = useGlobals();
+    const { popUpSheetRef, successSheetRef } = useGlobals();
 
     // states and delivery locations
     const states = [
@@ -427,6 +428,9 @@ const LogisticsDetails = ({navigation}) => {
         }
     ];
 
+    // is loading state
+    const [isLoading, setIsLoading] = useState(false); 
+
     // page loading state
     const [pageLaoding, setPageLoading] = useState(true);
 
@@ -597,9 +601,8 @@ const LogisticsDetails = ({navigation}) => {
                                         <Text style={style.headerText} >Komitex Logistics</Text>
                                         <VerifiedIcon />
                                     </View>
-                                } 
-                                iconFunction={null} 
-                                icon={null} 
+                                }
+                                component={true}
                                 unpadded={true}
                             />
 
@@ -765,31 +768,16 @@ const LogisticsDetails = ({navigation}) => {
                     </View>
                 </ScrollView>
             ) : <LogisticsDetailsSkeleton />}
-            {/* pop up modal */}
-            <PopUpBottomSheet
-                bottomSheetModalRef={popUpSheetRef}
-                closeModal={handleAddLogisticsSuccess}
-                snapPointsArray={["40%"]}
-                autoSnapAt={0}
-                sheetTitle={false}
-                sheetSubtitle={false}
-            >   
-                <View style={style.popUpContent}>
-                    <SuccessPrompt />
-                    <Text style={style.popUpHeading}>
-                        Komitex Succesfully Added
-                    </Text>
-                    <Text style={style.popUpParagraph}>
-                        Hi Raymond, You have successfully linked your store to Komitex Logistics
-                    </Text>
-                    <CustomButton
-                        name={"Done"}
-                        shrinkWrapper={true}
-                        onPress={handleAddLogisticsSuccess}
-                        unpadded={true}
-                    />
-                </View>
-            </PopUpBottomSheet>
+            {/* success sheet */}
+            <SuccessSheet
+                successSheetRef={successSheetRef}
+                heading={"Komitex Successfully Added"}
+                height={320}
+                paragraph={<>
+                    Hi Raymond, You have successfully linked your store to Komitex Logistics
+                </>}
+                primaryFunction={handleAddLogisticsSuccess}
+            />
         </>
     );
 }
@@ -807,6 +795,7 @@ const style = StyleSheet.create({
         alignItems: 'center',
         flexDirection: 'row',
         gap: 4,
+        marginTop: 4,
     },
     main: {
         display: 'flex',

@@ -177,8 +177,7 @@ const LogisticsAnalytics = ({navigation}) => {
                                     <VerifiedIcon />
                                 </View>
                             } 
-                            iconFunction={null} 
-                            icon={null} 
+                            component={true}
                             unpadded={true}
                         />
                         <View style={style.chartContainer}>
