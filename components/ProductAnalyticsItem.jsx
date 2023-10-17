@@ -4,6 +4,7 @@ import { TouchableOpacity, Image, View, Text, StyleSheet } from 'react-native';
 import { black, bodyText, white } from '../style/colors';
 // components
 import PercentageChange from './PercentageChange';
+import Avatar from './Avatar';
 // helpers
 import { windowWidth } from '../utils/helpers';
 
@@ -25,9 +26,9 @@ const ProductAnalyticsItem = ({product, numberOfDeliveries, totalPrice, oldTotal
             onPress={onPress}
         >
             {/* product image */}
-            <Image 
-                source={imageUrl}
-                style={style.orderImage}
+            <Avatar 
+                imageUrl={imageUrl}
+                squared={true}
             />
             {/* product information */}
             <View style={style.orderInfo}>

@@ -23,6 +23,7 @@ import StatWrapper from "../components/StatWrapper";
 import StatCard from "../components/StatCard";
 import LocationAnalyticsItem from "../components/LocationAnalyticsItem";
 import CalendarSheet from "../components/CalendarSheet";
+import Avatar from "../components/Avatar";
 // icons
 import ArrowDownSmall from '../assets/icons/ArrowDownSmall';
 import VerifiedIcon from '../assets/icons/VerifiedIcon';
@@ -169,9 +170,9 @@ const LogisticsAnalytics = ({navigation}) => {
                             navigation={navigation} 
                             stackName={
                                 <View style={style.headerWrapper}>
-                                    <Image 
-                                        source={require('../assets/images/komitex.png')}
-                                        style={style.logisticsImage}
+                                    <Avatar 
+                                        imageUrl={require('../assets/images/komitex.png')}
+                                        squared={true}
                                     />
                                     <Text style={style.headerText} >Komitex Logistics</Text>
                                     <VerifiedIcon />
@@ -278,13 +279,8 @@ const style = StyleSheet.create({
         gap: 20,
         marginBottom: 20,
     },
-    logisticsImage: {
-        width: 40,
-        height: 40,
-        borderRadius: 8,
-        marginRight: 4,
-    },
     headerText: {
+        marginLeft: 8,
         fontFamily: 'mulish-semibold',
         color: black,
         fontSize: 12,

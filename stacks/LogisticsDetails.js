@@ -27,6 +27,7 @@ import StatCard from "../components/StatCard";
 import Accordion from "../components/Accordion";
 import CustomButton from "../components/CustomButton";
 import ReviewCard from "../components/ReviewCard";
+import Avatar from "../components/Avatar";
 // icons
 import VerifiedIcon from '../assets/icons/VerifiedIcon';
 import EmailIcon from "../assets/icons/EmailIcon";
@@ -592,11 +593,11 @@ const LogisticsDetails = ({navigation}) => {
                                 navigation={navigation} 
                                 stackName={
                                     <View style={style.headerWrapper}>
-                                        <Image 
-                                            source={require('../assets/images/komitex.png')}
-                                            style={style.logisticsImage}
+                                        <Avatar 
+                                            imageUrl={require('../assets/images/komitex.png')}
+                                            squared={true}
                                         />
-                                        <Text style={style.headerText} >Komitex Logistics</Text>
+                                        <Text style={style.headerText}>Komitex Logistics</Text>
                                         <VerifiedIcon />
                                     </View>
                                 }
@@ -815,9 +816,9 @@ const style = StyleSheet.create({
         width: 40,
         height: 40,
         borderRadius: 8,
-        marginRight: 4,
     },
     headerText: {
+        marginLeft: 8,
         fontFamily: 'mulish-semibold',
         color: black,
         fontSize: 12,

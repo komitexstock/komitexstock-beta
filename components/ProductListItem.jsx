@@ -6,6 +6,7 @@ import { black, bodyText, white } from '../style/colors';
 import { windowWidth } from '../utils/helpers';
 // components
 import Mark from './Mark';
+import Avatar from './Avatar';
 
 // product list item that shows up in search results
 const ProductListItem = ({product_name, quantity, price, imageUrl, onPress, searchQuery}) => {
@@ -63,9 +64,9 @@ const ProductListItem = ({product_name, quantity, price, imageUrl, onPress, sear
             onPress={onPress}
         >
             {/* product image */}
-            <Image 
-                source={imageUrl}
-                style={style.orderImage}
+            <Avatar 
+                imageUrl={imageUrl}
+                squared={true}
             />
             {/* product information */}
             <View style={style.orderInfo}>

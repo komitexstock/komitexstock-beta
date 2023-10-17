@@ -3,6 +3,7 @@ import { TouchableOpacity, Image, View, Text, StyleSheet } from 'react-native';
 // components
 import Indicator from './Indicator';
 import Mark from './Mark';
+import Avatar from './Avatar';
 // colors
 import { black, bodyText, white } from '../style/colors';
 // import helper functions
@@ -72,9 +73,9 @@ const WaybillListItem = ({item, index, firstWaybill, lastWaybill, sideFunctions,
             activeOpacity={0.8}
         >
             {/* waybill image */}
-            <Image 
-                source={item.imageUrl}
-                style={style.orderImage}
+            <Avatar 
+                imageUrl={item.imageUrl}
+                squared={true}
             />
             <View style={style.orderInfo}>
                 <Text 

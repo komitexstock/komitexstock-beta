@@ -5,8 +5,6 @@ import {
     ScrollView,
     StyleSheet,
     TouchableOpacity,
-    Image,
-    BackHandler
 } from "react-native";
 // colors
 import {
@@ -24,10 +22,11 @@ import StatWrapper from "../components/StatWrapper";
 import StatCard from "../components/StatCard";
 import LocationAnalyticsItem from "../components/LocationAnalyticsItem";
 import CalendarSheet from "../components/CalendarSheet";
+import Avatar from "../components/Avatar";
 // icons
 import ArrowDownSmall from '../assets/icons/ArrowDownSmall';
 // react hooks
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 // skeleton screen
 import LogisticsAnalyticsSkeleton from "../skeletons/LogisticsAnalyticsSkeleton";
 // globals
@@ -171,9 +170,9 @@ const ProductAnalytics = ({navigation}) => {
                             navigation={navigation} 
                             stackName={
                                 <View style={style.headerWrapper}>
-                                    <Image 
-                                        source={require('../assets/images/maybach-sunglasses.png')}
-                                        style={style.logisticsImage}
+                                    <Avatar 
+                                        imageUrl={require('../assets/images/maybach-sunglasses.png')}
+                                        squared={true}
                                     />
                                     <Text style={style.headerText} >Maybach Sunglasses</Text>
                                 </View>
@@ -268,7 +267,7 @@ const style = StyleSheet.create({
         justifyContent: 'flex-start',
         alignItems: 'center',
         flexDirection: 'row',
-        gap: 4,
+        gap: 12,
     },
     main: {
         display: 'flex',
@@ -278,12 +277,6 @@ const style = StyleSheet.create({
         justifyContent: 'center',
         gap: 20,
         marginBottom: 20,
-    },
-    logisticsImage: {
-        width: 40,
-        height: 40,
-        borderRadius: 8,
-        marginRight: 4,
     },
     headerText: {
         fontFamily: 'mulish-semibold',

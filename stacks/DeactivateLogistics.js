@@ -28,6 +28,7 @@ import CustomButton from "../components/CustomButton";
 import PopUpBottomSheet from "../components/PopUpBottomSheet";
 import SuccessPrompt from "../components/SuccessPrompt";
 import CautionPrompt from "../components/CautionPrompt";
+import Avatar from "../components/Avatar";
 // icons
 import VerifiedIcon from '../assets/icons/VerifiedIcon';
 import EmailIcon from "../assets/icons/EmailIcon";
@@ -486,9 +487,9 @@ const DeactivateLogistics = ({navigation}) => {
                                 navigation={navigation} 
                                 stackName={
                                     <View style={style.headerWrapper}>
-                                        <Image 
-                                            source={require('../assets/images/komitex.png')}
-                                            style={style.logisticsImage}
+                                        <Avatar 
+                                            imageUrl={require('../assets/images/komitex.png')}
+                                            squared={true}
                                         />
                                         <Text style={style.headerText}>Komitex Logistics</Text>
                                         <VerifiedIcon />
@@ -696,9 +697,9 @@ const style = StyleSheet.create({
         width: 40,
         height: 40,
         borderRadius: 8,
-        marginRight: 4,
     },
     headerText: {
+        marginLeft: 8,
         fontFamily: 'mulish-semibold',
         color: black,
         fontSize: 12,

@@ -9,6 +9,7 @@ import {
 // component
 import Indicator from './Indicator';
 import Mark from './Mark';
+import Avatar from './Avatar';
 // icons
 import SelectedOrderIcon from '../assets/icons/SelectedOrderIcon';
 // colors
@@ -81,7 +82,7 @@ const OrderListItem = ({item, index, firstOrder, lastOrder, selectable, selected
                 // add borderRadius to bottom of last order
                 index === lastOrder && style.lastOrderWrapper,
 
-                extraVerticalPadding && style.extraVerticalPadding
+                extraVerticalPadding && style.extraVerticalPadding,
             ]}
             // navigate to chat on press order
             onPress={handleOnPress}
@@ -89,15 +90,11 @@ const OrderListItem = ({item, index, firstOrder, lastOrder, selectable, selected
         >
             {/* logistics image */}
             <View style={style.orderImageContainer}>
-                <Image 
-                    source={item.imageUrl}
-                    style={style.orderImage}
+                <Avatar 
+                    imageUrl={item.imageUrl}
+                    squared={true}
+                    selected={selectable && selected}
                 />
-                { selectable && selected && (
-                    <View style={style.selectedIconWrapper}> 
-                        <SelectedOrderIcon />
-                    </View>
-                )}
             </View>
             {/* order info */}
             <View style={style.orderInfo}>

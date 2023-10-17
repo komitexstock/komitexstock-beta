@@ -1,7 +1,9 @@
 import { View, Text, Image, StyleSheet } from "react-native";
 import { primaryColor, secondaryColor } from "../style/colors";
+// icons
+import SelectedOrderIcon from "../assets/icons/SelectedOrderIcon";
 
-const Avatar = ({imageUrl, fullname, smallerSize, squared}) => {
+const Avatar = ({imageUrl, fullname, smallerSize, squared, selected}) => {
     // imageUrl => string | path to image
     // fullname => string
 
@@ -34,6 +36,9 @@ const Avatar = ({imageUrl, fullname, smallerSize, squared}) => {
                 // else display initials
                 <Text style={style.initials}>{initials}</Text>  
             )}
+            {selected && <View style={style.selectedIconWrapper}> 
+                <SelectedOrderIcon />
+            </View>}
         </View>
     );
 }
@@ -47,6 +52,7 @@ const style = StyleSheet.create({
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        position: "relative",
     },
     avatarImage: {
         width: "100%",
@@ -56,7 +62,12 @@ const style = StyleSheet.create({
     initials: {
         fontFamily: "mulish-bold",
         color: primaryColor,
-    }
+    },
+    selectedIconWrapper: {
+        position: 'absolute',
+        bottom: 0,
+        right: 0,  
+    },
 })
  
 export default Avatar;
