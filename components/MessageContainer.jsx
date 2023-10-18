@@ -176,6 +176,7 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
         
         const phoneNumbersIndex = findPhoneNumbers(text);
         
+        // no phone number found
         if (phoneNumbersIndex.length === 0) {
             if (!text.includes('*')) return text;
             const textArray = text.split('*');
@@ -456,6 +457,7 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
                         {type === "Edited" && authData?.account_type === account_type && <EditWhiteIcon />}
                         {type === "Edited" && authData?.account_type !== account_type && <EditBlackIcon />}
 
+                        {/* custom message heading */}
                         <Text 
                             style={[
                                 style.actionMessageTitle,
@@ -468,16 +470,21 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
                         >
                             Order {type}
                         </Text>
+                        
+                        {/* edited custome message text */}
                         { type === "Edited" && (
                             <Text 
                                 style={[
                                     style.messageText, 
-                                    authData?.account_type === account_type && style.sentText
+                                    authData?.account_type === account_type && style.sentText,
+                                    {marginTop: 0}
                                 ]}
                             >
                                 {processText(text, account_type)}
                             </Text>
                         )}
+
+                        {/* show products for all custome messages except edited custome message */}
                         { type !== "Edited" && (
                             <Text style={style.actionMessageHeading}>
                                 Product:
@@ -489,6 +496,8 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
                                 </Text>
                             </Text>
                         )}
+
+                        {/* rescheduled custom message content */}
                         { type === "Rescheduled" && (
                             <Text style={style.actionMessageHeading}>
                                 New Delivery Date:&nbsp;
@@ -498,6 +507,7 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
                             </Text>
                         )}
 
+                        {/* rescheduled, cancelled or returned custom message content */}
                         { ['Rescheduled', 'Cancelled', 'Returned'].includes(type) && (
                             <Text style={style.actionMessageHeading}>
                                 Reason:&nbsp;
@@ -507,10 +517,20 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
                             </Text>
                         )}
 
-                        
-                        { ["Delivered", "Dispatched"].includes(type) && (
+                        {/* dispatched custom message content */}
+                        { type === "Dispatched" && (
                             <Text style={style.actionMessageHeading}>
                                 Comments :&nbsp;
+                                <Text style={style.actionMessageText}>
+                                    {text ? text : "N/A"}
+                                </Text>
+                            </Text>
+                        )}
+
+                        {/* delivered custom message content */}
+                        { type === "Delivered" && (
+                            <Text style={style.actionMessageHeading}>
+                                Payment Method :&nbsp;
                                 <Text style={style.actionMessageText}>
                                     {text ? text : "N/A"}
                                 </Text>

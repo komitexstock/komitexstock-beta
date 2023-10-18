@@ -226,7 +226,7 @@ const Chat = ({navigation, route}) => {
     const userId = "hjsdjkji81899";
     const companyName = "Mega Enterprise";
     const fullname = "Iffie Ovie";
-    const emptyStock = true;
+    const emptyStock = false;
 
 
     const [price, setPrice] = useState(50000);
@@ -380,12 +380,12 @@ const Chat = ({navigation, route}) => {
         if (type === "Open with") {
             return setModal({
                 type: type,
-                snapPoints: ["25%"],
+                snapPoints: [198],
             });
         } else if (type === "Reschedule order") {
             return setModal({
                 type: type,
-                snapPoints: ["85%"],
+                snapPoints: ["100%"],
             });
         } else if (type === "Cancel order") {
             return setModal({
@@ -395,7 +395,7 @@ const Chat = ({navigation, route}) => {
         } else if (type === "") {
             return setModal({
                 type: type,
-                snapPoints: ["25%"],
+                snapPoints: [198],
             });
         } else {
             return setModal({
@@ -427,8 +427,9 @@ const Chat = ({navigation, route}) => {
     };
 
     const handleOnPressPhoneNumber = (phoneNumber) => {
-        Keyboard.dismiss();
+        // Keyboard.dismiss();
         openModal("Open with");
+        // set phone  number thats passed to dailing function
         setLinkPhoneNumber(phoneNumber);
     }
 
@@ -444,26 +445,22 @@ const Chat = ({navigation, route}) => {
         {
             id: 1,
             name: "Reschedule",
-            onPress: () => {
-                openModal("Reschedule order")
-            }
+            onPress: () => openModal("Reschedule order")
         },
         {
             id: 2,
             name: "Cancel",
-            onPress: () => {
-                openModal("Cancel order")
-            }
+            onPress: () => openModal("Cancel order")
         },
         {
             id: 3,
             name: "Dispatch",
-            onPress: () => {}
+            onPress: () => openModal("Dispatch order")
         },
         {
             id: 4,
             name: "Deliver",
-            onPress: () => {}
+            onPress: () => openModal("Deliver order")
         },
     ];
 
@@ -509,6 +506,11 @@ const Chat = ({navigation, route}) => {
     // MESSAGES MESSAGES MESSAGES MESSAGES
     // MESSAGES MESSAGES MESSAGES MESSAGES
     const [messages, setMessages] = useState(messageData);
+
+    // update messages
+    useEffect(() => {
+        setMessages(messageData)
+    }, [messageData])
 
     const sendMessage = (type) => {
         if (textInput === "" && uploading === false && type === "message") return;
@@ -1022,7 +1024,7 @@ const Chat = ({navigation, route}) => {
                                 {/* Selected Products Container */}
                                 <View style={style.productsWrapper}>
                                     <View style={style.productsHeading}>
-                                        <Text style={style.producPlaceholder}>Products Selected</Text>
+                                        <Text style={style.producPlaceholder}>Products ({products.length})</Text>
                                         <TouchableOpacity
                                             onPress={() => openStackedModal("Products")}
                                         >
@@ -1106,7 +1108,7 @@ const Chat = ({navigation, route}) => {
                                 {/* Selected Products Container */}
                                 <View style={style.productsWrapper}>
                                     <View style={style.productsHeading}>
-                                        <Text style={style.producPlaceholder}>Products Selected</Text>
+                                        <Text style={style.producPlaceholder}>Products ({products.length})</Text>
                                     </View>
                                     <View style={style.productsDetailsContainer}>
                                         { products.map((product) => (
@@ -1157,6 +1159,7 @@ const Chat = ({navigation, route}) => {
                         />
                     </>
                 )}
+                {/* cancel order */}
                 { modal.type === "Cancel order" && (
                     <>
                         <BottomSheetScrollView contentContainerStyle={style.modalWrapper}>
@@ -1167,7 +1170,7 @@ const Chat = ({navigation, route}) => {
                                 {/* Selected Products Container */}
                                 <View style={style.productsWrapper}>
                                     <View style={style.productsHeading}>
-                                        <Text style={style.producPlaceholder}>Products Selected</Text>
+                                        <Text style={style.producPlaceholder}>Products ({products.length})</Text>
                                     </View>
                                     <View style={style.productsDetailsContainer}>
                                         { products.map((product) => (
