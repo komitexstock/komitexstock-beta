@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 // icons
 import ArrowDownSmall from '../assets/icons/ArrowDownSmall';
-import { black, bodyText, subText } from '../style/colors';
+import { background, black, bodyText, subText } from '../style/colors';
 // import react hook
 import { useEffect } from 'react';
 
@@ -70,7 +70,13 @@ const Accordion = ({state, locations, opened}) => {
                 </View>
             </TouchableOpacity>
 
-            <View style={[style.content, accordionStyle]}>
+            <View 
+                style={[
+                    style.content, 
+                    accordionStyle,
+                    expanded && {marginTop: 5}
+                ]}
+            >
                 {locations.map((location) => (
                     <View key={location.id} style={style.locationsItems}>
                         <Text style={style.locationsText}>{location.location}</Text>
@@ -120,6 +126,8 @@ const style = StyleSheet.create({
         flexDirection: 'column',
         gap: 10,
         width: '100%',
+        backgroundColor: background,
+        borderRadius: 12,
     },
     expanded: {
         padding: 10,

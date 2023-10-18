@@ -6,6 +6,9 @@ import { convertUTCToTime } from "../utils/convertUTCToTime";
 import SentDocumentIcon from "../assets/icons/SentDocumentIcon";
 import ReceivedDocumentIcon from "../assets/icons/ReceivedDocumentIcon";
 import OrderRescheduled from "../assets/icons/OrderRescheduled";
+import OrderReturned from "../assets/icons/OrderReturned";
+import OrderDelivered from "../assets/icons/OrderDelivered";
+import OrderDispatched from "../assets/icons/OrderDispatched";
 import OrderCancelled from "../assets/icons/OrderCancelled";
 import RepliedImageIcon from "../assets/icons/RepliedImageIcon";
 import RepliedDocumentIcon from "../assets/icons/RepliedDocumentIcon";
@@ -26,16 +29,18 @@ import {
     subText,
     rescheduledContainer,
     cancelledContainer,
-    deliveredContainer,
-    pendingContainer,
+    deliveredMessageBody,
     cancelledText,
     deliveredText,
-    pendingText
 } from "../style/colors";
 // components
 import NumberLink from "./NumberLink";
+// useAuth
+import { useAuth } from "../context/AuthContext"
 
 const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAlert, products, handleOnPressPhoneNumber, handleScrollToComponent, setReplying, textInputRef, navigation}) => {
+
+    const { authData } = useAuth()
 
     // accoutntype, retreived from global variables
     const accountType = "Merchant";
@@ -100,33 +105,9 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
     }
 
 
-    const messageSender = (account_type, user_id, full_name, prev_id, company_name, color, reply, orderDetails) => {
+    const messageSender = (account_type, user_id, full_name, prev_id, company_name, color, reply) => {
 
-        if (orderDetails) {
-            return account_type === "Merchant" ? (
-                <Text 
-                    style={[
-                        style.messageSender, 
-                        style.myTeam, 
-                        {color: user_id === userId ? accent : color}
-                    ]}
-                >
-                    {user_id === userId ? "Me" : full_name}
-                </Text>
-            ) : (
-                <Text 
-                    style={[
-                        style.messageSender, 
-                        style.otherTeam, 
-                        {color: primaryColor}
-                    ]}
-                >
-                    {company_name}
-                </Text>
-            )
-        }
-
-        if (accountType === account_type) {
+        if (authData?.account_type === account_type) {
             return prev_id !== user_id && (
                 <Text 
                     style={[
@@ -150,7 +131,7 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
 
     const repliedMessageSender = (account_type, user_id, full_name, company_name) => {
 
-        if (accountType === account_type) {
+        if (authData?.account_type === account_type) {
             return user_id === userId ? "Me" : full_name;
         } else {
             return company_name;
@@ -212,7 +193,7 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
                                 key={index} 
                                 style={[
                                     style.messageHeading, 
-                                    accountType === account_type && style.sentHeading
+                                    authData?.account_type === account_type && style.sentHeading
                                 ]}
                             >
                                 {item}
@@ -243,7 +224,7 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
                                         key={`${index2}${index2}`} 
                                         style={[
                                             style.messageHeading, 
-                                            accountType === account_type && style.sentHeading
+                                            authData?.account_type === account_type && style.sentHeading
                                         ]}
                                     >
                                         {item}
@@ -283,24 +264,23 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
             <View 
                 style={[
                     style.message,
-                    accountType === account_type ? style.sent : style.received,
+                    authData?.account_type === account_type ? style.sent : style.received,
                     // for sent messages or messages from my team
                     // remove padding from file
-                    file && accountType === account_type && {borderBottomRightRadius: 12, borderBottomRightRadius: 12},
+                    file && authData?.account_type === account_type && {borderBottomRightRadius: 12, borderBottomRightRadius: 12},
                     // apply padding to text
-                    text && accountType === account_type && {paddingTop: 0, padding: 10, borderBottomRightRadius: 0},
+                    text && authData?.account_type === account_type && {paddingTop: 0, padding: 10, borderBottomRightRadius: 0},
                     // for received messages from other team
                     // remove padding from file
-                    file && accountType !== account_type && {borderBottomRightRadius: 12, borderBottomLeftRadius: 12},
+                    file && authData?.account_type !== account_type && {borderBottomRightRadius: 12, borderBottomLeftRadius: 12},
                     // apply padding to text
-                    text && accountType !== account_type && {paddingTop: 0, padding: 10, borderBottomLeftRadius: 0},
+                    text && authData?.account_type !== account_type && {paddingTop: 0, padding: 10, borderBottomLeftRadius: 0},
                     // general
                     reply && {paddingTop: 0, padding: 10},
-                    type === "Rescheduled" && {backgroundColor: rescheduledContainer},
+                    ["Rescheduled", "Returned"].includes(type) && {backgroundColor: rescheduledContainer},
                     type === "Cancelled" && {backgroundColor: cancelledContainer},
-                    type === "Delivered" && {backgroundColor: deliveredContainer},
+                    type === "Delivered" && {backgroundColor: deliveredMessageBody},
                     type === "Dispatched" && {backgroundColor: secondaryColor},
-                    type === "Returned" && {backgroundColor: pendingContainer},
                     // always pad custom messages regardless of is text is present
                     customMessages.includes(type) && {paddingTop: 0, padding: 10},
                 ]}
@@ -309,7 +289,7 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
                 { reply && repliedMessage[0].type === 'message' && 
                     <TouchableOpacity 
                         // specific to sent messages or messages from my team
-                        activeOpacity={accountType === account_type && 0.8} 
+                        activeOpacity={authData?.account_type === account_type && 0.8} 
                         style={style.repliedMessage}
                         onPress={() => {
                             handleScrollToComponent(reply)
@@ -431,12 +411,12 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
                         ]}
                         onPress={() => {}}
                     >
-                        {accountType === account_type ? <SentDocumentIcon /> : <ReceivedDocumentIcon />}
+                        {authData?.account_type === account_type ? <SentDocumentIcon /> : <ReceivedDocumentIcon />}
                         <View style={style.documentDescription}>
                             <Text 
                                 style={[
                                     style.documentName,
-                                    accountType === account_type && style.sentText,
+                                    authData?.account_type === account_type && style.sentText,
                                 ]}
                             >
                                 {file.name}
@@ -444,7 +424,7 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
                             <Text 
                                 style={[
                                     style.documentProperties,
-                                    accountType === account_type && style.sentText
+                                    authData?.account_type === account_type && style.sentText
                                 ]}
                             >
                                 {`${file.size} \u2022 ${file.format.toUpperCase()}`}
@@ -452,43 +432,47 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
                         </View>
                     </TouchableOpacity>
                 }
+                
                 {/* if it is not an action triggered message i.e a basic text*/}
                 { text && !customMessages.includes(type) &&
                     <Text 
                         style={[
                             style.messageText, 
-                            accountType === account_type && style.sentText
+                            authData?.account_type === account_type && style.sentText
                         ]}
                     >
                         {processText(text, account_type)}
                     </Text>
                 }
 
+                {/* if it's a custome message */}
                 { customMessages.includes(type) &&
                     <View style={style.actionMessageWrapper}>
                         {type === "Rescheduled" && <OrderRescheduled />}
+                        {type === "Returned" && <OrderReturned />}
                         {type === "Cancelled" && <OrderCancelled />}
-                        {type === "Edited" && accountType === account_type && <EditWhiteIcon />}
-                        {type === "Edited" && accountType !== account_type && <EditBlackIcon />}
+                        {type === "Delivered" && <OrderDelivered />}
+                        {type === "Dispatched" && <OrderDispatched />}
+                        {type === "Edited" && authData?.account_type === account_type && <EditWhiteIcon />}
+                        {type === "Edited" && authData?.account_type !== account_type && <EditBlackIcon />}
 
                         <Text 
                             style={[
                                 style.actionMessageTitle,
-                                type === "Rescheduled" && {color: black},
+                                ["Rescheduled", "Returned"].includes(type) && {color: black},
                                 type === "Cancelled" && {color: cancelledText},
                                 type === "Dispatched" && {color: primaryColor},
                                 type === "Delivered" && {color: deliveredText},
-                                type === "Returned" && {color: pendingText},
-                                type === "Edited" && accountType === account_type && style.sentText
+                                type === "Edited" && authData?.account_type === account_type && style.sentText
                             ]}
                         >
                             Order {type}
                         </Text>
                         { type === "Edited" && (
                             <Text 
-                            style={[
-                                style.messageText, 
-                                accountType === account_type && style.sentText
+                                style={[
+                                    style.messageText, 
+                                    authData?.account_type === account_type && style.sentText
                                 ]}
                             >
                                 {processText(text, account_type)}
@@ -518,16 +502,17 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
                             <Text style={style.actionMessageHeading}>
                                 Reason:&nbsp;
                                 <Text style={style.actionMessageText}>
-                                    {text}
+                                    {text ? text : "N/A"}
                                 </Text>
                             </Text>
                         )}
 
-                        { type === "Delivered" && (
+                        
+                        { ["Delivered", "Dispatched"].includes(type) && (
                             <Text style={style.actionMessageHeading}>
-                                Payemnt Method:&nbsp;
+                                Comments :&nbsp;
                                 <Text style={style.actionMessageText}>
-                                    {text}
+                                    {text ? text : "N/A"}
                                 </Text>
                             </Text>
                         )}
@@ -539,7 +524,7 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
     };
 
     const messageTimestamp = (account_type, time, next_time, user_id, next_user_id, seen) => {
-        if (accountType === account_type) {
+        if (authData?.account_type === account_type) {
             if (user_id !== next_user_id) {
                 return (
                     <Text style={[style.timeSent, style.myTeam]}>{convertUTCToTime(time)} . {seen ? "Seen" : "Sent"}</Text>
@@ -602,7 +587,6 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
                 message.company_name,
                 message.color,
                 message.reply,
-                index === 0 ? true : false, // parameter to indicate the first message which is the order details
             )}
             {/* message body */}
             { messageBody(

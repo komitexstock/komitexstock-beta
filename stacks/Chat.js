@@ -71,8 +71,12 @@ import * as DocumentPicker from 'expo-document-picker';
 import { useGlobals } from "../context/AppContext";
 // data
 import { messageData } from "../data/messageData";
+// use Auth
+import { useAuth } from "../context/AuthContext";
 
 const Chat = ({navigation, route}) => {
+
+    const { authData } = useAuth()
 
     const { bottomSheetRef, stackedSheetRef, calendarSheetRef, bottomSheetOpen } = useGlobals();
 
@@ -518,7 +522,7 @@ const Chat = ({navigation, route}) => {
                         user_id: userId,
                         fullname: fullname,
                         company_name: companyName,
-                        account_type: accountType,
+                        account_type: authData?.account_type,
                         color: messageSenderColors[0],
                         type: 'message',
                         timestamp: () => {
@@ -540,7 +544,7 @@ const Chat = ({navigation, route}) => {
                         user_id: userId,
                         fullname: fullname,
                         company_name: companyName,
-                        account_type: accountType,
+                        account_type: authData?.account_type,
                         color: messageSenderColors[0],
                         type: 'Edited',
                         timestamp: () => {
@@ -550,7 +554,7 @@ const Chat = ({navigation, route}) => {
                         file: null,
                         reply: false,
                         reschedule_date: () => {},
-                        text: `Customer's Name: *Richard Idana*\nPhone Number: 08165266847, 08123456789\nDelivery Address: *${address}*\nProduct: *${products.map((product) => { return ` ${product.product_name} x ${product.quantity}`})}*\nPrice: *₦${price.toLocaleString()}*\nLocation: *${location.location}*\nCharge: *₦${location.charge.toLocaleString()}*\nLogistics: *Komitex Logistics*\nMerchant: *Mega Enterprise*`,
+                        text: `Customer's Name: *Richard Idana*\nPhone Number: 08165266847, 08123456789\nDelivery Address: *${address}*\nProduct: *${products.map((product) => { return ` ${product.product_name} x ${product.quantity}`})}*\nPrice: *₦${price.toLocaleString()}*\nLocation: *${location.location}*\nCharge: *₦${location.charge.toLocaleString()}*\nLogistics: *Komitex Logistics*`,
                     }   
                 ]);
 
@@ -563,7 +567,7 @@ const Chat = ({navigation, route}) => {
                         user_id: userId,
                         fullname: fullname,
                         company_name: companyName,
-                        account_type: accountType,
+                        account_type: authData?.account_type,
                         color: messageSenderColors[0],
                         type: 'Cancelled',
                         timestamp: () => {
@@ -585,7 +589,7 @@ const Chat = ({navigation, route}) => {
                         user_id: userId,
                         fullname: fullname,
                         company_name: companyName,
-                        account_type: accountType,
+                        account_type: authData?.account_type,
                         color: messageSenderColors[0],
                         type: 'Rescheduled',
                         timestamp: () => {
@@ -610,7 +614,7 @@ const Chat = ({navigation, route}) => {
 
     const replyingSenderName = (targetMessage) => {
 
-        if (accountType !== targetMessage.account_type) {
+        if (authData?.account_type !== targetMessage.account_type) {
             return targetMessage.company_name;
         }
 
@@ -892,7 +896,7 @@ const Chat = ({navigation, route}) => {
                             <Text style={style.dateText}>{"Friday July 7, 2023"}</Text>
                         </View>
 
-                        <View style={[style.editButtonWrapper, accountType === "Merchant" && {justifyContent: 'flex-end'}]}>
+                        <View style={[style.editButtonWrapper, authData?.account_type === "Merchant" && {justifyContent: 'flex-end'}]}>
                             <TouchableOpacity 
                                 style={style.editButton}
                                 onPress={handleEditOrder}
@@ -931,7 +935,7 @@ const Chat = ({navigation, route}) => {
                 { !replying && !uploading && (
                     <View style={style.actionButtonsWrapper}>
                         { type === "Order" && orderButtons.map((button) => {
-                            if (accountType === "Merchant"){
+                            if (authData?.account_type === "Merchant"){
                                 if (button.id === 1 || button.id === 2){
                                     return <ActionButton
                                         key={button.id}
@@ -948,7 +952,7 @@ const Chat = ({navigation, route}) => {
                             }
                         })}
 
-                        { type === "Waybill" && accountType === "Logistics" && (
+                        { type === "Waybill" && authData?.account_type === "Logistics" && (
                             <ActionButton 
                                 name={waybillButton.name}
                                 onPress={waybillButton.onPress}

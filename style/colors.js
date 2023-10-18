@@ -21,6 +21,7 @@ export const orderDate = "#868686";
 export const inputBorder = "#E7E5E5";
 export const listSeparator = "#F4F4F4"
 export const toolTipBackground = "#333333";
+export const deliveredMessageBody = "#ECFDF3";
 export const deliveredContainer = "#D1FADF";
 export const deliveredText = "#039855";
 export const cancelledContainer = "#FEF3F2";
@@ -34,6 +35,7 @@ export const checkBoxBorder = "#828282";
 export const overlay = "#0000004D";
 export const filterIndicator = "#D84D3A";
 export const rescheduledContainer = "#2222220D";
+
 export const messageSenderColors = [
     '#FF0000', // Red
     '#FF9900', // Orange
