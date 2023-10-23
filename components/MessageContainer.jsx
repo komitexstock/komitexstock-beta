@@ -14,6 +14,7 @@ import RepliedImageIcon from "../assets/icons/RepliedImageIcon";
 import RepliedDocumentIcon from "../assets/icons/RepliedDocumentIcon";
 import EditWhiteIcon from "../assets/icons/EditWhiteIcon";
 import EditBlackIcon from "../assets/icons/EditBlackIcon";
+import MessageArrowWhiteIcon from "../assets/icons/MessageArrowWhiteIcon";
 // colors
 import {
     accent,
@@ -170,70 +171,76 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
         return slicedStrings;
     }
 
+    // handle bold text
+    const handleBoldText = (text, account_type, repliedText, index_) => {
+        // if index isn't provided use 0
+        const index1 = index_ ? index_ : 0;
+        // if no asterix, retun text as it is
+        if (!text.includes('*')) return text;
+        const textArray = text.split('*'); // split text where asterix exist
+        // if its a text that shows above the text input thats rbeing replied to
+        // return the text without all the asterix
+        if (repliedText) return textArray.join("");
+        // if thext contains just one asterix, return text as it is
+        if (textArray.length < 3) {
+            if (!index_) return textArray.join("*");
+            return <Text key={index1}>{textArray.join("*")}</Text>;
+        } else {
+            return textArray.map((item, index2) => {
+                // odd text
+                if (index2 % 2 === 0) {
+                    return <Text key={`${index1}${index2}`}>{item}</Text>;
+                } else {
+                    return (
+                        <Text 
+                            key={`${index1}${index2}`} 
+                            style={[
+                                style.messageHeading, 
+                                authData?.account_type === account_type && style.sentHeading
+                            ]}
+                        >
+                            {item}
+                        </Text>
+                    )
+                }
+            })
+        }
+    }
+
+    const handleTextIcons = (text, account_type, repliedText) => {
+        const textArray = text.split('&arrow&');
+        return textArray.map((item, index) => {
+            if (index % 2 === 0) {
+                return <Text key={index}>{processText(item, account_type, repliedText)}</Text>;
+            } else {
+                return <Text key={index}>
+                    &nbsp;<MessageArrowWhiteIcon />&nbsp;
+                    {processText(item, account_type, repliedText)}
+                </Text>;             
+            }
+        })
+    }
+
+    // process text function, makes text bold and highlights phone number
     const processText = (text, account_type, repliedText) => {
 
         // first check if phone numbers exist in text
-        
         const phoneNumbersIndex = findPhoneNumbers(text);
         
         // no phone number found
         if (phoneNumbersIndex.length === 0) {
-            if (!text.includes('*')) return text;
-            const textArray = text.split('*');
-            if (repliedText) return textArray.join("");
-            if (textArray.length < 3) {
-                return textArray.join("*");
-            } else {
-                return textArray.map((item, index) => {
-                    // odd text
-                    if (index % 2 === 0) {
-                        return <Text key={index}>{item}</Text>;
-                    } else {
-                        return (
-                            <Text 
-                                key={index} 
-                                style={[
-                                    style.messageHeading, 
-                                    authData?.account_type === account_type && style.sentHeading
-                                ]}
-                            >
-                                {item}
-                            </Text>
-                        )
-                    }
-                })
-            }
+            // handle bold text where neccesary
+            return handleBoldText(text, account_type, repliedText)
+            
         } else {
             const stringWithPhoneNumbers = sliceStringByNumbers(text, phoneNumbersIndex);
 
             return stringWithPhoneNumbers.map((item, index1) => {
                 // odd element in array, would be text
                 if (index1 % 2 === 0) { // actual text
-                    if (!item.includes('*')) return item;
-                    const textArray = item.split('*');
-                    if (repliedText) return textArray.join("");
-                    if (textArray.length < 3) {
-                        return <Text key={index1}>{textArray.join("*")}</Text>;
-                    } else {
-                        return textArray.map((item, index2) => {
-                            // odd text
-                            if (index2 % 2 === 0) {
-                                return <Text key={`${index2}${index2}`}>{item}</Text>;
-                            } else {
-                                return (
-                                    <Text 
-                                        key={`${index2}${index2}`} 
-                                        style={[
-                                            style.messageHeading, 
-                                            authData?.account_type === account_type && style.sentHeading
-                                        ]}
-                                    >
-                                        {item}
-                                    </Text>
-                                )
-                            }
-                        })
-                    }
+                    // handle bold text
+                    return handleBoldText(item, account_type, repliedText, index1)
+                    
                 } else { // even elements in array would be phone number
                     if (repliedText) return item;
                     return (
@@ -247,16 +254,10 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
                     );
                 }
             })
-
-            console.log(stringWithPhoneNumbers);
         }
     }
 
-    // const string = "8012345678 08012345678 +2348107182760 2348107182760 0807 140 2847 +234 807 559 1478";
-    // const phoneNumberMatches = findPhoneNumbers(string);
-    // const slicedStrings = sliceStringByNumbers(string, phoneNumberMatches);
-    // console.log(slicedStrings)
-    
+    // message body function
     const messageBody = (account_type, text, reply, file, timestamp, user_id, full_name, company_name, type, reschedule_date, id) => {
 
         const repliedMessage = messages.filter(message => message.id === reply);
@@ -306,8 +307,8 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
                         </Text>
                         <Text style={style.repliedText}>
                             {repliedMessage[0].text.length > 175 ? 
-                                processText(repliedMessage[0].text.slice(0, 175), account_type, true) :
-                                processText(repliedMessage[0].text, account_type, true)
+                                handleTextIcons(repliedMessage[0].text.slice(0, 175), account_type, true) :
+                                handleTextIcons(repliedMessage[0].text, account_type, true)
                             }
                         </Text>
                     </TouchableOpacity>
@@ -442,7 +443,7 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
                             authData?.account_type === account_type && style.sentText
                         ]}
                     >
-                        {processText(text, account_type)}
+                        {handleTextIcons(text, account_type)}
                     </Text>
                 }
 
@@ -480,7 +481,7 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
                                     {marginTop: 0}
                                 ]}
                             >
-                                {processText(text, account_type)}
+                                {handleTextIcons(text, account_type)}
                             </Text>
                         )}
 

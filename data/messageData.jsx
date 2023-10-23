@@ -58,6 +58,25 @@ export const messageData = [
         reply: false,
         text: "Merchant: *Mega Enterprise*\nLogistics: *Komitex Logistics*\nWarehouse Name: *Warri*\nProduct: *Maybach Sunglasses x 4, Accurate Watch x 8, Brown Clarks Shoe x 13*\nWaybill Details: Driver's number 09012345678",
     },
+    {
+        reschedule_date: () => {},
+        id: 9272,
+        seen: true,
+        user_id: "hayaFGye67qY",
+        fullname: "John Mark",
+        color: messageSenderColors[1],
+        company_name: 'Komitex Logistics',
+        type: 'message',
+        timestamp: () => {
+            const currentTime = new Date();
+            currentTime.setMinutes(currentTime.getMinutes() - 40);
+            return currentTime.getTime();
+        },
+        account_type: 'Logistics',
+        file: null,
+        reply: false,
+        text: "*Warri* &arrow& *Asaba*\nProduct: *Maybach Sunglasses x 4, Accurate Watch x 8, Brown Clarks Shoe x 13*\nAdditional Details: Delta Line Parcel Service\nWaybill Number: 123456",
+    },
     // {
     //     reschedule_date: () => {},
     //     id: 3,

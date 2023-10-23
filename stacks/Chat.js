@@ -387,10 +387,10 @@ const Chat = ({navigation, route}) => {
                 type: type,
                 snapPoints: ["100%"],
             });
-        } else if (type === "Cancel order") {
+        } else if (["Cancel order", "Dispatch order", "Deliver order"].includes(type)) {
             return setModal({
                 type: type,
-                snapPoints: ["80%"],
+                snapPoints: [520],
             });
         } else if (type === "") {
             return setModal({
@@ -789,6 +789,15 @@ const Chat = ({navigation, route}) => {
         openAlert('Success', 'Order cancelled successfully');
     }
 
+    const submitDispatchedOrder = () => {
+        hasScrolledToBottom.current = false;
+        Keyboard.dismiss();
+        scrollToBottom(true); // animate === true
+        sendMessage("Dispatched");
+        closeModal();
+        openAlert('Success', 'Order dispatched successfully');
+    }
+
     // console.log(moment("today").format('DD MMMM, YYYY'));
 
     // function to pick image from gallery
@@ -852,6 +861,7 @@ const Chat = ({navigation, route}) => {
                 <Header
                     navigation={navigation}
                     stackName={ChatHeader}
+                    component={true}
                     iconFunction={() => {}}
                     icon={<MenuIcon />}
                     removeBackArrow={true}
@@ -1210,6 +1220,56 @@ const Chat = ({navigation, route}) => {
                         />
                     </>
                 )}
+                {/* cancel order */}
+                { modal.type === "Dispatch order" && (
+                    <>
+                        <BottomSheetScrollView contentContainerStyle={style.modalWrapper}>
+                            <View style={style.modalContent}>
+                                <Text style={style.editModalParagragh}>
+                                    Kindly review and confirm this action
+                                </Text>
+                                {/* Selected Products Container */}
+                                <View style={style.productsWrapper}>
+                                    <View style={style.productsHeading}>
+                                        <Text style={style.producPlaceholder}>Products ({products.length})</Text>
+                                    </View>
+                                    <View style={style.productsDetailsContainer}>
+                                        { products.map((product) => (
+                                            // map through selected products
+                                            <ProductListSummary
+                                                key={product.id}
+                                                product_name={product.product_name}
+                                                quantity={product.quantity}
+                                                imageUrl={product.imageUrl}
+                                                padded={true}
+                                            />
+                                        ))}
+                                    </View>
+                                </View>
+                                <Input
+                                    multiline={true}
+                                    label={"Comments (optional)"}
+                                    placeholder={"Anything you would like to say?"}
+                                    value={reason}
+                                    onChange={setReason}
+                                    height={100}
+                                    textAlign={"top"}
+                                    error={errorReason}
+                                    setError={setErrorReason}
+                                />
+
+                                
+                            </View>
+                        </BottomSheetScrollView>
+                        <CustomButton
+                            // secondaryButton={true}
+                            name={"Done"}
+                            shrinkWrapper={true}
+                            onPress={submitDispatchedOrder}
+                            unpadded={true}
+                        />
+                    </>
+                )}
                 {/* onclick phone number */}
                 { modal.type === "Open with" && (
                     <View style={style.uploadButtonsWrapper}>
@@ -1352,7 +1412,8 @@ const style = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'flex-start',
-        width: "100%",
+        alignSelf: 'stretch',
+        flex: 1,
         gap: 10,
     },  
     headerImage: {
