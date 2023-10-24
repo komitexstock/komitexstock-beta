@@ -19,6 +19,7 @@ import { primaryColor, secondaryColor, background, black, bodyText, white, } fro
 import CustomBottomSheet from "../components/CustomBottomSheet";
 import AccountButtons from "../components/AccountButtons";
 import Indicator from "../components/Indicator";
+import Avatar from "../components/Avatar";
 // icons
 import CameraIcon from "../assets/icons/CameraIcon";
 import EditUserIcon from "../assets/icons/EditUserIcon";
@@ -40,10 +41,17 @@ import * as ImagePicker from "expo-image-picker";
 // import global
 import { useGlobals } from "../context/AppContext";
 // auth functions
+import { useAuth } from "../context/AuthContext";
 import { auth } from "../Firebase";
 import { signOut } from "firebase/auth";
 
 const Account = ({navigation, route}) => {
+
+    // auth data
+    const { authData } = useAuth();
+
+    // console.log(authData);
+
     // list of buttons in Account Page
     const accountButtons = {
         profile: {
@@ -238,25 +246,33 @@ const Account = ({navigation, route}) => {
                             >
                                 <CameraIcon />
                             </TouchableOpacity>
-                            <Image 
-                                style={style.bannerImage}
-                                source={!selectedBanner ? 
-                                    require('../assets/images/mega-enterprise.png') : 
-                                    {uri: selectedBanner}
-                                }
-                            />
+                            {/* banner image */}
+                            {authData?.banner_image || selectedBanner ? (
+                                <Image 
+                                    style={style.bannerImage}
+                                    source={!selectedBanner ? 
+                                        {uri: authData?.banner_image} : 
+                                        {uri: selectedBanner}
+                                    }
+                                />
+                            ) : (
+                                <View>
+                                    <Text style={style.businessNameBanner}>{authData?.business_name}</Text>
+                                </View>
+                            )}
                         </View>
                         <View style={style.accountInfoWrapper}> 
-                            <Indicator type={"Dispatched"} text={"Manager"}/>
+                            <Indicator type={"Dispatched"} text={authData?.role}/>
                             <View style={style.profileWrapper}>
                                 <View style={style.imageContainer}>
                                     {/* user profile photo */}
-                                    <Image 
-                                        style={style.profileImage}
-                                        source={!selectedImage ? 
-                                            require('../assets/profile/profile.jpg') : 
-                                            {uri: selectedImage}
-                                        }
+                                    <Avatar 
+                                        imageUrl={authData?.profile_image}
+                                        largerSize={true}
+                                        borderColor={white}
+                                        borderWidth={2}
+                                        fullname={authData?.full_name}
+                                        selectedImageUri={selectedImage}
                                     />
                                     {/* change profile photo button */}
                                     <TouchableOpacity 
@@ -271,8 +287,8 @@ const Account = ({navigation, route}) => {
                                 </View>
                                 {/* Username and company/business name */}
                                 <View>
-                                    <Text style={style.fullname}>Raymond Reddington</Text>
-                                    <Text style={style.businessName}>Mega Enterprise Ltd</Text>
+                                    <Text style={style.fullname}>{authData?.full_name}</Text>
+                                    <Text style={style.businessName}>{authData?.business_name}</Text>
                                 </View>
                             </View>
                         </View>
@@ -448,6 +464,11 @@ const style = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         position: 'relative'
+    },
+    businessNameBanner: {
+        color: primaryColor,
+        fontFamily: 'mulish-semibold',
+        fontSize: 24,
     },
     bannerCamera: {
         display: 'flex',

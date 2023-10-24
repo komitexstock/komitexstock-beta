@@ -3,7 +3,7 @@ import { primaryColor, secondaryColor } from "../style/colors";
 // icons
 import SelectedOrderIcon from "../assets/icons/SelectedOrderIcon";
 
-const Avatar = ({imageUrl, fullname, smallerSize, squared, selected}) => {
+const Avatar = ({imageUrl, fullname, smallerSize, selectedImageUri, largerSize, squared, selected, borderWidth, borderColor}) => {
     // imageUrl => string | path to image
     // fullname => string
 
@@ -20,13 +20,16 @@ const Avatar = ({imageUrl, fullname, smallerSize, squared, selected}) => {
             style={[
                 style.avatarWrapper,
                 smallerSize && {width: 32, height: 32, borderRadius: 16},
+                largerSize && {width: 80, height: 80, borderRadius: 40},
+                borderWidth && {borderWidth: borderWidth},
+                borderColor && {borderColor: borderColor},
                 squared && {borderRadius: 8}
             ]}
         >
             {/* display image if its given */}
             {imageUrl ? (
                 <Image
-                    source={imageUrl}
+                    source={!selectedImageUri ? imageUrl : {uri: selectedImageUri}}
                     style={[
                         style.avatarImage,
                         squared && {borderRadius: 8}
@@ -34,7 +37,14 @@ const Avatar = ({imageUrl, fullname, smallerSize, squared, selected}) => {
                 />
             ):(
                 // else display initials
-                <Text style={style.initials}>{initials}</Text>  
+                <Text 
+                    style={[
+                        style.initials,
+                        largerSize && {fontSize: 24},
+                    ]}
+                >
+                    {initials}
+                </Text>  
             )}
             {selected && <View style={style.selectedIconWrapper}> 
                 <SelectedOrderIcon />
@@ -62,6 +72,7 @@ const style = StyleSheet.create({
     initials: {
         fontFamily: "mulish-bold",
         color: primaryColor,
+        fontSize: 12,
     },
     selectedIconWrapper: {
         position: 'absolute',

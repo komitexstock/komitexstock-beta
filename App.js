@@ -74,18 +74,11 @@ import { StatusBar, AppRegistry } from 'react-native';
 import { white } from './style/colors';
 // react safe area provider
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-// context
-import { useAuth } from './context/AuthContext';
 // navigator
 import Navigator from './router/Navigator';
 
 export default function App() {
     
-    // get Auth data   
-    const { authData, loading } = useAuth();
-
-    // console.log("Auth Data: ", authData);
-
     // declare fonts 
     const [fontsLoaded] = useFonts({
         'mulish-regular': require('./assets/fonts/Mulish-Regular.ttf'),
@@ -98,7 +91,7 @@ export default function App() {
     //   function to load font
     const onLayoutRootView = useCallback(async () => {
         // wait fpr font and authData to finish loading
-        if (fontsLoaded && !loading) {
+        if (fontsLoaded) {
             // remove splash screen
             await SplashScreen.hideAsync();
         }
