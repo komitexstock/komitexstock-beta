@@ -171,7 +171,7 @@ const ProductAnalytics = ({navigation}) => {
                             stackName={
                                 <View style={style.headerWrapper}>
                                     <Avatar 
-                                        imageUrl={require('../assets/images/maybach-sunglasses.png')}
+                                        imageUrl={'../assets/images/maybach-sunglasses.png'}
                                         squared={true}
                                     />
                                     <Text style={style.headerText} >Maybach Sunglasses</Text>

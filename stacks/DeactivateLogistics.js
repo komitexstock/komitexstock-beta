@@ -488,7 +488,7 @@ const DeactivateLogistics = ({navigation}) => {
                                 stackName={
                                     <View style={style.headerWrapper}>
                                         <Avatar 
-                                            imageUrl={require('../assets/images/komitex.png')}
+                                            imageUrl={'../assets/images/komitex.png'}
                                             squared={true}
                                         />
                                         <Text style={style.headerText}>Komitex Logistics</Text>

@@ -34,7 +34,7 @@ const AddLogistics = ({navigation}) => {
         {
             id: 1,
             logistics: "Komitex Logistics",
-            imageUrl: require('../assets/images/komitex.png'),
+            imageUrl: '../assets/images/komitex.png',
             verified: true,
             destinations: 14,
             rating: 4.9,
@@ -43,7 +43,7 @@ const AddLogistics = ({navigation}) => {
         {
             id: 2,
             logistics: "DHL",
-            imageUrl: require('../assets/images/dhl.png'),
+            imageUrl: '../assets/images/dhl.png',
             verified: true,
             destinations: 28,
             rating: 4.2,
@@ -52,7 +52,7 @@ const AddLogistics = ({navigation}) => {
         {
             id: 3,
             logistics: "Fedex",
-            imageUrl: require('../assets/images/fedex.png'),
+            imageUrl: '../assets/images/fedex.png',
             verified: true,
             destinations: 33,
             rating: 4.0,
@@ -61,7 +61,7 @@ const AddLogistics = ({navigation}) => {
         {
             id: 4,
             logistics: "UPS",
-            imageUrl: require('../assets/images/ups.png'),
+            imageUrl: '../assets/images/ups.png',
             verified: false,
             destinations: 14,
             rating: 3.5,

@@ -125,7 +125,7 @@ const LocationAnalytics = ({navigation}) => {
             numberOfDeliveries: 10,
             totalPrice: 72500,
             oldTotalPrice: 67000,
-            imageUrl: require('../assets/images/komitex.png'),
+            imageUrl: '../assets/images/komitex.png',
         },
         {
             id: 2,
@@ -133,7 +133,7 @@ const LocationAnalytics = ({navigation}) => {
             numberOfDeliveries: 13,
             totalPrice: 49500,
             oldTotalPrice: 67000,
-            imageUrl: require('../assets/images/dhl.png'),
+            imageUrl: '../assets/images/dhl.png',
         },
         {
             id: 3,
@@ -141,7 +141,7 @@ const LocationAnalytics = ({navigation}) => {
             numberOfDeliveries: 7,
             totalPrice: 70000,
             oldTotalPrice: 67000,
-            imageUrl: require('../assets/images/fedex.png'),
+            imageUrl: '../assets/images/fedex.png',
         },
     ];
 

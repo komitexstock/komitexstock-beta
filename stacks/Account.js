@@ -201,19 +201,28 @@ const Account = ({navigation, route}) => {
         },
     ];
 
+    console.log(selectedImage);
     // function to select image for profile photo
     const pickImageAsync = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-          allowsEditing: true,
-          quality: 1,
-        });
-    
-        if (!result.canceled) {
-            imageType === "Profile" ? 
-            setSelectedImage(!result.canceled[0].uri) : 
-            setSelectedBanner(!result.canceled[0].uri);
-            closeModal();
+        try {
+            const result = await ImagePicker.launchImageLibraryAsync({
+                allowsEditing: true,
+                quality: 1,
+                allowsMultipleSelection: false,
+            });
+            
+            
+            if (!result.canceled) {
+                // console.log(result.assets[0].uri);
+                imageType === "Profile" ?
+                setSelectedImage(result.assets[0].uri) : 
+                setSelectedBanner(result.assets[0].uri);
+                closeModal();
+            }
+        } catch (error) {
+            console.log(error.message);
         }
+    
     };
 
     const handleSignOut = async () => {

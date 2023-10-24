@@ -3,7 +3,7 @@ import { primaryColor, secondaryColor } from "../style/colors";
 // icons
 import SelectedOrderIcon from "../assets/icons/SelectedOrderIcon";
 
-const Avatar = ({imageUrl, fullname, smallerSize, selectedImageUri, largerSize, squared, selected, borderWidth, borderColor}) => {
+const Avatar = ({imageUrl, fullname, smallerSize, largerSize, squared, selected, borderWidth, borderColor}) => {
     // imageUrl => string | path to image
     // fullname => string
 
@@ -27,15 +27,18 @@ const Avatar = ({imageUrl, fullname, smallerSize, selectedImageUri, largerSize, 
             ]}
         >
             {/* display image if its given */}
-            {imageUrl ? (
+            {imageUrl &&
                 <Image
-                    source={!selectedImageUri ? imageUrl : {uri: selectedImageUri}}
+                    source={{uri: imageUrl}}
                     style={[
                         style.avatarImage,
-                        squared && {borderRadius: 8}
+                        smallerSize && {borderRadius: 16},
+                        largerSize && {borderRadius: 40},
+                        squared && {borderRadius: 8},
                     ]}
                 />
-            ):(
+            }
+            { !imageUrl &&
                 // else display initials
                 <Text 
                     style={[
@@ -45,7 +48,7 @@ const Avatar = ({imageUrl, fullname, smallerSize, selectedImageUri, largerSize, 
                 >
                     {initials}
                 </Text>  
-            )}
+            }
             {selected && <View style={style.selectedIconWrapper}> 
                 <SelectedOrderIcon />
             </View>}
@@ -68,6 +71,7 @@ const style = StyleSheet.create({
         width: "100%",
         height: "100%",
         borderRadius: 20,
+        resizeMode: "cover",
     },
     initials: {
         fontFamily: "mulish-bold",

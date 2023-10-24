@@ -42,14 +42,14 @@ const Share = ({navigation}) => {
             price: 15000,
             logistics: "Komitex",
             status: "Delivered",
-            imageUrl: require('../assets/images/komitex.png'),
+            imageUrl: '../assets/images/komitex..png',
             newMessage: true,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "abc123",
                     type: "Order",
                     name: "Komitex",
-                    imageUrl: require('../assets/images/komitex.png'),
+                    imageUrl: '../assets/images/komitex..png',
                 })
             },
             selected: false,
@@ -68,14 +68,14 @@ const Share = ({navigation}) => {
             price: 13000,
             status: "Pending",
             logistics: "Fedex",
-            imageUrl: require('../assets/images/fedex.png'),
+            imageUrl: '../assets/images/fedex..png',
             newMessage: true,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "def456",
                     type: "Order",
                     name: "Fedex",
-                    imageUrl: require('../assets/images/fedex.png'),
+                    imageUrl: '../assets/images/fedex..png',
                 })
             },
             selected: false,
@@ -93,14 +93,14 @@ const Share = ({navigation}) => {
             price: 14000,
             status: "Dispatched",
             logistics: "Komitex",
-            imageUrl: require('../assets/images/komitex.png'),
+            imageUrl: '../assets/images/komitex..png',
             newMessage: true,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "ghi789",
                     type: "Order",
                     name: "Komitex",
-                    imageUrl: require('../assets/images/komitex.png'),
+                    imageUrl: '../assets/images/komitex..png',
                 })
             },
             selected: false,
@@ -118,14 +118,14 @@ const Share = ({navigation}) => {
             price: 16000,
             status: "Delivered",
             logistics: "DHL",
-            imageUrl: require('../assets/images/dhl.png'),
+            imageUrl: '../assets/images/dhl..png',
             newMessage: true,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "mno345",
                     type: "Order",
                     name: "DHL",
-                    imageUrl: require('../assets/images/dhl.png'),
+                    imageUrl: '../assets/images/dhl..png',
                 })
             },
             selected: false,
@@ -143,14 +143,14 @@ const Share = ({navigation}) => {
             price: 12000,
             logistics: "UPS",
             status: "Rescheduled",
-            imageUrl: require('../assets/images/ups.png'),
+            imageUrl: '../assets/images/ups..png',
             newMessage: false,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "pqr678",
                     type: "Order",
                     name: "UPS",
-                    imageUrl: require('../assets/images/ups.png'),
+                    imageUrl: '../assets/images/ups..png',
                 })
             },
             selected: false,
@@ -169,14 +169,14 @@ const Share = ({navigation}) => {
             price: 25000,
             status: "Delivered",
             logistics: "Komitex",
-            imageUrl: require('../assets/images/komitex.png'),
+            imageUrl: '../assets/images/komitex..png',
             newMessage: false,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "stu901",
                     type: "Order",
                     name: "Komitex",
-                    imageUrl: require('../assets/images/komitex.png'),
+                    imageUrl: '../assets/images/komitex..png',
                 })
             },
             selected: false,
@@ -194,14 +194,14 @@ const Share = ({navigation}) => {
             price: 18000,
             logistics: "Fedex",
             status: "Pending",
-            imageUrl: require('../assets/images/fedex.png'),
+            imageUrl: '../assets/images/fedex..png',
             newMessage: false,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "vwx234",
                     type: "Order",
                     name: "Fedex",
-                    imageUrl: require('../assets/images/fedex.png'),
+                    imageUrl: '../assets/images/fedex..png',
                 })
             },
             selected: false,
@@ -219,14 +219,14 @@ const Share = ({navigation}) => {
             price: 19000,
             logistics: "Komitex",
             status: "Dispatched",
-            imageUrl: require('../assets/images/komitex.png'),
+            imageUrl: '../assets/images/komitex..png',
             newMessage: false,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "yz0123",
                     type: "Order",
                     name: "Komitex",
-                    imageUrl: require('../assets/images/komitex.png'),
+                    imageUrl: '../assets/images/komitex..png',
                 })
             },
             selected: false,
@@ -244,14 +244,14 @@ const Share = ({navigation}) => {
             price: 22000,
             status: "Cancelled",
             logistics: "DHL",
-            imageUrl: require('../assets/images/dhl.png'),
+            imageUrl: '../assets/images/dhl..png',
             newMessage: false,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "bcd345",
                     type: "Order",
                     name: "DHL",
-                    imageUrl: require('../assets/images/dhl.png'),
+                    imageUrl: '../assets/images/dhl..png',
                 })
             },
             selected: false,
@@ -269,14 +269,14 @@ const Share = ({navigation}) => {
             price: 28000,
             status: "Delivered",
             logistics: "UPS",
-            imageUrl: require('../assets/images/ups.png'),
+            imageUrl: '../assets/images/ups..png',
             newMessage: false,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "efg567",
                     type: "Order",
                     name: "UPS",
-                    imageUrl: require('../assets/images/ups.png'),
+                    imageUrl: '../assets/images/ups..png',
                 })
             },
             selected: false,
@@ -294,14 +294,14 @@ const Share = ({navigation}) => {
             price: 20000,
             logistics: "Komitex",
             status: "Rescheduled",
-            imageUrl: require('../assets/images/komitex.png'),
+            imageUrl: '../assets/images/komitex..png',
             newMessage: true,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "ghi678",
                     type: "Order",
                     name: "Komitex",
-                    imageUrl: require('../assets/images/komitex.png'),
+                    imageUrl: '../assets/images/komitex..png',
                 })
             },
             selected: false,
@@ -320,14 +320,14 @@ const Share = ({navigation}) => {
             price: 30000,
             logistics: "Fedex",
             status: "Pending",
-            imageUrl: require('../assets/images/fedex.png'),
+            imageUrl: '../assets/images/fedex..png',
             newMessage: true,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "jkl901",
                     type: "Order",
                     name: "Fedex",
-                    imageUrl: require('../assets/images/fedex.png'),
+                    imageUrl: '../assets/images/fedex..png',
                 })
             },
             selected: false,
@@ -345,14 +345,14 @@ const Share = ({navigation}) => {
             logistics: "Komitex",
             price: 26000,
             status: "Dispatched",
-            imageUrl: require('../assets/images/komitex.png'),
+            imageUrl: '../assets/images/komitex..png',
             newMessage: false,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "mno234",
                     type: "Order",
                     name: "Komitex",
-                    imageUrl: require('../assets/images/komitex.png'),
+                    imageUrl: '../assets/images/komitex..png',
                 })
             },
             selected: false,
@@ -370,14 +370,14 @@ const Share = ({navigation}) => {
             logistics: "DHL",
             price: 23000,
             status: "Dispatched",
-            imageUrl: require('../assets/images/dhl.png'),
+            imageUrl: '../assets/images/dhl..png',
             newMessage: false,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "pqr345",
                     type: "Order",
                     name: "DHL",
-                    imageUrl: require('../assets/images/dhl.png'),
+                    imageUrl: '../assets/images/dhl..png',
                 })
             },
             selected: false,
@@ -395,14 +395,14 @@ const Share = ({navigation}) => {
             price: 32000,
             logistics: "UPS",
             status: "Delivered",
-            imageUrl: require('../assets/images/ups.png'),
+            imageUrl: '../assets/images/ups..png',
             newMessage: true,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "stu567",
                     type: "Order",
                     name: "UPS",
-                    imageUrl: require('../assets/images/ups.png'),
+                    imageUrl: '../assets/images/ups..png',
                 })
             },
             selected: false,
@@ -420,14 +420,14 @@ const Share = ({navigation}) => {
             price: 24000,
             logistics: "Komitex",
             status: "Rescheduled",
-            imageUrl: require('../assets/images/komitex.png'),
+            imageUrl: '../assets/images/komitex..png',
             newMessage: true,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "vwx678",
                     type: "Order",
                     name: "Komitex",
-                    imageUrl: require('../assets/images/komitex.png'),
+                    imageUrl: '../assets/images/komitex..png',
                 })
             },
             selected: false,
@@ -445,7 +445,7 @@ const Share = ({navigation}) => {
             id: "yz0124",
             price: 35000,
             status: "Delivered",
-            imageUrl: require('../assets/images/fedex.png'),
+            imageUrl: '../assets/images/fedex..png',
             logistics: "Fedex",
             newMessage: false,
             navigateToChat: () => {
@@ -453,7 +453,7 @@ const Share = ({navigation}) => {
                     id: "yz0124",
                     type: "Order",
                     name: "Fedex",
-                    imageUrl: require('../assets/images/fedex.png'),
+                    imageUrl: '../assets/images/fedex..png',
                 })
             },
             selected: false,
@@ -471,14 +471,14 @@ const Share = ({navigation}) => {
             price: 27000,
             status: "Dispatched",
             logistics: "Komitex",
-            imageUrl: require('../assets/images/komitex.png'),
+            imageUrl: '../assets/images/komitex..png',
             newMessage: false,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "bcd456",
                     type: "Order",
                     name: "Komitex",
-                    imageUrl: require('../assets/images/komitex.png'),
+                    imageUrl: '../assets/images/komitex..png',
                 })
             },
             selected: false,
@@ -496,14 +496,14 @@ const Share = ({navigation}) => {
             price: 30000,
             status: "Pending",
             logistics: "DHL",
-            imageUrl: require('../assets/images/dhl.png'),
+            imageUrl: '../assets/images/dhl..png',
             newMessage: true,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "efg789",
                     type: "Order",
                     name: "DHL",
-                    imageUrl: require('../assets/images/dhl.png'),
+                    imageUrl: '../assets/images/dhl..png',
                 })
             },
             selected: false,
@@ -521,14 +521,14 @@ const Share = ({navigation}) => {
             price: 38000,
             logistics: "UPS",
             status: "Cancelled",
-            imageUrl: require('../assets/images/ups.png'),
+            imageUrl: '../assets/images/ups..png',
             newMessage: false,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
                     id: "ghi901",
                     type: "Order",
                     name: "UPS",
-                    imageUrl: require('../assets/images/ups.png'),
+                    imageUrl: '../assets/images/ups..png',
                 })
             },
             selected: false,
@@ -546,14 +546,14 @@ const Share = ({navigation}) => {
             price: 22000,
             status: "Dispatched",
             logistics: "Fedex",
-            imageUrl: require('../assets/images/fedex.png'),
+            imageUrl: '../assets/images/fedex..png',
             newMessage: true,
             navigateToChat: () => {
               navigation.navigate("Chat", {
                 id: "fedex101",
                 type: "Order",
                 name: "Fedex",
-                imageUrl: require('../assets/images/fedex.png'),
+                imageUrl: '../assets/images/fedex..png',
               });
             },
             selected: false,
@@ -571,14 +571,14 @@ const Share = ({navigation}) => {
             price: 22000,
             status: "Dispatched",
             logistics: "UPS",
-            imageUrl: require('../assets/images/ups.png'),
+            imageUrl: '../assets/images/ups..png',
             newMessage: true,
             navigateToChat: () => {
               navigation.navigate("Chat", {
                 id: "ups001",
                 type: "Order",
                 name: "UPS",
-                imageUrl: require('../assets/images/ups.png'),
+                imageUrl: '../assets/images/ups..png',
               });
             },
             selected: false,
@@ -597,14 +597,14 @@ const Share = ({navigation}) => {
             price: 18000,
             status: "Delivered",
             logistics: "Fedex",
-            imageUrl: require('../assets/images/fedex.png'),
+            imageUrl: '../assets/images/fedex..png',
             newMessage: false,
             navigateToChat: () => {
               navigation.navigate("Chat", {
                 id: "fedex102",
                 type: "Order",
                 name: "Fedex",
-                imageUrl: require('../assets/images/fedex.png'),
+                imageUrl: '../assets/images/fedex..png',
               });
             },
             selected: false,
@@ -622,14 +622,14 @@ const Share = ({navigation}) => {
             price: 18000,
             status: "Delivered",
             logistics: "UPS",
-            imageUrl: require('../assets/images/ups.png'),
+            imageUrl: '../assets/images/ups..png',
             newMessage: false,
             navigateToChat: () => {
               navigation.navigate("Chat", {
                 id: "ups002",
                 type: "Order",
                 name: "UPS",
-                imageUrl: require('../assets/images/ups.png'),
+                imageUrl: '../assets/images/ups..png',
               });
             },
             selected: false,
@@ -647,14 +647,14 @@ const Share = ({navigation}) => {
             price: 15000,
             status: "Cancelled",
             logistics: "UPS",
-            imageUrl: require('../assets/images/ups.png'),
+            imageUrl: '../assets/images/ups..png',
             newMessage: true,
             navigateToChat: () => {
               navigation.navigate("Chat", {
                 id: "ups003",
                 type: "Order",
                 name: "UPS",
-                imageUrl: require('../assets/images/ups.png'),
+                imageUrl: '../assets/images/ups..png',
               });
             },
             selected: false,
@@ -672,14 +672,14 @@ const Share = ({navigation}) => {
             price: 15000,
             status: "Cancelled",
             logistics: "Fedex",
-            imageUrl: require('../assets/images/fedex.png'),
+            imageUrl: '../assets/images/fedex..png',
             newMessage: true,
             navigateToChat: () => {
               navigation.navigate("Chat", {
                 id: "fedex103",
                 type: "Order",
                 name: "Fedex",
-                imageUrl: require('../assets/images/fedex.png'),
+                imageUrl: '../assets/images/fedex..png',
               });
             },
             selected: false,
@@ -697,14 +697,14 @@ const Share = ({navigation}) => {
             price: 26000,
             status: "Pending",
             logistics: "Fedex",
-            imageUrl: require('../assets/images/fedex.png'),
+            imageUrl: '../assets/images/fedex..png',
             newMessage: false,
             navigateToChat: () => {
               navigation.navigate("Chat", {
                 id: "fedex104",
                 type: "Order",
                 name: "Fedex",
-                imageUrl: require('../assets/images/fedex.png'),
+                imageUrl: '../assets/images/fedex..png',
               });
             },
             selected: false,
@@ -722,14 +722,14 @@ const Share = ({navigation}) => {
             price: 28000,
             status: "Rescheduled",
             logistics: "Fedex",
-            imageUrl: require('../assets/images/fedex.png'),
+            imageUrl: '../assets/images/fedex..png',
             newMessage: true,
             navigateToChat: () => {
               navigation.navigate("Chat", {
                 id: "fedex105",
                 type: "Order",
                 name: "Fedex",
-                imageUrl: require('../assets/images/fedex.png'),
+                imageUrl: '../assets/images/fedex..png',
               });
             },
             selected: false,
@@ -747,14 +747,14 @@ const Share = ({navigation}) => {
             price: 25000,
             status: "Delivered",
             logistics: "Fedex",
-            imageUrl: require('../assets/images/fedex.png'),
+            imageUrl: '../assets/images/fedex..png',
             newMessage: false,
             navigateToChat: () => {
               navigation.navigate("Chat", {
                 id: "fedex106",
                 type: "Order",
                 name: "Fedex",
-                imageUrl: require('../assets/images/fedex.png'),
+                imageUrl: '../assets/images/fedex..png',
               });
             },
             selected: false,
@@ -772,14 +772,14 @@ const Share = ({navigation}) => {
             price: 26000,
             status: "Pending",
             logistics: "UPS",
-            imageUrl: require('../assets/images/ups.png'),
+            imageUrl: '../assets/images/ups..png',
             newMessage: false,
             navigateToChat: () => {
               navigation.navigate("Chat", {
                 id: "ups004",
                 type: "Order",
                 name: "UPS",
-                imageUrl: require('../assets/images/ups.png'),
+                imageUrl: '../assets/images/ups..png',
               });
             },
             selected: false,
@@ -797,14 +797,14 @@ const Share = ({navigation}) => {
             price: 25000,
             status: "Delivered",
             logistics: "UPS",
-            imageUrl: require('../assets/images/ups.png'),
+            imageUrl: '../assets/images/ups..png',
             newMessage: true,
             navigateToChat: () => {
               navigation.navigate("Chat", {
                 id: "ups005",
                 type: "Order",
                 name: "UPS",
-                imageUrl: require('../assets/images/ups.png'),
+                imageUrl: '../assets/images/ups..png',
               });
             },
             selected: false,
@@ -822,14 +822,14 @@ const Share = ({navigation}) => {
             price: 22000,
             status: "Dispatched",
             logistics: "DHL",
-            imageUrl: require('../assets/images/dhl.png'),
+            imageUrl: '../assets/images/dhl..png',
             newMessage: true,
             navigateToChat: () => {
               navigation.navigate("Chat", {
                 id: "dhl001",
                 type: "Order",
                 name: "DHL",
-                imageUrl: require('../assets/images/dhl.png'),
+                imageUrl: '../assets/images/dhl..png',
               });
             },
             selected: false,
@@ -848,14 +848,14 @@ const Share = ({navigation}) => {
             price: 18000,
             status: "Delivered",
             logistics: "DHL",
-            imageUrl: require('../assets/images/dhl.png'),
+            imageUrl: '../assets/images/dhl..png',
             newMessage: false,
             navigateToChat: () => {
               navigation.navigate("Chat", {
                 id: "dhl002",
                 type: "Order",
                 name: "DHL",
-                imageUrl: require('../assets/images/dhl.png'),
+                imageUrl: '../assets/images/dhl..png',
               });
             },
             selected: false,
@@ -873,14 +873,14 @@ const Share = ({navigation}) => {
             price: 15000,
             status: "Cancelled",
             logistics: "DHL",
-            imageUrl: require('../assets/images/dhl.png'),
+            imageUrl: '../assets/images/dhl..png',
             newMessage: true,
             navigateToChat: () => {
               navigation.navigate("Chat", {
                 id: "dhl003",
                 type: "Order",
                 name: "DHL",
-                imageUrl: require('../assets/images/dhl.png'),
+                imageUrl: '../assets/images/dhl..png',
               });
             },
             selected: false,
@@ -898,14 +898,14 @@ const Share = ({navigation}) => {
             price: 26000,
             status: "Pending",
             logistics: "DHL",
-            imageUrl: require('../assets/images/dhl.png'),
+            imageUrl: '../assets/images/dhl..png',
             newMessage: false,
             navigateToChat: () => {
               navigation.navigate("Chat", {
                 id: "dhl004",
                 type: "Order",
                 name: "DHL",
-                imageUrl: require('../assets/images/dhl.png'),
+                imageUrl: '../assets/images/dhl..png',
               });
             },
             selected: false,
@@ -923,14 +923,14 @@ const Share = ({navigation}) => {
             price: 25000,
             status: "Delivered",
             logistics: "DHL",
-            imageUrl: require('../assets/images/dhl.png'),
+            imageUrl: '../assets/images/dhl..png',
             newMessage: true,
             navigateToChat: () => {
               navigation.navigate("Chat", {
                 id: "dhl005",
                 type: "Order",
                 name: "DHL",
-                imageUrl: require('../assets/images/dhl.png'),
+                imageUrl: '../assets/images/dhl..png',
               });
             },
             selected: false,
@@ -948,14 +948,14 @@ const Share = ({navigation}) => {
             price: 23000,
             status: "Dispatched",
             logistics: "Fedex",
-            imageUrl: require('../assets/images/fedex.png'),
+            imageUrl: '../assets/images/fedex..png',
             newMessage: false,
             navigateToChat: () => {
               navigation.navigate("Chat", {
                 id: "fedex107",
                 type: "Order",
                 name: "Fedex",
-                imageUrl: require('../assets/images/fedex.png'),
+                imageUrl: '../assets/images/fedex..png',
               });
             },
             selected: false,
@@ -973,14 +973,14 @@ const Share = ({navigation}) => {
             price: 32000,
             status: "Rescheduled",
             logistics: "Fedex",
-            imageUrl: require('../assets/images/fedex.png'),
+            imageUrl: '../assets/images/fedex..png',
             newMessage: true,
             navigateToChat: () => {
               navigation.navigate("Chat", {
                 id: "fedex108",
                 type: "Order",
                 name: "Fedex",
-                imageUrl: require('../assets/images/fedex.png'),
+                imageUrl: '../assets/images/fedex..png',
               });
             },
             selected: false,

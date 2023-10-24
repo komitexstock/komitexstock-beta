@@ -173,7 +173,7 @@ const SendWaybill = ({navigation}) => {
             id: "abc123",
             type: "Waybill",
             name: "Komitex",
-            imageUrl: require('../assets/images/komitex.png'),
+            imageUrl: '../assets/images/komitex.png',
             newChat: true,
         })
     }

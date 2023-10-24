@@ -19,7 +19,7 @@ const Reviews = ({navigation}) => {
     const reviews = [
         {
             id: 1,
-            imageUrl: require('../assets/profile/profile.jpg'),
+            imageUrl: '../assets/profile/profile.jpg',
             fullname: "John Doe",
             timestamp: "2023-07-08 09:15:00",
             review: "I recently had the pleasure of utilizing the logistics services provided by this company, and I must say it was an exceptional experience from start to finish. The level of professionalism and attention to detail demonstrated by their team was truly commendable. From the moment I reached out for a quote to the safe delivery of my package, they exceeded my expectations at every step.\n\nThe customer service was outstanding. The representatives were knowledgeable, responsive, and eager to assist. They patiently answered all my questions and provided me with regular updates on the status of my shipment. It was comforting to know that I could rely on their expertise and trust them with my valuable package. Moreover, the delivery itself was prompt and seamless. My package arrived on time and in perfect condition, which speaks volumes about their dedication to ensuring the safe transportation of goods.\n\nI highly recommend this logistics company to anyone in need of reliable and efficient shipping services. They prioritize customer satisfaction and deliver on their promises. I will definitely be using their services again in the future for all my logistics needs."
@@ -33,21 +33,21 @@ const Reviews = ({navigation}) => {
         },
         {
             id: 3,
-            imageUrl: require('../assets/profile/profile1.jpg'),
+            imageUrl: '../assets/profile/profile1.jpg',
             fullname: "David Johnson",
             timestamp: "2023-07-06 17:45:00",
             review: "Impressive service from this logistics company. The staff was professional and helpful throughout the process."
         },
         {
             id: 4,
-            imageUrl: require('../assets/profile/profile3.png'),
+            imageUrl: '../assets/profile/profile3.png',
             fullname: "Sarah Williams",
             timestamp: "2023-07-05 11:20:00",
             review: "I had a great shipping experience with this logistics company. They provided real-time tracking and my package arrived in perfect condition."
         },
         {
             id: 5,
-            imageUrl: require('../assets/profile/profile7.jpg'),
+            imageUrl: '../assets/profile/profile7.jpg',
             fullname: "Michael Brown",
             timestamp: "2023-07-04 16:10:00",
             review: "Excellent logistics services. The delivery was fast and the communication was clear and friendly."
@@ -68,7 +68,7 @@ const Reviews = ({navigation}) => {
         },
         {
             id: 8,
-            imageUrl: require('../assets/profile/profile5.png'),
+            imageUrl: '../assets/profile/profile5.png',
             fullname: "Jessica Miller",
             timestamp: "2023-07-01 10:55:00",
             review: "I had a wonderful experience with this logistics company. They were efficient, reliable, and delivered my package without any issues."
@@ -82,7 +82,7 @@ const Reviews = ({navigation}) => {
         },
         {
             id: 10,
-            imageUrl: require('../assets/profile/profile4.png'),
+            imageUrl: '../assets/profile/profile4.png',
             fullname: "Olivia Anderson",
             timestamp: "2023-06-29 12:35:00",
             review: "Great logistics service overall. The delivery was on time, and the staff was friendly and helpful."

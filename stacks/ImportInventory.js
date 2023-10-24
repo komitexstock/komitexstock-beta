@@ -34,38 +34,38 @@ const ImportInventory = ({navigation}) => {
         {
             id: 1,
             product_name: "Clarks Shoe",
-            imageUrl: require("../assets/images/Clarks.jpg"),
+            imageUrl: "../assets/images/Clarks.jpg",
             quantity: 1,
         },
         {
             id: 2,
             product_name: "Pheonix Sneakers",
-            imageUrl: require("../assets/images/sneakers.png"),
+            imageUrl: "../assets/images/sneakers.png",
             quantity: 1,
         },
         {
             id: 3,
             product_name: "Timberland Shoe",
-            imageUrl: require("../assets/images/Timberland.jpg"),
+            imageUrl: "../assets/images/Timberland.jpg",
             quantity: 1,
         },
         {
             id: 4,
             product_name: "Chaos Watch",
-            imageUrl: require("../assets/images/Chaos-Window-Watch.jpg"),
+            imageUrl: "../assets/images/Chaos-Window-Watch.jpg",
             quantity: 1,
         },
         {
             id: 5,
             product_name: "Maybach Sunglasses",
             quantity: 1,
-            imageUrl: require("../assets/images/maybach-sunglasses.png"),
+            imageUrl: "../assets/images/maybach-sunglasses.png",
         },
         {
             id: 6,
             product_name: "Accurate Watch",
             quantity: 2,
-            imageUrl: require("../assets/images/accurate-watch.png"),
+            imageUrl: "../assets/images/accurate-watch.png",
         },
     ]
 

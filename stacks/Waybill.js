@@ -135,7 +135,7 @@ const Waybill = ({navigation}) => {
             logistics: "Komitex",
             inventory_action: "increment",
             status: "Delivered",
-            imageUrl: require('../assets/images/komitex.png'),
+            imageUrl: '../assets/images/komitex..png',
             newMessage: true,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
@@ -143,7 +143,7 @@ const Waybill = ({navigation}) => {
                     type: "Waybill",
                     order: "Chat Message",
                     name: "Komitex",
-                    imageUrl: require('../assets/images/komitex.png'),
+                    imageUrl: '../assets/images/komitex..png',
                 })
             },
         },
@@ -157,7 +157,7 @@ const Waybill = ({navigation}) => {
             status: "Pending",
             logistics: "Fedex",
             inventory_action: "increment",
-            imageUrl: require('../assets/images/fedex.png'),
+            imageUrl: '../assets/images/fedex..png',
             newMessage: false,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
@@ -165,7 +165,7 @@ const Waybill = ({navigation}) => {
                     type: "Waybill",
                     order: "Chat Message",
                     name: "Fedex",
-                    imageUrl: require('../assets/images/fedex.png'),
+                    imageUrl: '../assets/images/fedex..png',
                 })
             },
         },
@@ -178,7 +178,7 @@ const Waybill = ({navigation}) => {
             logistics: "Komitex",
             inventory_action: "increment",
             status: "Delivered",
-            imageUrl: require('../assets/images/komitex.png'),
+            imageUrl: '../assets/images/komitex..png',
             newMessage: false,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
@@ -186,7 +186,7 @@ const Waybill = ({navigation}) => {
                     type: "Waybill",
                     order: "Chat Message",
                     name: "Komitex",
-                    imageUrl: require('../assets/images/komitex.png'),
+                    imageUrl: '../assets/images/komitex..png',
                 })
             },
         },
@@ -199,7 +199,7 @@ const Waybill = ({navigation}) => {
             logistics: "DHL",
             inventory_action: "increment",
             status: "Pending",
-            imageUrl: require('../assets/images/dhl.png'),
+            imageUrl: '../assets/images/dhl..png',
             newMessage: true,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
@@ -207,7 +207,7 @@ const Waybill = ({navigation}) => {
                     type: "Waybill",
                     order: "Chat Message",
                     name: "Dhl",
-                    imageUrl: require('../assets/images/dhl.png'),
+                    imageUrl: '../assets/images/dhl..png',
                 })
             },
         },
@@ -220,7 +220,7 @@ const Waybill = ({navigation}) => {
             status: "Pending",
             logistics: "UPS",
             inventory_action: "increment",
-            imageUrl: require('../assets/images/ups.png'),
+            imageUrl: '../assets/images/ups..png',
             newMessage: false,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
@@ -228,7 +228,7 @@ const Waybill = ({navigation}) => {
                     type: "Waybill",
                     order: "Chat Message",
                     name: "Ups",
-                    imageUrl: require('../assets/images/ups.png'),
+                    imageUrl: '../assets/images/ups..png',
                 })
             },
         },
@@ -242,7 +242,7 @@ const Waybill = ({navigation}) => {
             status: "Pending",
             logistics: "Fedex",
             inventory_action: "increment",
-            imageUrl: require('../assets/images/fedex.png'),
+            imageUrl: '../assets/images/fedex..png',
             newMessage: true,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
@@ -250,7 +250,7 @@ const Waybill = ({navigation}) => {
                     type: "Waybill",
                     order: "Chat Message",
                     name: "Fedex",
-                    imageUrl: require('../assets/images/fedex.png'),
+                    imageUrl: '../assets/images/fedex..png',
                 })
             },
         },
@@ -264,7 +264,7 @@ const Waybill = ({navigation}) => {
             status: "Delivered",
             logistics: "Komitex",
             inventory_action: "increment",
-            imageUrl: require('../assets/images/komitex.png'),
+            imageUrl: '../assets/images/komitex..png',
             newMessage: false,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
@@ -272,7 +272,7 @@ const Waybill = ({navigation}) => {
                     type: "Waybill",
                     order: "Chat Message",
                     name: "Komitex",
-                    imageUrl: require('../assets/images/komitex.png'),
+                    imageUrl: '../assets/images/komitex..png',
                 })
             },
         },
@@ -285,7 +285,7 @@ const Waybill = ({navigation}) => {
             status: "Pending",
             logistics: "DHL",
             inventory_action: "increment",
-            imageUrl: require('../assets/images/dhl.png'),
+            imageUrl: '../assets/images/dhl..png',
             newMessage: false,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
@@ -293,7 +293,7 @@ const Waybill = ({navigation}) => {
                     type: "Waybill",
                     order: "Chat Message",
                     name: "Dhl",
-                    imageUrl: require('../assets/images/dhl.png'),
+                    imageUrl: '../assets/images/dhl..png',
                 })
             },
         },
@@ -306,7 +306,7 @@ const Waybill = ({navigation}) => {
             status: "Delivered",
             logistics: "UPS",
             inventory_action: "increment",
-            imageUrl: require('../assets/images/ups.png'),
+            imageUrl: '../assets/images/ups..png',
             newMessage: true,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
@@ -314,7 +314,7 @@ const Waybill = ({navigation}) => {
                     type: "Waybill",
                     order: "Chat Message",
                     name: "Ups",
-                    imageUrl: require('../assets/images/ups.png'),
+                    imageUrl: '../assets/images/ups..png',
                 })
             },
         },
@@ -327,7 +327,7 @@ const Waybill = ({navigation}) => {
             status: "Pending",
             logistics: "Fedex",
             inventory_action: "increment",
-            imageUrl: require('../assets/images/fedex.png'),
+            imageUrl: '../assets/images/fedex..png',
             newMessage: false,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
@@ -335,7 +335,7 @@ const Waybill = ({navigation}) => {
                     type: "Waybill",
                     order: "Chat Message",
                     name: "Fedex",
-                    imageUrl: require('../assets/images/fedex.png'),
+                    imageUrl: '../assets/images/fedex..png',
                 })
             },
         },
@@ -349,7 +349,7 @@ const Waybill = ({navigation}) => {
             status: "Pending",
             logistics: "Komitex",
             inventory_action: "decrement",
-            imageUrl: require('../assets/images/komitex.png'),
+            imageUrl: '../assets/images/komitex..png',
             newMessage: false,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
@@ -357,7 +357,7 @@ const Waybill = ({navigation}) => {
                     type: "Waybill",
                     order: "Chat Message",
                     name: "Komitex",
-                    imageUrl: require('../assets/images/komitex.png'),
+                    imageUrl: '../assets/images/komitex..png',
                 })
             },
         },
@@ -370,7 +370,7 @@ const Waybill = ({navigation}) => {
             status: "Delivered",
             logistics: "Fedex",
             inventory_action: "decrement",
-            imageUrl: require('../assets/images/fedex.png'),
+            imageUrl: '../assets/images/fedex..png',
             newMessage: false,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
@@ -378,7 +378,7 @@ const Waybill = ({navigation}) => {
                     type: "Waybill",
                     order: "Chat Message",
                     name: "Fedex",
-                    imageUrl: require('../assets/images/fedex.png'),
+                    imageUrl: '../assets/images/fedex..png',
                 })
             },
         },
@@ -391,7 +391,7 @@ const Waybill = ({navigation}) => {
             status: "Pending",
             logistics: "Komitex",
             inventory_action: "decrement",
-            imageUrl: require('../assets/images/komitex.png'),
+            imageUrl: '../assets/images/komitex..png',
             newMessage: false,
             navigateToChat: () => {
                 navigation.navigate("Chat", {
@@ -399,7 +399,7 @@ const Waybill = ({navigation}) => {
                     type: "Waybill",
                     order: "Chat Message",
                     name: "Komitex",
-                    imageUrl: require('../assets/images/komitex.png'),
+                    imageUrl: '../assets/images/komitex..png',
                 })
             },
         },

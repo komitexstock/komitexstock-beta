@@ -21,7 +21,7 @@ const Logistics = ({navigation}) => {
         {
             id: 1,
             logistics: "Komitex Logistics",
-            imageUrl: require('../assets/images/komitex.png'),
+            imageUrl: '../assets/images/komitex.png',
             totalLocations: 17,
             totalStock: 25,
             lowStock: true,
@@ -33,7 +33,7 @@ const Logistics = ({navigation}) => {
         {
             id: 2,
             logistics: "DHL",
-            imageUrl: require('../assets/images/dhl.png'),
+            imageUrl: '../assets/images/dhl.png',
             totalLocations: 15,
             totalStock: 17,
             lowStock: false,
@@ -45,7 +45,7 @@ const Logistics = ({navigation}) => {
         {
             id: 3,
             logistics: "Fedex",
-            imageUrl: require('../assets/images/fedex.png'),
+            imageUrl: '../assets/images/fedex.png',
             totalLocations: 11,
             totalStock: 9,
             lowStock: false,
@@ -57,7 +57,7 @@ const Logistics = ({navigation}) => {
         {
             id: 4,
             logistics: "UPS",
-            imageUrl: require('../assets/images/ups.png'),
+            imageUrl: '../assets/images/ups.png',
             totalLocations: 5,
             totalStock: 7,
             lowStock: false,

@@ -27,7 +27,7 @@ const StockTransferProducts = ({navigation, route}) => {
         {
             id: 1,
             product_name: "Clarks Shoe",
-            image_url: require("../assets/images/Clarks.jpg"),
+            image_url: "../assets/images/Clarks.jpg",
             available_quantity: 5,
             merchant: "Style Bazaar",
             quantity: 1,
@@ -36,7 +36,7 @@ const StockTransferProducts = ({navigation, route}) => {
         {
             id: 2,
             product_name: "Pheonix Sneakers",
-            image_url: require("../assets/images/sneakers.png"),
+            image_url: "../assets/images/sneakers.png",
             merchant: "Style Bazaar",
             available_quantity: 5,
             quantity: 1,
@@ -45,7 +45,7 @@ const StockTransferProducts = ({navigation, route}) => {
         {
             id: 3,
             product_name: "Timberland Shoe",
-            image_url: require("../assets/images/Timberland.jpg"),
+            image_url: "../assets/images/Timberland.jpg",
             merchant: "Luxe Living Ltd",
             available_quantity: 10,
             quantity: 1,
@@ -54,7 +54,7 @@ const StockTransferProducts = ({navigation, route}) => {
         {
             id: 4,
             product_name: "Chaos Watch",
-            image_url: require("../assets/images/Chaos-Window-Watch.jpg"),
+            image_url: "../assets/images/Chaos-Window-Watch.jpg",
             merchant: "Ecosavy Ltd",
             available_quantity: 8,
             quantity: 1,
@@ -66,7 +66,7 @@ const StockTransferProducts = ({navigation, route}) => {
             merchant: "Ecosavy Ltd",
             available_quantity: 7,
             quantity: 1,
-            image_url: require("../assets/images/maybach-sunglasses.png"),
+            image_url: "../assets/images/maybach-sunglasses.png",
             selected: false,
         },
         {
@@ -75,7 +75,7 @@ const StockTransferProducts = ({navigation, route}) => {
             merchant: "Tech Haven",
             available_quantity: 9,
             quantity: 1,
-            image_url: require("../assets/images/accurate-watch.png"),
+            image_url: "../assets/images/accurate-watch.png",
             selected: false,
         },
         {
@@ -84,7 +84,7 @@ const StockTransferProducts = ({navigation, route}) => {
             merchant: "Tech Haven",
             available_quantity: 9,
             quantity: 1,
-            image_url: require('../assets/images/black-sketchers.png'),
+            image_url: '../assets/images/black-sketchers.png',
             selected: false,
         },
         {
@@ -93,7 +93,7 @@ const StockTransferProducts = ({navigation, route}) => {
             merchant: "Tech Haven",
             available_quantity: 9,
             quantity: 1,
-            image_url: require('../assets/images/brown-clarks.png'),
+            image_url: '../assets/images/brown-clarks.png',
             selected: false,
         },
         {
@@ -102,7 +102,7 @@ const StockTransferProducts = ({navigation, route}) => {
             merchant: "Tech Haven",
             available_quantity: 9,
             quantity: 1,
-            image_url: require('../assets/images/perfectly-useless-mornig-watch.png'),
+            image_url: '../assets/images/perfectly-useless-mornig-watch.png',
             selected: false,
         },
         {
@@ -111,7 +111,7 @@ const StockTransferProducts = ({navigation, route}) => {
             merchant: "Tech Haven",
             available_quantity: 9,
             quantity: 1,
-            image_url: require('../assets/images/useless-afternoon-watch.png'),
+            image_url: '../assets/images/useless-afternoon-watch.png',
             selected: false,
         },
     ]);

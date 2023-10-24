@@ -246,14 +246,14 @@ const Chat = ({navigation, route}) => {
             id: 5,
             product_name: "Maybach Sunglasses",
             quantity: 1,
-            imageUrl: require("../assets/images/maybach-sunglasses.png"),
+            imageUrl: "../assets/images/maybach-sunglasses.png",
             checked: true,
         },
         {
             id: 6,
             product_name: "Accurate Watch",
             quantity: 1,
-            imageUrl: require("../assets/images/accurate-watch.png"),
+            imageUrl: "../assets/images/accurate-watch.png",
             checked: true,
         },
     ]);
@@ -326,7 +326,7 @@ const Chat = ({navigation, route}) => {
     const ChatHeader = (
         <View style={style.headerInfoWrapper}>
             <Image 
-                source={imageUrl ? imageUrl : require("../assets/images/default.png")}
+                source={require("../assets/images/default.png")}
                 style={style.headerImage}
             />
             <View style={style.headerTextWrapper}>

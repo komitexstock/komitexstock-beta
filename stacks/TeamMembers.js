@@ -204,7 +204,7 @@ const TeamMembers = ({ navigation }) => {
     const memberList = [
         {
             id: 1,
-            imageUrl: require('../assets/profile/profile.jpg'),
+            imageUrl: '../assets/profile/profile.jpg',
             admin: true,
             fullname: "Raymond Reddington",
             role: "Manager",
@@ -214,7 +214,7 @@ const TeamMembers = ({ navigation }) => {
         },
         {
             id: 2,
-            imageUrl: require('../assets/profile/profile1.jpg'),
+            imageUrl: '../assets/profile/profile1.jpg',
             admin: false,
             fullname: "John Doe",
             role: "Sales Rep",

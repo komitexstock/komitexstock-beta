@@ -65,7 +65,7 @@ const Products = ({navigation}) => {
         {
             id: 1,
             logistics: "Komitex Logistics",
-            imageUrl: require('../assets/images/komitex.png'),
+            imageUrl: '../assets/images/komitex.png',
             totalLocations: 17,
             totalStock: 25,
             lowStock: true,
@@ -77,7 +77,7 @@ const Products = ({navigation}) => {
         {
             id: 2,
             logistics: "DHL",
-            imageUrl: require('../assets/images/dhl.png'),
+            imageUrl: '../assets/images/dhl.png',
             totalLocations: 15,
             totalStock: 17,
             lowStock: false,
@@ -89,7 +89,7 @@ const Products = ({navigation}) => {
         {
             id: 3,
             logistics: "Fedex",
-            imageUrl: require('../assets/images/fedex.png'),
+            imageUrl: '../assets/images/fedex.png',
             totalLocations: 11,
             totalStock: 9,
             lowStock: false,
@@ -101,7 +101,7 @@ const Products = ({navigation}) => {
         {
             id: 4,
             logistics: "UPS",
-            imageUrl: require('../assets/images/ups.png'),
+            imageUrl: '../assets/images/ups.png',
             totalLocations: 5,
             totalStock: 7,
             lowStock: false,
@@ -113,7 +113,7 @@ const Products = ({navigation}) => {
         {
             id: 5,
             logistics: "Amazon Logistics",
-            imageUrl: require('../assets/images/amazon.png'),
+            imageUrl: '../assets/images/amazon.png',
             totalLocations: 20,
             totalStock: 68,
             lowStock: false,
@@ -125,7 +125,7 @@ const Products = ({navigation}) => {
         {
             id: 6,
             logistics: "On Trac",
-            imageUrl: require('../assets/images/ontrac.png'),
+            imageUrl: '../assets/images/ontrac.png',
             totalLocations: 17,
             totalStock: 43,
             lowStock: false,
@@ -137,7 +137,7 @@ const Products = ({navigation}) => {
         {
             id: 7,
             logistics: "Laser Ship",
-            imageUrl: require('../assets/images/lasership.png'),
+            imageUrl: '../assets/images/lasership.png',
             totalLocations: 18,
             totalStock: 425,
             lowStock: false,
@@ -149,7 +149,7 @@ const Products = ({navigation}) => {
         {
             id: 8,
             logistics: "Tranex",
-            imageUrl: require('../assets/images/tranex.png'),
+            imageUrl: '../assets/images/tranex.png',
             totalLocations: 30,
             totalStock: 72,
             lowStock: false,
@@ -165,7 +165,7 @@ const Products = ({navigation}) => {
         {
             id: 1,
             merchant: "Style Bazaar",
-            imageUrl: require('../assets/images/style_bazaar.png'),
+            imageUrl: '../assets/images/style_bazaar.png',
             totalProducts: 17,
             totalStock: 25,
             lowStock: true,
@@ -177,7 +177,7 @@ const Products = ({navigation}) => {
         {
             id: 2,
             merchant: "Luxe Living Ltd",
-            imageUrl: require('../assets/images/luxe_living_finds.png'),
+            imageUrl: '../assets/images/luxe_living_finds.png',
             totalProducts: 15,
             totalStock: 17,
             lowStock: false,
@@ -189,7 +189,7 @@ const Products = ({navigation}) => {
         {
             id: 3,
             merchant: "Eco Savvy Emporium",
-            imageUrl: require('../assets/images/eco_savvy_emporium.png'),
+            imageUrl: '../assets/images/eco_savvy_emporium.png',
             totalProducts: 11,
             totalStock: 9,
             lowStock: false,

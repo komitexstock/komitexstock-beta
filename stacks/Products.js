@@ -95,7 +95,7 @@ const Products = ({navigation, route}) => {
             product_name: "Maybach Sunglasses",
             quantity: 7,
             price: 20000,
-            imageUrl: require('../assets/images/maybach-sunglasses.png'),
+            imageUrl: '../assets/images/maybach-sunglasses.png',
             onPress: () => handleEditProduct(1),
         },
         {
@@ -103,7 +103,7 @@ const Products = ({navigation, route}) => {
             product_name: "Accurate Watch",
             quantity: 3,
             price: 33000,
-            imageUrl: require('../assets/images/accurate-watch.png'),
+            imageUrl: '../assets/images/accurate-watch.png',
             onPress: () => handleEditProduct(2),
         },
         {
@@ -111,7 +111,7 @@ const Products = ({navigation, route}) => {
             product_name: "Black Sketchers",
             quantity: 0,
             price: 35000,
-            imageUrl: require('../assets/images/black-sketchers.png'),
+            imageUrl: '../assets/images/black-sketchers.png',
             onPress: () => handleEditProduct(3),
         },
         {
@@ -119,7 +119,7 @@ const Products = ({navigation, route}) => {
             product_name: "Brown Clarks",
             quantity: 11,
             price: 40000,
-            imageUrl: require('../assets/images/brown-clarks.png'),
+            imageUrl: '../assets/images/brown-clarks.png',
             onPress: () => handleEditProduct(4),
         },
         {
@@ -127,7 +127,7 @@ const Products = ({navigation, route}) => {
             product_name: "Pheonix Sneakers",
             quantity: 2,
             price: 25000,
-            imageUrl: require('../assets/images/sneakers.png'),
+            imageUrl: '../assets/images/sneakers.png',
             onPress: () => handleEditProduct(5),
         },
         {
@@ -135,7 +135,7 @@ const Products = ({navigation, route}) => {
             product_name: "Perfectly Useless Morning Watch",
             quantity: 9,
             price: 32000,
-            imageUrl: require('../assets/images/perfectly-useless-mornig-watch.png'),
+            imageUrl: '../assets/images/perfectly-useless-mornig-watch.png',
             onPress: () => handleEditProduct(6),
         },
         {
@@ -143,7 +143,7 @@ const Products = ({navigation, route}) => {
             product_name: "Chaos Watch",
             quantity: 15,
             price: 30000,
-            imageUrl: require('../assets/images/Chaos-Window-Watch.jpg'),
+            imageUrl: '../assets/images/Chaos-Window-Watch.jpg',
             onPress: () => handleEditProduct(7),
         },
         {
@@ -151,7 +151,7 @@ const Products = ({navigation, route}) => {
             product_name: "Clarks Phantom",
             quantity: 10,
             price: 25000,
-            imageUrl: require('../assets/images/Clarks.jpg'),
+            imageUrl: '../assets/images/Clarks.jpg',
             onPress: () => handleEditProduct(8),
         },
         {
@@ -159,7 +159,7 @@ const Products = ({navigation, route}) => {
             product_name: "Timberland",
             quantity: 10,
             price: 35000,
-            imageUrl: require('../assets/images/Timberland.jpg'),
+            imageUrl: '../assets/images/Timberland.jpg',
             onPress: () => handleEditProduct(9),
         },
         {
@@ -167,7 +167,7 @@ const Products = ({navigation, route}) => {
             product_name: "Useless Afternoon Watch",
             quantity: 19,
             price: 32000,
-            imageUrl: require('../assets/images/useless-afternoon-watch.png'),
+            imageUrl: '../assets/images/useless-afternoon-watch.png',
             onPress: () => handleEditProduct(10),
         },
     ];
@@ -779,7 +779,7 @@ const Products = ({navigation, route}) => {
                         <View style={style.warehouseBanner}>
                             <Avatar 
                                 fullname={"Abiodun Johnson"}
-                                imageUrl={require('../assets/images/style_bazaar.png')}
+                                imageUrl={'../assets/images/style_bazaar.png'}
                                 smallerSize={true}
                             />
                             <View style={style.managerText}>

@@ -55,14 +55,14 @@ const SendOrder = ({navigation, route}) => {
             id: 5,
             product_name: "Maybach Sunglasses",
             quantity: 1,
-            imageUrl: require("../assets/images/maybach-sunglasses.png"),
+            imageUrl: "../assets/images/maybach-sunglasses.png",
             checked: false,
         },
         {
             id: 6,
             product_name: "Accurate Watch",
             quantity: 1,
-            imageUrl: require("../assets/images/accurate-watch.png"),
+            imageUrl: "../assets/images/accurate-watch.png",
             checked: false,
         },
     ]);
@@ -364,7 +364,7 @@ const SendOrder = ({navigation, route}) => {
             id: "abc123",
             type: "Order",
             name: "Komitex",
-            imageUrl: require('../assets/images/komitex.png'),
+            imageUrl: '../assets/images/komitex.png',
             newChat: true,
         })
     }

@@ -102,7 +102,7 @@ const Analytics = ({navigation}) => {
             numberOfDeliveries: 10,
             totalPrice: 72500,
             oldTotalPrice: 67000,
-            imageUrl: require('../assets/images/komitex.png'),
+            imageUrl: '../assets/images/komitex.png',
             onPress: () => {navigation.navigate("LogisticsAnalytics")}
         },
         {
@@ -111,7 +111,7 @@ const Analytics = ({navigation}) => {
             numberOfDeliveries: 13,
             totalPrice: 49500,
             oldTotalPrice: 67000,
-            imageUrl: require('../assets/images/dhl.png'),
+            imageUrl: '../assets/images/dhl.png',
             onPress: () => {navigation.navigate("LogisticsAnalytics")}
         },
         {
@@ -120,7 +120,7 @@ const Analytics = ({navigation}) => {
             numberOfDeliveries: 7,
             totalPrice: 70000,
             oldTotalPrice: 67000,
-            imageUrl: require('../assets/images/fedex.png'),
+            imageUrl: '../assets/images/fedex.png',
             onPress: () => {navigation.navigate("LogisticsAnalytics")}
         },
     ];
@@ -133,7 +133,7 @@ const Analytics = ({navigation}) => {
             numberOfDeliveries: 10,
             totalPrice: 72500,
             oldTotalPrice: 67000,
-            imageUrl: require('../assets/images/maybach-sunglasses.png'),
+            imageUrl: '../assets/images/maybach-sunglasses.png',
             onPress: () => {navigation.navigate("ProductAnalytics")}
         },
         {
@@ -142,7 +142,7 @@ const Analytics = ({navigation}) => {
             numberOfDeliveries: 13,
             totalPrice: 49500,
             oldTotalPrice: 67000,
-            imageUrl: require('../assets/images/sneakers.png'),
+            imageUrl: '../assets/images/sneakers.png',
             onPress: () => {navigation.navigate("ProductAnalytics")}
         },
         {
@@ -151,7 +151,7 @@ const Analytics = ({navigation}) => {
             numberOfDeliveries: 7,
             totalPrice: 70000,
             oldTotalPrice: 67000,
-            imageUrl: require('../assets/images/black-sketchers.png'),
+            imageUrl: '../assets/images/black-sketchers.png',
             onPress: () => {navigation.navigate("ProductAnalytics")}
         },
         {
@@ -160,7 +160,7 @@ const Analytics = ({navigation}) => {
             numberOfDeliveries: 13,
             totalPrice: 150000,
             oldTotalPrice: 89000,
-            imageUrl: require("../assets/images/Timberland.jpg"),
+            imageUrl: "../assets/images/Timberland.jpg",
             onPress: () => {navigation.navigate("ProductAnalytics")}
         },
     ];

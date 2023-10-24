@@ -94,6 +94,7 @@ const OrderListItem = ({item, index, firstOrder, lastOrder, selectable, selected
                     imageUrl={item.imageUrl}
                     squared={true}
                     selected={selectable && selected}
+                    fullname={"Komitex Logistics"}
                 />
             </View>
             {/* order info */}
