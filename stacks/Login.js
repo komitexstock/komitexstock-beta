@@ -15,6 +15,9 @@ import CustomButton from "../components/CustomButton";
 import { useState } from "react";
 // colors
 import { background, black, bodyText, primaryColor } from "../style/colors";
+// auth
+import { auth } from "../Firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 const Login = ({navigation}) => {
 
@@ -39,12 +42,24 @@ const Login = ({navigation}) => {
         setEmailAddress(text);
     }
 
-    const handleUserLogin = () => {
+    const handleUserLogin = async () => {
         setIsLoading(true);
 
-        setTimeout(() => {
-            navigation.navigate("Home");
-        }, 3000);
+        try {
+            const response = await signInWithEmailAndPassword(
+                auth,
+                emailAddress,
+                password,
+            );
+            console.log(response)
+            setIsLoading(false);
+        } catch (error) {
+            console.log(error.message)            
+            setIsLoading(false);
+        }
+
+        // if (response) {
+        // }
     }
 
     const emptyFields = [emailAddress, password].some(

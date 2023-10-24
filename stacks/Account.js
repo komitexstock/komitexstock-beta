@@ -39,6 +39,9 @@ import GalleryIcon from "../assets/icons/GalleryIcon";
 import * as ImagePicker from "expo-image-picker";
 // import global
 import { useGlobals } from "../context/AppContext";
+// auth functions
+import { auth } from "../Firebase";
+import { signOut } from "firebase/auth";
 
 const Account = ({navigation, route}) => {
     // list of buttons in Account Page
@@ -205,6 +208,14 @@ const Account = ({navigation, route}) => {
         }
     };
 
+    const handleSignOut = async () => {
+        try {
+            await signOut(auth)
+        } catch (error) {
+            console.log(error.message);
+        }
+    }
+
     // render Account page
     return (
         <>
@@ -316,7 +327,10 @@ const Account = ({navigation, route}) => {
                             })}
                         </View>
                         {/* logout button */}
-                        <TouchableOpacity style={style.logoutButton}>
+                        <TouchableOpacity
+                            onPress={handleSignOut}
+                            style={style.logoutButton}
+                        >
                             <LogoutIcon />
                             <Text style={style.logoutText}>Log Out</Text>
                         </TouchableOpacity>

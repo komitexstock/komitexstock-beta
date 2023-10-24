@@ -23,12 +23,14 @@ import SignupCompleteIcon from "../assets/icons/SignupCompleteIcon";
 import { windowHeight } from "../utils/helpers"; 
 // context
 // import { useAuth } from "../context/AuthContext";
-import { FIREBASE_AUTH } from "../Firebase";
+import { auth, database } from "../Firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+// fire store functions
+import { collection, addDoc, setDoc, doc } from "firebase/firestore";
 
 const CreateAccount = ({navigation}) => {
 
-    const signup = useAuth
+    // const signup = useAuth
 
     // total number of step in the creating account proccess
     const totalSteps = [1, 2, 3];
@@ -38,7 +40,7 @@ const CreateAccount = ({navigation}) => {
     const [isLoading, setIsLoading] = useState(false);
 
     // email address
-    const [emailAddress, setEmailAddress] = useState("iffieovie@gmail.com");
+    const [emailAddress, setEmailAddress] = useState("komitexlogistics@gmail.com");
 
     // state to email address error
     const [errorEmailAddress, setErrorEmailAddress] = useState(false);
@@ -48,37 +50,37 @@ const CreateAccount = ({navigation}) => {
     }
 
     // state to store full code
-    const [code, setCode] = useState("");
+    const [code, setCode] = useState("1");
 
     // ref for code segment 1
     const segment1 = useRef(null);
     // state for segemnt 1
-    const [code1, setCode1] = useState("");
+    const [code1, setCode1] = useState("1");
     
     // ref for code segment 2
     const segment2 = useRef(null);
     // state for segemnt 2
-    const [code2, setCode2] = useState("");
+    const [code2, setCode2] = useState("1");
     
     // ref for code segment 3
     const segment3 = useRef(null);
     // state for segemnt 3
-    const [code3, setCode3] = useState("");
+    const [code3, setCode3] = useState("1");
     
     // ref for code segment 4
     const segment4 = useRef(null);
     // state for segemnt 4
-    const [code4, setCode4] = useState("");
+    const [code4, setCode4] = useState("1");
     
     // ref for code segment 5
     const segment5 = useRef(null);
     // state for segemnt 5
-    const [code5, setCode5] = useState("");
+    const [code5, setCode5] = useState("1");
     
     // ref for code segment 6
     const segment6 = useRef(null);
     // state for segemnt 6
-    const [code6, setCode6] = useState("");
+    const [code6, setCode6] = useState("1");
 
     useEffect(() => {
         setCode(code1 + code2 + code3 + code4 + code5 + code6);
@@ -155,7 +157,7 @@ const CreateAccount = ({navigation}) => {
     }
 
     // businessName
-    const [businessName, setBusinessName] = useState("");
+    const [businessName, setBusinessName] = useState("Komitex Logistics");
 
     // state to email address error
     const [errorBusinessName, setErrorBusinessName] = useState(false);
@@ -165,7 +167,7 @@ const CreateAccount = ({navigation}) => {
     }
 
     // fullName
-    const [fullName, setFullName] = useState("");
+    const [fullName, setFullName] = useState("Iffie Okomite");
 
     // state to fullName error
     const [errorFullName, setErrorFullName] = useState(false);
@@ -175,7 +177,7 @@ const CreateAccount = ({navigation}) => {
     }
 
     // phoneNumber
-    const [phoneNumber, setPhoneNumber] = useState("");
+    const [phoneNumber, setPhoneNumber] = useState("08122266618");
 
     // state to phoneNumber error
     const [errorPhoneNumber, setErrorPhoneNumber] = useState(false);
@@ -185,7 +187,7 @@ const CreateAccount = ({navigation}) => {
     }
 
     // password
-    const [password, setPassword] = useState("qwertyuiop789");
+    const [password, setPassword] = useState("komitex1234");
 
     // state to password error
     const [errorPassword, setErrorPassword] = useState(false);
@@ -218,18 +220,41 @@ const CreateAccount = ({navigation}) => {
     const handleSignup = async () => {
         setIsLoading(true);
 
-
-
+        
+        
         try {
-            const userCredentials = await createUserWithEmailAndPassword(FIREBASE_AUTH, emailAddress, password);
-            console.log(userCredentials);
 
-            if (userCredentials) {
-                setIsLoading(false);
-            }
+            const businessesRef = collection(database, 'businesses');
+            
+            const authResponse = await createUserWithEmailAndPassword(auth, emailAddress, password);
+            
+            const businessResponse = await addDoc(businessesRef, {
+                account_type: "Merchant",
+                banner_image: null,
+                businessName: businessName,
+                verified: false,
+            })
+
+            const usersRef = doc(database, "users", authResponse.user.uid)
+            
+            await setDoc(usersRef, {
+                business_id: businessResponse.id,
+                deactivated: false,
+                face_id: false,
+                fingerprint: false,
+                full_name: fullName,
+                notification: false,
+                profile_image: null,
+                role: "Manager",
+            })
+            
+            console.log("user id from auth", authResponse.user.uid);
+            console.log("bussiness id from bussiness", businessResponse.id);
+
+            setIsLoading(false)
             
         } catch (error) {
-            console.log("Error: ", error);
+            console.log("Error: ", error.message);
             setIsLoading(false);
         }
     }
