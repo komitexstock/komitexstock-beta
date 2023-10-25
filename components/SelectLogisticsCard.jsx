@@ -10,6 +10,8 @@ from "react-native";
 // icons
 import VerifiedIcon from "../assets/icons/VerifiedIcon";
 import StarIcon from "../assets/icons/StarIcon";
+// components
+import Avatar from "./Avatar";
 // colors
 import { black, subText, white } from "../style/colors";
 
@@ -29,9 +31,11 @@ const SelectLogisticsCard = ({logistics, imageUrl, rating, destinations, verifie
         >   
             <View style={style.primaryWrapper}>
                 <View style={style.imageContainer}>
-                    <Image 
-                        source={imageUrl} 
-                        style={style.image} 
+                    <Avatar 
+                        imageUrl={imageUrl}
+                        smallerSize={true}
+                        squared={true}
+                        fullname={logistics}
                     />
                     {/* { verified && <VerifiedIcon />} */}
                 </View>

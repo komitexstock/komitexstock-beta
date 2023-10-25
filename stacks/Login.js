@@ -24,9 +24,9 @@ const Login = ({navigation}) => {
     const [isLoading, setIsLoading] = useState(false);
 
     // state to store password
-    const [password, setPassword] = useState("");
+    const [password, setPassword] = useState("komitex1234");
     // email address
-    const [emailAddress, setEmailAddress] = useState("");
+    const [emailAddress, setEmailAddress] = useState("komitexlogistics@gmail.com");
 
     // state to store password error
     const [errorPassword, setErrorPassword] = useState("");
@@ -46,13 +46,11 @@ const Login = ({navigation}) => {
         setIsLoading(true);
 
         try {
-            const response = await signInWithEmailAndPassword(
+            await signInWithEmailAndPassword(
                 auth,
                 emailAddress,
                 password,
             );
-            console.log(response)
-            setIsLoading(false);
         } catch (error) {
             console.log(error.message)            
             setIsLoading(false);

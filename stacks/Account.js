@@ -42,13 +42,20 @@ import * as ImagePicker from "expo-image-picker";
 import { useGlobals } from "../context/AppContext";
 // auth functions
 import { useAuth } from "../context/AuthContext";
-import { auth } from "../Firebase";
+import { auth, database, storage } from "../Firebase";
 import { signOut } from "firebase/auth";
+// firbase storage functions
+import { 
+    ref, 
+    uploadBytesResumable, 
+    getDownloadURL 
+} from "firebase/storage";
+import { doc, updateDoc } from "firebase/firestore";
 
 const Account = ({navigation, route}) => {
 
     // auth data
-    const { authData } = useAuth();
+    const { authData, setAuthData, setStoredData } = useAuth();
 
     // console.log(authData);
 
@@ -123,6 +130,12 @@ const Account = ({navigation, route}) => {
         type: "Notifications",
         snapPoints: ["35%"],
     });
+
+    // uploading profile state
+    const [uploadingProfile, setUploadingProfile] = useState(false);
+    
+    // uploading profile state
+    const [uploadingBanner, setUploadingBanner] = useState(false);
 
     // state to hold selected image for profile
     const [selectedImage, setSelectedImage] = useState(null);
@@ -201,9 +214,12 @@ const Account = ({navigation, route}) => {
         },
     ];
 
-    console.log(selectedImage);
+    // console.log(selectedImage);
     // function to select image for profile photo
     const pickImageAsync = async () => {
+        
+        imageType === "Profile" ? setUploadingProfile(true) : setUploadingBanner(true);
+
         try {
             const result = await ImagePicker.launchImageLibraryAsync({
                 allowsEditing: true,
@@ -214,17 +230,108 @@ const Account = ({navigation, route}) => {
             
             if (!result.canceled) {
                 // console.log(result.assets[0].uri);
-                imageType === "Profile" ?
-                setSelectedImage(result.assets[0].uri) : 
-                setSelectedBanner(result.assets[0].uri);
+                if (imageType === "Profile") {
+                    setSelectedImage(result.assets[0].uri)
+                } else {
+                    setSelectedBanner(result.assets[0].uri)
+                }
+                await uploadImage(result.assets[0], imageType);
                 closeModal();
+            } else {
+                imageType === "Profile" ? setUploadingProfile(false) : setUploadingBanner(false);
             }
         } catch (error) {
             console.log(error.message);
+            imageType === "Profile" ? setUploadingProfile(false) : setUploadingBanner(false);
         }
     
     };
 
+    // console.log(authData);
+
+    const uploadImage = async (image, type) => {
+        try {
+            const extension = image.uri.split('.').pop();
+            const response = await fetch(image.uri);
+            const blob = await response.blob();
+            const uid = type === "Profile" ? authData.uid : authData.business_id;
+            const rootPath = type === "Profile" ? "profiles/" : "banners/";
+
+            const storageRef = ref(storage, rootPath + uid + extension);
+            const uploadTask = uploadBytesResumable(storageRef, blob);
+        
+            // Register three observers:
+            // 1. 'state_changed' observer, called any time the state changes
+            // 2. Error observer, called on failure
+            // 3. Completion observer, called on successful completion
+            uploadTask.on('state_changed', 
+                (snapshot) => {
+                    // Observe state change events such as progress, pause, and resume
+                    // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    console.log('Upload is ' + progress + '% done');
+                    switch (snapshot.state) {
+                        case 'paused':
+                        // console.log('Upload is paused');
+                        break;
+                        case 'running':
+                        // console.log('Upload is running');
+                        break;
+                        default:
+                        break;
+                    }
+                }, 
+                (error) => {
+                    // Handle unsuccessful uploads
+                    console.log(error.message);
+                }, 
+                () => {
+                    // Handle successful uploads on complete
+                    // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+                    getDownloadURL(uploadTask.snapshot.ref).then( async (downloadURL) => {
+                        // console.log('File available at', downloadURL);  
+                        const docRef = doc(
+                            database,
+                            type === "Profile" ? "users" : "businesses", 
+                            uid
+                        );
+                        
+                        try {
+                            
+                            await updateDoc(docRef, 
+                                type === "Profile" ? { profile_image: downloadURL} : { banner_image: downloadURL }
+                            );
+                            
+                            // data needs to be stored in async storage
+                            await setStoredData({
+                                ...authData,
+                                profile_image: type === "Profile" ? downloadURL : authData.profile_image,
+                                banner_image: type === "Banner" ? downloadURL : authData.banner_image,
+                            });
+
+                            image === "Profile" ? setUploadingProfile(false) : setUploadingBanner(false);
+
+                            // setAuthData(prevAuthData => {
+                            //     return {
+                            //         ...prevAuthData,
+                            //         profile_image: type === "Profile" ? downloadURL : prevAuthData.profile_image,
+                            //         banner_image: type === "Banner" ? downloadURL : prevAuthData.banner_image,
+                            //     }
+                            // })
+
+                            // setSelectedImage(false);
+                        } catch (error) {
+                            console.log(error.message);
+                        }
+                    });
+                }
+            );
+        } catch (error) {
+            console.log(error.message);                
+        }
+    }
+
+    // handle sign out function
     const handleSignOut = async () => {
         try {
             await signOut(auth)
@@ -232,6 +339,8 @@ const Account = ({navigation, route}) => {
             console.log(error.message);
         }
     }
+
+    // console.log(authData);
 
     // render Account page
     return (
@@ -256,13 +365,10 @@ const Account = ({navigation, route}) => {
                                 <CameraIcon />
                             </TouchableOpacity>
                             {/* banner image */}
-                            {authData?.banner_image || selectedBanner ? (
-                                <Image 
+                            {authData?.banner_image ? (
+                                <Image
                                     style={style.bannerImage}
-                                    source={!selectedBanner ? 
-                                        {uri: authData?.banner_image} : 
-                                        {uri: selectedBanner}
-                                    }
+                                    source={uploadingBanner ? {uri: selectedBanner} : {uri: authData?.banner_image}}
                                 />
                             ) : (
                                 <View>
@@ -276,12 +382,11 @@ const Account = ({navigation, route}) => {
                                 <View style={style.imageContainer}>
                                     {/* user profile photo */}
                                     <Avatar 
-                                        imageUrl={authData?.profile_image}
+                                        imageUrl={!uploadingProfile ? authData?.profile_image : selectedImage}
                                         largerSize={true}
                                         borderColor={white}
                                         borderWidth={2}
                                         fullname={authData?.full_name}
-                                        selectedImageUri={selectedImage}
                                     />
                                     {/* change profile photo button */}
                                     <TouchableOpacity 

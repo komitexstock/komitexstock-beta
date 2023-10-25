@@ -27,6 +27,7 @@ export const useAuth = () => useContext(AuthContext);
 const AuthProvider = ({children}) => {
 
 	const setStoredData = async (data) => {
+		setAuthData(data);
 		await AsyncStorage.setItem("@user", JSON.stringify(data));
 	}
 
@@ -53,13 +54,6 @@ const AuthProvider = ({children}) => {
 		const docRef = doc(database, 'users', uid);
 		try {
 			const user = await getDoc(docRef);
-			// console.log(user.data())
-			setAuthData(prevData => {
-				return {
-					...prevData,
-					...user.data()
-				}
-			})
 			return user.data()
 		} catch (error) {
 			console.log(error.message);
@@ -71,13 +65,6 @@ const AuthProvider = ({children}) => {
 		const docRef = doc(database, 'businesses', id)
 		try {
 			const business = await getDoc(docRef);
-			// console.log(business.data())
-			setAuthData(prevData => {
-				return {
-					...prevData,
-					...business.data()
-				}
-			})
 			return business.data()
 		} catch (error) {
 			console.log(error.message);
@@ -121,6 +108,7 @@ const AuthProvider = ({children}) => {
 				
 				// Combine user and business data
 				const data = {
+					uid: user.uid,
 					...user_data,
 					...business_data,
 				};
@@ -143,7 +131,7 @@ const AuthProvider = ({children}) => {
 	}, []);
 	
 	return (
-		<AuthContext.Provider value={{authData, loading}}>
+		<AuthContext.Provider value={{authData, loading, setAuthData, setStoredData }}>
 			{children}
 		</AuthContext.Provider>
 	)

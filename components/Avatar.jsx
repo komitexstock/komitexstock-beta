@@ -23,7 +23,8 @@ const Avatar = ({imageUrl, fullname, smallerSize, largerSize, squared, selected,
                 largerSize && {width: 80, height: 80, borderRadius: 40},
                 borderWidth && {borderWidth: borderWidth},
                 borderColor && {borderColor: borderColor},
-                squared && {borderRadius: 8}
+                squared && {borderRadius: 8},
+                squared && smallerSize && {borderRadius: 5},
             ]}
         >
             {/* display image if its given */}
@@ -35,6 +36,7 @@ const Avatar = ({imageUrl, fullname, smallerSize, largerSize, squared, selected,
                         smallerSize && {borderRadius: 16},
                         largerSize && {borderRadius: 40},
                         squared && {borderRadius: 8},
+                        squared && smallerSize && {borderRadius: 5},
                     ]}
                 />
             }
