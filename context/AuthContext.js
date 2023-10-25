@@ -15,12 +15,8 @@ import {
 import { auth, database } from "../Firebase";
 // firestore functions
 import { doc, getDoc } from "firebase/firestore";
-// users
-import { User } from "firebase/auth";
 
 const AuthContext = createContext({});
-
-console.log(User);
 
 export const useAuth = () => useContext(AuthContext);
 
@@ -109,6 +105,7 @@ const AuthProvider = ({children}) => {
 				// Combine user and business data
 				const data = {
 					uid: user.uid,
+					email: user.email,
 					...user_data,
 					...business_data,
 				};
@@ -131,7 +128,7 @@ const AuthProvider = ({children}) => {
 	}, []);
 	
 	return (
-		<AuthContext.Provider value={{authData, loading, setAuthData, setStoredData }}>
+		<AuthContext.Provider value={{authData, loading, setStoredData }}>
 			{children}
 		</AuthContext.Provider>
 	)

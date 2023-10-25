@@ -55,7 +55,7 @@ import { doc, updateDoc } from "firebase/firestore";
 const Account = ({navigation, route}) => {
 
     // auth data
-    const { authData, setAuthData, setStoredData } = useAuth();
+    const { authData, setStoredData } = useAuth();
 
     // console.log(authData);
 

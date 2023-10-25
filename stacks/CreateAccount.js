@@ -245,6 +245,7 @@ const CreateAccount = ({navigation}) => {
                 full_name: fullName,
                 notification: false,
                 profile_image: null,
+                phone: phoneNumber,
                 role: "Manager",
             })
             

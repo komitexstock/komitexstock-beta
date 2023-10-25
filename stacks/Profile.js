@@ -24,8 +24,13 @@ import EmailIcon from "../assets/icons/EmailIcon";
 import { background, black, bodyText } from "../style/colors";
 // globals
 import { useGlobals } from "../context/AppContext";
+// use auth
+import { useAuth } from "../context/AuthContext";
+import { auth } from "../Firebase";
 
 const Profile = ({navigation}) => {
+
+    const { authData } = useAuth();
 
     // bottomsheet ref
     const { bottomSheetRef } = useGlobals();
@@ -57,28 +62,28 @@ const Profile = ({navigation}) => {
         {
             id: 1,
             title: "Full Name",
-            mainInfoText: "Raymond Reddington",
+            mainInfoText: authData?.full_name,
             onPress: () => {openModal("Full Name")},
             disabled: false
         },
         {
             id: 2,
             title: "Business Name",
-            mainInfoText: "Mega Enterprise Ltd",
+            mainInfoText: authData?.business_name,
             onPress: () => {},
             disabled: true
         },
         {
             id: 3,
             title: "Phone Number",
-            mainInfoText: "08012345678",
+            mainInfoText: authData?.phone,
             onPress: () => {openModal("Phone Number")},
             disabled: false
         },
         {
             id: 4,
             title: "Email Address",
-            mainInfoText: "raymondreddington@gmail.com",
+            mainInfoText: authData?.email,
             onPress: () => {},
             disabled: true
         },
