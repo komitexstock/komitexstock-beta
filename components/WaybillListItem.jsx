@@ -8,10 +8,14 @@ import Avatar from './Avatar';
 import { black, bodyText, white } from '../style/colors';
 // import helper functions
 import { windowWidth } from '../utils/helpers';
+// use auth
+import { useAuth } from '../context/AuthContext';
 
 const WaybillListItem = ({item, index, firstWaybill, lastWaybill, sideFunctions, searchQuery}) => {
     // item => object
     // index, length => int
+
+    const { authData } = useAuth();
 
     const handleOnPress = () => {
         if (sideFunctions) {
@@ -74,8 +78,17 @@ const WaybillListItem = ({item, index, firstWaybill, lastWaybill, sideFunctions,
         >
             {/* waybill image */}
             <Avatar 
-                imageUrl={item.imageUrl}
+                imageUrl={
+                    authData?.account_type === "Logistics" ? 
+                    item?.merchant?.banner_image : 
+                    item?.logistics?.banner_image
+                }
                 squared={true}
+                fullname={
+                    authData?.account_type === "Logistics" ? 
+                    item?.merchant?.business_name : 
+                    item?.logistics?.business_name
+                }
             />
             <View style={style.orderInfo}>
                 <Text 

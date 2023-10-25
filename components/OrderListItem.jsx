@@ -10,23 +10,25 @@ import {
 import Indicator from './Indicator';
 import Mark from './Mark';
 import Avatar from './Avatar';
-// icons
-import SelectedOrderIcon from '../assets/icons/SelectedOrderIcon';
 // colors
 import { background, black, bodyText, orderDate, white } from '../style/colors';
 // import helper functions
 import { windowWidth } from '../utils/helpers';
+// use auth
+import { useAuth } from '../context/AuthContext';
 
-const OrderListItem = ({item, index, firstOrder, lastOrder, selectable, selected, selectFunction, extraVerticalPadding, sideFunctions, searchQuery}) => {
+const OrderListItem = ({item, index, firstOrder, lastOrder, selectable, selected, selectFunction, extraVerticalPadding, sideFunctions, searchQuery, navigation}) => {
     // lenght, index => int
     // item => object
+
+    const { authData } = useAuth();
 
     const handleOnPress = () => {
         if (selectable) {
             return selectFunction(item.id);
         } else {
             if (sideFunctions) sideFunctions();
-            return item.navigateToChat();
+            return item.navigation(navigate("Chat", {id: item.id}));
         }
     }
 
@@ -88,13 +90,21 @@ const OrderListItem = ({item, index, firstOrder, lastOrder, selectable, selected
             onPress={handleOnPress}
             activeOpacity={selectable ? 0.8 : 0.5}
         >
-            {/* logistics image */}
+            {/* logistics/merchnat image */}
             <View style={style.orderImageContainer}>
                 <Avatar 
-                    imageUrl={item.imageUrl}
+                    imageUrl={
+                        authData?.account_type === "Logistics" ? 
+                        item?.merchant?.banner_image : 
+                        item?.logistics?.banner_image
+                    }
                     squared={true}
                     selected={selectable && selected}
-                    fullname={"Komitex Logistics"}
+                    fullname={
+                        authData?.account_type === "Logistics" ? 
+                        item?.merchant?.business_name : 
+                        item?.logistics?.business_name
+                    }
                 />
             </View>
             {/* order info */}

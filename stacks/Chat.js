@@ -70,7 +70,7 @@ import * as DocumentPicker from 'expo-document-picker';
 // globals
 import { useGlobals } from "../context/AppContext";
 // data
-import { messageData } from "../data/messageData";
+import { messages } from "../data/messages";
 // use Auth
 import { useAuth } from "../context/AuthContext";
 
@@ -505,12 +505,12 @@ const Chat = ({navigation, route}) => {
     // MESSAGES MESSAGES MESSAGES MESSAGES
     // MESSAGES MESSAGES MESSAGES MESSAGES
     // MESSAGES MESSAGES MESSAGES MESSAGES
-    const [messages, setMessages] = useState(messageData);
+    const [messages, setMessages] = useState(messages);
 
     // update messages
     useEffect(() => {
-        setMessages(messageData)
-    }, [messageData])
+        setMessages(messages)
+    }, [messages])
 
     const sendMessage = (type) => {
         if (textInput === "" && uploading === false && type === "message") return;

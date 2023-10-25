@@ -1,6 +1,6 @@
 import { messageSenderColors } from '../style/colors';
 
-export const messageData = [
+export const messages = [
     {
         reschedule_date: () => {},
         id: 70,
