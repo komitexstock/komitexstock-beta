@@ -36,6 +36,8 @@ import SmsIcon from "../assets/icons/SmsIcon";
 import PhoneIcon from "../assets/icons/PhoneIcon";
 import CameraPrimaryLargeIcon from "../assets/icons/CameraPrimaryLargeIcon";
 import GalleryIcon from "../assets/icons/GalleryIcon";
+import MerchantsIcon from "../assets/icons/MerchantsIcon";
+import BusinessSettingsIcon from "../assets/icons/BusinessSettingsIcon";
 // import image picker library
 import * as ImagePicker from "expo-image-picker";
 // import global
@@ -52,6 +54,77 @@ const Account = ({navigation, route}) => {
     // auth data
     const { authData, setStoredData } = useAuth();
 
+    // merchant account business group buttons
+    const merchantBusinessButtons = [
+        {
+            id: 1,
+            title: "Analytics",
+            subtitle: false,
+            icon: <AnalyticsIcon />,
+            onPress: () => {navigation.navigate("Analytics")},
+        },
+        {
+            id: 4,
+            title: "Generate Business Report",
+            subtitle: false,
+            icon: <BusinessReportIcon />,
+            onPress: () => {navigation.navigate("GenerateBusinessReport")},
+        },
+        {
+            id: 2,
+            title: "Team Members",
+            subtitle: false,
+            icon: <TeamIcon />,
+            onPress: () => {navigation.navigate("TeamMembers")},
+        },
+        {
+            id: 3,
+            title: "logistics",
+            subtitle: false,
+            icon: <LogisticsIcon />,
+            onPress: () => {navigation.navigate("Logistics")},
+        },
+    ];
+
+    // logistics account business group buttons
+    const logisticsBusinessButtons = [
+        {
+            id: 1,
+            title: "Analytics",
+            subtitle: false,
+            icon: <AnalyticsIcon />,
+            onPress: () => {navigation.navigate("Analytics")},
+        },
+        {
+            id: 5,
+            title: "Business Settings",
+            subtitle: false,
+            icon: <BusinessSettingsIcon />,
+            onPress: () => {navigation.navigate("BusinessSettings")},
+        },
+        {
+            id: 4,
+            title: "Generate Business Report",
+            subtitle: false,
+            icon: <BusinessReportIcon />,
+            onPress: () => {navigation.navigate("GenerateBusinessReport")},
+        },
+        {
+            id: 2,
+            title: "Team Members",
+            subtitle: false,
+            icon: <TeamIcon />,
+            onPress: () => {navigation.navigate("TeamMembers")},
+        },
+        {
+            id: 3,
+            title: "Merchants",
+            subtitle: false,
+            icon: <MerchantsIcon />,
+            onPress: () => {navigation.navigate("Merchants")},
+        },
+    ];
+
     // list of buttons in Account Page
     const accountButtons = {
         profile: {
@@ -60,36 +133,7 @@ const Account = ({navigation, route}) => {
             icon: <EditUserIcon />,
             onPress: () => {navigation.navigate("Profile")},
         },
-        business: [
-            {
-                id: 1,
-                title: "Analytics",
-                subtitle: false,
-                icon: <AnalyticsIcon />,
-                onPress: () => {navigation.navigate("Analytics")},
-            },
-            {
-                id: 4,
-                title: "Generate Business Report",
-                subtitle: false,
-                icon: <BusinessReportIcon />,
-                onPress: () => {navigation.navigate("GenerateBusinessReport")},
-            },
-            {
-                id: 2,
-                title: "Team Members",
-                subtitle: false,
-                icon: <TeamIcon />,
-                onPress: () => {navigation.navigate("TeamMembers")},
-            },
-            {
-                id: 3,
-                title: "logistics",
-                subtitle: false,
-                icon: <LogisticsIcon />,
-                onPress: () => {navigation.navigate("Logistics")},
-            },
-        ],
+        business: authData?.account_type === "Logistics" ? logisticsBusinessButtons : merchantBusinessButtons,
         security: [
             {
                 id: 1,
