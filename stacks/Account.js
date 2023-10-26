@@ -42,24 +42,15 @@ import * as ImagePicker from "expo-image-picker";
 import { useGlobals } from "../context/AppContext";
 // auth functions
 import { useAuth } from "../context/AuthContext";
-import { auth, database, storage } from "../Firebase";
+import { auth } from "../Firebase";
 import { signOut } from "firebase/auth";
-// firbase storage functions
-import { 
-    ref, 
-    uploadBytesResumable, 
-    getDownloadURL 
-} from "firebase/storage";
-import { doc, updateDoc } from "firebase/firestore";
-//
+// upload file function
 import { uploadFile } from "../database/common/storage";
 
 const Account = ({navigation, route}) => {
 
     // auth data
     const { authData, setStoredData } = useAuth();
-
-    // console.log(authData);
 
     // list of buttons in Account Page
     const accountButtons = {
@@ -219,7 +210,6 @@ const Account = ({navigation, route}) => {
     // console.log(selectedImage);
     // function to select image for profile photo
     const pickImageAsync = async () => {
-        
         imageType === "Profile" ? setUploadingProfile(true) : setUploadingBanner(true);
 
         try {
@@ -389,7 +379,6 @@ const Account = ({navigation, route}) => {
                             )}
                         </View>
                         <View style={style.accountInfoWrapper}> 
-                            <Indicator type={"Dispatched"} text={authData?.role}/>
                             <View style={style.profileWrapper}>
                                 <View style={style.imageContainer}>
                                     {/* user profile photo */}
@@ -413,7 +402,10 @@ const Account = ({navigation, route}) => {
                                 </View>
                                 {/* Username and company/business name */}
                                 <View>
-                                    <Text style={style.fullname}>{authData?.full_name}</Text>
+                                    <View style={style.fullnameWrapper}>
+                                        <Text style={style.fullname}>{authData?.full_name}</Text>
+                                        <Indicator type={"Dispatched"} text={authData?.role}/>
+                                    </View>
                                     <Text style={style.businessName}>{authData?.business_name}</Text>
                                 </View>
                             </View>
@@ -663,6 +655,13 @@ const style = StyleSheet.create({
         borderWidth: 1,
         borderColor: white,
         backgroundColor: primaryColor
+    },
+    fullnameWrapper: {
+        display: "flex",
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        flexDirection: 'row',
+        gap: 6,
     },
     fullname: {
         fontFamily: 'mulish-semibold',

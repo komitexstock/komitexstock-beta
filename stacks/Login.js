@@ -18,8 +18,12 @@ import { background, black, bodyText, primaryColor } from "../style/colors";
 // auth
 import { auth } from "../Firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
+// globals
+import { useGlobals } from "../context/AppContext";
 
 const Login = ({navigation}) => {
+
+    const { setToast } = useGlobals();
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -52,7 +56,12 @@ const Login = ({navigation}) => {
                 password,
             );
         } catch (error) {
-            console.log(error.message)            
+            console.log(error);
+            setToast({
+                visible: true,
+                type: "error",
+                text: error.message,
+            });        
             setIsLoading(false);
         }
 

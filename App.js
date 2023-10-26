@@ -5,63 +5,9 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
-// STACKS
-// Home related stacks 
-import Home from './stacks/Home';
-import Notifications from './stacks/Notifications';
-// Analytics related stacks
-import Analytics from './stacks/Analytics';
-import LogisticsAnalytics from './stacks/LogisticsAnalytics';
-import LocationAnalytics from './stacks/LocationAnalytics';
-import ProductAnalytics from './stacks/ProductAnalytics';
-import GenerateBusinessReport from './stacks/GenerateBusinessReport';
-// orders related stacks
-import Orders from './stacks/Orders';
-// send order for pick up and delivery
-import PickupDelivery from './stacks/PickupDelivery';
-// send order by merchant
-import SendOrder from './stacks/SendOrder';
-// waybill related stacks
-import Waybill from './stacks/Waybill';
-import SendWaybill from './stacks/SendWaybill';
-// chat
-import Chat from './stacks/Chat';
-// inventory related stacks
-import Inventory from './stacks/Inventory';
-import Products from './stacks/Products';
-import AddLogistics from './stacks/AddLogistics';
-import AvailableLocations from './stacks/AvailableLocations';
-import AddProduct from './stacks/AddProduct';
-import ImportInventory from './stacks/ImportInventory';
-// warehouse related stacks
-import Warehouse from './stacks/Warehouse';
-import AddWarehouse from './stacks/AddWarehouse';
-import EditWarehouse from './stacks/EditWarehouse';
-import StockTransfer from './stacks/StockTransfer';
-import StockTransferProducts from './stacks/StockTransferProducts';
-import StockTransferSummary from './stacks/StockTransferSummary';
-// account related stacks
-import Account from './stacks/Account';
-import Profile from './stacks/Profile';
-import TeamMembers from './stacks/TeamMembers';
-import Logistics from './stacks/Logistics';
-import Security from './stacks/Security';
-// others stacks
-import DeactivateLogistics from './stacks/DeactivateLogistics';
-import LogisticsDetails from './stacks/LogisticsDetails';
-import Reviews from './stacks/Reviews';
-import CompanyPolicy from './stacks/CompanyPolicy';
-import CaptureImage from './stacks/CaptureImage';
-import WriteReview from './stacks/WriteReview';
-import ViewImage from './stacks/ViewImage';
-import Share from './stacks/Share';
-// no session stacks
-import Login from './stacks/Login';
-import OnBoarding from './stacks/OnBoarding';
-import CreateAccount from './stacks/CreateAccount';
 // components
 import BottomNavigation from './components/BottomNavigation';
+import Toast from './components/Toast';
 // context
 import AuthProvider from './context/AuthContext';
 import AppProvider from './context/AppContext';
@@ -125,8 +71,8 @@ export default function App() {
                                     which is usually used when the status bar background color is darker. 
                                     "dark-content": Sets the status bar style to dark content, which is usually used when the status bar background color is lighte
                                 */}
+                                <Toast />
                                 <Navigator />
-                                
                                 <BottomNavigation />
                             </BottomSheetModalProvider>
                         </GestureHandlerRootView>

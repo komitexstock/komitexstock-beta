@@ -27,10 +27,13 @@ import { auth, database } from "../Firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 // fire store functions
 import { collection, addDoc, setDoc, doc } from "firebase/firestore";
+// globals
+import { useGlobals } from "../context/AppContext";
 
 const CreateAccount = ({navigation}) => {
 
-    // const signup = useAuth
+    // toast parameters
+    const { setToast } = useGlobals();
 
     // total number of step in the creating account proccess
     const totalSteps = [1, 2, 3];
@@ -231,7 +234,7 @@ const CreateAccount = ({navigation}) => {
             const businessResponse = await addDoc(businessesRef, {
                 account_type: "Merchant",
                 banner_image: null,
-                businessName: businessName,
+                business_name: businessName,
                 verified: false,
             })
 
@@ -256,6 +259,11 @@ const CreateAccount = ({navigation}) => {
             
         } catch (error) {
             console.log("Error: ", error.message);
+            setToast({
+                visible: true,
+                type: "error",
+                text: error.message,
+            });
             setIsLoading(false);
         }
     }

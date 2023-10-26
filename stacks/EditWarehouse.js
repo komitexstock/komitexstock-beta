@@ -16,7 +16,6 @@ import Input from '../components/Input';
 import CustomButton from '../components/CustomButton';
 import CustomBottomSheet from '../components/CustomBottomSheet';
 import SearchBar from '../components/SearchBar';
-import SuccessPopUp from '../components/SuccessPopUp';
 import SuccessSheet from '../components/SuccessSheet';
 // bottomsheet components
 import { BottomSheetScrollView } from '@gorhom/bottom-sheet';

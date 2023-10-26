@@ -39,7 +39,13 @@ const AppProvider = ({children}) => {
     // state to keep track if success up bottomsheet is open
     const [successSheetOpen, setSuccessSheetOpen] = useState(false);
 
-    // useEffect to listen for onPress back button and close opened bottomsheets
+    // state to control toast
+    const [toast, setToast] = useState({
+        visible: false,
+        text: "",
+        type: "success",
+    });
+
     useEffect(() => {
         // function to run if back button is pressed
         const backAction = () => {
@@ -112,12 +118,14 @@ const AppProvider = ({children}) => {
                 bottomSheetOpen,
                 calendarSheetOpen,
                 popUpSheetOpen,
+                toast,
                 setBottomSheetOpen,
                 setCalendarSheetOpen,
                 setFilterSheetOpen,
                 setPopUpSheetOpen,
                 setStackedSheetOpen,
                 setSuccessSheetOpen,
+                setToast,
             }}
         >
            {children}

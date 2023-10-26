@@ -46,6 +46,7 @@ const Avatar = ({imageUrl, fullname, smallerSize, largerSize, squared, selected,
                     style={[
                         style.initials,
                         largerSize && {fontSize: 24},
+                        smallerSize && {fontSize: 12},
                     ]}
                 >
                     {initials}
@@ -78,7 +79,7 @@ const style = StyleSheet.create({
     initials: {
         fontFamily: "mulish-bold",
         color: primaryColor,
-        fontSize: 12,
+        fontSize: 16,
     },
     selectedIconWrapper: {
         position: 'absolute',
