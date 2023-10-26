@@ -706,17 +706,20 @@ const style = StyleSheet.create({
         alignItems: 'center',
         flexDirection: 'row',
         gap: 6,
+        // height: 18,
+        // backgroundColor: 'red',
     },
     fullname: {
         fontFamily: 'mulish-semibold',
         color: black,
         fontSize: 14,
-        marginBottom: 4,
+        textTransform: 'capitalize',
     },
     businessName: {
         fontSize: 12,
         fontFamily: 'mulish-medium',
         color: bodyText,
+        marginTop: 4,
     },
     infoWrapper: {
         width: '100%',

@@ -26,17 +26,22 @@ import { background, black, bodyText } from "../style/colors";
 import { useGlobals } from "../context/AppContext";
 // use auth
 import { useAuth } from "../context/AuthContext";
-import { auth } from "../Firebase";
+// firebase firestore functions
+import { doc, updateDoc } from "firebase/firestore";
+import { database } from "../Firebase";
 
 const Profile = ({navigation}) => {
 
-    const { authData } = useAuth();
+    // auth data
+    const { authData, setStoredData } = useAuth();
+
+    const [isLoading, setIsLoading] = useState(false);
 
     // bottomsheet ref
-    const { bottomSheetRef } = useGlobals();
+    const { bottomSheetRef, setToast } = useGlobals();
 
     // state to store full name input value
-    const [fullName, setFullName] = useState("");
+    const [fullName, setFullName] = useState(authData?.full_name);
 
     // state to store error in full name input value
     const [errorFullName, setErrorFullName] = useState(false);
@@ -47,7 +52,7 @@ const Profile = ({navigation}) => {
     }
 
     // state to store phone number input value
-    const [phoneNumber, setPhoneNumber] = useState("");
+    const [phoneNumber, setPhoneNumber] = useState(authData?.phone);
 
     // state to store error in phone number input value
     const [errorPhoneNumber, setErrorPhoneNumber] = useState(false);
@@ -125,12 +130,75 @@ const Profile = ({navigation}) => {
         },
     ];
 
-    // validation to check for empty input fields
-    const fullNameEmptyFields = [
-        fullName, 
-        ].some(
-            (item) => item === null || item === ''
-    );
+    const userRef = doc(database, "users", authData?.uid);
+
+    const handleUpdateFullname = async () => {
+        setIsLoading(true);
+        // dismiss keyboard
+        Keyboard.dismiss();
+        try {
+
+            // update document
+            await updateDoc(userRef, {
+                full_name: fullName,
+            });
+            // show success toast
+            setToast({
+                text: "Full name successfully updated",
+                visible: true,
+                type: "success",
+            });
+            // set loading state to false
+            setIsLoading(false);
+            // close bottomsheet modal
+            closeModal();
+            // update user data in async storage
+            await setStoredData({
+                ...authData,
+                full_name: fullName,
+            })
+        } catch (error) {
+            setToast({
+                text: error.message,
+                visible: true,
+                type: "error",
+            })
+        }
+    }
+
+    const handleUpdatePhoneNumber = async () => {
+        setIsLoading(true);
+        // dismiss keyboard
+        Keyboard.dismiss();
+        try {
+
+            // update document
+            await updateDoc(userRef, {
+                phone: phoneNumber,
+            });
+            // show success toast
+            setToast({
+                text: "Phone number successfully updated",
+                visible: true,
+                type: "success",
+            });
+            // set loading state to false
+            setIsLoading(false);
+            // close bottomsheet modal
+            closeModal();
+            // update user data in async storage
+            await setStoredData({
+                ...authData,
+                phone: phoneNumber,
+            })
+        } catch (error) {
+            setToast({
+                text: error.message,
+                visible: true,
+                type: "error",
+            })
+        }
+    }
 
     // render Profile page/stack
     return (
@@ -175,7 +243,7 @@ const Profile = ({navigation}) => {
             <CustomBottomSheet 
                 bottomSheetModalRef={bottomSheetRef}
                 closeModal={closeModal}
-                snapPointsArray={modal === "Help & Support" ? ["40%"] : ["50%"]}
+                snapPointsArray={modal === "Help & Support" ? [270] : [270]}
                 autoSnapAt={0}
                 sheetTitle={modal}
             >   
@@ -212,10 +280,11 @@ const Profile = ({navigation}) => {
                             {/* modal button to save changes */}
                             <CustomButton
                                 name={"Save Changes"}
-                                inactive={fullNameEmptyFields}
+                                inactive={authData?.full_name === fullName}
                                 shrinkWrapper={true}
-                                onPress={() => {}}
+                                onPress={handleUpdateFullname}
                                 unpadded={true}
+                                isLoading={isLoading}
                             />
                         </View>
                     </TouchableWithoutFeedback>
@@ -235,6 +304,7 @@ const Profile = ({navigation}) => {
                                     label={"Phone number"}
                                     placeholder={"Phone number"}
                                     value={phoneNumber}
+                                    keyboardType={"phone-pad"}
                                     onChange={updatePhoneNumber}
                                     error={errorPhoneNumber}
                                     setError={setErrorPhoneNumber}
@@ -243,9 +313,10 @@ const Profile = ({navigation}) => {
                             {/* modal button to save changes */}
                             <CustomButton
                                 name={"Save Changes"}
-                                inactive={phoneNumber === ''}
+                                inactive={authData?.phone === phoneNumber}
                                 shrinkWrapper={true}
-                                onPress={() => {}}
+                                isLoading={isLoading}
+                                onPress={handleUpdatePhoneNumber}
                                 unpadded={true}
                             />
                         </View>
