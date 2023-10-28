@@ -29,8 +29,15 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { collection, addDoc, setDoc, doc } from "firebase/firestore";
 // globals
 import { useGlobals } from "../context/AppContext";
+// firebase functions
+import { functions } from "../Firebase";
+import { httpsCallable } from "firebase/functions";
+// import use AUth
+import { useAuth } from "../context/AuthContext";
 
 const CreateAccount = ({navigation}) => {
+
+    const { setStoredData } = useAuth();
 
     // toast parameters
     const { setToast } = useGlobals();
@@ -222,24 +229,54 @@ const CreateAccount = ({navigation}) => {
 
     const handleSignup = async () => {
         setIsLoading(true);
-
-        
         
         try {
 
             const businessesRef = collection(database, 'businesses');
             
             const authResponse = await createUserWithEmailAndPassword(auth, emailAddress, password);
+
+            // get setRole cloud functions
+            const setRole = httpsCallable(functions, "setRole");
             
+            // setRole
+            await setRole({ 
+                email: emailAddress, 
+                admin: true, 
+                role: "Manager", 
+                account_type: "Logistics"
+            });
+            
+            // store business data
             const businessResponse = await addDoc(businessesRef, {
                 account_type: "Merchant",
                 banner_image: null,
                 business_name: businessName,
                 verified: false,
-            })
+            });
 
-            const usersRef = doc(database, "users", authResponse.user.uid)
+            // store data in async storage
+            await setStoredData({
+                account_type: "Logistics",
+                banner_image: null,
+                business_name: businessName,
+                verified: false,
+                business_id: businessResponse.id,
+                deactivated: false,
+                face_id: false,
+                fingerprint: false,
+                full_name: fullName,
+                notification: false,
+                profile_image: null,
+                phone: phoneNumber,
+                role: "Manager",
+                admin: true,
+            });
+
+            // ref to users collection
+            const usersRef = doc(database, "users", authResponse.user.uid);
             
+            // save data in database
             await setDoc(usersRef, {
                 business_id: businessResponse.id,
                 deactivated: false,
@@ -250,12 +287,13 @@ const CreateAccount = ({navigation}) => {
                 profile_image: null,
                 phone: phoneNumber,
                 role: "Manager",
-            })
+                admin: true,
+            });
             
-            console.log("user id from auth", authResponse.user.uid);
-            console.log("bussiness id from bussiness", businessResponse.id);
+            // console.log("user id from auth", authResponse.user.uid);
+            // console.log("bussiness id from bussiness", businessResponse.id);
 
-            setIsLoading(false)
+            // setIsLoading(false)
             
         } catch (error) {
             console.log("Error: ", error.message);

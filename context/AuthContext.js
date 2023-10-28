@@ -14,7 +14,7 @@ import {
 // firebase
 import { auth, database } from "../Firebase";
 // firestore functions
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, onSnapshot } from "firebase/firestore";
 
 const AuthContext = createContext({});
 
@@ -41,6 +41,7 @@ const AuthProvider = ({children}) => {
 	const removeStoredData = async () => {
 		try {
 			await AsyncStorage.removeItem("@user");
+			setAuthData(null);
 		} catch (error) {
 			console.log(error.message)
 		}
@@ -56,6 +57,23 @@ const AuthProvider = ({children}) => {
 			return null;			
 		}
 	}
+
+	// const getUserData = (uid) => {
+	// 	const docRef = doc(database, 'users', uid);
+	  
+	// 	return new Promise((resolve, reject) => {
+	// 	  onSnapshot(docRef, (doc) => {
+	// 		if (doc.exists()) {
+	// 		  resolve(doc.data());
+	// 		} else {
+	// 		  resolve(null);
+	// 		}
+	// 	  }, (error) => {
+	// 		console.log(error.message);
+	// 		reject(error);
+	// 	  });
+	// 	});
+	// };
 
 	const getBusinessData = async (id) => {
 		const docRef = doc(database, 'businesses', id)
@@ -85,7 +103,6 @@ const AuthProvider = ({children}) => {
 		const unsubscribeFromAuthStatuChanged = onAuthStateChanged(auth, async (user) => {
 			// console.log("Auth State Changed", user);
 			if (!user) {
-				setAuthData(null)
 				await removeStoredData();
 				return setLoading(false);
 			}
@@ -99,24 +116,36 @@ const AuthProvider = ({children}) => {
 				setAuthData(storedData)
 				return setLoading(false);
 			} else {
-				const user_data = await getUserData(user.uid); 
-				const business_data = await getBusinessData(user_data.business_id);
-				
-				// Combine user and business data
-				const data = {
-					uid: user.uid,
-					email: user.email,
-					...user_data,
-					...business_data,
-				};
-	
 				try {
-					// Wait for setStoredData to complete
-					await setStoredData(data);
-					setAuthData(data);
-					return setLoading(false);
+					// get user data
+					const user_data = await getUserData(user.uid); 
+
+					console.log("User Data:", user_data); // Add this line for debugging
+					
+					// if there is no business_id in users collection, 
+					// make request again get business data
+					if (user_data === undefined) {
+						// return early if business id is null
+						await removeStoredData();
+						return;
+					} else {
+						// get business data
+						const business_data = await getBusinessData(user_data?.business_id);
+						
+						// Combine user and business data
+						const data = {
+							uid: user.uid,
+							email: user.email,
+							...user_data,
+							...business_data,
+						};
+						// Wait for setStoredData to complete
+						await setStoredData(data);
+						return setLoading(false);
+					}
+	
 				} catch (error) {
-					console.error('Error setting stored data:', error);
+					console.error(error.message);
 					return setLoading(false);
 				}
 			}
