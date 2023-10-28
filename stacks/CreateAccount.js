@@ -26,7 +26,7 @@ import { windowHeight } from "../utils/helpers";
 import { auth, database } from "../Firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 // fire store functions
-import { collection, addDoc, setDoc, doc } from "firebase/firestore";
+import { collection, addDoc, setDoc, doc, getDocs } from "firebase/firestore";
 // globals
 import { useGlobals } from "../context/AppContext";
 // firebase functions
@@ -232,7 +232,23 @@ const CreateAccount = ({navigation}) => {
         
         try {
 
+            // business reference
             const businessesRef = collection(database, 'businesses');
+
+            // get business docs
+            const businessDoc = await getDocs(businessesRef);
+
+            // get business data
+            const businessData = businessDoc.docs.map(doc => doc.data());
+            
+            // check if business name exist
+            const checkBusinessNameExist = businessData.find(business => business.business_name ===  businessName);
+
+            // if business name exist, throw error
+            if (checkBusinessNameExist !== undefined) {
+                setIsLoading(false);
+                throw new Error("Business name already exist");
+            }
             
             const authResponse = await createUserWithEmailAndPassword(auth, emailAddress, password);
 
