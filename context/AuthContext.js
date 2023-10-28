@@ -14,7 +14,7 @@ import {
 // firebase
 import { auth, database } from "../Firebase";
 // firestore functions
-import { doc, getDoc, onSnapshot } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 
 const AuthContext = createContext({});
 
@@ -57,23 +57,6 @@ const AuthProvider = ({children}) => {
 			return null;			
 		}
 	}
-
-	// const getUserData = (uid) => {
-	// 	const docRef = doc(database, 'users', uid);
-	  
-	// 	return new Promise((resolve, reject) => {
-	// 	  onSnapshot(docRef, (doc) => {
-	// 		if (doc.exists()) {
-	// 		  resolve(doc.data());
-	// 		} else {
-	// 		  resolve(null);
-	// 		}
-	// 	  }, (error) => {
-	// 		console.log(error.message);
-	// 		reject(error);
-	// 	  });
-	// 	});
-	// };
 
 	const getBusinessData = async (id) => {
 		const docRef = doc(database, 'businesses', id)
@@ -120,7 +103,9 @@ const AuthProvider = ({children}) => {
 					// get user data
 					const user_data = await getUserData(user.uid); 
 
-					console.log("User Data:", user_data); // Add this line for debugging
+					// (await user.getIdTokenResult()).claims;
+
+					// console.log("User Data:", user_data); // Add this line for debugging
 					
 					// if there is no business_id in users collection, 
 					// make request again get business data

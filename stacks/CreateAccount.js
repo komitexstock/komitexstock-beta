@@ -250,6 +250,7 @@ const CreateAccount = ({navigation}) => {
                 throw new Error("Business name already exist");
             }
             
+            // sign up user
             const authResponse = await createUserWithEmailAndPassword(auth, emailAddress, password);
 
             // get setRole cloud functions
@@ -265,7 +266,7 @@ const CreateAccount = ({navigation}) => {
             
             // store business data
             const businessResponse = await addDoc(businessesRef, {
-                account_type: "Merchant",
+                account_type: "Logistics",
                 banner_image: null,
                 business_name: businessName,
                 verified: false,
@@ -273,6 +274,7 @@ const CreateAccount = ({navigation}) => {
 
             // store data in async storage
             await setStoredData({
+                uid: authResponse.user.uid,
                 account_type: "Logistics",
                 banner_image: null,
                 business_name: businessName,
@@ -305,11 +307,6 @@ const CreateAccount = ({navigation}) => {
                 role: "Manager",
                 admin: true,
             });
-            
-            // console.log("user id from auth", authResponse.user.uid);
-            // console.log("bussiness id from bussiness", businessResponse.id);
-
-            // setIsLoading(false)
             
         } catch (error) {
             console.log("Error: ", error.message);

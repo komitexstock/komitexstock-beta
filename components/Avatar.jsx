@@ -1,5 +1,5 @@
 import { View, Text, Image, StyleSheet } from "react-native";
-import { primaryColor, secondaryColor } from "../style/colors";
+import { background, primaryColor, secondaryColor, white } from "../style/colors";
 // icons
 import SelectedOrderIcon from "../assets/icons/SelectedOrderIcon";
 
@@ -64,7 +64,7 @@ const style = StyleSheet.create({
         width: 40,
         height: 40,
         borderRadius: 20,
-        backgroundColor: secondaryColor,
+        backgroundColor: background,
         display: "flex",
         justifyContent: "center",
         alignItems: "center",

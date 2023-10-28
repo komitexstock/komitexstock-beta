@@ -9,6 +9,7 @@ import { doc, updateDoc } from "firebase/firestore";
 
 // const { setStoredData } = useAuth();
 
+// get path function
 const getPath = (type) => {
     if (type === "Profile") return "profiles/";
     if (type === "Banner") return "banners/";
@@ -16,6 +17,7 @@ const getPath = (type) => {
     if (type === "Message") return "messages/";
 }
 
+// get ref function
 const getRef = (type, id) => {
     if (type === "Profile") return doc(database, "users", id);
     if (type === "Banner") return doc(database, "businesses", id);
@@ -23,6 +25,7 @@ const getRef = (type, id) => {
     if (type === "Message") return doc(database, "messages", id);
 }
 
+// get query object
 const getQueryObject = (type, downloadURL) => {
     if (type === "Profile") return { profile_image: downloadURL };
     if (type === "Banner") return { banner_image: downloadURL };
@@ -30,6 +33,7 @@ const getQueryObject = (type, downloadURL) => {
     if (type === "Message") return { file: downloadURL } ;
 }
 
+// upload file function
 export const uploadFile = async (image, type, id, authData, storeData) => {
     try {
         const extension = image.uri.split('.').pop();

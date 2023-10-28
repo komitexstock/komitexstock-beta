@@ -48,11 +48,18 @@ import { auth } from "../Firebase";
 import { signOut } from "firebase/auth";
 // upload file function
 import { uploadFile } from "../database/common/storage";
+// test
 
 const Account = ({navigation, route}) => {
 
     // auth data
     const { authData, setStoredData } = useAuth();
+
+    
+    // const token = auth.currentUser.getIdTokenResult().then(data => {
+    //     console.log(data.claims);
+    //     return data.claims;
+    // });
 
     // merchant account business group buttons
     const merchantBusinessButtons = [
@@ -251,7 +258,7 @@ const Account = ({navigation, route}) => {
         },
     ];
 
-    // console.log(selectedImage);
+    // console.log(authData);
     // function to select image for profile photo
     const pickImageAsync = async () => {
         imageType === "Profile" ? setUploadingProfile(true) : setUploadingBanner(true);
@@ -411,15 +418,15 @@ const Account = ({navigation, route}) => {
                                 <CameraIcon />
                             </TouchableOpacity>
                             {/* banner image */}
-                            {authData?.banner_image ? (
+                            {!authData?.banner_image && !selectedBanner ? (
+                                <View>
+                                    <Text style={style.businessNameBanner}>{authData?.business_name}</Text>
+                                </View>
+                            ) : (
                                 <Image
                                     style={style.bannerImage}
                                     source={uploadingBanner ? {uri: selectedBanner} : {uri: authData?.banner_image}}
                                 />
-                            ) : (
-                                <View>
-                                    <Text style={style.businessNameBanner}>{authData?.business_name}</Text>
-                                </View>
                             )}
                         </View>
                         <View style={style.accountInfoWrapper}> 
