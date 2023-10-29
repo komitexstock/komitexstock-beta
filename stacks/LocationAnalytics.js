@@ -20,7 +20,7 @@ import Header from "../components/Header";
 import BarChart from "../components/BarChart";
 import StatWrapper from "../components/StatWrapper";
 import StatCard from "../components/StatCard";
-import LogisticsAnalyticsItem from "../components/LogisticsAnalyticsItem";
+import BusinessAnalyticsItem from "../components/BusinessAnalyticsItem";
 import CalendarSheet from "../components/CalendarSheet";
 // icons
 import ArrowDownSmall from '../assets/icons/ArrowDownSmall';
@@ -217,7 +217,7 @@ const LocationAnalytics = ({navigation}) => {
                                 <View style={style.tabContentList}>
                                     {/* Logistics list */}
                                     {logisticsAnalyticsList.map(item => (
-                                        <LogisticsAnalyticsItem
+                                        <BusinessAnalyticsItem
                                             key={item.id}
                                             logistics={item.logistics}
                                             numberOfDeliveries={item.numberOfDeliveries}

@@ -32,6 +32,7 @@ const OrderListItem = ({item, index, firstOrder, lastOrder, selectable, selected
         }
     }
 
+    // function to highlight search text
     const highlightSearchtext = (text) => {
         if (!searchQuery) return text;
 
@@ -70,6 +71,13 @@ const OrderListItem = ({item, index, firstOrder, lastOrder, selectable, selected
         }
     }
 
+    // cont process banner image
+    const handleBannerImage = () => {
+        // if
+    };
+
+    // console.log(authData);
+
     // render OrderListItem
     return (
         <TouchableOpacity 
@@ -92,20 +100,24 @@ const OrderListItem = ({item, index, firstOrder, lastOrder, selectable, selected
         >
             {/* logistics/merchnat image */}
             <View style={style.orderImageContainer}>
-                <Avatar 
-                    imageUrl={
-                        authData?.account_type === "Logistics" ? 
-                        item?.merchant?.banner_image : 
-                        item?.logistics?.banner_image
-                    }
-                    squared={true}
-                    selected={selectable && selected}
-                    fullname={
-                        authData?.account_type === "Logistics" ? 
-                        item?.merchant?.business_name : 
-                        item?.logistics?.business_name
-                    }
-                />
+                {/* merchant avatar */}
+                {authData.account_type === "Logistics" && (
+                    <Avatar 
+                        imageUrl={item?.merchant?.banner_image}
+                        squared={true}
+                        selected={selectable && selected}
+                        fullname={item?.merchant?.business_name}
+                    />
+                )}
+                {/* logistics avatar */}
+                {authData.account_type === "Merchant" && (
+                    <Avatar 
+                        imageUrl={item?.logistics?.banner_image}
+                        squared={true}
+                        selected={selectable && selected}
+                        fullname={item?.logistics?.business_name}
+                    />
+                )}
             </View>
             {/* order info */}
             <View style={style.orderInfo}>

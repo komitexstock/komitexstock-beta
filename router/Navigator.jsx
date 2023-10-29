@@ -10,7 +10,7 @@ import Home from '../stacks/Home';
 import Notifications from '../stacks/Notifications';
 // Analytics related stacks
 import Analytics from '../stacks/Analytics';
-import LogisticsAnalytics from '../stacks/LogisticsAnalytics';
+import BusinessAnalytics from '../stacks/BusinessAnalytics';
 import LocationAnalytics from '../stacks/LocationAnalytics';
 import ProductAnalytics from '../stacks/ProductAnalytics';
 import GenerateBusinessReport from '../stacks/GenerateBusinessReport';
@@ -182,8 +182,8 @@ const Navigator = () => {
                     />
                     {/* Logistics Analytics stack */}
                     <Stack.Screen 
-                        name="LogisticsAnalytics" 
-                        component={LogisticsAnalytics} 
+                        name="BusinessAnalytics" 
+                        component={BusinessAnalytics} 
                     />
                     {/* Location Analytics stack */}
                     <Stack.Screen 

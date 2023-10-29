@@ -408,17 +408,19 @@ const Account = ({navigation, route}) => {
                     <View style={style.header}>
                         <View style={style.bannerWrapper}>
                             {/* change banner photo button */}
-                            <TouchableOpacity 
-                                style={style.bannerCamera}
-                                onPress={() => {
-                                    setImageType("Banner");
-                                    openModal("Open with");
-                                }}
-                            >
-                                <CameraIcon />
-                            </TouchableOpacity>
+                            { authData?.admin && (
+                                <TouchableOpacity 
+                                    style={style.bannerCamera}
+                                    onPress={() => {
+                                        setImageType("Banner");
+                                        openModal("Open with");
+                                    }}
+                                >
+                                    <CameraIcon />
+                                </TouchableOpacity>
+                            )}
                             {/* banner image */}
-                            {!authData?.banner_image && !selectedBanner ? (
+                            {/* {!authData?.banner_image && !selectedBanner ? (
                                 <View>
                                     <Text style={style.businessNameBanner}>{authData?.business_name}</Text>
                                 </View>
@@ -427,7 +429,11 @@ const Account = ({navigation, route}) => {
                                     style={style.bannerImage}
                                     source={uploadingBanner ? {uri: selectedBanner} : {uri: authData?.banner_image}}
                                 />
-                            )}
+                            )} */}
+                            <Image
+                                style={style.bannerImage}
+                                source={uploadingBanner ? {uri: selectedBanner} : {uri: authData?.banner_image}}
+                            />
                         </View>
                         <View style={style.accountInfoWrapper}> 
                             <View style={style.profileWrapper}>

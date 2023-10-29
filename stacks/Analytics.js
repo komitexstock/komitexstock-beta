@@ -20,7 +20,7 @@ import Header from "../components/Header";
 import BarChart from "../components/BarChart";
 import StatWrapper from "../components/StatWrapper";
 import StatCard from "../components/StatCard";
-import LogisticsAnalyticsItem from "../components/LogisticsAnalyticsItem";
+import BusinessAnalyticsItem from "../components/BusinessAnalyticsItem";
 import LocationAnalyticsItem from "../components/LocationAnalyticsItem";
 import ProductAnalyticsItem from "../components/ProductAnalyticsItem";
 import CalendarSheet from "../components/CalendarSheet";
@@ -32,9 +32,14 @@ import {useState, useEffect} from "react";
 import AnalyticsSkeleton from "../skeletons/AnalyticsSkeleton";
 // globals
 import { useGlobals } from "../context/AppContext";
+// use auth
+import { useAuth } from "../context/AuthContext";
 
 
 const Analytics = ({navigation}) => {
+
+    // auth data
+    const { authData } = useAuth();
 
     // calendar ref
     const { calendarSheetRef } = useGlobals();
@@ -103,7 +108,7 @@ const Analytics = ({navigation}) => {
             totalPrice: 72500,
             oldTotalPrice: 67000,
             imageUrl: '../assets/images/komitex.png',
-            onPress: () => {navigation.navigate("LogisticsAnalytics")}
+            onPress: () => {navigation.navigate("BusinessAnalytics")}
         },
         {
             id: 2,
@@ -112,7 +117,7 @@ const Analytics = ({navigation}) => {
             totalPrice: 49500,
             oldTotalPrice: 67000,
             imageUrl: '../assets/images/dhl.png',
-            onPress: () => {navigation.navigate("LogisticsAnalytics")}
+            onPress: () => {navigation.navigate("BusinessAnalytics")}
         },
         {
             id: 3,
@@ -121,7 +126,38 @@ const Analytics = ({navigation}) => {
             totalPrice: 70000,
             oldTotalPrice: 67000,
             imageUrl: '../assets/images/fedex.png',
-            onPress: () => {navigation.navigate("LogisticsAnalytics")}
+            onPress: () => {navigation.navigate("BusinessAnalytics")}
+        },
+    ];
+
+    // merchant analytics list
+    const merchantAnalyticsList = [
+        {
+            id: 1,
+            logistics: 'Style Bazaar',
+            numberOfDeliveries: 10,
+            totalPrice: 72500,
+            oldTotalPrice: 67000,
+            imageUrl: '../assets/images/komitex.png',
+            onPress: () => {navigation.navigate("BusinessAnalytics")}
+        },
+        {
+            id: 2,
+            logistics: 'Tech Haven',
+            numberOfDeliveries: 13,
+            totalPrice: 49500,
+            oldTotalPrice: 67000,
+            imageUrl: '../assets/images/dhl.png',
+            onPress: () => {navigation.navigate("BusinessAnalytics")}
+        },
+        {
+            id: 3,
+            logistics: 'Mega Enterpise',
+            numberOfDeliveries: 7,
+            totalPrice: 70000,
+            oldTotalPrice: 67000,
+            imageUrl: '../assets/images/fedex.png',
+            onPress: () => {navigation.navigate("BusinessAnalytics")}
         },
     ];
 
@@ -194,7 +230,9 @@ const Analytics = ({navigation}) => {
     ];
 
     // state to control tabs
-    const [tabs, setTabs] = useState("Logistics");
+    const [tabs, setTabs] = useState(authData?.account_type === "Logistics" ? "Merchant" : "Logistics");
+
+    console.log(tabs)
 
     const openCalendar = () => {
         calendarSheetRef.current?.present();
@@ -266,20 +304,41 @@ const Analytics = ({navigation}) => {
                             <View style={style.tabsContainer}>
                                 {/* Tab buttons container */}
                                 <View style={style.tabButtonContainer}>
-                                    <TouchableOpacity
-                                        style={
-                                            tabs === "Logistics" ? style.tabButtonSelected : style.tabButton
-                                        }
-                                        onPress={() => setTabs("Logistics")}
-                                    >
-                                        <Text 
+                                    {/* logistics tab button */}
+                                    { authData?.account_type !== "Logistics" && (
+                                        <TouchableOpacity
                                             style={
-                                                tabs === "Logistics" ? style.tabButtonTextSelected : style.tabButtonText
+                                                tabs === "Logistics" ? style.tabButtonSelected : style.tabButton
                                             }
+                                            onPress={() => setTabs("Logistics")}
                                         >
-                                            Logistics
-                                        </Text>
-                                    </TouchableOpacity>
+                                            <Text 
+                                                style={
+                                                    tabs === "Logistics" ? style.tabButtonTextSelected : style.tabButtonText
+                                                }
+                                            >
+                                                Logistics
+                                            </Text>
+                                        </TouchableOpacity>
+                                    )}
+                                    {/* merchant tab button */}
+                                    { authData?.account_type !== "Merchant" && (
+                                        <TouchableOpacity
+                                            style={
+                                                tabs === "Merchant" ? style.tabButtonSelected : style.tabButton
+                                            }
+                                            onPress={() => setTabs("Merchant")}
+                                        >
+                                            <Text 
+                                                style={
+                                                    tabs === "Merchant" ? style.tabButtonTextSelected : style.tabButtonText
+                                                }
+                                            >
+                                                Merchant
+                                            </Text>
+                                        </TouchableOpacity>
+                                    )}
+                                    {/* location tab buttons */}
                                     <TouchableOpacity
                                         style={
                                             tabs === "Location" ? style.tabButtonSelected : style.tabButton
@@ -294,6 +353,7 @@ const Analytics = ({navigation}) => {
                                             Location
                                         </Text>
                                     </TouchableOpacity>
+                                    {/* product tab button */}
                                     <TouchableOpacity
                                         style={
                                             tabs === "Product" ? style.tabButtonSelected : style.tabButton
@@ -310,15 +370,27 @@ const Analytics = ({navigation}) => {
                                     </TouchableOpacity>
                                 </View>
                                 <View style={style.tabContentList}>
-                                    {/* Logistics Tab content */}
-                                    {tabs === "Logistics" && logisticsAnalyticsList.map(item => (
-                                        <LogisticsAnalyticsItem
+                                    {/* Merchant Tab content */}
+                                    {tabs === "Merchant" && merchantAnalyticsList.map(item => (
+                                        <BusinessAnalyticsItem
                                             key={item.id}
                                             logistics={item.logistics}
                                             numberOfDeliveries={item.numberOfDeliveries}
                                             totalPrice={item.totalPrice}
                                             oldTotalPrice={item.oldTotalPrice}
-                                            imageUrl={item.imageUrl}
+                                            imageUrl={item?.imageUrl}
+                                            onPress={item.onPress}
+                                        />
+                                    ))}
+                                    {/* Logistics Tab content */}
+                                    {tabs === "Logistics" && logisticsAnalyticsList.map(item => (
+                                        <BusinessAnalyticsItem
+                                            key={item.id}
+                                            logistics={item.logistics}
+                                            numberOfDeliveries={item.numberOfDeliveries}
+                                            totalPrice={item.totalPrice}
+                                            oldTotalPrice={item.oldTotalPrice}
+                                            imageUrl={item?.imageUrl}
                                             onPress={item.onPress}
                                         />
                                     ))}
@@ -341,7 +413,7 @@ const Analytics = ({navigation}) => {
                                             numberOfDeliveries={item.numberOfDeliveries}
                                             totalPrice={item.totalPrice}
                                             oldTotalPrice={item.oldTotalPrice}
-                                            imageUrl={item.imageUrl}
+                                            imageUrl={item?.imageUrl}
                                             onPress={item.onPress}
                                         />
                                     ))}

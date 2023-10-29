@@ -34,7 +34,7 @@ import LogisticsAnalyticsSkeleton from "../skeletons/LogisticsAnalyticsSkeleton"
 // globals
 import { useGlobals } from "../context/AppContext";
 
-const LogisticsAnalytics = ({navigation}) => {
+const BusinessAnalytics = ({navigation}) => {
 
     // calendar sheet
     const { calendarSheetRef } = useGlobals();
@@ -75,7 +75,7 @@ const LogisticsAnalytics = ({navigation}) => {
         },
         {
             id: 2,
-            title: "Total POD",
+            title: "Total Charges",
             presentValue: 20000,
             oldValue: 185500,
             decimal: true,
@@ -156,7 +156,7 @@ const LogisticsAnalytics = ({navigation}) => {
 
     const [date, setDate] = useState(null);
 
-    // render LogisticsAnalytics page
+    // render BusinessAnalytics page
     return (
         <>
             {!pageLoading ? (
@@ -231,7 +231,7 @@ const LogisticsAnalytics = ({navigation}) => {
                                             numberOfDeliveries={item.numberOfDeliveries}
                                             totalPrice={item.totalPrice}
                                             oldTotalPrice={item.oldTotalPrice}
-                                            disableCick={true}
+                                            disableClick={true}
                                         />
                                     ))}
                                 </View>
@@ -377,4 +377,4 @@ const style = StyleSheet.create({
     }
 })
  
-export default LogisticsAnalytics;
+export default BusinessAnalytics;

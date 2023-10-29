@@ -230,7 +230,7 @@ const ProductAnalytics = ({navigation}) => {
                                             numberOfDeliveries={item.numberOfDeliveries}
                                             totalPrice={item.totalPrice}
                                             oldTotalPrice={item.oldTotalPrice}
-                                            disableCick={true}
+                                            disableClick={true}
                                         />
                                     ))}
                                 </View>

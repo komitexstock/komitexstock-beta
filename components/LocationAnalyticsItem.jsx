@@ -8,41 +8,18 @@ import PercentageChange from './PercentageChange';
 import { windowWidth } from '../utils/helpers';
 
 // product list item that shows up in search results
-const LocationAnalyticsItem = ({location, numberOfDeliveries, totalPrice, oldTotalPrice, onPress, disableCick}) => {
+const LocationAnalyticsItem = ({location, numberOfDeliveries, totalPrice, oldTotalPrice, onPress, disableClick}) => {
     // product_name => string
     // quantity => int
     // price => float
     // imageUrl => string | pathToImage
     // onPress => function
 
-    // render LocationAnalyticsItem component
-    if (disableCick) return (
-        <View style={style.orderWrapper}>
-            {/* product information */}
-            <View style={style.orderInfo}>
-                <Text style={style.orderMainText}>
-                    {location}
-                </Text>
-                <Text style={style.orderSubText}>
-                    {numberOfDeliveries} deliveries
-                </Text>
-            </View>
-            <View style={style.orderPriceContainer}>
-                <Text style={style.orderPrice}>
-                    ₦{totalPrice.toLocaleString()}.<Text style={style.decimal}>00</Text>
-                </Text>
-                <PercentageChange
-                    presentValue={totalPrice}
-                    oldValue={oldTotalPrice}
-                />
-            </View>
-        </View>
-    );
-
     return (
         <TouchableOpacity 
             style={style.orderWrapper}
-            onPress={onPress}
+            onPress={disableClick ? () => {} : onPress}
+            activeOpacity={disableClick ? 1 : 0.3}
         >
             {/* product information */}
             <View style={style.orderInfo}>

@@ -29,6 +29,7 @@ const ProductAnalyticsItem = ({product, numberOfDeliveries, totalPrice, oldTotal
             <Avatar 
                 imageUrl={imageUrl}
                 squared={true}
+                fullname={product} // fallback
             />
             {/* product information */}
             <View style={style.orderInfo}>
