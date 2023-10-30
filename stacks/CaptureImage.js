@@ -34,7 +34,7 @@ const CaptureImage = ({navigation, route}) => {
 
     const [type, setType] = useState(CameraType.back);
     const [flashMode, setFlashMode] = useState(FlashMode.off);
-    const [picture, setPicture ] = useState();
+    const [picture, setPicture ] = useState(null);
 
     const [origin, setOrigin] = useState(null)
     const [imageType, setImageType] = useState(null)
@@ -123,8 +123,14 @@ const CaptureImage = ({navigation, route}) => {
     }
 
     const confirmImage = () => {
+        if (origin === "Account") {
+            return navigation.navigate(origin, {
+                image: picture,
+                imageType: imageType,
+            });
+        }
         navigation.navigate(origin, {
-            imageUri: picture.uri,
+            imageUri: picture,
             imageType: imageType,
             id: chatId,
             type: chatType,

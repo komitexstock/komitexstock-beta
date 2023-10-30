@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, Image, StyleSheet, Animated, PanResponder } from "react-native";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 // import helper functions
 import { convertUTCToTime } from "../utils/convertUTCToTime";
 // icons
@@ -36,20 +36,17 @@ import {
 } from "../style/colors";
 // components
 import NumberLink from "./NumberLink";
+import Menu from "./Menu";
 // useAuth
 import { useAuth } from "../context/AuthContext"
 
-const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAlert, products, handleOnPressPhoneNumber, handleScrollToComponent, setReplying, textInputRef, navigation}) => {
+const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAlert, products, handleOnPressPhoneNumber, handleScrollToComponent, setReplying, textInputRef, navigation, openMenu}) => {
 
     const { authData } = useAuth()
 
     // accoutntype, retreived from global variables
-    const accountType = "Merchant";
     const userId = "hjsdjkji81899";
-    const companyName = "Mega Enterprise";
-    const fullname = "Iffie Ovie";
     const postOrderUserId = "hjsdjkji81899";
-    const postOrderTimestamp = "6:30 am";
 
     const customMessages = ['Rescheduled', 'Dispatched', 'Cancelled', 'Delivered', 'Returned', 'Edited'];
 
@@ -257,13 +254,14 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
         }
     }
 
+
     // message body function
     const messageBody = (account_type, text, reply, file, timestamp, user_id, full_name, company_name, type, reschedule_date, id) => {
 
         const repliedMessage = messages.filter(message => message.id === reply);
         
         return (
-            <View 
+            <TouchableOpacity 
                 style={[
                     style.message,
                     authData?.account_type === account_type ? style.sent : style.received,
@@ -286,12 +284,33 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
                     // always pad custom messages regardless of is text is present
                     customMessages.includes(type) && {paddingTop: 0, padding: 10},
                 ]}
+                delayLongPress={250}
+                onLongPress={() => {
+                    const customMessages = ['Rescheduled', 'Cancelled', 'Returned', 'Delivered', 'Dispatched' ];
+                    if (customMessages.includes(type)) return;
+                    openMenu("message", id)}
+                }
+                activeOpacity={1}
+                onLayout={(e) => {
+                    const width = e.nativeEvent.layout.width;
+                    setTimeout(() => {
+                        messagesRefs.current = messagesRefs.current.map(item => {
+                            if (item.id === id) {
+                                return {
+                                    ...item,
+                                    width: width,
+                                }
+                            }
+                            return item
+                        });
+                    }, 2000);
+                }}
             >
                 {/* replied text message */}
                 { reply && repliedMessage[0].type === 'message' && 
                     <TouchableOpacity 
                         // specific to sent messages or messages from my team
-                        activeOpacity={authData?.account_type === account_type && 0.8} 
+                        activeOpacity={authData?.account_type === account_type && 0.95} 
                         style={style.repliedMessage}
                         onPress={() => {
                             handleScrollToComponent(reply)
@@ -399,6 +418,12 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
                                 accountType: account_type
                             })
                         }}
+                        onLongPress={() => {
+                            const customMessages = ['Rescheduled', 'Cancelled', 'Returned', 'Delivered', 'Dispatched' ];
+                            if (customMessages.includes(type)) return;
+                            openMenu("message", id)}
+                        }
+                        delayLongPress={250}
                     >
                         <Image source={file.path} style={style.postedImage} />
                     </TouchableOpacity>
@@ -412,6 +437,12 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
                             !reply && !text && {marginTop: 0}
                         ]}
                         onPress={() => {}}
+                        onLongPress={() => {
+                            const customMessages = ['Rescheduled', 'Cancelled', 'Returned', 'Delivered', 'Dispatched' ];
+                            if (customMessages.includes(type)) return;
+                            openMenu("message", id)}
+                        }
+                        delayLongPress={250}
                     >
                         {authData?.account_type === account_type ? <SentDocumentIcon /> : <ReceivedDocumentIcon />}
                         <View style={style.documentDescription}>
@@ -540,7 +571,7 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
 
                     </View>
                 }
-            </View>
+            </TouchableOpacity>
         );
     };
 
@@ -583,6 +614,7 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
                 message.type !== 'Edited' &&
                 panResponder.panHandlers
             )}
+            
             key={message.id} 
             style={[
                 style.messageContent, 
@@ -596,6 +628,8 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
                     id: message.id, 
                     y: e.nativeEvent.layout.y,
                     height: e.nativeEvent.layout.height,
+                    width: 0,
+                    account_type: message.account_type,
                 })
             }}
         >
@@ -769,15 +803,6 @@ const style = StyleSheet.create({
         color: primaryColor,
         fontFamily: 'mulish-medium',
     },
-    indicatorWrapper: {
-        position: 'absolute',
-        width: "100%",
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        top: 100,
-        zIndex: 2,
-    },
     messageContent: {
         width: "100%",
         display: 'flex',
@@ -785,6 +810,8 @@ const style = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'flex-start',
         marginBottom: 5,
+        position: "relative",
+        zIndex: 1,
     },
     messageOverlay: {
         position: 'absolute',
@@ -828,6 +855,8 @@ const style = StyleSheet.create({
         padding: 0,
         borderRadius: 12,
         height: null,
+        zIndex: 1,
+        position: "relative"
     },
     textGroup: {
         display: 'flex',

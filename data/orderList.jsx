@@ -15,14 +15,6 @@ export const orderList = [
         status: "Delivered",
         imageUrl: '../assets/images/komitex.png',
         newMessage: true,
-        navigateToChat: () => {
-            navigation.navigate("Chat", {
-                id: "abc123",
-                type: "Order",
-                name: "Komitex",
-                imageUrl: '../assets/images/komitex.png',
-            })
-        },
     },
     {
         name: "Jane Smith",
@@ -39,14 +31,6 @@ export const orderList = [
         logistics: "Fedex",
         imageUrl: '../assets/images/fedex.png',
         newMessage: true,
-        navigateToChat: () => {
-            navigation.navigate("Chat", {
-                id: "def456",
-                type: "Order",
-                name: "Fedex",
-                imageUrl: '../assets/images/fedex.png',
-            })
-        },
     },
     {
         name: "Michael Johnson",
@@ -62,14 +46,6 @@ export const orderList = [
         logistics: "Komitex",
         imageUrl: '../assets/images/komitex.png',
         newMessage: true,
-        navigateToChat: () => {
-            navigation.navigate("Chat", {
-                id: "ghi789",
-                type: "Order",
-                name: "Komitex",
-                imageUrl: '../assets/images/komitex.png',
-            })
-        },
     },
     {
         name: "Robert Davis",
@@ -85,14 +61,6 @@ export const orderList = [
         logistics: "DHL",
         imageUrl: '../assets/images/dhl.png',
         newMessage: true,
-        navigateToChat: () => {
-            navigation.navigate("Chat", {
-                id: "mno345",
-                type: "Order",
-                name: "DHL",
-                imageUrl: '../assets/images/dhl.png',
-            })
-        },
     },
     {
         name: "Sophia Brown",
@@ -108,14 +76,6 @@ export const orderList = [
         status: "Rescheduled",
         imageUrl: '../assets/images/ups.png',
         newMessage: false,
-        navigateToChat: () => {
-            navigation.navigate("Chat", {
-                id: "pqr678",
-                type: "Order",
-                name: "UPS",
-                imageUrl: '../assets/images/ups.png',
-            })
-        },
     },
     {
         name: "Emily Wilson",
@@ -132,14 +92,6 @@ export const orderList = [
         logistics: "Komitex",
         imageUrl: '../assets/images/komitex.png',
         newMessage: false,
-        navigateToChat: () => {
-            navigation.navigate("Chat", {
-                id: "stu901",
-                type: "Order",
-                name: "Komitex",
-                imageUrl: '../assets/images/komitex.png',
-            })
-        },
     },
     {
         name: "David Johnson",
@@ -155,14 +107,6 @@ export const orderList = [
         status: "Pending",
         imageUrl: '../assets/images/fedex.png',
         newMessage: false,
-        navigateToChat: () => {
-            navigation.navigate("Chat", {
-                id: "vwx234",
-                type: "Order",
-                name: "Fedex",
-                imageUrl: '../assets/images/fedex.png',
-            })
-        },
     },
     {
         name: "Olivia Taylor",
@@ -178,14 +122,6 @@ export const orderList = [
         status: "Dispatched",
         imageUrl: '../assets/images/komitex.png',
         newMessage: false,
-        navigateToChat: () => {
-            navigation.navigate("Chat", {
-                id: "yz0123",
-                type: "Order",
-                name: "Komitex",
-                imageUrl: '../assets/images/komitex.png',
-            })
-        },
     },
     {
         name: "Ethan Wilson",
@@ -201,14 +137,6 @@ export const orderList = [
         logistics: "DHL",
         imageUrl: '../assets/images/dhl.png',
         newMessage: false,
-        navigateToChat: () => {
-            navigation.navigate("Chat", {
-                id: "bcd345",
-                type: "Order",
-                name: "DHL",
-                imageUrl: '../assets/images/dhl.png',
-            })
-        },
     },
     {
         name: "Emma Davis",
@@ -224,14 +152,6 @@ export const orderList = [
         logistics: "UPS",
         imageUrl: '../assets/images/ups.png',
         newMessage: false,
-        navigateToChat: () => {
-            navigation.navigate("Chat", {
-                id: "efg567",
-                type: "Order",
-                name: "UPS",
-                imageUrl: '../assets/images/ups.png',
-            })
-        },
     },
     {
         name: "William Smith",
@@ -247,14 +167,6 @@ export const orderList = [
         status: "Rescheduled",
         imageUrl: '../assets/images/komitex.png',
         newMessage: true,
-        navigateToChat: () => {
-            navigation.navigate("Chat", {
-                id: "ghi678",
-                type: "Order",
-                name: "Komitex",
-                imageUrl: '../assets/images/komitex.png',
-            })
-        },
     },
     {
         name: "Isabella Johnson",
@@ -271,14 +183,6 @@ export const orderList = [
         status: "Pending",
         imageUrl: '../assets/images/fedex.png',
         newMessage: true,
-        navigateToChat: () => {
-            navigation.navigate("Chat", {
-                id: "jkl901",
-                type: "Order",
-                name: "Fedex",
-                imageUrl: '../assets/images/fedex.png',
-            })
-        },
     },
     {
         name: "Mia Taylor",
@@ -294,14 +198,6 @@ export const orderList = [
         status: "Dispatched",
         imageUrl: '../assets/images/komitex.png',
         newMessage: false,
-        navigateToChat: () => {
-            navigation.navigate("Chat", {
-                id: "mno234",
-                type: "Order",
-                name: "Komitex",
-                imageUrl: '../assets/images/komitex.png',
-            })
-        },
     },
     {
         name: "James Brown",
@@ -317,14 +213,6 @@ export const orderList = [
         status: "Dispatched",
         imageUrl: '../assets/images/dhl.png',
         newMessage: false,
-        navigateToChat: () => {
-            navigation.navigate("Chat", {
-                id: "pqr345",
-                type: "Order",
-                name: "DHL",
-                imageUrl: '../assets/images/dhl.png',
-            })
-        },
     },
     {
         name: "Alexander Davis",
@@ -340,14 +228,6 @@ export const orderList = [
         status: "Delivered",
         imageUrl: '../assets/images/ups.png',
         newMessage: true,
-        navigateToChat: () => {
-            navigation.navigate("Chat", {
-                id: "stu567",
-                type: "Order",
-                name: "UPS",
-                imageUrl: '../assets/images/ups.png',
-            })
-        },
     },
     {
         name: "Charlotte Wilson",
@@ -363,14 +243,6 @@ export const orderList = [
         status: "Rescheduled",
         imageUrl: '../assets/images/komitex.png',
         newMessage: true,
-        navigateToChat: () => {
-            navigation.navigate("Chat", {
-                id: "vwx678",
-                type: "Order",
-                name: "Komitex",
-                imageUrl: '../assets/images/komitex.png',
-            })
-        },
     },
     {
         name: "Henry Johnson",
@@ -387,14 +259,6 @@ export const orderList = [
         imageUrl: '../assets/images/fedex.png',
         logistics: "Fedex",
         newMessage: false,
-        navigateToChat: () => {
-            navigation.navigate("Chat", {
-                id: "yz0124",
-                type: "Order",
-                name: "Fedex",
-                imageUrl: '../assets/images/fedex.png',
-            })
-        },
     },
     {
         name: "Amelia Taylor",
@@ -410,14 +274,6 @@ export const orderList = [
         logistics: "Komitex",
         imageUrl: '../assets/images/komitex.png',
         newMessage: false,
-        navigateToChat: () => {
-            navigation.navigate("Chat", {
-                id: "bcd456",
-                type: "Order",
-                name: "Komitex",
-                imageUrl: '../assets/images/komitex.png',
-            })
-        },
     },
     {
         name: "Benjamin Davis",
@@ -433,14 +289,6 @@ export const orderList = [
         logistics: "DHL",
         imageUrl: '../assets/images/dhl.png',
         newMessage: true,
-        navigateToChat: () => {
-            navigation.navigate("Chat", {
-                id: "efg789",
-                type: "Order",
-                name: "DHL",
-                imageUrl: '../assets/images/dhl.png',
-            })
-        },
     },
     {
         name: "Victoria Smith",
@@ -456,14 +304,6 @@ export const orderList = [
         status: "Cancelled",
         imageUrl: '../assets/images/ups.png',
         newMessage: false,
-        navigateToChat: () => {
-            navigation.navigate("Chat", {
-                id: "ghi901",
-                type: "Order",
-                name: "UPS",
-                imageUrl: '../assets/images/ups.png',
-            })
-        },
     },
     {
         name: "Liam Williams",
@@ -479,14 +319,6 @@ export const orderList = [
         logistics: "Fedex",
         imageUrl: '../assets/images/fedex.png',
         newMessage: true,
-        navigateToChat: () => {
-          navigation.navigate("Chat", {
-            id: "fedex101",
-            type: "Order",
-            name: "Fedex",
-            imageUrl: '../assets/images/fedex.png',
-          });
-        },
     },
     {
         name: "Liam Thomas",
@@ -502,14 +334,6 @@ export const orderList = [
         logistics: "UPS",
         imageUrl: '../assets/images/ups.png',
         newMessage: true,
-        navigateToChat: () => {
-          navigation.navigate("Chat", {
-            id: "ups001",
-            type: "Order",
-            name: "UPS",
-            imageUrl: '../assets/images/ups.png',
-          });
-        },
     },
     {
         name: "Olivia Anderson",
@@ -526,14 +350,6 @@ export const orderList = [
         logistics: "Fedex",
         imageUrl: '../assets/images/fedex.png',
         newMessage: false,
-        navigateToChat: () => {
-          navigation.navigate("Chat", {
-            id: "fedex102",
-            type: "Order",
-            name: "Fedex",
-            imageUrl: '../assets/images/fedex.png',
-          });
-        },
     },
     {
         name: "Olivia Brown",
@@ -549,14 +365,6 @@ export const orderList = [
         logistics: "UPS",
         imageUrl: '../assets/images/ups.png',
         newMessage: false,
-        navigateToChat: () => {
-          navigation.navigate("Chat", {
-            id: "ups002",
-            type: "Order",
-            name: "UPS",
-            imageUrl: '../assets/images/ups.png',
-          });
-        },
     },
     {
         name: "Ella Wilson",
@@ -572,14 +380,6 @@ export const orderList = [
         logistics: "UPS",
         imageUrl: '../assets/images/ups.png',
         newMessage: true,
-        navigateToChat: () => {
-          navigation.navigate("Chat", {
-            id: "ups003",
-            type: "Order",
-            name: "UPS",
-            imageUrl: '../assets/images/ups.png',
-          });
-        },
     },
     {
         name: "Sophia Martinez",
@@ -595,14 +395,6 @@ export const orderList = [
         logistics: "Fedex",
         imageUrl: '../assets/images/fedex.png',
         newMessage: true,
-        navigateToChat: () => {
-          navigation.navigate("Chat", {
-            id: "fedex103",
-            type: "Order",
-            name: "Fedex",
-            imageUrl: '../assets/images/fedex.png',
-          });
-        },
     },
     {
         name: "James Davis",
@@ -618,14 +410,6 @@ export const orderList = [
         logistics: "Fedex",
         imageUrl: '../assets/images/fedex.png',
         newMessage: false,
-        navigateToChat: () => {
-          navigation.navigate("Chat", {
-            id: "fedex104",
-            type: "Order",
-            name: "Fedex",
-            imageUrl: '../assets/images/fedex.png',
-          });
-        },
     },
     {
         name: "William Taylor",
@@ -641,14 +425,6 @@ export const orderList = [
         logistics: "Fedex",
         imageUrl: '../assets/images/fedex.png',
         newMessage: true,
-        navigateToChat: () => {
-          navigation.navigate("Chat", {
-            id: "fedex105",
-            type: "Order",
-            name: "Fedex",
-            imageUrl: '../assets/images/fedex.png',
-          });
-        },
     },
     {
         name: "Ella Harris",
@@ -664,14 +440,6 @@ export const orderList = [
         logistics: "Fedex",
         imageUrl: '../assets/images/fedex.png',
         newMessage: false,
-        navigateToChat: () => {
-          navigation.navigate("Chat", {
-            id: "fedex106",
-            type: "Order",
-            name: "Fedex",
-            imageUrl: '../assets/images/fedex.png',
-          });
-        },
     },
     {
         name: "James Martin",
@@ -687,14 +455,6 @@ export const orderList = [
         logistics: "UPS",
         imageUrl: '../assets/images/ups.png',
         newMessage: false,
-        navigateToChat: () => {
-          navigation.navigate("Chat", {
-            id: "ups004",
-            type: "Order",
-            name: "UPS",
-            imageUrl: '../assets/images/ups.png',
-          });
-        },
     },
     {
         name: "Aiden Smith",
@@ -710,14 +470,6 @@ export const orderList = [
         logistics: "UPS",
         imageUrl: '../assets/images/ups.png',
         newMessage: true,
-        navigateToChat: () => {
-          navigation.navigate("Chat", {
-            id: "ups005",
-            type: "Order",
-            name: "UPS",
-            imageUrl: '../assets/images/ups.png',
-          });
-        },
     },
     {
         name: "Liam Davis",
@@ -733,14 +485,6 @@ export const orderList = [
         logistics: "DHL",
         imageUrl: '../assets/images/dhl.png',
         newMessage: true,
-        navigateToChat: () => {
-          navigation.navigate("Chat", {
-            id: "dhl001",
-            type: "Order",
-            name: "DHL",
-            imageUrl: '../assets/images/dhl.png',
-          });
-        },
     },
     {
         name: "William Johnson",
@@ -757,14 +501,6 @@ export const orderList = [
         logistics: "DHL",
         imageUrl: '../assets/images/dhl.png',
         newMessage: false,
-        navigateToChat: () => {
-          navigation.navigate("Chat", {
-            id: "dhl002",
-            type: "Order",
-            name: "DHL",
-            imageUrl: '../assets/images/dhl.png',
-          });
-        },
     },
     {
         name: "Sophia Smith",
@@ -780,14 +516,6 @@ export const orderList = [
         logistics: "DHL",
         imageUrl: '../assets/images/dhl.png',
         newMessage: true,
-        navigateToChat: () => {
-          navigation.navigate("Chat", {
-            id: "dhl003",
-            type: "Order",
-            name: "DHL",
-            imageUrl: '../assets/images/dhl.png',
-          });
-        },
     },
     {
         name: "James Brown",
@@ -803,14 +531,6 @@ export const orderList = [
         logistics: "DHL",
         imageUrl: '../assets/images/dhl.png',
         newMessage: false,
-        navigateToChat: () => {
-          navigation.navigate("Chat", {
-            id: "dhl004",
-            type: "Order",
-            name: "DHL",
-            imageUrl: '../assets/images/dhl.png',
-          });
-        },
     },
     {
         name: "Aiden Wilson",
@@ -826,14 +546,6 @@ export const orderList = [
         logistics: "DHL",
         imageUrl: '../assets/images/dhl.png',
         newMessage: true,
-        navigateToChat: () => {
-          navigation.navigate("Chat", {
-            id: "dhl005",
-            type: "Order",
-            name: "DHL",
-            imageUrl: '../assets/images/dhl.png',
-          });
-        },
     },        
     {
         name: "Aiden Jackson",
@@ -849,14 +561,6 @@ export const orderList = [
         logistics: "Fedex",
         imageUrl: '../assets/images/fedex.png',
         newMessage: false,
-        navigateToChat: () => {
-          navigation.navigate("Chat", {
-            id: "fedex107",
-            type: "Order",
-            name: "Fedex",
-            imageUrl: '../assets/images/fedex.png',
-          });
-        },
     },
     {
         name: "Mia Thomas",
@@ -872,13 +576,5 @@ export const orderList = [
         logistics: "Fedex",
         imageUrl: '../assets/images/fedex.png',
         newMessage: true,
-        navigateToChat: () => {
-          navigation.navigate("Chat", {
-            id: "fedex108",
-            type: "Order",
-            name: "Fedex",
-            imageUrl: '../assets/images/fedex.png',
-          });
-        },
     },
 ];

@@ -1,32 +1,46 @@
 import { TouchableWithoutFeedback, TouchableOpacity, View, Text, StyleSheet } from "react-native";
-import { black, blackOut, overlay, white } from "../style/colors";
+import { black, blackOut, overlay, primaryColor, secondaryColor, white } from "../style/colors";
+import { windowHeight, windowWidth } from "../utils/helpers";
+// helpers
 
-const Menu = ({closeMenu, menuButtons}) => {
+
+const Menu = ({closeMenu, menuButtons, top, right, hideTouchableBackground, left}) => {
+
     return (
-        <TouchableWithoutFeedback onPress={closeMenu}>
-            <View style={style.menuWrapper}>
-                <View style={style.menuContainer}>
-                    {menuButtons.map(menuButton => (
-                        <TouchableOpacity
-                            onPress={menuButton.onPress}
-                            key={menuButton.id}
-                            style={style.menuButton}
-                        >
-                            {menuButton.icon}
-                            <Text style={style.menuText}>{menuButton.text}</Text>
-                        </TouchableOpacity>
-                    ))}
-                </View>
+        <>  
+            {!hideTouchableBackground && (
+                <TouchableWithoutFeedback onPress={closeMenu}>
+                    <View style={style.withoutFeedbackContent} />
+                </TouchableWithoutFeedback>
+            )}
+            <View 
+                style={[
+                    style.menuContainer,
+                    {top: top !== undefined ? top : 42},
+                    right !== undefined && {right: right},
+                    left !== undefined && {left: left},
+                ]}
+            >
+                {menuButtons?.map(menuButton => (
+                    <TouchableOpacity
+                        onPress={menuButton.onPress}
+                        key={menuButton.id}
+                        style={style.menuButton}
+                    >
+                        {menuButton.icon}
+                        <Text style={style.menuText}>{menuButton.text}</Text>
+                    </TouchableOpacity>
+                ))}
             </View>
-        </TouchableWithoutFeedback>
+        </>
     );
 }
 
 const style = StyleSheet.create({
-    menuWrapper: {
-        position: "absolute",
+    withoutFeedbackContent: {
         width: "100%",
         height: "100%",
+        position: "absolute",
         top: 0,
         right: 0,
         zIndex: 10,
@@ -34,10 +48,13 @@ const style = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'flex-start',
         alignItems: 'flex-end',
-        padding: 5,
     },
     menuContainer: {
+        zIndex: 10,
         backgroundColor: white,
+        position: "absolute",
+        top: 42,
+        right: 5,
         width: 184,
         // maxWidth: "80%",
         display: 'flex',

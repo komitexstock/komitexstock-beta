@@ -4,6 +4,7 @@ import {
     Text, 
     TextInput, 
     TouchableOpacity,
+    TouchableWithoutFeedback,
     ScrollView, 
     StyleSheet, 
     Image,
@@ -29,6 +30,10 @@ import RemoveImageIcon from "../assets/icons/RemoveImageIcon";
 import RemoveDocIcon from "../assets/icons/RemoveDocIcon";
 import UploadingImageDocIcon from "../assets/icons/UploadingImageDocIcon";
 import UploadingDocIcon from "../assets/icons/UploadingDocIcon";
+import OrderDetailsIcon from "../assets/icons/OrderDetailsIcon";
+import ChatLinkIcon from "../assets/icons/ChatLinkIcon";
+import CopyTextIcon from "../assets/icons/CopyTextIcon";
+import ReplyIcon from "../assets/icons/ReplyIcon";
 // components
 import ActionButton from "../components/ActionButton";
 import Header from "../components/Header";
@@ -45,6 +50,8 @@ import Input from "../components/Input";
 import SelectInput from "../components/SelectInput";
 import MessageContainer from "../components/MessageContainer";
 import ProductListSummary from "../components/ProductListSummary";
+import Avatar from "../components/Avatar";
+import Menu from "../components/Menu";
 // import react hooks
 import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
 // colors
@@ -70,9 +77,12 @@ import * as DocumentPicker from 'expo-document-picker';
 // globals
 import { useGlobals } from "../context/AppContext";
 // data
-import { messages } from "../data/messages";
+import { messageList } from "../data/messageList";
 // use Auth
 import { useAuth } from "../context/AuthContext";
+// helpers
+import { copyToClipboard, windowHeight, windowWidth } from "../utils/helpers";
+
 
 const Chat = ({navigation, route}) => {
 
@@ -219,7 +229,7 @@ const Chat = ({navigation, route}) => {
     }
 
     // chat rout parameters
-    const {id, type, name, imageUrl} = route.params;
+    const {chatId, chatType, business_name, banner_image} = route.params;
 
     // accoutntype, retreived from global variables
     const accountType = "Merchant";
@@ -325,13 +335,15 @@ const Chat = ({navigation, route}) => {
     // chat header component
     const ChatHeader = (
         <View style={style.headerInfoWrapper}>
-            <Image 
-                source={require("../assets/images/default.png")}
-                style={style.headerImage}
+            <Avatar
+                imageUrl={banner_image}
+                fullname={business_name}
+                squared={true}
+                smallerSize={true}
             />
             <View style={style.headerTextWrapper}>
-                <Text style={style.headerPrimaryText}>{name}</Text>
-                <Text style={style.headerSecondaryText}>{type === "Order" ? "Order" : "Waybill"} ID: Y5lq3xgCK9rkKRD7oJ4Q</Text>
+                <Text style={style.headerPrimaryText}>{business_name}</Text>
+                <Text style={style.headerSecondaryText}>{chatType} ID: {chatId}</Text>
             </View>
         </View>
     );
@@ -505,7 +517,7 @@ const Chat = ({navigation, route}) => {
     // MESSAGES MESSAGES MESSAGES MESSAGES
     // MESSAGES MESSAGES MESSAGES MESSAGES
     // MESSAGES MESSAGES MESSAGES MESSAGES
-    const [messages, setMessages] = useState(messages);
+    const [messages, setMessages] = useState(messageList);
 
     // update messages
     useEffect(() => {
@@ -839,12 +851,132 @@ const Chat = ({navigation, route}) => {
         Keyboard.dismiss();
         navigation.navigate("CaptureImage", {
             origin: "Chat",
-            id: id,
-            type: type,
-            name: name,
-            imageUrl: imageUrl,
+            chatId: chatId,
+            chatType: chatType,
+            business_name: business_name,
+            banner_image: banner_image,
         })
+    };
+
+
+
+    // close Menu function
+    const closeMenu = () => {
+        setMenu(prevMenu => {
+            return  {
+                ...prevMenu,
+                open: false
+            }
+        });
     }
+
+    const getRightPosition = (messageWidth) => {
+        const menuWidth = 184;
+        const horizontalPadding = 40;
+
+        if ( horizontalPadding + messageWidth + menuWidth >= windowWidth ) {
+            return (windowWidth - menuWidth)/2 + horizontalPadding/2;
+        }
+        return messageWidth + horizontalPadding/4;
+    }
+
+    const getTopPosition = (messageHeight, messageOffset) => {
+
+        // vertical padding in message container
+        const verticalPadding = 30;
+
+        // height of menu
+        const menuHeight = 124;
+
+        // header bar height
+        const headerBarHeight = 80;
+
+        // text fields height
+        const textFieldHeight = 103;
+
+        if (messageOffset > windowHeight - textFieldHeight) {
+            const threshold = messageOffset - scrollOffset;
+            // console.log(threshold);
+            if ( threshold > 500 ) {
+                return messageOffset + verticalPadding - menuHeight;
+            }
+        }
+
+
+        if (messageOffset - scrollOffset <= headerBarHeight) {
+            return messageOffset + messageHeight - verticalPadding;
+        }
+
+        return messageOffset;
+    }
+    
+    // open Menu function
+    const openMenu = (menuType, id) => {
+        if (menuType === "header") {
+            return setMenu({
+                open: true,
+                buttons: headerMenuButtons,
+            })
+        }
+
+        const targetMessage = messagesRefs.current.find(message => message.id === id);
+
+        // console.log(targetMessage);
+        setMenu({
+            open: true,
+            buttons: messageMenuButtons,
+            top: getTopPosition(targetMessage.height, targetMessage.y),
+            right: authData?.account_type === targetMessage.account_type ? getRightPosition(targetMessage.width) : undefined,
+            left: authData?.account_type !== targetMessage.account_type ? getRightPosition(targetMessage.width) : undefined,
+            hideTouchableBackground: false,
+        });
+    }
+
+    const handleCopyChatLink = () => {
+        copyToClipboard("abc123");
+        closeMenu();
+
+    }
+    
+    // menu buttons
+    const messageMenuButtons = [
+        {
+            id: 1,
+            icon: <ReplyIcon />,
+            text: "Reply",
+            onPress: () => {},
+        },
+        {
+            id: 2,
+            icon: <CopyTextIcon />,
+            text: "Copy text",
+            onPress: () => {},
+        },
+    ];
+
+    const headerMenuButtons = [
+        {
+            id: 1,
+            icon: <OrderDetailsIcon />,
+            text: "Order details",
+            onPress: () => navigation.navigate("OrderDetails", {order_id: "abc123"}),
+        },
+        {
+            id: 2,
+            icon: <ChatLinkIcon />,
+            text: "Chat link",
+            onPress: handleCopyChatLink,
+        },
+    ];
+
+    // const menu state
+    const [menu, setMenu] = useState({
+        open: false,
+        buttons: null,
+    });
+
+    // menu ref
+    const menuRef = useRef(null)
 
     // if bottomsheet modal is closed with back button set reason as ""
     useEffect(() => {
@@ -852,6 +984,8 @@ const Chat = ({navigation, route}) => {
     }, [bottomSheetOpen])
 
 
+    const [scrollOffset, setScrollOffset] = useState(null);
+    // console.log(scrollOffset);
 
     return (
         <>
@@ -862,7 +996,7 @@ const Chat = ({navigation, route}) => {
                     navigation={navigation}
                     stackName={ChatHeader}
                     component={true}
-                    iconFunction={() => {}}
+                    iconFunction={() => openMenu("header")}
                     icon={<MenuIcon />}
                     removeBackArrow={true}
                     inlineArrow={true}
@@ -888,7 +1022,23 @@ const Chat = ({navigation, route}) => {
                 style={style.scrollView}
                 contentContainerStyle={style.scrollViewContent}
                 keyboardShouldPersistTaps="always"
+                onScroll={({nativeEvent}) => {
+                    closeMenu();
+                    setScrollOffset(nativeEvent.contentOffset.y)
+                }}
             >
+                {/* menu */}
+                {menu.open && (
+                    <Menu
+                        closeMenu={closeMenu}
+                        menuButtons={menu?.buttons}
+                        menuRef={menuRef}
+                        top={menu?.top}
+                        right={menu?.right}
+                        left={menu?.left}
+                        hideTouchableBackground={menu?.hideTouchableBackground}
+                    />
+                )}
                 {/* message overlay */}
                 <View 
                     style={[
@@ -934,6 +1084,7 @@ const Chat = ({navigation, route}) => {
                                     setReplying={setReplying}
                                     textInputRef={textInputRef}
                                     navigation={navigation}
+                                    openMenu={openMenu}
                                 />
                             );
                         })}
@@ -946,7 +1097,7 @@ const Chat = ({navigation, route}) => {
             <View style={style.textFieldWrapper}>
                 { !replying && !uploading && (
                     <View style={style.actionButtonsWrapper}>
-                        { type === "Order" && orderButtons.map((button) => {
+                        { chatType === "Order" && orderButtons.map((button) => {
                             if (authData?.account_type === "Merchant"){
                                 if (button.id === 1 || button.id === 2){
                                     return <ActionButton
@@ -964,7 +1115,7 @@ const Chat = ({navigation, route}) => {
                             }
                         })}
 
-                        { type === "Waybill" && authData?.account_type === "Logistics" && (
+                        { chatType === "Waybill" && authData?.account_type === "Logistics" && (
                             <ActionButton 
                                 name={waybillButton.name}
                                 onPress={waybillButton.onPress}
@@ -1441,6 +1592,7 @@ const style = StyleSheet.create({
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'flex-start',
+        zIndex: 1,
     },
     dateWrapper: {
         width: "100%",

@@ -1,7 +1,7 @@
 import { TouchableOpacity, Text, StyleSheet } from "react-native";
 import { linkText, primaryColor } from "../style/colors";
 // expo clipboard
-import * as Clipboard from 'expo-clipboard';
+import { copyToClipboard } from "../utils/helpers";
 // use auth
 import { useAuth } from "../context/AuthContext";
 
@@ -9,16 +9,11 @@ const NumberLink = ({number, account_type, onPress, copyNumberAlert}) => {
 
     const { authData } = useAuth()
 
-    const copyToClipboard = async (text) => {
-        await Clipboard.setStringAsync(text);
-        copyNumberAlert(true);
-    };
-
     return (
         <TouchableOpacity
             style={style.linkButton}
             onPress={() => {onPress(number)}}
-            onLongPress={() => {copyToClipboard(number)}}
+            onLongPress={() => {copyToClipboard(number, copyNumberAlert(true))}}
         >
             <Text style={authData?.account_type === account_type ? style.sentLinkText : style.receivedLinkText}>
                 {number}

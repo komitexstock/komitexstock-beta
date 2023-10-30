@@ -17,18 +17,38 @@ import { windowWidth } from '../utils/helpers';
 // use auth
 import { useAuth } from '../context/AuthContext';
 
-const OrderListItem = ({item, index, firstOrder, lastOrder, selectable, selected, selectFunction, extraVerticalPadding, sideFunctions, searchQuery, navigation}) => {
+const OrderListItem = ({item, index, firstOrder, lastOrder, selectable, selected, selectFunction, extraVerticalPadding, sideFunctions, searchQuery, navigation, onPress}) => {
     // lenght, index => int
     // item => object
 
     const { authData } = useAuth();
+
+    // get the desired business name
+    const handleChatHeaderBusinessName = () => {
+        if (authData?.account_type !== "Merchant") return item?.merchant?.business_name;
+        if (authData?.account_type !== "Logistics") return item?.logistics?.business_name;
+        return null;
+    }
+    
+    // get the desired banner image
+    const handleChatHeaderBanner = () => {
+        if (authData?.account_type !== "Merchant") return item?.merchant?.banner_image;
+        if (authData?.account_type !== "Logistics") return item?.logistics?.banner_image;
+        return null;
+    }
 
     const handleOnPress = () => {
         if (selectable) {
             return selectFunction(item.id);
         } else {
             if (sideFunctions) sideFunctions();
-            return item.navigation(navigate("Chat", {id: item.id}));
+            // return onPress;
+            return navigation.navigate("Chat", {
+                chatId: item.id, 
+                chatType: "Order",
+                business_name: handleChatHeaderBusinessName(),
+                banner_image: handleChatHeaderBanner(),
+            });
         }
     }
 
@@ -121,7 +141,7 @@ const OrderListItem = ({item, index, firstOrder, lastOrder, selectable, selected
             </View>
             {/* order info */}
             <View style={style.orderInfo}>
-                <Text 
+                <Text
                     style={[
                         style.orderMainText,
                         // if order has a new message make text have a color with higher opacity
