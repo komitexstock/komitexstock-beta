@@ -121,6 +121,8 @@ const CaptureImage = ({navigation, route}) => {
     const resetImage = () => {
         setPicture(null)
     }
+    // console.log(picture);
+    // console.log(imageType);
 
     const confirmImage = () => {
         if (origin === "Account") {
@@ -129,6 +131,7 @@ const CaptureImage = ({navigation, route}) => {
                 imageType: imageType,
             });
         }
+
         navigation.navigate(origin, {
             imageUri: picture,
             imageType: imageType,

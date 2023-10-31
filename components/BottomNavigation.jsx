@@ -93,7 +93,7 @@ const BottomNavigation = () => {
             >                
                 {["Inventory", "Products", "Warehouse"].includes(currentStack) ? (<InventoryActiveIcon />) : (<InventoryIcon />)}
                 <Text 
-                    style={currentStack === "Inventory" ? style.activeText : style.inactiveText}
+                    style={["Inventory", "Warehouse"].includes(currentStack) ? style.activeText : style.inactiveText}
                 >
                     {authData?.account_type === "Merchant" ? "Inventory" : "Warehouse"}
                 </Text>

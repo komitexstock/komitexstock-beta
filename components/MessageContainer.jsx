@@ -315,6 +315,12 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
                         onPress={() => {
                             handleScrollToComponent(reply)
                         }}
+                        delayLongPress={250}
+                        onLongPress={() => {
+                            const customMessages = ['Rescheduled', 'Cancelled', 'Returned', 'Delivered', 'Dispatched' ];
+                            if (customMessages.includes(type)) return;
+                            openMenu("message", id)}
+                        }
                     >
                         <Text style={style.repliedUser}>
                             { repliedMessageSender(
@@ -341,6 +347,12 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
                         onPress={() => {
                             handleScrollToComponent(reply)
                         }}
+                        delayLongPress={250}
+                        onLongPress={() => {
+                            const customMessages = ['Rescheduled', 'Cancelled', 'Returned', 'Delivered', 'Dispatched' ];
+                            if (customMessages.includes(type)) return;
+                            openMenu("message", id)}
+                        }
                     >  
                         <View style={style.repliedImageWrapper}>
                             <View style={style.repliedUserContainer}>
@@ -375,6 +387,12 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
                         onPress={() => {
                             handleScrollToComponent(reply)
                         }}
+                        delayLongPress={250}
+                        onLongPress={() => {
+                            const customMessages = ['Rescheduled', 'Cancelled', 'Returned', 'Delivered', 'Dispatched' ];
+                            if (customMessages.includes(type)) return;
+                            openMenu("message", id)}
+                        }
                     >  
                         <View style={style.repliedImageWrapper}>
                             <View style={style.repliedUserContainer}>
