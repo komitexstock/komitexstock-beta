@@ -26,7 +26,14 @@ import { windowHeight } from "../utils/helpers";
 import { auth, database } from "../Firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 // fire store functions
-import { collection, addDoc, setDoc, doc, getDocs } from "firebase/firestore";
+import {
+    collection,
+    addDoc,
+    setDoc,
+    doc,
+    getDocs,
+    serverTimestamp,
+} from "firebase/firestore";
 // globals
 import { useGlobals } from "../context/AppContext";
 // firebase functions
@@ -257,12 +264,12 @@ const CreateAccount = ({navigation}) => {
             const setRole = httpsCallable(functions, "setRole");
             
             // setRole
-            await setRole({ 
-                email: emailAddress, 
-                admin: true, 
-                role: "Manager", 
-                account_type: "Logistics"
-            });
+            // await setRole({ 
+            //     email: emailAddress, 
+            //     admin: true, 
+            //     role: "Manager", 
+            //     account_type: "Logistics"
+            // });
             
             // store business data
             const businessResponse = await addDoc(businessesRef, {
@@ -299,6 +306,7 @@ const CreateAccount = ({navigation}) => {
             await setDoc(usersRef, {
                 business_id: businessResponse.id,
                 email: authResponse.user.email,
+                created_at: serverTimestamp(),
                 deactivated: false,
                 face_id: false,
                 fingerprint: false,

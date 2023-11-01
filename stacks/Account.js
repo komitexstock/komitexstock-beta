@@ -64,75 +64,107 @@ const Account = ({navigation, route}) => {
     // });
 
     // merchant account business group buttons
-    const merchantBusinessButtons = [
-        {
-            id: 1,
-            title: "Analytics",
-            subtitle: false,
-            icon: <AnalyticsIcon />,
-            onPress: () => {navigation.navigate("Analytics")},
-        },
-        {
-            id: 4,
-            title: "Generate Business Report",
-            subtitle: false,
-            icon: <BusinessReportIcon />,
-            onPress: () => {navigation.navigate("GenerateBusinessReport")},
-        },
-        {
-            id: 2,
-            title: "Team Members",
-            subtitle: false,
-            icon: <TeamIcon />,
-            onPress: () => {navigation.navigate("TeamMembers")},
-        },
-        {
-            id: 3,
-            title: "logistics",
-            subtitle: false,
-            icon: <LogisticsIcon />,
-            onPress: () => {navigation.navigate("Logistics")},
-        },
-    ];
+    const merchantBusinessButtons = () => {
+
+        // business default buttons
+        let buttons = [
+            {
+                id: 2,
+                title: "Team Members",
+                subtitle: false,
+                icon: <TeamIcon />,
+                onPress: () => {navigation.navigate("TeamMembers")},
+            },
+        ];
+
+        // buttons accessible to just managers
+        const managerButtons = [
+            {
+                id: 1,
+                title: "Analytics",
+                subtitle: false,
+                icon: <AnalyticsIcon />,
+                onPress: () => {navigation.navigate("Analytics")},
+            },
+            {
+                id: 4,
+                title: "Generate Business Report",
+                subtitle: false,
+                icon: <BusinessReportIcon />,
+                onPress: () => {navigation.navigate("GenerateBusinessReport")},
+            },
+            {
+                id: 3,
+                title: "logistics",
+                subtitle: false,
+                icon: <LogisticsIcon />,
+                onPress: () => {navigation.navigate("Logistics")},
+            },
+        ];
+
+        // if user is a manager, include manager buttons
+        if (authData?.role === "Manager") {
+            return [...buttons, ...managerButtons];
+        };
+
+        // return all the buttons
+        return buttons;
+    };
 
     // logistics account business group buttons
-    const logisticsBusinessButtons = [
-        {
-            id: 1,
-            title: "Analytics",
-            subtitle: false,
-            icon: <AnalyticsIcon />,
-            onPress: () => {navigation.navigate("Analytics")},
-        },
-        {
-            id: 5,
-            title: "Business Settings",
-            subtitle: false,
-            icon: <BusinessSettingsIcon />,
-            onPress: () => {navigation.navigate("BusinessSettings")},
-        },
-        {
-            id: 4,
-            title: "Generate Business Report",
-            subtitle: false,
-            icon: <BusinessReportIcon />,
-            onPress: () => {navigation.navigate("GenerateBusinessReport")},
-        },
-        {
-            id: 2,
-            title: "Team Members",
-            subtitle: false,
-            icon: <TeamIcon />,
-            onPress: () => {navigation.navigate("TeamMembers")},
-        },
-        {
-            id: 3,
-            title: "Merchants",
-            subtitle: false,
-            icon: <MerchantsIcon />,
-            onPress: () => {navigation.navigate("Merchants")},
-        },
-    ];
+    const logisticsBusinessButtons = () => {
+        
+        // business buttons
+        const buttons = [
+            {
+                id: 2,
+                title: "Team Members",
+                subtitle: false,
+                icon: <TeamIcon />,
+                onPress: () => {navigation.navigate("TeamMembers")},
+            },
+        ];
+
+        // manager buttons
+        const managerButtons = [
+            {
+                id: 1,
+                title: "Analytics",
+                subtitle: false,
+                icon: <AnalyticsIcon />,
+                onPress: () => {navigation.navigate("Analytics")},
+            },
+            {
+                id: 5,
+                title: "Business Settings",
+                subtitle: false,
+                icon: <BusinessSettingsIcon />,
+                onPress: () => {navigation.navigate("BusinessSettings")},
+            },
+            {
+                id: 4,
+                title: "Generate Business Report",
+                subtitle: false,
+                icon: <BusinessReportIcon />,
+                onPress: () => {navigation.navigate("GenerateBusinessReport")},
+            },
+            {
+                id: 3,
+                title: "Merchants",
+                subtitle: false,
+                icon: <MerchantsIcon />,
+                onPress: () => {navigation.navigate("Merchants")},
+            },
+        ];
+
+        // if user is a manager, include manager buttons
+        if (authData?.role === "Manager") {
+            return [...buttons, ...managerButtons];
+        }
+
+        // return all the buttons
+        return buttons;
+    };
 
     // list of buttons in Account Page
     const accountButtons = {
@@ -142,7 +174,7 @@ const Account = ({navigation, route}) => {
             icon: <EditUserIcon />,
             onPress: () => {navigation.navigate("Profile")},
         },
-        business: authData?.account_type === "Logistics" ? logisticsBusinessButtons : merchantBusinessButtons,
+        business: authData?.account_type === "Logistics" ? logisticsBusinessButtons() : merchantBusinessButtons(),
         security: [
             {
                 id: 1,
@@ -393,7 +425,7 @@ const Account = ({navigation, route}) => {
                     <View style={style.header}>
                         <View style={style.bannerWrapper}>
                             {/* change banner photo button */}
-                            { authData?.admin && (
+                            { authData?.role === "Manager" && (
                                 <TouchableOpacity 
                                     style={style.bannerCamera}
                                     onPress={() => {
@@ -404,17 +436,6 @@ const Account = ({navigation, route}) => {
                                     <CameraIcon />
                                 </TouchableOpacity>
                             )}
-                            {/* banner image */}
-                            {/* {!authData?.banner_image && !selectedBanner ? (
-                                <View>
-                                    <Text style={style.businessNameBanner}>{authData?.business_name}</Text>
-                                </View>
-                            ) : (
-                                <Image
-                                    style={style.bannerImage}
-                                    source={uploadingBanner ? {uri: selectedBanner} : {uri: authData?.banner_image}}
-                                />
-                            )} */}
                             <Image
                                 style={style.bannerImage}
                                 source={uploadingBanner ? {uri: selectedBanner} : {uri: authData?.banner_image}}

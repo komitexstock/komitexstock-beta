@@ -1,7 +1,7 @@
 // react native components
 import { TouchableOpacity, Text, View, StyleSheet } from "react-native";
 // colors
-import { inputBorder, inputLabel, neutral, primaryColor, white } from "../style/colors";
+import { inputBorder, inputLabel, listSeparator, neutral, primaryColor, white } from "../style/colors";
 // icon
 import ArrowDown from "../assets/icons/ArrowDown";
 // moment
@@ -41,10 +41,14 @@ const SelectInput = ({label, labelIcon, placeholder, onPress, icon, value, activ
                     active && style.activeInput,
                     disabled && style.disabled
                 ]}
+                activeOpacity={disabled && 1}
             >
                 {/* render value */}
                 <Text 
-                    style={value ? style.value : style.placeholder}
+                    style={[
+                        value ? style.value : style.placeholder,
+                        disabled && style.disabledText
+                    ]}
                 >
                     { inputFor === "Location" && (
                         <>
@@ -118,7 +122,11 @@ const style = StyleSheet.create({
         borderColor: primaryColor,
     },
     disabled: {
-        opacity: 0.5,
+        // opacity: 0.5,
+        backgroundColor: listSeparator,
+    },
+    disabledText: {
+        color: inputLabel,
     },
     placeholder: {
         fontFamily: 'mulish-semibold',

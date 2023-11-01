@@ -48,6 +48,8 @@ import {
     collection,
     where,
     query,
+    orderBy,
+    limit,
 } from "firebase/firestore";
 // firebase authentication
 import { createUserWithEmailAndPassword } from "firebase/auth";
@@ -115,8 +117,8 @@ const TeamMembers = ({ navigation }) => {
         bottomSheetRef.current?.present();
         setModal(type);
 
-        console.log("ID: ", id);
-        console.log("Type: ", type);
+        // console.log("ID: ", id);
+        // console.log("Type: ", type);
         
         if (type === "Edit") {
             console.log(type);
@@ -130,10 +132,14 @@ const TeamMembers = ({ navigation }) => {
 
     // function to know if member can be deactivated
     const handleCantDeactivate = useMemo(() => {
+        // if no account is selected return true
         if (selectedId === null) return true;
         const member = members?.find((member) => member?.id === selectedId);
-        if (authData?.uid === member.id) return true;
+        // admins can't be deactivated
         if (member.admin) return true;
+        // if users are not managers
+        if (authData?.role !== "Manager") return true;
+        // else return false
         return false;
     }, [selectedId])
 
@@ -145,7 +151,12 @@ const TeamMembers = ({ navigation }) => {
         const fetchTeamMembers = async (business_id) => {
             try {
                 const collectionRef = collection(database, "users");
-                let q = query(collectionRef, where("business_id", "==", business_id));
+                let q = query(
+                        collectionRef, 
+                        where("business_id", "==", business_id),
+                        orderBy("created_at"),
+                        // limit(10),
+                    );
             
                 const unsubscribe = onSnapshot(q, (querySnapshot) => {
                     let members = [];
@@ -153,6 +164,7 @@ const TeamMembers = ({ navigation }) => {
                         const member = {
                             id: doc.id,
                             admin: doc.data().admin,
+                            created_by: doc.data().created_by,
                             email: doc.data().email,
                             deactivated: doc.data().deactivated,
                             full_name: doc.data().full_name,
@@ -161,6 +173,13 @@ const TeamMembers = ({ navigation }) => {
                         };
                         members.push(member);
                     });
+
+                    const addNewCard = { //add new member card 
+                        id: "addNew",
+                        add_new: true,
+                        onPress: () => openModal("Add"),
+                    }
+
                     // console.log("Members: ", members);
                     const adjustedArray = [
                         // add openModal function to each member card
@@ -175,29 +194,29 @@ const TeamMembers = ({ navigation }) => {
                                 role: member.role,
                                 onPress: () => openModal("Edit", member.id),
                             }
-                        }),
-                        { //add new member card 
-                            id: "addNew",
-                            add_new: true,
-                            onPress: () => openModal("Add"),
-                        }
+                        })
                     ];
+
+                    // if user is a manager, show them add new member card
+                    if (authData?.role === "Manager") adjustedArray.push(addNewCard);
+
                     setMembers(adjustedArray);
-                });
-                if (members.length <= 1) {
                     setPageLoading(false);
-                }
+                }, (error) => { //handle errors
+                    console.log("Error: ", error.message);
+                }, (data) => {
+                    console.log(data)
+                });
+    
                 return unsubscribe;
             } catch (error) {
-                console.log("Error: ", error.message);
-                return [];
+                console.log("Caught Error: ", error.message)
             }
         };
     
         // fetch team members data
         fetchTeamMembers(authData?.business_id);
     }, []);
-
 
     // function to close Popup modal
     const closePopUpModal = () => {
