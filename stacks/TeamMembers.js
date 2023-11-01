@@ -8,7 +8,7 @@ import {
     Keyboard,
 } from "react-native";
 // react hooks
-import { useState, useEffect } from "react";
+import { useState, useEffect, useLayoutEffect, useMemo } from "react";
 // components
 import Header from "../components/Header";
 import CustomBottomSheet from "../components/CustomBottomSheet";
@@ -23,6 +23,7 @@ import TeamMemberCard from "../components/TeamMemberCard";
 import SuccessPrompt from "../components/SuccessPrompt";
 import CautionPrompt from "../components/CautionPrompt";
 import SuccessSheet from "../components/SuccessSheet";
+import Toast from "../components/Toast";
 // colors
 import { background, black, bodyText, white } from "../style/colors";
 // bottomsheet components
@@ -35,23 +36,53 @@ import { windowHeight } from "../utils/helpers";
 import { useGlobals } from "../context/AppContext";
 // useAuth
 import { useAuth } from "../context/AuthContext";
+// member functions
+import { getTeamMembers } from "../database/common/teamMembers";
+// firebase
+import { database, functions, auth } from "../Firebase";
+// firestore functions
+import {
+    doc,
+    setDoc,
+    onSnapshot,
+    collection,
+    where,
+    query,
+} from "firebase/firestore";
+// firebase authentication
+import { createUserWithEmailAndPassword } from "firebase/auth";
+// firebase functions
+import { httpsCallable } from "firebase/functions";
 
 const TeamMembers = ({ navigation }) => {
 
     // auth data
     const { authData } = useAuth();
 
-    // bottoms sheef refs
-    const { bottomSheetRef, successSheetRef, popUpSheetRef, popUpSheetOpen } = useGlobals();
-
     // page loading state
     const [pageLoading, setPageLoading] = useState(true);
 
-    useEffect(() => {
-        setTimeout(() => {
-            setPageLoading(false);
-        }, 500);
-    })
+    // button loading state
+    const [isLoading, setIsLoading] = useState(false);
+    // reset data
+    // let resetData = 0; 
+
+    // bottoms sheef refs
+    const { bottomSheetRef, successSheetRef, popUpSheetRef, popUpSheetOpen, setToast } = useGlobals();
+
+    // state to store members array
+    const [members, setMembers] = useState([]);
+    
+    // selected member id
+    const [selectedId, setSelectedId] = useState(null);
+
+    // selected member
+    const selectedMember = useMemo(() => {
+        return members.find((member) => member?.id === selectedId);
+    }, [selectedId]);
+
+
+    // console.log(members);
 
     // state to control modal type
     const [modal, setModal] = useState("");
@@ -75,15 +106,98 @@ const TeamMembers = ({ navigation }) => {
     // function to close modal
     const closeModal = () => {
         bottomSheetRef.current?.close();
+
+        setSelectedId(null);
     };
 
     // function to open bottom sheet modal
-    const openModal = (type) => {
+    const openModal = (type, id) => {
         bottomSheetRef.current?.present();
         setModal(type);
 
-        type === "Add" ? setBottomSheetSnapPoints([0.7 * windowHeight]) : setBottomSheetSnapPoints(["60%"]);
+        console.log("ID: ", id);
+        console.log("Type: ", type);
+        
+        if (type === "Edit") {
+            console.log(type);
+            setBottomSheetSnapPoints(["60%"])
+            // const chosenMember = ;
+            setSelectedId(id);
+        } else {
+            setBottomSheetSnapPoints([0.7 * windowHeight])
+        }
     }
+
+    // function to know if member can be deactivated
+    const handleCantDeactivate = useMemo(() => {
+        if (selectedId === null) return true;
+        const member = members?.find((member) => member?.id === selectedId);
+        if (authData?.uid === member.id) return true;
+        if (member.admin) return true;
+        return false;
+    }, [selectedId])
+
+    let membersList = [];
+
+    // get team members
+    useLayoutEffect(() => {
+        // fetch team members data
+        const fetchTeamMembers = async (business_id) => {
+            try {
+                const collectionRef = collection(database, "users");
+                let q = query(collectionRef, where("business_id", "==", business_id));
+            
+                const unsubscribe = onSnapshot(q, (querySnapshot) => {
+                    let members = [];
+                    querySnapshot.forEach((doc) => {
+                        const member = {
+                            id: doc.id,
+                            admin: doc.data().admin,
+                            email: doc.data().email,
+                            deactivated: doc.data().deactivated,
+                            full_name: doc.data().full_name,
+                            profile_image: doc.data().profile_image,
+                            role: doc.data().role,
+                        };
+                        members.push(member);
+                    });
+                    // console.log("Members: ", members);
+                    const adjustedArray = [
+                        // add openModal function to each member card
+                        ...members.map((member) => {
+                            return {
+                                id: member.id,
+                                admin: member.admin,
+                                email: member.email,
+                                deactivated: member.deactivated,
+                                full_name: member.full_name,
+                                profile_image: member.profile_image,
+                                role: member.role,
+                                onPress: () => openModal("Edit", member.id),
+                            }
+                        }),
+                        { //add new member card 
+                            id: "addNew",
+                            add_new: true,
+                            onPress: () => openModal("Add"),
+                        }
+                    ];
+                    setMembers(adjustedArray);
+                });
+                if (members.length <= 1) {
+                    setPageLoading(false);
+                }
+                return unsubscribe;
+            } catch (error) {
+                console.log("Error: ", error.message);
+                return [];
+            }
+        };
+    
+        // fetch team members data
+        fetchTeamMembers(authData?.business_id);
+    }, []);
+
 
     // function to close Popup modal
     const closePopUpModal = () => {
@@ -97,8 +211,7 @@ const TeamMembers = ({ navigation }) => {
         closePopUpModal();
         closeSuccessModal();
         // reset all inputs
-        setFirstName("");
-        setLastName("");
+        setFullName("");
         setWorkEmail("");
         setRole("");
     }
@@ -172,11 +285,11 @@ const TeamMembers = ({ navigation }) => {
 
             case "AddSuccess":
                 setSuccessModal({
-                    heading: <>{firstName + ' ' + lastName } Succesfully Added</>,
+                    heading: <>{fullName} Succesfully Added</>,
                     height: 320,
                     paragragh: <>
                         Hi {authData?.full_name}, you have successfully added   
-                        <Text style={style.boldText}> {firstName + ' ' + lastName} </Text>
+                        <Text style={style.boldText}> {fullName} </Text>
                         to your team
                     </>,
                     primaryFunction: closeAllModal,
@@ -200,69 +313,15 @@ const TeamMembers = ({ navigation }) => {
         }
     }, [popUpSheetOpen])
 
-    // list of members
-    const memberList = [
-        {
-            id: 1,
-            imageUrl: '../assets/profile/profile.jpg',
-            admin: true,
-            fullname: "Raymond Reddington",
-            role: "Manager",
-            onPress: () => {openModal("Edit")},
-            addNew: false,
-            deactivated: false,
-        },
-        {
-            id: 2,
-            imageUrl: '../assets/profile/profile1.jpg',
-            admin: false,
-            fullname: "John Doe",
-            role: "Sales Rep",
-            onPress: () => {openModal("Edit")},
-            addNew: false,
-            deactivated: true,
-        },
-        {
-            id: 3,
-            imageUrl: null,
-            admin: false,
-            fullname: "Felix Johnson",
-            role: "Sales Rep",
-            onPress: () => {openModal("Edit")},
-            addNew: false,
-            deactivated: false,
-        },
-        {
-            id: 4,
-            imageUrl: null,
-            admin: false,
-            role: "Sales Rep",
-            onPress: () => {openModal("Add")},
-            addNew: true,
-            deactivated: false,
-        }
-    ];
-
     // state to store first name input value
-    const [firstName, setFirstName] = useState("");
+    const [fullName, setFullName] = useState("");
 
     // state to store error in first name input value
     const [errorFirstName, setErrorFirstName] = useState(false);
 
     // function to update first name
     const updateFirstName = (text) => {
-        setFirstName(text);
-    }
-
-    // state to store last name input value
-    const [lastName, setLastName] = useState("");
-
-    // state to store error in last name input value
-    const [errorLastName, setErrorLastName] = useState(false);
-
-    // function to update last name
-    const updateLastName = (text) => {
-        setLastName(text);
+        setFullName(text);
     }
 
     // state to store work email input value
@@ -295,7 +354,7 @@ const TeamMembers = ({ navigation }) => {
     }
     
     // state to store role select input value
-    const [editRole, setEditRole] = useState("Sales Rep");
+    const [editRole, setEditRole] = useState("");
     
     // member inputs
     const newMemberInputs = [
@@ -303,7 +362,7 @@ const TeamMembers = ({ navigation }) => {
             id: 1,
             placeholder: "First Name",
             label: "First Name",
-            value: firstName,
+            value: fullName,
             forceBlur: forceBlur,
             onChange: updateFirstName,
             error: errorFirstName,
@@ -311,16 +370,6 @@ const TeamMembers = ({ navigation }) => {
         },
         {
             id: 2,
-            placeholder: "Last Name",
-            label: "Last Name",
-            value: lastName,
-            forceBlur: forceBlur,
-            onChange: updateLastName,
-            error: errorLastName,
-            setError: setErrorLastName
-        },
-        {
-            id: 3,
             placeholder: "Work Email",
             label: "Email address",
             value: workEmail,
@@ -333,8 +382,7 @@ const TeamMembers = ({ navigation }) => {
 
     // check for empty fields
     const emptyFields = [
-        firstName, 
-        lastName,
+        fullName, 
         workEmail,
         role
         ].some(
@@ -350,6 +398,57 @@ const TeamMembers = ({ navigation }) => {
     const handleDeactivateUser = () => {
         openSuccessModal("Deactivate");
     }
+
+    const defaultPassword = "komitex1234";
+
+    // function to add new team member
+    const handleAddNewMember = async () => {
+        setIsLoading(true);
+        try {
+            // sign up user
+            const authResponse = await createUserWithEmailAndPassword(auth, workEmail, defaultPassword);
+
+            // get setRole cloud functions
+            const setRole = httpsCallable(functions, "setRole");
+            
+            // setRole
+            await setRole({ 
+                email: workEmail, 
+                admin: false, 
+                role: role, 
+                account_type: authData?.account_type,
+            });
+            
+            // ref to users collection
+            const usersRef = doc(database, "users", authResponse.user.uid);
+            
+            // save data in database
+            await setDoc(usersRef, {
+                business_id: authData?.business_id,
+                email: workEmail,
+                deactivated: false,
+                face_id: false,
+                fingerprint: false,
+                full_name: fullName,
+                notification: false,
+                profile_image: null,
+                phone: null,
+                role: role,
+                admin: false,
+            });
+            setIsLoading(false);
+            openSuccessModal("AddSuccess");
+        } catch (error) {
+            console.log("Error: ", error.message);
+            setToast({
+                visible: true,
+                type: "error",
+                text: error.message,
+            });
+            setIsLoading(false);
+        }
+    }
+
 
     // render TeamMember page
     return (
@@ -371,17 +470,17 @@ const TeamMembers = ({ navigation }) => {
                     columnWrapperStyle={style.listContainer}
                     style={style.listWrapper}
                     keyExtractor={item => item.id}
-                    data={memberList}
+                    data={members}
                     numColumns={2}
                     renderItem={({ item }) => (
                         <TeamMemberCard
-                            imageUrl={item.imageUrl}
-                            admin={item.admin}
-                            fullname={item.fullname}
-                            role={item.role}
-                            onPress={item.onPress}
-                            addNew={item.addNew}
-                            deactivated={item.deactivated}
+                            imageUrl={item?.profile_image}
+                            admin={item?.admin}
+                            fullname={item?.full_name}
+                            role={item?.role}
+                            onPress={item?.onPress}
+                            addNew={item?.add_new}
+                            deactivated={item?.deactivated}
                         />
                     )}
                 />
@@ -430,11 +529,10 @@ const TeamMembers = ({ navigation }) => {
                         <CustomButton
                             name={"Add New Team Member"}
                             shrinkWrapper={true}
-                            onPress={() => {
-                                openSuccessModal("AddSuccess")
-                            }}
+                            onPress={handleAddNewMember}
                             inactive={emptyFields}
                             unpadded={true}
+                            isLoading={isLoading}
                         />
                     </>
                 )}
@@ -445,22 +543,24 @@ const TeamMembers = ({ navigation }) => {
                         <View style={style.modalContainer}>
                             <View style={style.infoWrapper}>
                                 <Avatar 
-                                    fullname={"Felix Johnson"}
+                                    fullname={selectedMember?.full_name}
+                                    imageUrl={selectedMember?.profile_image}
                                 />
                                 <Indicator
                                     type={"Dispatched"}
-                                    text={"Sales Rep"}
+                                    text={selectedMember?.role}
                                 />
                             </View>
-                            <Text style={style.modalFullnameText}>Felix Johnson</Text>
-                            <Text style={style.modalEmailText}>felixjohnson@gmail.com</Text>
+                            <Text style={style.modalFullnameText}>{selectedMember?.full_name}</Text>
+                            <Text style={style.modalEmailText}>{selectedMember?.email}</Text>
                             <SelectInput 
                                 label={"Role"}
                                 placeholder={"Role"}
                                 onPress={() => openPopUpModal("Edit")}
-                                value={editRole}
+                                value={!editRole ? selectedMember?.role : editRole}
                                 active={roleInputActive}
                                 inputFor={"String"}
+                                disabled={handleCantDeactivate}
                             />
                         </View>
                         <View style={style.modalButtonsWrapper}>
@@ -469,6 +569,8 @@ const TeamMembers = ({ navigation }) => {
                                 shrinkWrapper={true}
                                 onPress={handleUpdateRole}
                                 unpadded={true}
+                                inactive={handleCantDeactivate}
+                                isLoading={isLoading}
                             />
                             <CustomButton
                                 secondaryButton={true}
@@ -476,6 +578,8 @@ const TeamMembers = ({ navigation }) => {
                                 shrinkWrapper={true}
                                 onPress={handleDeactivateUser}
                                 unpadded={true}
+                                inactive={handleCantDeactivate}
+                                isLoading={isLoading}
                             />
                         </View>
                     </View>

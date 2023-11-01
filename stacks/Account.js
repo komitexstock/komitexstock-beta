@@ -55,6 +55,8 @@ const Account = ({navigation, route}) => {
     // auth data
     const { authData, setStoredData } = useAuth();
 
+    // console.log(authData);
+
     
     // const token = auth.currentUser.getIdTokenResult().then(data => {
     //     console.log(data.claims);

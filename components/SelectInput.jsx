@@ -7,7 +7,7 @@ import ArrowDown from "../assets/icons/ArrowDown";
 // moment
 import moment from "moment";
 
-const SelectInput = ({label, labelIcon, placeholder, onPress, icon, value, active, inputFor}) => {
+const SelectInput = ({label, labelIcon, placeholder, onPress, icon, value, active, inputFor, disabled}) => {
     // label, placeholder, value => string
     // lableIcon, icon => jxst component
     // active = boolean
@@ -34,9 +34,13 @@ const SelectInput = ({label, labelIcon, placeholder, onPress, icon, value, activ
                     </Text>
                 )}
             <TouchableOpacity 
-                onPress={onPress}
+                onPress={disabled ? () => {} : onPress}
                 // if input is active, render activeinput else regular input
-                style={!active ? style.input : [style.input, style.activeInput]}
+                style={[
+                    style.input,
+                    active && style.activeInput,
+                    disabled && style.disabled
+                ]}
             >
                 {/* render value */}
                 <Text 
@@ -112,6 +116,9 @@ const style = StyleSheet.create({
     },
     activeInput: {
         borderColor: primaryColor,
+    },
+    disabled: {
+        opacity: 0.5,
     },
     placeholder: {
         fontFamily: 'mulish-semibold',

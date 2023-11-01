@@ -275,6 +275,7 @@ const CreateAccount = ({navigation}) => {
             // store data in async storage
             await setStoredData({
                 uid: authResponse.user.uid,
+                email: authResponse.user.email,
                 account_type: "Logistics",
                 banner_image: null,
                 business_name: businessName,
@@ -297,6 +298,7 @@ const CreateAccount = ({navigation}) => {
             // save data in database
             await setDoc(usersRef, {
                 business_id: businessResponse.id,
+                email: authResponse.user.email,
                 deactivated: false,
                 face_id: false,
                 fingerprint: false,

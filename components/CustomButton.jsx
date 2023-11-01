@@ -104,18 +104,21 @@ const CustomButton = ({name, onPress, backgroundColor, fixed, inactive, secondar
                         <Animated.View
                             style={[
                                 style.loadingBalls,
+                                secondaryButton && {backgroundColor: primaryColor},
                                 {transform: [{ translateY: translate1 }]}
                             ]}
                         />
                         <Animated.View
                             style={[
                                 style.loadingBalls,
+                                secondaryButton && {backgroundColor: primaryColor},
                                 {transform: [{ translateY: translate2 }]}
                             ]}
                         />
                         <Animated.View
                             style={[
                                 style.loadingBalls,
+                                secondaryButton && {backgroundColor: primaryColor},
                                 {transform: [{ translateY: translate3 }]}
                             ]}
                         />
