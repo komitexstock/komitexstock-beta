@@ -287,17 +287,6 @@ const CreateAccount = ({navigation}) => {
 
             // ref to users collection
             const usersRef = doc(database, "users", uid);
-
-            // get setRole cloud functions
-            const setRole = httpsCallable(functions, "setRole");
-
-            // setRole token
-            await setRole({ 
-                email: emailAddress, 
-                role: role,
-                account_type: accountType,
-                business_id: businessId,
-            });
             
             // save data in database
             await setDoc(usersRef, {
@@ -314,6 +303,20 @@ const CreateAccount = ({navigation}) => {
                 role: role,
                 admin: true,
             });
+
+            // get setRole cloud functions
+            const setRole = httpsCallable(functions, "setRole");
+
+            // setRole token
+            const roleResponse = await setRole({ 
+                email: emailAddress, 
+                role: role,
+                account_type: accountType,
+                business_id: businessId,
+            });
+
+            // log response
+            console.log(roleResponse);
 
             // disable laoding state
             setIsLoading(false);

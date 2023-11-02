@@ -461,7 +461,6 @@ const TeamMembers = ({ navigation }) => {
             role: editRole, 
             account_type: authData?.account_type,
             business_id: authData?.business_id,
-            deactivated: false,
         });
 
         console.log(response);
@@ -497,7 +496,7 @@ const TeamMembers = ({ navigation }) => {
             role: selectedMember.role, 
             account_type: authData?.account_type,
             business_id: authData?.business_id,
-            deactivated: true,
+            deactivated: !selectedMember.deactivated,
         });
 
         console.log(response);
