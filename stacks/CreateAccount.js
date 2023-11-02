@@ -57,7 +57,7 @@ const CreateAccount = ({navigation}) => {
     const [isLoading, setIsLoading] = useState(false);
 
     // email address
-    const [emailAddress, setEmailAddress] = useState("komitexlogistics@gmail.com");
+    const [emailAddress, setEmailAddress] = useState("tonystark@gmail.com");
 
     // state to email address error
     const [errorEmailAddress, setErrorEmailAddress] = useState(false);
@@ -174,7 +174,7 @@ const CreateAccount = ({navigation}) => {
     }
 
     // businessName
-    const [businessName, setBusinessName] = useState("Komitex Logistics");
+    const [businessName, setBusinessName] = useState("Stark Industries");
 
     // state to email address error
     const [errorBusinessName, setErrorBusinessName] = useState(false);
@@ -184,7 +184,7 @@ const CreateAccount = ({navigation}) => {
     }
 
     // fullName
-    const [fullName, setFullName] = useState("Iffie Okomite");
+    const [fullName, setFullName] = useState("Tony Stark");
 
     // state to fullName error
     const [errorFullName, setErrorFullName] = useState(false);
@@ -194,7 +194,7 @@ const CreateAccount = ({navigation}) => {
     }
 
     // phoneNumber
-    const [phoneNumber, setPhoneNumber] = useState("08122266618");
+    const [phoneNumber, setPhoneNumber] = useState("08011223344");
 
     // state to phoneNumber error
     const [errorPhoneNumber, setErrorPhoneNumber] = useState(false);
@@ -234,6 +234,16 @@ const CreateAccount = ({navigation}) => {
     // console.log("Email", emailAddress);
     // console.log("Password", password);
 
+    // user account type
+    const accountType = "Merchant";
+
+    // user role
+    const role = "Manager";
+
+    // uid avraibel
+    let uid;
+    let businessId;
+
     const handleSignup = async () => {
         setIsLoading(true);
         
@@ -254,58 +264,45 @@ const CreateAccount = ({navigation}) => {
             // if business name exist, throw error
             if (checkBusinessNameExist !== undefined) {
                 setIsLoading(false);
+                // trhow error
                 throw new Error("Business name already exist");
             }
             
             // sign up user
             const authResponse = await createUserWithEmailAndPassword(auth, emailAddress, password);
 
-            // get setRole cloud functions
-            const setRole = httpsCallable(functions, "setRole");
-            
-            // setRole
-            // await setRole({ 
-            //     email: emailAddress, 
-            //     admin: true, 
-            //     role: "Manager", 
-            //     account_type: "Logistics"
-            // });
-            
+            // user id from create user doc response
+            uid = authResponse.user.uid;
+
             // store business data
             const businessResponse = await addDoc(businessesRef, {
-                account_type: "Logistics",
+                account_type: accountType,
                 banner_image: null,
                 business_name: businessName,
                 verified: false,
             });
 
-            // store data in async storage
-            await setStoredData({
-                uid: authResponse.user.uid,
-                email: authResponse.user.email,
-                account_type: "Logistics",
-                banner_image: null,
-                business_name: businessName,
-                verified: false,
-                business_id: businessResponse.id,
-                deactivated: false,
-                face_id: false,
-                fingerprint: false,
-                full_name: fullName,
-                notification: false,
-                profile_image: null,
-                phone: phoneNumber,
-                role: "Manager",
-                admin: true,
-            });
+            // business id from add business doc response
+            businessId = businessResponse.id;
 
             // ref to users collection
-            const usersRef = doc(database, "users", authResponse.user.uid);
+            const usersRef = doc(database, "users", uid);
+
+            // get setRole cloud functions
+            const setRole = httpsCallable(functions, "setRole");
+
+            // setRole token
+            await setRole({ 
+                email: emailAddress, 
+                role: role,
+                account_type: accountType,
+                business_id: businessId,
+            });
             
             // save data in database
             await setDoc(usersRef, {
-                business_id: businessResponse.id,
-                email: authResponse.user.email,
+                business_id: businessId,
+                email: emailAddress,
                 created_at: serverTimestamp(),
                 deactivated: false,
                 face_id: false,
@@ -314,9 +311,15 @@ const CreateAccount = ({navigation}) => {
                 notification: false,
                 profile_image: null,
                 phone: phoneNumber,
-                role: "Manager",
+                role: role,
                 admin: true,
             });
+
+            // disable laoding state
+            setIsLoading(false);
+
+            // move to next step
+            setCurrentStep(4);
             
         } catch (error) {
             console.log("Error: ", error.message);
@@ -330,8 +333,29 @@ const CreateAccount = ({navigation}) => {
     }
 
     // function to navigate to home screen/stack
-    const handleNavigateHome = () => {
-        navigation.navigate("Home");
+    const handleCompleteSignup = async () => {
+        // enable loading state
+        setIsLoading(true);
+        // store data in async storage
+        await setStoredData({
+            uid: uid,
+            email: emailAddress,
+            account_type: accountType,
+            banner_image: null,
+            business_name: businessName,
+            verified: false,
+            business_id: businessId,
+            deactivated: false,
+            face_id: false,
+            fingerprint: false,
+            full_name: fullName,
+            notification: false,
+            profile_image: null,
+            phone: phoneNumber,
+            role: role,
+            admin: true,
+        });
+        // on data store completed, it'll auto navigate to home
     }
 
     const [time, setTime] = useState(90);
@@ -429,7 +453,7 @@ const CreateAccount = ({navigation}) => {
                             <Text style={style.paragraph}>
                                 Enter the code we’ve sent by email to &nbsp;
                                 <Text style={style.bolderText}>
-                                    Raymond@komitex.ng
+                                    {emailAddress}
                                 </Text>
                             </Text>
                             <View style={style.inputWrapper}>
@@ -574,7 +598,7 @@ const CreateAccount = ({navigation}) => {
             {currentStep === 4 && <>
                 <CustomButton
                     name={"Done"}
-                    onPress={handleNavigateHome}
+                    onPress={handleCompleteSignup}
                     fixed={true}
                     backgroundColor={background}
                 />

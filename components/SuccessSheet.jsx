@@ -17,7 +17,7 @@ import CautionPrompt from './CautionPrompt';
 import SuccessPrompt from './SuccessPrompt';
 import CustomButton from './CustomButton';
 
-const SuccessSheet = ({successSheetRef, caution, height, heading, paragraph, secondaryFunction, primaryFunction, secondaryButtonText, primaryButtonText}) => {
+const SuccessSheet = ({successSheetRef, caution, height, heading, paragraph, secondaryFunction, primaryFunction, secondaryButtonText, primaryButtonText, isLoadingPrimary, isLoadingSecondary}) => {
     // bottomsheet modal ref => useRef variable for bottomsheet modal ref
     // hideCloseButton, centered => boolean
     // closeModal => function
@@ -99,6 +99,7 @@ const SuccessSheet = ({successSheetRef, caution, height, heading, paragraph, sec
                                 shrinkWrapper={true}
                                 onPress={primaryFunction}
                                 unpadded={true}
+                                isLoading={isLoadingPrimary}
                             />
                             { secondaryFunction && (
                                 <CustomButton
@@ -107,6 +108,7 @@ const SuccessSheet = ({successSheetRef, caution, height, heading, paragraph, sec
                                     shrinkWrapper={true}
                                     onPress={secondaryFunction}
                                     unpadded={true}
+                                    isLoading={isLoadingSecondary}
                                 />
                             )}
                         </View>

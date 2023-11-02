@@ -67,7 +67,7 @@ const Navigator = () => {
 
     return (
         <Stack.Navigator 
-            initialRouteName={"Home"}
+            initialRouteName={!authData ? "OnBoarding" : "Home"}
         >
             {!authData ? (
                 <Stack.Group screenOptions={{ headerShown: false}}>

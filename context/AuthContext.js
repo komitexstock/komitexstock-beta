@@ -92,6 +92,9 @@ const AuthProvider = ({children}) => {
 
 			const storedData = await getStoredData();
 
+			const claims = await user.getIdTokenResult();
+
+			console.log(claims.claims);
 			// console.log("Stored Data", storedData);
 			// if there is a stored data
 			if (storedData) {
@@ -102,16 +105,13 @@ const AuthProvider = ({children}) => {
 				try {
 					// get user data
 					const user_data = await getUserData(user.uid); 
-
-					// (await user.getIdTokenResult()).claims;
-
 					// console.log("User Data:", user_data); // Add this line for debugging
 					
 					// if there is no business_id in users collection, 
 					// make request again get business data
 					if (user_data === undefined) {
-						// return early if business id is null
-						await removeStoredData();
+						// return early if user data is undefined
+						// this happens when user signs up for the first time
 						return;
 					} else {
 						// get business data

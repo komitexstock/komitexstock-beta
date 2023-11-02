@@ -44,12 +44,13 @@ import { database, functions, auth } from "../Firebase";
 import {
     doc,
     setDoc,
+    updateDoc,
     onSnapshot,
     collection,
     where,
     query,
     orderBy,
-    limit,
+    serverTimestamp,
 } from "firebase/firestore";
 // firebase authentication
 import { createUserWithEmailAndPassword } from "firebase/auth";
@@ -66,8 +67,9 @@ const TeamMembers = ({ navigation }) => {
 
     // button loading state
     const [isLoading, setIsLoading] = useState(false);
-    // reset data
-    // let resetData = 0; 
+    
+    // secondary button loading state
+    const [isLoadingSecondary, setIsLoadingSecondary] = useState(false);
 
     // bottoms sheef refs
     const { bottomSheetRef, successSheetRef, popUpSheetRef, popUpSheetOpen, setToast } = useGlobals();
@@ -121,7 +123,7 @@ const TeamMembers = ({ navigation }) => {
         // console.log("Type: ", type);
         
         if (type === "Edit") {
-            console.log(type);
+            // console.log(type);
             setBottomSheetSnapPoints(["60%"])
             // const chosenMember = ;
             setSelectedId(id);
@@ -138,6 +140,7 @@ const TeamMembers = ({ navigation }) => {
         // admins can't be deactivated
         if (member.admin) return true;
         // if users are not managers
+        if (member.deactivated) return true;
         if (authData?.role !== "Manager") return true;
         // else return false
         return false;
@@ -155,7 +158,6 @@ const TeamMembers = ({ navigation }) => {
                         collectionRef, 
                         where("business_id", "==", business_id),
                         orderBy("created_at"),
-                        // limit(10),
                     );
             
                 const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -264,27 +266,55 @@ const TeamMembers = ({ navigation }) => {
         switch (type) {
             case "Deactivate":
                 setSuccessModal({
-                    heading: 'Deactivte User',
+                    heading: 'Deactivate User',
                     height: 381,
                     paragragh: <>
                         Are you sure you want to deactivate 
-                        <Text style={style.boldText}> Felix Jones</Text>
+                        <Text style={style.boldText}> {selectedMember.full_name}</Text>
                     </>,
                     caution: true,
-                    primaryFunction: () => openSuccessModal("Confirmed"),
+                    primaryFunction: handleDeactivateUser,
                     primaryButtonText: 'Yes, deactivate',
                     secondaryFunction: closeSuccessModal,
                     secondaryButtonText: 'No, cancel',
                 })
                 break;
         
-            case "Confirmed":
+            case "Activate":
                 setSuccessModal({
-                    heading: 'Felix Jones Succesfully Deactivated',
+                    heading: 'Activate User',
+                    height: 381,
+                    paragragh: <>
+                        Are you sure you want to activate 
+                        <Text style={style.boldText}> {selectedMember.full_name}</Text>
+                    </>,
+                    caution: true,
+                    primaryFunction: handleDeactivateUser,
+                    primaryButtonText: 'Yes, activate',
+                    secondaryFunction: closeSuccessModal,
+                    secondaryButtonText: 'No, cancel',
+                })
+                break;
+        
+            case "Confirmed Deactivation":
+                setSuccessModal({
+                    heading: `${selectedMember.full_name} Succesfully Deactivated`,
                     height: 320,
                     paragragh: <>
                         You have successfully deactivated 
-                        <Text style={style.boldText}> Felix Jones</Text>
+                        <Text style={style.boldText}> {selectedMember.full_name}</Text>
+                    </>,
+                    primaryFunction: closeAllModal,
+                })
+                break;
+
+            case "Confirmed Activation":
+                setSuccessModal({
+                    heading: `${selectedMember.full_name} Succesfully Activated`,
+                    height: 320,
+                    paragragh: <>
+                        You have successfully activated 
+                        <Text style={style.boldText}> {selectedMember.full_name}</Text>
                     </>,
                     primaryFunction: closeAllModal,
                 })
@@ -295,7 +325,7 @@ const TeamMembers = ({ navigation }) => {
                     heading: 'Role Updated Succesfully',
                     height: 320,
                     paragragh: <>
-                        You have successfully updated Felix Johnson role to a
+                        You have successfully updated {selectedMember.full_name} role to a
                         <Text style={style.boldText}> {editRole}</Text>
                     </>,
                     primaryFunction: closeAllModal,
@@ -379,8 +409,8 @@ const TeamMembers = ({ navigation }) => {
     const newMemberInputs = [
         {
             id: 1,
-            placeholder: "First Name",
-            label: "First Name",
+            placeholder: "Full Name",
+            label: "Full Name",
             value: fullName,
             forceBlur: forceBlur,
             onChange: updateFirstName,
@@ -409,34 +439,86 @@ const TeamMembers = ({ navigation }) => {
     );
 
     // function to update role
-    const handleUpdateRole = () => {
+    const handleUpdateRole = async () => {
+        // indicate loadind state
+        setIsLoading(true);
+        // console.log(selectedMember);
+
+        // ref to users collection
+        const usersRef = doc(database, "users", selectedMember.id);
+
+        // save data in database
+        await updateDoc(usersRef, {
+            role: editRole,
+        });
+
+        // get setRole cloud functions
+        const setRole = httpsCallable(functions, "setRole");
+            
+        // setRole and token
+        const response = await setRole({ 
+            email: selectedMember.email, 
+            role: editRole, 
+            account_type: authData?.account_type,
+            business_id: authData?.business_id,
+            deactivated: false,
+        });
+
+        console.log(response);
+
+        // reset edited role
+        setEditRole("");
+
+        // end loadind state
+        setIsLoading(false);
         openSuccessModal("UpdateSuccess");
     }
 
     // function to confirm deactivation
-    const handleDeactivateUser = () => {
-        openSuccessModal("Deactivate");
+    const handleDeactivateUser = async () => {
+        // indicate loadind state
+        setIsLoading(true);
+        // console.log(selectedMember);
+
+        // ref to users collection
+        const usersRef = doc(database, "users", selectedMember.id);
+
+        // save data in database
+        await updateDoc(usersRef, {
+            deactivated: !selectedMember.deactivated,
+        });
+
+        // get setRole cloud functions
+        const setRole = httpsCallable(functions, "setRole");
+
+        // setRole and token
+        const response = await setRole({ 
+            email: selectedMember.email, 
+            role: selectedMember.role, 
+            account_type: authData?.account_type,
+            business_id: authData?.business_id,
+            deactivated: true,
+        });
+
+        console.log(response);
+
+        // end loadind state
+        setIsLoading(false);
+
+        // open success pop up modal
+        openSuccessModal(selectedMember.deactivated ? "Confirmed Activation" : "Confirmed Deactivation")
     }
 
     const defaultPassword = "komitex1234";
 
     // function to add new team member
     const handleAddNewMember = async () => {
+        // dismiss keyboard first
+        Keyboard.dismiss()
         setIsLoading(true);
         try {
             // sign up user
             const authResponse = await createUserWithEmailAndPassword(auth, workEmail, defaultPassword);
-
-            // get setRole cloud functions
-            const setRole = httpsCallable(functions, "setRole");
-            
-            // setRole
-            await setRole({ 
-                email: workEmail, 
-                admin: false, 
-                role: role, 
-                account_type: authData?.account_type,
-            });
             
             // ref to users collection
             const usersRef = doc(database, "users", authResponse.user.uid);
@@ -445,6 +527,7 @@ const TeamMembers = ({ navigation }) => {
             await setDoc(usersRef, {
                 business_id: authData?.business_id,
                 email: workEmail,
+                created_at: serverTimestamp(),
                 deactivated: false,
                 face_id: false,
                 fingerprint: false,
@@ -455,6 +538,20 @@ const TeamMembers = ({ navigation }) => {
                 role: role,
                 admin: false,
             });
+
+            // get setRole cloud functions
+            const setRole = httpsCallable(functions, "setRole");
+            
+            // setRole and token
+            const response = await setRole({ 
+                email: workEmail, 
+                role: role, 
+                account_type: authData?.account_type,
+                business_id: authData?.business_id,
+            });
+
+            console.log(response);
+
             setIsLoading(false);
             openSuccessModal("AddSuccess");
         } catch (error) {
@@ -588,17 +685,16 @@ const TeamMembers = ({ navigation }) => {
                                 shrinkWrapper={true}
                                 onPress={handleUpdateRole}
                                 unpadded={true}
-                                inactive={handleCantDeactivate}
+                                inactive={editRole === "" || handleCantDeactivate}
                                 isLoading={isLoading}
                             />
                             <CustomButton
                                 secondaryButton={true}
-                                name={"Deactivate User"}
+                                name={selectedMember?.deactivated ? "Activate User" : "Deactivate User"}
                                 shrinkWrapper={true}
-                                onPress={handleDeactivateUser}
+                                onPress={() => openSuccessModal(selectedMember?.deactivated ? "Activate" : "Deactivate")}
                                 unpadded={true}
-                                inactive={handleCantDeactivate}
-                                isLoading={isLoading}
+                                inactive={selectedMember?.deactivated ? false : handleCantDeactivate}
                             />
                         </View>
                     </View>
@@ -641,6 +737,7 @@ const TeamMembers = ({ navigation }) => {
                 primaryButtonText={successModal?.primaryButtonText}
                 secondaryFunction={successModal?.secondaryFunction}
                 secondaryButtonText={successModal?.secondaryButtonText}
+                isLoadingPrimary={isLoading}
             />
         </>
     );

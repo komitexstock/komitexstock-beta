@@ -54,6 +54,10 @@ const CustomButton = ({name, onPress, backgroundColor, fixed, inactive, secondar
         };
 
         const stopAnimation = () => {
+            // reset values
+            translate1.setValue(0);
+            translate2.setValue(0);
+            translate3.setValue(0);
             clearInterval(intervalId);
         };
 
