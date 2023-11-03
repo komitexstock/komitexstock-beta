@@ -48,6 +48,7 @@ const Login = ({navigation}) => {
 
     const handleUserLogin = async () => {
         setIsLoading(true);
+        Keyboard.dismiss();
 
         try {
             await signInWithEmailAndPassword(

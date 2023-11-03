@@ -442,11 +442,6 @@ const TeamMembers = ({ navigation }) => {
         // ref to users collection
         const usersRef = doc(database, "users", selectedMember.id);
 
-        // save data in database
-        await updateDoc(usersRef, {
-            role: editRole,
-        });
-
         // get setRole cloud functions
         const setRole = httpsCallable(functions, "setRole");
             
@@ -459,6 +454,11 @@ const TeamMembers = ({ navigation }) => {
         });
 
         console.log(response);
+
+        // save data in database
+        await updateDoc(usersRef, {
+            role: editRole,
+        });
 
         // reset edited role
         setEditRole("");
@@ -479,11 +479,6 @@ const TeamMembers = ({ navigation }) => {
         // ref to users collection
         const usersRef = doc(database, "users", selectedMember.id);
 
-        // save data in database
-        await updateDoc(usersRef, {
-            deactivated: !selectedMember.deactivated,
-        });
-
         // get setRole cloud functions
         const setRole = httpsCallable(functions, "setRole");
 
@@ -497,6 +492,12 @@ const TeamMembers = ({ navigation }) => {
         });
 
         console.log(response);
+
+        // save data in database
+        await updateDoc(usersRef, {
+            deactivated: !selectedMember.deactivated,
+        });
+
 
         // end loadind state
         setIsLoading(false);

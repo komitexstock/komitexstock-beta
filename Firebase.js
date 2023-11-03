@@ -32,11 +32,7 @@ const initAuth = initializeAuth(app, {
     persistence: getReactNativePersistence(AsyncStorage),
 });
 
-// const initAuth = initializeAuth(app, {
-//     persistence: inMemoryPersistence
-// });
-    
 export const auth = getAuth(app);
 export const database = getFirestore(app);
 export const storage = getStorage(app);
-export const functions = getFunctions(app); 
+export const functions = getFunctions(app);

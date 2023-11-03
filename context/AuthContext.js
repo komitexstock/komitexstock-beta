@@ -4,18 +4,20 @@ import {
 	useState,
 	useContext,
 	useEffect,
+	useLayoutEffect,
 } from "react";
 // async storage
 import AsyncStorage from "@react-native-async-storage/async-storage";
 // firebase AUth
 import {
 	onAuthStateChanged,
-	onIdTokenChanged,
 } from "firebase/auth";
 // firebase
 import { auth, database } from "../Firebase";
 // firestore functions
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, onSnapshot } from "firebase/firestore";
+// auth
+import { signOut } from "firebase/auth";
 
 const AuthContext = createContext({});
 
@@ -144,33 +146,52 @@ const AuthProvider = ({children}) => {
 				
 	}, []);
 
-	// token change listener
-	useEffect(() => {
-		// detect changes in token change
-		const unsubscribeFromTokenChanged = onIdTokenChanged(auth, async (user) => {
-			console.log("Token State Change detected");
-			if (!user) {
-				// User is signed out, handle accordingly
-				return;
+	// role change listener
+	useLayoutEffect(() => {
+		// console.log(authData?.uid);
+		// if user doesn't exist return early		
+		// if user exist 
+		// if (!auth.currentUser) {
+		const userRef = doc(database, 'users', authData?.uid ? authData?.uid : "x");
+		const unsubscribe = onSnapshot(userRef, async (doc) => {
+			const data = doc.data();
+			if (data) {
+				const { role, deactivated } = data;
+				// console.log("DB Role: ", role);
+				// console.log("Stored Role: ", authData.role);
+	
+				// Check if the role has changed
+				if (role !== authData.role) {
+					try {
+						console.log("updating data...")
+						// update role
+						await setStoredData({
+							...authData,
+							role: role,
+						})
+					} catch (error) {
+						console.log(error.message)
+					}
+				}
+				
+				// Check if deactivated status has changed
+				if (deactivated !== authData?.deactivated && authData?.deactivated !== undefined) {
+					try {
+						// force signout
+						setTimeout(async () => {
+							await signOut(auth);
+						}, 3000);
+					} catch (error) {
+						console.log(error.message)
+					}
+				}
 			}
-			
-			const storedData = await getStoredData();
-			// Get the updated custom claims from the ID token
-			const idTokenResult = await user.getIdTokenResult();
-			// cusyome claims
-			const customClaims = idTokenResult.claims;
-
-			console.log(customClaims);
-
-			await setStoredData({
-				...storedData,
-				role: customClaims.role,
-				deactivated: customClaims.deactivated,
-			});
-		})
-
-		return unsubscribeFromTokenChanged;
-	}, [])
+		}, (error) => {
+			console.log(error.message);
+		});
+		return unsubscribe;
+		// }
+	}, [authData]);
 
 	return (
 		<AuthContext.Provider value={{authData, loading, setStoredData }}>
