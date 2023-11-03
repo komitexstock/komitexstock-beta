@@ -1,44 +1,50 @@
-const {onCall} = require("firebase-functions/v2/https");
+const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 
 admin.initializeApp();
 
 // function to update role
-exports.setRole = onCall(async (request) => {
-  return admin.auth().getUserByEmail(request.data.email).then(async (user) => {
+exports.setRole = functions.https.onCall(async (data, context) => {
+  try {
+    const user = await admin.auth().getUserByEmail(data.email);
+    // deactivated
+    const deactivated = data.deactivated;
     // if user is not logged in
-    if (request.auth.uid === null) {
-      throw new Error("No auth data present");
+    if (!context.auth.uid) {
+      throw new Error("Not auth data present");
     }
+    console.log("Auth user claims: ", context.auth.token);
     console.log("Write user claims: ", user.customClaims);
     // if role token has not been set
-    if (user.customClaims.role === undefined) {
+    if (user.customClaims === undefined) {
       console.log("New User");
       // Check if there are other users with the same business_id
       const usersSnapshot = await admin.firestore().collection("users")
-          .where("business_id", "==", request.data.business_id)
+          .where("business_id", "==", data.business_id)
           .get();
+      console.log("Snapshot Size: ", usersSnapshot.size);
       if (usersSnapshot.size > 1) {
-        // users with same business_id exist, so user can't be adminu
-        return admin.auth().setCustomUserClaims(user.uid, {
+        // users with same business_id exist, so user can't be admin
+        await admin.auth().setCustomUserClaims(user.uid, {
           admin: false,
-          role: request.data.role,
-          account_type: request.data.account_type,
-          deactivated: false,
+          role: data.role,
+          account_type: data.account_type,
+          deactivated: deactivated === undefined ? false : deactivated,
         });
+        return {message: "Role added successfully"};
       } else {
         // This is the first user with the business_id, so they can be admin
-        return admin.auth().setCustomUserClaims(user.uid, {
+        await admin.auth().setCustomUserClaims(user.uid, {
           admin: true,
-          role: request.data.role,
-          account_type: request.data.account_type,
-          deactivated: false,
+          role: data.role,
+          account_type: data.account_type,
+          deactivated: deactivated === undefined ? false : deactivated,
         });
+        return {message: "Role added successfully"};
       }
     }
-    console.log("Auth user claims: ", request.auth.token);
     // if user is not a manager throw error
-    if (request.auth.token.role !== "Manager") {
+    if (context.auth.token.role !== "Manager") {
       throw new Error("Only managers can edit roles");
     }
     // if user is not a manager throw error
@@ -46,17 +52,17 @@ exports.setRole = onCall(async (request) => {
       throw new Error("Cannot edit admin");
     }
     // set token
-    return admin.auth().setCustomUserClaims(user.uid, {
+    await admin.auth().setCustomUserClaims(user.uid, {
       admin: false,
-      role: request.data.role,
-      account_type: request.data.account_type,
-      deactivated: false,
+      role: data.role,
+      account_type: data.account_type,
+      deactivated: deactivated === undefined ? false : deactivated,
     });
-  }).then(() => {
-    return {
-      message: "Role successfully updated",
-    };
-  }).catch((error) => {
+    // revoke user id, to force them to sign in again
+    await admin.auth().revokeRefreshTokens(user.uid);
+    return {message: "Role updated successfully"};
+  } catch (error) {
+    // throw new Error("Failed to set role: " + error.message);
     return error;
-  });
+  }
 });
