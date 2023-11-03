@@ -248,7 +248,6 @@ const CreateAccount = ({navigation}) => {
         setIsLoading(true);
         
         try {
-
             // business reference
             const businessesRef = collection(database, 'businesses');
 
@@ -363,6 +362,7 @@ const CreateAccount = ({navigation}) => {
 
     const [time, setTime] = useState(90);
 
+    // function to display timer
     useEffect(() => {
         if (currentStep === 2) {
             const timer = setInterval(() => {
@@ -379,6 +379,30 @@ const CreateAccount = ({navigation}) => {
         }
 
     }, [currentStep, time]);
+
+    // functiont to listen for onPress of back button when in step 4
+    useEffect(() => {
+        // function to run if back button is pressed
+        const backAction = () => {
+
+            // current step is 4
+            if (currentStep === 4) {
+                // complete the signup process
+                handleCompleteSignup()
+                // return true to disable back button
+                return true;
+            }
+        };
+    
+        // listen for onPress back button
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction
+        );
+    
+        return () => backHandler.remove();
+
+    }, [currentStep]);
 
     // function to display timer in a readable format i.e 01:30
     const formatTime = (timeInSeconds) => {

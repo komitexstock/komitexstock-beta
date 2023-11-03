@@ -132,10 +132,10 @@ const OrderListItem = ({item, index, firstOrder, lastOrder, selectable, selected
                 {/* logistics avatar */}
                 {authData.account_type === "Merchant" && (
                     <Avatar 
-                        imageUrl={item?.logistics?.banner_image}
-                        squared={true}
-                        selected={selectable && selected}
-                        fullname={item?.logistics?.business_name}
+                    imageUrl={item?.logistics?.banner_image}
+                    squared={true}
+                    selected={selectable && selected}
+                    fullname={item?.logistics?.business_name}
                     />
                 )}
             </View>
@@ -216,6 +216,8 @@ const style = StyleSheet.create({
     },
     orderImageContainer: {
         position: 'relative',
+        width: 40,
+        height: 40,
     },
     orderImage: {
         width: 40,

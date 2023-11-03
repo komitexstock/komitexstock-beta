@@ -10,7 +10,7 @@ exports.setRole = functions.https.onCall(async (data, context) => {
     const deactivated = data.deactivated;
     // if user is not logged in
     if (!context.auth.uid) {
-      throw new Error("Not auth data present");
+      return {message: "Not auth data present"};
     }
     console.log("Auth user claims: ", context.auth.token);
     console.log("Write user claims: ", user.customClaims);
@@ -29,6 +29,8 @@ exports.setRole = functions.https.onCall(async (data, context) => {
           role: data.role,
           account_type: data.account_type,
           deactivated: deactivated === undefined ? false : deactivated,
+        }).then(() => {
+          return {message: "Role added successfully"};
         }).catch((error) => {
           return error;
         });
@@ -39,6 +41,8 @@ exports.setRole = functions.https.onCall(async (data, context) => {
           role: data.role,
           account_type: data.account_type,
           deactivated: deactivated === undefined ? false : deactivated,
+        }).then(() => {
+          return {message: "Role added successfully"};
         }).catch((error) => {
           return error;
         });
@@ -46,11 +50,11 @@ exports.setRole = functions.https.onCall(async (data, context) => {
     }
     // if user is not a manager throw error
     if (context.auth.token.role !== "Manager") {
-      throw new Error("Only managers can edit roles");
+      return {message: "Only managers can edit roles"};
     }
     // if user is not a manager throw error
     if (user.customClaims.admin) {
-      throw new Error("Cannot edit admin");
+      return {message: "Cannot edit admin"};
     }
     // set token
     return admin.auth().setCustomUserClaims(user.uid, {
@@ -58,13 +62,13 @@ exports.setRole = functions.https.onCall(async (data, context) => {
       role: data.role,
       account_type: data.account_type,
       deactivated: deactivated === undefined ? false : deactivated,
+    }).then(async () => {
+      // revoke user id, to force them to sign in again
+      await admin.auth().revokeRefreshTokens(user.uid);
+      return {message: "Role updated successfully"};
     }).catch((error) => {
       return error;
     });
-  }).then(() => {
-    return {
-      message: "Role successfully updated",
-    };
   }).catch((error) => {
     return error;
   });

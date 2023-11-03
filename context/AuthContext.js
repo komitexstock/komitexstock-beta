@@ -10,6 +10,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 // firebase AUth
 import {
 	onAuthStateChanged,
+	onIdTokenChanged,
 } from "firebase/auth";
 // firebase
 import { auth, database } from "../Firebase";
@@ -80,10 +81,12 @@ const AuthProvider = ({children}) => {
 	
 	// console.log("auth state", authData);
 	
+	// auth listeners
 	useEffect(() => {
 		// setLoading(true);
 
-		const unsubscribeFromAuthStatuChanged = onAuthStateChanged(auth, async (user) => {
+		// detect changes in auth state
+		const unsubscribeFromAuthStateChanged = onAuthStateChanged(auth, async (user) => {
 			// console.log("Auth State Changed", user);
 			if (!user) {
 				await removeStoredData();
@@ -137,10 +140,10 @@ const AuthProvider = ({children}) => {
 
 		})
 
-		return unsubscribeFromAuthStatuChanged;
-		
+		return unsubscribeFromAuthStateChanged;
+				
 	}, []);
-	
+
 	return (
 		<AuthContext.Provider value={{authData, loading, setStoredData }}>
 			{children}

@@ -20,8 +20,6 @@ import PopUpBottomSheet from "../components/PopUpBottomSheet";
 import Avatar from "../components/Avatar";
 import SelectRolePopUpContent from "../components/SelectRolePopUpContent";
 import TeamMemberCard from "../components/TeamMemberCard";
-import SuccessPrompt from "../components/SuccessPrompt";
-import CautionPrompt from "../components/CautionPrompt";
 import SuccessSheet from "../components/SuccessSheet";
 import Toast from "../components/Toast";
 // colors
@@ -68,9 +66,6 @@ const TeamMembers = ({ navigation }) => {
     // button loading state
     const [isLoading, setIsLoading] = useState(false);
     
-    // secondary button loading state
-    const [isLoadingSecondary, setIsLoadingSecondary] = useState(false);
-
     // bottoms sheef refs
     const { bottomSheetRef, successSheetRef, popUpSheetRef, popUpSheetOpen, setToast } = useGlobals();
 
@@ -470,6 +465,8 @@ const TeamMembers = ({ navigation }) => {
 
         // end loadind state
         setIsLoading(false);
+
+        // open success modal
         openSuccessModal("UpdateSuccess");
     }
 
