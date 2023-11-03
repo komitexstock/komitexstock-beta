@@ -144,6 +144,34 @@ const AuthProvider = ({children}) => {
 				
 	}, []);
 
+	// token change listener
+	useEffect(() => {
+		// detect changes in token change
+		const unsubscribeFromTokenChanged = onIdTokenChanged(auth, async (user) => {
+			console.log("Token State Change detected");
+			if (!user) {
+				// User is signed out, handle accordingly
+				return;
+			}
+			
+			const storedData = await getStoredData();
+			// Get the updated custom claims from the ID token
+			const idTokenResult = await user.getIdTokenResult();
+			// cusyome claims
+			const customClaims = idTokenResult.claims;
+
+			console.log(customClaims);
+
+			await setStoredData({
+				...storedData,
+				role: customClaims.role,
+				deactivated: customClaims.deactivated,
+			});
+		})
+
+		return unsubscribeFromTokenChanged;
+	}, [])
+
 	return (
 		<AuthContext.Provider value={{authData, loading, setStoredData }}>
 			{children}
