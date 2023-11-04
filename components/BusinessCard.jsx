@@ -9,7 +9,7 @@ import {
 } 
 from "react-native";
 // component
-import Indicator from '../components/Indicator';
+import Indicator from './Indicator';
 import Avatar from "./Avatar";
 // icons
 import AddIcon from '../assets/icons/AddIcon';
@@ -17,7 +17,7 @@ import VerifiedIcon from "../assets/icons/VerifiedIcon";
 import { black, secondaryColor, subText, white } from "../style/colors";
 
 const maxCardWidth = Dimensions.get("window").width/2 - 28;
-const LogisticsCard = ({logistics, merchant, imageUrl, totalLocations, totalProducts, totalStock, lowStock, onPress, addNew, verified}) => {
+const BusinessCard = ({logistics, merchant, imageUrl, totalLocations, totalProducts, totalStock, lowStock, onPress, addNew, verified}) => {
     return (
         <>   
             { !addNew ? (
@@ -146,4 +146,4 @@ const style = StyleSheet.create({
     }
 })
  
-export default LogisticsCard;
+export default BusinessCard;

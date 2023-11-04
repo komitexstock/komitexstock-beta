@@ -12,7 +12,7 @@ const shimmerColorArray = ["#ebebeb", "#d9d9d9", "#ebebeb",];
 
 const Skeleton = createShimmerPlaceholder(LinearGradient);
 
-const DeactivateLogisticsSkeleton = () => {
+const AboutLogisticsSkeleton = () => {
     return (
         <View 
             style={skeleton.container}
@@ -165,4 +165,4 @@ const skeleton = StyleSheet.create({
     }
 })
  
-export default DeactivateLogisticsSkeleton;
+export default AboutLogisticsSkeleton;

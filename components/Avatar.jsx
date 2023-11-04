@@ -64,7 +64,7 @@ const style = StyleSheet.create({
         width: 40,
         height: 40,
         borderRadius: 20,
-        backgroundColor: background,
+        backgroundColor: secondaryColor,
         display: "flex",
         justifyContent: "center",
         alignItems: "center",

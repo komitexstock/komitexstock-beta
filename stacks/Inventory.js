@@ -13,7 +13,7 @@ import { primaryColor, secondaryColor, white, background, black, subText, vertic
 // react hooks
 import { useEffect, useState, useRef } from "react";
 // components
-import LogisticsCard from "../components/LogisticsCard";
+import BusinessCard from "../components/BusinessCard";
 import SearchBar from "../components/SearchBar";
 import Header from "../components/Header";
 import CustomButton from "../components/CustomButton";
@@ -358,7 +358,7 @@ const Products = ({navigation}) => {
                             } else {
                                 return (
                                     <View style={index % 2 === 0 ? style.leftCard : style.rightCard}>
-                                        <LogisticsCard
+                                        <BusinessCard
                                             logistics={item?.logistics}
                                             merchant={item?.merchant}
                                             imageUrl={item.imageUrl}

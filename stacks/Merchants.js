@@ -14,7 +14,7 @@ import { useState, useEffect } from "react";
 // skeleton screen
 import LogisticsSkeleton from "../skeletons/LogisticsSkeleton";
 
-const Logistics = ({navigation}) => {
+const Merchants = ({navigation}) => {
 
     // logistics list
     const logisticsList = [
@@ -22,11 +22,11 @@ const Logistics = ({navigation}) => {
             id: 1,
             logistics: "Komitex Logistics",
             imageUrl: '../assets/images/komitex.png',
-            totalLocations: 17,
+            totalProducts: 17,
             totalStock: 25,
             lowStock: true,
             onPress: () => {
-                navigation.navigate("AboutLogistics");
+                navigation.navigate("AboutMerchant");
             },
             addNew: false 
         },
@@ -34,11 +34,11 @@ const Logistics = ({navigation}) => {
             id: 2,
             logistics: "DHL",
             imageUrl: '../assets/images/dhl.png',
-            totalLocations: 15,
+            totalProducts: 15,
             totalStock: 17,
             lowStock: false,
             onPress: () => {
-                navigation.navigate("AboutLogistics");
+                navigation.navigate("AboutMerchant");
             },
             addNew: false,
         },
@@ -46,11 +46,11 @@ const Logistics = ({navigation}) => {
             id: 3,
             logistics: "Fedex",
             imageUrl: '../assets/images/fedex.png',
-            totalLocations: 11,
+            totalProducts: 11,
             totalStock: 9,
             lowStock: false,
             onPress: () => {
-                navigation.navigate("AboutLogistics");
+                navigation.navigate("AboutMerchant");
             },
             addNew: false,
         },
@@ -58,26 +58,14 @@ const Logistics = ({navigation}) => {
             id: 4,
             logistics: "UPS",
             imageUrl: '../assets/images/ups.png',
-            totalLocations: 5,
+            totalProducts: 5,
             totalStock: 7,
             lowStock: false,
             onPress: () => {
-                navigation.navigate("AboutLogistics");
+                navigation.navigate("AboutMerchant");
             },
             addNew: false,
         },
-        {
-            id: 5,
-            logistics: null,
-            imageUrl: null,
-            totalLocations: null,
-            totalStock: null,
-            lowStock: false,
-            onPress: () => {
-                navigation.navigate("AddLogistics");
-            },
-            addNew: true
-        }
     ];
 
     // page loading state
@@ -89,7 +77,7 @@ const Logistics = ({navigation}) => {
         }, 500);
     })
 
-    //  render Logistics stack
+    //  render merchants stack
     return (
         <>
             {!pageLoading ? (
@@ -100,7 +88,7 @@ const Logistics = ({navigation}) => {
                         <View style={style.headerWrapper}>
                             <Header 
                                 navigation={navigation} 
-                                stackName={"Logistics"} 
+                                stackName={"Merchants"} 
                                 iconFunction={null} 
                                 icon={null} 
                                 unpadded={true}
@@ -116,13 +104,13 @@ const Logistics = ({navigation}) => {
                     renderItem={({ item }) => (
                         // logistics card
                         <BusinessCard
-                            logistics={item.logistics}
-                            imageUrl={item.imageUrl}
-                            totalLocations={item.totalLocations}
-                            totalStock={item.totalStock}
-                            lowStock={item.lowStock}
-                            onPress={item.onPress}
-                            addNew={item.addNew}
+                            logistics={item?.logistics}
+                            imageUrl={item?.imageUrl}
+                            totalStock={item?.totalStock}
+                            totalProducts={item?.totalProducts}
+                            lowStock={item?.lowStock}
+                            onPress={item?.onPress}
+                            addNew={item?.addNew}
                         />
                     )}
                 />
@@ -196,4 +184,4 @@ const style = StyleSheet.create({
     }
 })
  
-export default Logistics;
+export default Merchants;

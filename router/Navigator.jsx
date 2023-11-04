@@ -44,9 +44,11 @@ import Account from '../stacks/Account';
 import Profile from '../stacks/Profile';
 import TeamMembers from '../stacks/TeamMembers';
 import Logistics from '../stacks/Logistics';
+import Merchants from '../stacks/Merchants';
 import Security from '../stacks/Security';
 // others stacks
-import DeactivateLogistics from '../stacks/DeactivateLogistics';
+import AboutLogistics from '../stacks/AboutLogistics';
+import AboutMerchant from '../stacks/AboutMerchant';
 import LogisticsDetails from '../stacks/LogisticsDetails';
 import Reviews from '../stacks/Reviews';
 import CompanyPolicy from '../stacks/CompanyPolicy';
@@ -61,7 +63,7 @@ import CreateAccount from '../stacks/CreateAccount';
 
 const Navigator = () => {
 
-    const { authData, loading } = useAuth();  
+    const { authData } = useAuth();  
 
     const Stack = createNativeStackNavigator();
 
@@ -210,10 +212,20 @@ const Navigator = () => {
                         name="Logistics" 
                         component={Logistics} 
                     />
-                    {/* Deactivate Logistics stack */}
+                    {/* merchants stack */}
                     <Stack.Screen 
-                        name="DeactivateLogistics" 
-                        component={DeactivateLogistics} 
+                        name="Merchants" 
+                        component={Merchants} 
+                    />
+                    {/* About Logistics stack */}
+                    <Stack.Screen 
+                        name="AboutLogistics" 
+                        component={AboutLogistics} 
+                    />
+                    {/* About Merchant stack */}
+                    <Stack.Screen 
+                        name="AboutMerchant" 
+                        component={AboutMerchant} 
                     />
                     {/* security stack */}
                     <Stack.Screen 

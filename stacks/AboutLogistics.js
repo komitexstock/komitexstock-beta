@@ -38,14 +38,14 @@ import ReportFlagIcon from "../assets/icons/ReportFlagIcon";
 // react hooks
 import { useState, useEffect } from "react";
 // skeleton screen
-import DeactivateLogisticsSkeleton from "../skeletons/DeactivateLogisticsSkeleton";
+import AboutLogisticsSkeleton from "../skeletons/AboutLogisticsSkeleton";
 // globals
 import { useGlobals } from "../context/AppContext";
 
 // windows width
 const windowsHeight = Dimensions.get("window").height;
 
-const DeactivateLogistics = ({navigation}) => {
+const AboutLogistics = ({navigation}) => {
 
     const { popUpSheetRef } = useGlobals();
 
@@ -472,7 +472,7 @@ const DeactivateLogistics = ({navigation}) => {
         setConfirmDeactivation(true);
     }
 
-    // render DeactivateLogistics page
+    // render AboutLogistics page
     return (
         <>
             {!pageLoading ? (
@@ -594,7 +594,7 @@ const DeactivateLogistics = ({navigation}) => {
                         </View>
                     </View>
                 </ScrollView>
-            ) : <DeactivateLogisticsSkeleton />}
+            ) : <AboutLogisticsSkeleton />}
             <CustomButton
                 name="Deactive Logistics"
                 onPress={openPopUpModal}
@@ -853,4 +853,4 @@ const style = StyleSheet.create({
     }
 })
  
-export default DeactivateLogistics;
+export default AboutLogistics;

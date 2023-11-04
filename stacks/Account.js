@@ -14,7 +14,7 @@ import {
     useEffect,
 } from "react";
 // colors
-import { primaryColor, secondaryColor, background, black, bodyText, white, } from '../style/colors';
+import { primaryColor, secondaryColor, background, black, bodyText, white, cancelledText, } from '../style/colors';
 // custom components
 import CustomBottomSheet from "../components/CustomBottomSheet";
 import AccountButtons from "../components/AccountButtons";
@@ -210,60 +210,21 @@ const Account = ({navigation, route}) => {
     });
 
     // uploading profile state
-    const [uploadingProfile, setUploadingProfile] = useState(() => {
-        // check if user is navigating from captureImage screen with an image
-        // for profile
-        // if (route?.params?.imageType === "Profile") return true;
-        // else return false
-        return false;
-    });
+    const [uploadingProfile, setUploadingProfile] = useState(false);
     
     // uploading profile state
-    const [uploadingBanner, setUploadingBanner] = useState(() => {
-        // check if user is navigating from captureImage screen with an image
-        // for banner
-        // if (route?.params?.imageType === "Banner") return true;
-        // else return false
-        return false
-    });
+    const [uploadingBanner, setUploadingBanner] = useState(false);
 
     // state to hold selected image for profile
-    const [selectedProfile, setSelectedProfile] = useState(() => {
-        // check if user is navigating from captureImage screen with an image
-        // for profile
-        // if (route?.params?.imageType === "Profile") return route?.params?.image?.uri;
-        // else return false
-        return null;
-    });
+    const [selectedProfile, setSelectedProfile] = useState(null);
     
     // state to hold selected image for BANNER
-    const [selectedBanner, setSelectedBanner] = useState(() => {
-        // check if user is navigating from captureImage screen with an image
-        // for banner
-        // if (route?.params?.imageType === "Banner") return route?.params?.image?.uri;
-        // else return false
-        return null;
-    });
+    const [selectedBanner, setSelectedBanner] = useState(null);
 
     // state to indicate what type of image is being uploade "Banner" or "Profile"
     const [imageType, setImageType] = useState("");
 
     useEffect(() => {        
-        //         console.log("Path ", imagePath);
-        //         // uploadingBanner(true);
-        //         // setSelectedBanner(route?.params?.image?.uri);
-        //         const id = authData?.business_id;
-        //         const response = await uploadFile(imagePath, imageType, id, authData, setStoredData);
-        //         if (response) {
-        //             setUploadingBanner(false);
-        //             setSelectedBanner(null);
-        //         }
-        //     } catch (error) {
-        //         console.log(error.message);  
-                              
-        //     }
-        // }
-
         const handleUploadProfile = async (image, type, id) => {
             try {
                 const response = await uploadFile(image, type, id, authData, setStoredData);
@@ -616,8 +577,6 @@ const style = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'flex-start', 
         alignItems: 'center',
-        // padding: 20,
-        // paddingTop: 12,
         gap: 20,
     },
     body: {
@@ -762,7 +721,7 @@ const style = StyleSheet.create({
         borderRadius: 12,
     },
     logoutText: {
-        color: "#B42318",
+        color: cancelledText,
         fontFamily: 'mulish-semibold',
         fontSize: 14,
     },
