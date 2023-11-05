@@ -39,7 +39,6 @@ const SendWaybill = ({navigation}) => {
     // state to store chosen warehouse
     const [warehouse, setWarehouse] = useState(null);
 
-    
     // state to store order details
     const [ waybillDetails, setWaybilldetails] = useState(null);
 
@@ -50,7 +49,6 @@ const SendWaybill = ({navigation}) => {
     
     // state to indicate if select warehouse input is active
     const [selectWarehouseActive, setSelectWarehouseActive] = useState(false);
-
 
     // state to control the type of modal to show in the bottom sheet
     const [modal, setModal] = useState({

@@ -10,6 +10,8 @@ import {
 // icons
 import ArrowDownSmall from '../assets/icons/ArrowDownSmall';
 import { background, black, bodyText, subText } from '../style/colors';
+// components
+import CustomButton from './CustomButton';
 // import react hook
 import { useEffect } from 'react';
 
@@ -18,7 +20,7 @@ if (Platform.OS === 'android') {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-const Accordion = ({state, locations, opened}) => {
+const Accordion = ({state, locations, opened, showEditButton, navigation}) => {
     const [expanded, setExpanded] = useState(opened);
 
     const toggleAccordion = () => {
@@ -58,7 +60,7 @@ const Accordion = ({state, locations, opened}) => {
     const maxCharge = getMaxCharge(locations);
     const minCharge = getMinCharge(locations);
 
-    return (
+    return (<>
         <View style={style.container}>
             <TouchableOpacity style={style.header} onPress={toggleAccordion}>
                 <Text style={style.title}>{state}</Text>
@@ -87,8 +89,23 @@ const Accordion = ({state, locations, opened}) => {
                     </View>
                 ))}
             </View>
+            {/* show edit button when accordion is opened */}
+            {showEditButton && expanded && (
+                <CustomButton 
+                    name={"Edit"}
+                    shrinkWrapper={true}
+                    buttonStyle={{width: 152}}
+                    wrapperStyle={{        
+                        justifyContent: "flex-end",
+                        padding: 0,
+                        marginTop: 10,
+                    }}
+                    secondaryButton={true}
+                    onPress={() => navigation.navigate("EditLocation")}
+                />
+            )}
         </View>
-    );
+    </>);
 };
 
 const style = StyleSheet.create({

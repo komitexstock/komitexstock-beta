@@ -20,34 +20,34 @@ const AddLogisticsModalContent = ({handleSelectedLogistics}) => {
     // logistics list
     const logisticsData = [
         {
-            company_id: "E3F7J1g4X6r9L2Y",
+            business_id: "E3F7J1g4X6r9L2Y",
             business_name: "Komitex Logistics",
             imageUrl: require("../assets/images/komitex.png"),
             verified: true,
         },
         {
-            company_id: "H9i2L4t6R3d7K1w",
+            business_id: "H9i2L4t6R3d7K1w",
             business_name: "Fedex",
             imageUrl: require("../assets/images/fedex.png"),
             verified: true,
         },
         {
-            company_id: "X7y2G4z9Q1a3w6J",
+            business_id: "X7y2G4z9Q1a3w6J",
             business_name: "UPS",
             imageUrl: require("../assets/images/ups.png"),
             verified: false,
         },
         {
-            company_id: "N5o8V2s6W3D1r4E",
+            business_id: "N5o8V2s6W3D1r4E",
             business_name: "DHL",
             imageUrl: require("../assets/images/dhl.png"),
             verified: true,
         },
     ];
 
-    // select logistics by company_id
-    const getLogistics = (company_id) => {
-        const selectedLogistics = logisticsData.find((logistics) => logistics.company_id === company_id);
+    // select logistics by business_id
+    const getLogistics = (business_id) => {
+        const selectedLogistics = logisticsData.find((logistics) => logistics.business_id === business_id);
 
         return handleSelectedLogistics(selectedLogistics);
     }
@@ -70,8 +70,8 @@ const AddLogisticsModalContent = ({handleSelectedLogistics}) => {
                 {logisticsData.map((data) => (
                     <TouchableOpacity
                         style={style.list}
-                        key={data.company_id}
-                        onPress={() => getLogistics(data.company_id)}
+                        key={data.business_id}
+                        onPress={() => getLogistics(data.business_id)}
                     >   
                         <Image
                             style={style.logisticsImage}

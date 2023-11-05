@@ -68,7 +68,7 @@ const Profile = ({navigation}) => {
             id: 1,
             title: "Full Name",
             mainInfoText: authData?.full_name,
-            onPress: () => {openModal("Full Name")},
+            onPress: () => openModal("Full Name"),
             disabled: false
         },
         {
@@ -82,7 +82,7 @@ const Profile = ({navigation}) => {
             id: 3,
             title: "Phone Number",
             mainInfoText: authData?.phone,
-            onPress: () => {openModal("Phone Number")},
+            onPress: () => openModal("Phone Number"),
             disabled: false
         },
         {

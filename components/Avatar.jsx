@@ -3,7 +3,7 @@ import { background, primaryColor, secondaryColor, white } from "../style/colors
 // icons
 import SelectedOrderIcon from "../assets/icons/SelectedOrderIcon";
 
-const Avatar = ({imageUrl, fullname, smallerSize, largerSize, squared, selected, borderWidth, borderColor}) => {
+const Avatar = ({imageUrl, fullname, smallerSize, largerSize, squared, selected, borderWidth, borderColor, diameter}) => {
     // imageUrl => string | path to image
     // fullname => string
 
@@ -25,6 +25,11 @@ const Avatar = ({imageUrl, fullname, smallerSize, largerSize, squared, selected,
                 borderColor && {borderColor: borderColor},
                 squared && {borderRadius: 8},
                 squared && smallerSize && {borderRadius: 5},
+                diameter && {
+                    width: diameter, 
+                    height: diameter, 
+                    borderRadius: squared ? diameter/5 : diameter/2
+                },
             ]}
         >
             {/* display image if its given */}
@@ -37,6 +42,11 @@ const Avatar = ({imageUrl, fullname, smallerSize, largerSize, squared, selected,
                         largerSize && {borderRadius: 40},
                         squared && {borderRadius: 8},
                         squared && smallerSize && {borderRadius: 5},
+                        diameter && {
+                            width: diameter, 
+                            height: diameter, 
+                            borderRadius: squared ? diameter/5 : diameter/2
+                        },
                     ]}
                 />
             }

@@ -42,12 +42,14 @@ import StockTransferSummary from '../stacks/StockTransferSummary';
 // account related stacks
 import Account from '../stacks/Account';
 import Profile from '../stacks/Profile';
+import BusinessSettings from '../stacks/BusinessSettings';
 import TeamMembers from '../stacks/TeamMembers';
 import Logistics from '../stacks/Logistics';
 import Merchants from '../stacks/Merchants';
 import Security from '../stacks/Security';
 // others stacks
 import AboutLogistics from '../stacks/AboutLogistics';
+import Locations from '../stacks/Locations';
 import AboutMerchant from '../stacks/AboutMerchant';
 import LogisticsDetails from '../stacks/LogisticsDetails';
 import Reviews from '../stacks/Reviews';
@@ -152,6 +154,11 @@ const Navigator = () => {
                         name="AvailableLocations" 
                         component={AvailableLocations} 
                     />
+                    {/* Locations stack */}
+                    <Stack.Screen 
+                        name="Locations" 
+                        component={Locations} 
+                    />
                     {/* Reviews stack */}
                     <Stack.Screen 
                         name="Reviews" 
@@ -176,6 +183,11 @@ const Navigator = () => {
                     <Stack.Screen 
                         name="Profile" 
                         component={Profile} 
+                    />
+                    {/* BusinessSettings stack */}
+                    <Stack.Screen 
+                        name="BusinessSettings" 
+                        component={BusinessSettings} 
                     />
                     {/* Analytics stack */}
                     <Stack.Screen 
