@@ -172,6 +172,7 @@ const Warehouse = ({navigation, route}) => {
         {
             id: 10,
             add_new: true,
+            onPress: () => navigation.navigate("AddWarehouse"),
         },
     ];
 

@@ -1,7 +1,7 @@
 import { StyleSheet, TouchableWithoutFeedback, Text, View, Keyboard, TouchableOpacity } from 'react-native'
 // react hooks
 import React, { useEffect, useState } from 'react'
-// import 
+// components 
 import Header from '../components/Header';
 import SelectInput from '../components/SelectInput';
 import Input from '../components/Input';
@@ -9,6 +9,7 @@ import CustomButton from '../components/CustomButton';
 import CustomBottomSheet from '../components/CustomBottomSheet';
 import SearchBar from '../components/SearchBar';
 import SuccessSheet from '../components/SuccessSheet';
+import CheckBox from '../components/CheckBox'
 // bottomsheet components
 import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 // globals
@@ -56,12 +57,15 @@ const AddWarehouse = ({navigation}) => {
     ];
 
     // origin warehouse state
-    const [selectedManager, setSelectedManager] = useState(null);
+    const [warehouseManager, setWarehouseManager] = useState(null);
     // active input state
-    const [activeSelectedManager, setActiveSelectedManager] = useState(false);
+    const [activeWarehouseManager, setActiveWarehouseManager] = useState(false);
+    
+    // reacieve waybill state
+    const [receiveWaybill, setReceiveWaybill] = useState(false);
     
     const handleWarehouseSelection = (id) => {
-        setSelectedManager(() => {
+        setWarehouseManager(() => {
             return managers.find(manager => manager.id === id);
         });
         closeModal();
@@ -72,13 +76,14 @@ const AddWarehouse = ({navigation}) => {
 
     const openModal = () => {
         bottomSheetRef?.current?.present();
+        setActiveWarehouseManager(true);
         Keyboard.dismiss();
     }
 
     // close modal function
     const closeModal = () => {
         bottomSheetRef?.current?.close();
-        setActiveSelectedManager(false);
+        setActiveWarehouseManager(false);
     }
     
     // open pop up modal
@@ -110,7 +115,7 @@ const AddWarehouse = ({navigation}) => {
     // disable active states for select input if back button is pressed
     useEffect(() => {
         if (!bottomSheetOpen) {
-            setActiveSelectedManager(false);
+            setActiveWarehouseManager(false);
         }
     }, [bottomSheetOpen])
 
@@ -156,12 +161,19 @@ const AddWarehouse = ({navigation}) => {
                             <SelectInput
                                 label={"Warehouse Manager"}
                                 placeholder={"Selecte a warehouse manager"}
-                                value={selectedManager?.fullname}
+                                value={warehouseManager?.fullname}
                                 inputFor={"String"}
                                 onPress={() => openModal()}
-                                active={activeSelectedManager}
+                                active={activeWarehouseManager}
                             />
-
+                            {/* receive waybill check box */}
+                            <View style={style.receiveWaybillWrapper}>
+                                <CheckBox
+                                    value={receiveWaybill}
+                                    onPress={() => setReceiveWaybill(prevValue => !prevValue)}
+                                />
+                                <Text style={style.receiveWaybillText}>Receive waybill in this warehouse</Text>
+                            </View>
                         </View>
                     </View>
                     <CustomButton
@@ -169,11 +181,12 @@ const AddWarehouse = ({navigation}) => {
                         unpadded={true}
                         isLoading={isLoading}
                         backgroundColor={background}
-                        inactive={selectedManager === null || warehouseName === "" || warehouseAddress === ""}
+                        inactive={warehouseManager === null || warehouseName === "" || warehouseAddress === ""}
                         onPress={handleCreateWarehouse}
                     />
                 </View>
             </TouchableWithoutFeedback>
+            {/* bottomsheet to select managers */}
             <CustomBottomSheet
                 bottomSheetModalRef={bottomSheetRef}
                 sheetTitle={"Select Warehouse"}
@@ -193,7 +206,7 @@ const AddWarehouse = ({navigation}) => {
                         Managers in your team
                     </Text>
                     <View style={style.listWrapper}>
-                        {managers.filter(manager => manager.id !== selectedManager?.id).map(manager => (
+                        {managers.filter(manager => manager.id !== warehouseManager?.id).map(manager => (
                                 <TouchableOpacity
                                     key={manager.id}
                                     style={style.listItemButton}
@@ -287,5 +300,18 @@ const style = StyleSheet.create({
         color: black,
         fontSize: 12,
         fontFamily: "mulish-bold",
+    },
+    receiveWaybillWrapper: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        gap: 10,
+        width: "100%",
+    },
+    receiveWaybillText: {
+        fontFamily: 'mulish-regular',
+        fontSize: 12,
+        color: bodyText,
     }
 })

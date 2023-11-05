@@ -87,6 +87,7 @@ const EditWarehouse = ({navigation, route}) => {
     const openModal = () => {
         bottomSheetRef?.current?.present();
         Keyboard.dismiss();
+        setActiveWarehouseManager(true);
     }
 
     // close modal function
