@@ -7,9 +7,10 @@ import {
     TouchableOpacity,
     Keyboard,
 } from 'react-native'
-import React, { useEffect, useRef } from 'react'
+// react hooks
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 // icons
-import SearchIcon from '../assets/icons/SearchIcon'
+import EditBlackLargeIcon from '../assets/icons/EditBlackLargeIcon.jsx'
 // component
 import Header from '../components/Header'
 import CustomButton from '../components/CustomButton'
@@ -19,15 +20,17 @@ import StatCard from '../components/StatCard';
 import StatWrapper from '../components/StatWrapper';
 import StockTransferListItem from '../components/StockTransferListItem'
 import WarehouseCard from '../components/WarehouseCard';
-// react hooks
-import { useState } from 'react';
+import CustomBottomSheet from '../components/CustomBottomSheet';
 // colors
 import { background, black, neutral, primaryColor, white } from '../style/colors';
 // utils
 import { windowHeight, windowWidth } from '../utils/helpers';
+// globals
+import { useGlobals } from '../context/AppContext';
 
 const Warehouse = ({navigation, route}) => {
 
+    const { bottomSheetRef } = useGlobals();
 
     // tab state
     const [tab, setTab] = useState(route.params?.tab ? route.params.tab : "warehouse")
@@ -58,94 +61,121 @@ const Warehouse = ({navigation, route}) => {
             id: 1,
             warehouse_name: "Warri",
             inventories_count: 12,
-            address: "276 PTI road",
+            warehouse_address: "276 PTI road",
+            warehouse_manager: {
+                id: 1,
+                full_name: "Abiodun Johnson"
+            },
             onPress: () => navigation.navigate("Inventory"),
-            onPressMenu: () => navigation.navigate("EditWarehouse"),
+            onPressMenu: () => openModal(1),      
+            receive_waybill: true,
             add_new: false,
         },
         {
             id: 2,
             warehouse_name: "Isoko",
             inventories_count: 3,
-            address: "123 Isoko Street",
+            warehouse_address: "123 Isoko Street",
+            warehouse_manager: {
+                id: 1,
+                full_name: "Abiodun Johnson"
+            },
             onPress: () => navigation.navigate("Inventory"),
-            onPressMenu: () => {},
+            onPressMenu: () => openModal(2),
+            receive_waybill: true,
             add_new: false,
         },
         {
             id: 3,
             warehouse_name: "Asaba",
             inventories_count: 7,
-            address: "456 Asaba Avenue",
+            warehouse_address: "456 Asaba Avenue",
+            warehouse_manager: {
+                id: 1,
+                full_name: "Abiodun Johnson"
+            },
             onPress: () => navigation.navigate("Inventory"),
-            onPressMenu: () => {},
+            onPressMenu: () => openModal(3),
+            receive_waybill: false,
             add_new: false,
         },
         {
             id: 4,
             warehouse_name: "Kwale",
             inventories_count: 4,
-            address: "789 Kwale Road",
+            warehouse_address: "789 Kwale Road",
+            warehouse_manager: {
+                id: 1,
+                full_name: "Abiodun Johnson"
+            },
             onPress: () => navigation.navigate("Inventory"),
-            onPressMenu: () => {},
+            onPressMenu: () => openModal(4),
+            receive_waybill: false,
             add_new: false,
         },
         {
             id: 5,
             warehouse_name: "Agbor",
             inventories_count: 6,
-            address: "101 Agbor Lane",
+            warehouse_address: "101 Agbor Lane",
+            warehouse_manager: {
+                id: 1,
+                full_name: "Abiodun Johnson"
+            },
             onPress: () => navigation.navigate("Inventory"),
-            onPressMenu: () => {},
+            onPressMenu: () => openModal(5),
+            receive_waybill: false,
             add_new: false,
         },
         {
             id: 6,
             warehouse_name: "Benin",
             inventories_count: 8,
-            address: "654 Benin Street",
+            warehouse_address: "654 Benin Street",
+            warehouse_manager: {
+                id: 1,
+                full_name: "Abiodun Johnson"
+            },
             onPress: () => navigation.navigate("Inventory"),
-            onPressMenu: () => {},
+            onPressMenu: () => openModal(6),
+            receive_waybill: false,
             add_new: false,
         },
         {
             id: 7,
             warehouse_name: "Auchi",
             inventories_count: 2,
-            address: "222 Auchi Road",
+            warehouse_address: "222 Auchi Road",
+            warehouse_manager: {
+                id: 1,
+                full_name: "Abiodun Johnson"
+            },
             onPress: () => navigation.navigate("Inventory"),
-            onPressMenu: () => {},
+            onPressMenu: () => openModal(7),
+            receive_waybill: false,
             add_new: false,
         },
         {
             id: 8,
             warehouse_name: "Ekpoma",
             inventories_count: 3,
-            address: "333 Ekpoma Street",
+            warehouse_address: "333 Ekpoma Street",
+            warehouse_manager: {
+                id: 1,
+                full_name: "Abiodun Johnson"
+            },
             onPress: () => navigation.navigate("Inventory"),
-            onPressMenu: () => {},
-            add_new: false,
-        },
-        {
-            id: 9,
-            warehouse_name: "Ekpoma",
-            inventories_count: 5,
-            address: "333 Ekpoma Street",
-            onPress: () => navigation.navigate("Inventory"),
-            onPressMenu: () => {},
+            onPressMenu: () => openModal(8),
+            receive_waybill: false,
             add_new: false,
         },
         {
             id: 10,
-            warehouse_name: null,
-            inventories_count: null,
-            address: null,
-            onPress: () => navigation.navigate("AddWarehouse"),
-            onPressMenu: () => {},
             add_new: true,
         },
     ];
 
+    // stock transfer data
     const stockTransfer = [
         { id: "stickyLeft" },
         {
@@ -279,6 +309,14 @@ const Warehouse = ({navigation, route}) => {
         }
     ];
 
+    // warehouse id to be edited
+    const [editWarehouseId, setEditWarehouseId] = useState(null);
+
+    // selected warehouse
+    const selectedWarehouse = useMemo(() => {
+        return warehouses.find(warehouse => warehouse.id === editWarehouseId)
+    }, [editWarehouseId])
+
     // search Query
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -293,11 +331,31 @@ const Warehouse = ({navigation, route}) => {
     }
 
     // function to open BottomSheet
-    const openModal = () => {
+    const openModal = (id) => {
+        bottomSheetRef?.current?.present();
 
+        setEditWarehouseId(id);
+    }
+
+    const closeModal = () => {
+        bottomSheetRef?.current?.close()
     }
 
     const scrollRef = useRef(null);
+
+    // function to navigate to edit warehouse screen
+    const handleEditWarehouse = () => {
+        // close modal
+        closeModal();
+        // navigate to edit warehouse screen
+        navigation.navigate("EditWarehouse", {
+            id: selectedWarehouse?.id,
+            warehouse_name: selectedWarehouse?.warehouse_name,
+            warehouse_address: selectedWarehouse?.warehouse_address,
+            warehouse_manager: selectedWarehouse?.warehouse_manager,
+            receive_waybill: selectedWarehouse?.receive_waybill,
+        });
+    }
 
     // remove sticky header shadow if scroll height hasn't crossed the required offset
     useEffect(() => {
@@ -418,12 +476,12 @@ const Warehouse = ({navigation, route}) => {
                                         ]}
                                     >
                                         <WarehouseCard
-                                            warehouseName={item.warehouse_name}
-                                            inventoriesCount={item.inventories_count}
-                                            address={item.address}
-                                            onPress={item.onPress}
-                                            onPressMenu={item.onPressMenu}
-                                            addNew={item.add_new}
+                                            warehouseName={item?.warehouse_name}
+                                            inventoriesCount={item?.inventories_count}
+                                            address={item?.warehouse_address}
+                                            onPress={item?.onPress}
+                                            onPressMenu={item?.onPressMenu}
+                                            addNew={item?.add_new}
                                         />
                                     </View>
                                 )
@@ -444,6 +502,25 @@ const Warehouse = ({navigation, route}) => {
                     }}
                 />
             </TouchableWithoutFeedback>
+            {/* bottomsheet */}
+            <CustomBottomSheet
+                bottomSheetModalRef={bottomSheetRef}
+                snapPointsArray={[124]}
+                autoSnapAt={0}
+                closeModal={closeModal}
+            >
+                <View style={styles.modalWrapper}>
+                    <TouchableOpacity
+                        style={styles.sheetButton}
+                        onPress={handleEditWarehouse}
+                    >
+                        <EditBlackLargeIcon />
+                        <Text style={styles.sheetButtonText}>
+                            Edit warehouse
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+            </CustomBottomSheet>
         </>
     )
 }
@@ -562,5 +639,18 @@ const styles = StyleSheet.create({
     },
     stockTransferItemWrapper: {
         paddingHorizontal: 20,
+    },
+    modalWrapper: {
+        width: "100%",
+        height: "100%",
+    },
+    sheetButton: {
+        width: "100%",
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "flex-start",
+        gap: 10,
+        paddingVertical: 16,
     }
 })

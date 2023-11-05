@@ -9,7 +9,7 @@ import ModalHandle from "./ModalHandle";
 // icons
 import CloseIcon from "../assets/icons/CloseIcon";
 // colors
-import { black, bodyText } from "../style/colors";
+import { black, bodyText, white } from "../style/colors";
 // globals
 import { useGlobals } from "../context/AppContext";
 // components
@@ -60,11 +60,13 @@ const SuccessSheet = ({successSheetRef, caution, height, heading, paragraph, sec
                 backdropComponent={renderBackdrop}
                 backgroundStyle={{
                     borderRadius: 24,
+                    backgroundColor: white,
                 }}
                 containerStyle={{
                     borderRadius: 24,
                     marginHorizontal: 20,
-                    marginVertical: 0,
+                    marginBottom: 15,
+                    marginTop: -15,
                 }}
                 handleComponent={() => (
                     <ModalHandle />
@@ -177,6 +179,7 @@ const style = StyleSheet.create({
         fontFamily: 'mulish-regular',
         textAlign: 'center',
         color: bodyText,
+        maxWidth: 205,
     },
     popUpButtonWrapper: {
         display: 'flex',
