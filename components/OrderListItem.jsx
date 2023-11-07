@@ -169,9 +169,9 @@ const OrderListItem = ({item, index, firstOrder, lastOrder, selectable, selected
                         }
                     })}
                 </Text>
-                <Text style={style.orderDatetime}>
+                {/* <Text style={style.orderDatetime}>
                     {item.datetime}
-                </Text>
+                </Text> */}
             </View>
             <View style={style.orderPriceContainer}>
                   <Text style={style.orderPrice}>

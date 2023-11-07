@@ -32,10 +32,10 @@ const EditWarehouse = ({navigation, route}) => {
     // loading state for buttons
     const [isLoading, setIsLoading] = useState(false);
 
-    const { warehouse_name, warehouse_address, warehouse_manager, receive_waybill } = route.params;
+    const { warehouse_name, warehouse_address, warehouse_manager, receive_waybill } = route?.params;
 
     // bottomsheet refs
-    const { bottomSheetRef, bottomSheetOpen, successSheetRef } = useGlobals();
+    const { stackedSheetRef, stackedSheetOpen, successSheetRef } = useGlobals();
 
     // warehouse name 
     const [warehouseName, setWarehouseName] = useState(warehouse_name);
@@ -85,23 +85,23 @@ const EditWarehouse = ({navigation, route}) => {
     const [searchQuery, setSearchQuery] = useState(null);
 
     const openModal = () => {
-        bottomSheetRef?.current?.present();
+        stackedSheetRef?.current?.present();
         Keyboard.dismiss();
         setActiveWarehouseManager(true);
     }
 
     // close modal function
     const closeModal = () => {
-        bottomSheetRef?.current?.close();
+        stackedSheetRef?.current?.close();
         setActiveWarehouseManager(false);
     }
     
     // disable active states for select input if back button is pressed
     useEffect(() => {
-        if (!bottomSheetOpen) {
+        if (!stackedSheetOpen) {
             setActiveWarehouseManager(false);
         }
-    }, [bottomSheetOpen])
+    }, [stackedSheetOpen])
 
 
     // handle save changes
@@ -179,7 +179,7 @@ const EditWarehouse = ({navigation, route}) => {
                                 placeholder={"Selecte a warehouse manager"}
                                 value={warehouseManager?.full_name}
                                 inputFor={"String"}
-                                onPress={() => openModal()}
+                                onPress={openModal}
                                 active={activeWarehouseManager}
                             />
                             {/* receive waybill check box */}
@@ -203,7 +203,7 @@ const EditWarehouse = ({navigation, route}) => {
                 </View>
             </TouchableWithoutFeedback>
             <CustomBottomSheet
-                bottomSheetModalRef={bottomSheetRef}
+                bottomSheetModalRef={stackedSheetRef}
                 sheetTitle={"Select Warehouse"}
                 snapPointsArray={["50%", "75%", "100%"]}
                 autoSnapAt={0}

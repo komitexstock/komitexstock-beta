@@ -142,12 +142,12 @@ const style = StyleSheet.create({
     activeText: {
         color: primaryColor,
         fontFamily: 'mulish-bold',
-        fontSize: 8,
+        fontSize: 10,
     },
     inactiveText: {
         color: neutral,
         fontFamily: 'mulish-bold',
-        fontSize: 8,
+        fontSize: 10,
     },
 });
  

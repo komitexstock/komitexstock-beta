@@ -515,8 +515,6 @@ const Locations = ({navigation}) => {
                         <Header
                             navigation={navigation} 
                             stackName={"Available Locations"} 
-                            iconFunction={() => {}} 
-                            icon={null}
                             unpadded={true}
                         />
                         <View style={style.paragraphWrapper}>
@@ -551,6 +549,7 @@ const Locations = ({navigation}) => {
                 fixed={true}
                 backgroundColor={white}
                 name={"Add Location"}
+                onPress={() => navigation.navigate("AddLocation")}
             />
         </>
     );

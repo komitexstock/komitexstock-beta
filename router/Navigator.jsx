@@ -50,6 +50,7 @@ import Security from '../stacks/Security';
 // others stacks
 import AboutLogistics from '../stacks/AboutLogistics';
 import Locations from '../stacks/Locations';
+import AddLocation from '../stacks/AddLocation';
 import AboutMerchant from '../stacks/AboutMerchant';
 import LogisticsDetails from '../stacks/LogisticsDetails';
 import Reviews from '../stacks/Reviews';
@@ -158,6 +159,11 @@ const Navigator = () => {
                     <Stack.Screen 
                         name="Locations" 
                         component={Locations} 
+                    />
+                    {/* AddLocations stack */}
+                    <Stack.Screen 
+                        name="AddLocation" 
+                        component={AddLocation} 
                     />
                     {/* Reviews stack */}
                     <Stack.Screen 

@@ -98,6 +98,7 @@ const AppProvider = ({children}) => {
     // function to listen for change in navigation, and update currentStack
     useEffect(() => {
         const unsubscribe = navigation.addListener('state', () => {
+            // update currentStack
             setCurrentStack(navigation.getCurrentRoute().name);
         });
 
