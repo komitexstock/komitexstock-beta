@@ -6,6 +6,7 @@ import CloseIcon from "../assets/icons/CloseIcon";
 import { bodyText, primaryColor } from "../style/colors";
 // import globals
 import { useGlobals } from "../context/AppContext";
+import { windowWidth } from "../utils/helpers";
 
 const CustomBottomSheet = ({bottomSheetModalRef, closeModal, snapPointsArray, autoSnapAt, children, sheetTitle, sheetSubtitle, topContentPadding, stacked, disablePanToClose}) => {
 
@@ -62,7 +63,7 @@ const CustomBottomSheet = ({bottomSheetModalRef, closeModal, snapPointsArray, au
                     snapPoints={snapPoints}
                     enablePanDownToClose={disablePanToClose ? false : true}
                     backgroundStyle={{
-                        borderRadius: 32,
+                        borderRadius: 24,
                     }}
                     style={{
                         zIndex: 999,

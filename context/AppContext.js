@@ -119,13 +119,14 @@ const AppProvider = ({children}) => {
                 bottomSheetOpen,
                 calendarSheetOpen,
                 popUpSheetOpen,
-                toast,
+                stackedSheetOpen,
                 setBottomSheetOpen,
                 setCalendarSheetOpen,
                 setFilterSheetOpen,
                 setPopUpSheetOpen,
                 setStackedSheetOpen,
                 setSuccessSheetOpen,
+                toast,
                 setToast,
             }}
         >

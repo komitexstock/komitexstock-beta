@@ -293,6 +293,7 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
                 activeOpacity={1}
                 onLayout={(e) => {
                     const width = e.nativeEvent.layout.width;
+                    // delay for 2 seconds and add the width to the messageRefs
                     setTimeout(() => {
                         messagesRefs.current = messagesRefs.current.map(item => {
                             if (item.id === id) {
