@@ -1,6 +1,5 @@
 import { TouchableWithoutFeedback, TouchableOpacity, View, Text, StyleSheet } from "react-native";
-import { black, blackOut, overlay, primaryColor, secondaryColor, white } from "../style/colors";
-import { windowHeight, windowWidth } from "../utils/helpers";
+import { black, blackOut, white } from "../style/colors";
 // helpers
 
 
@@ -16,7 +15,7 @@ const Menu = ({closeMenu, menuButtons, top, right, hideTouchableBackground, left
             <View 
                 style={[
                     style.menuContainer,
-                    {top: top !== undefined ? top : 42},
+                    top !== undefined ? {top: top} : {top: 42},
                     right !== undefined && {right: right},
                     left !== undefined && {left: left},
                 ]}

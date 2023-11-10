@@ -10,7 +10,7 @@ import {
 // react hooks
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 // icons
-import EditBlackLargeIcon from '../assets/icons/EditBlackLargeIcon.jsx'
+import EditBlackLargeIcon from '../assets/icons/EditBlackLargeIcon';
 // component
 import Header from '../components/Header'
 import CustomButton from '../components/CustomButton'
