@@ -99,7 +99,7 @@ const Toast = () => {
                 style.container,
                 {
                     top: top,
-                    opacity: opacity,
+                    // opacity: opacity,
                     display: toast.visible ? "flex" : "none",
                     // transform: [{ translateY }], // Apply the animated translation
                 },

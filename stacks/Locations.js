@@ -17,11 +17,17 @@ import Mark from "../components/Mark";
 import CustomButton from "../components/CustomButton";
 // colors
 import { bodyText, black, white, background } from "../style/colors";
+// globals
+import { useGlobals } from '../context/AppContext';
 
-const Locations = ({navigation}) => {
+const Locations = ({navigation, route}) => {
 
     // state to store search query
     const [searchQuery, setSearchQuery] = useState("");
+
+    // globals
+    const { setToast } = useGlobals();
+
 
     // states and delivery locations
     const states = [
@@ -493,6 +499,17 @@ const Locations = ({navigation}) => {
         if (searchQuery === "") return setSearchResults(states);
         else return setSearchResults(filterStatesAndLocations(searchQuery));
     }, [searchQuery]);
+
+    // check of route params
+    useEffect(() => {
+        if (route.params?.toastType) {
+            setToast({
+                visible: true,
+                type: route.params?.toastType,
+                text: route.params?.toastMessage,
+            })
+        }
+    }, [route.params])
 
 
     // console.log(searchResults)
