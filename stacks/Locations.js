@@ -89,44 +89,44 @@ const Locations = ({navigation, route}) => {
             opened: false,
             locations: [
                 {
-                id: 1,
-                location: "Benin City",
-                charge: 4000,
+                    id: 1,
+                    location: "Benin City",
+                    charge: 4000,
                 },
                 {
-                id: 2,
-                location: "Auchi",
-                charge: 3500,
+                    id: 2,
+                    location: "Auchi",
+                    charge: 3500,
                 },
                 {
-                id: 3,
-                location: "Igarra",
-                charge: 3000,
+                    id: 3,
+                    location: "Igarra",
+                    charge: 3000,
                 },
                 {
-                id: 4,
-                location: "Okpella",
-                charge: 3500,
+                    id: 4,
+                    location: "Okpella",
+                    charge: 3500,
                 },
                 {
-                id: 5,
-                location: "Ekpoma",
-                charge: 4000,
+                    id: 5,
+                    location: "Ekpoma",
+                    charge: 4000,
                 },
                 {
-                id: 6,
-                location: "Usen",
-                charge: 3500,
+                    id: 6,
+                    location: "Usen",
+                    charge: 3500,
                 },
                 {
-                id: 7,
-                location: "Irrua",
-                charge: 3000,
+                    id: 7,
+                    location: "Irrua",
+                    charge: 3000,
                 },
                 {
-                id: 8,
-                location: "Sabongida-Ora",
-                charge: 4000,
+                    id: 8,
+                    location: "Sabongida-Ora",
+                    charge: 4000,
                 }
             ]
         },
@@ -136,44 +136,44 @@ const Locations = ({navigation, route}) => {
             opened: false,
             locations: [
                 {
-                id: 1,
-                location: "Ikeja",
-                charge: 4000,
+                    id: 1,
+                    location: "Ikeja",
+                    charge: 4000,
                 },
                 {
-                id: 2,
-                location: "Victoria Island",
-                charge: 5000,
+                    id: 2,
+                    location: "Victoria Island",
+                    charge: 5000,
                 },
                 {
-                id: 3,
-                location: "Surulere",
-                charge: 3500,
+                    id: 3,
+                    location: "Surulere",
+                    charge: 3500,
                 },
                 {
-                id: 4,
-                location: "Lekki",
-                charge: 4500,
+                    id: 4,
+                    location: "Lekki",
+                    charge: 4500,
                 },
                 {
-                id: 5,
-                location: "Yaba",
-                charge: 3500,
+                    id: 5,
+                    location: "Yaba",
+                    charge: 3500,
                 },
                 {
-                id: 6,
-                location: "Ikorodu",
-                charge: 4000,
+                    id: 6,
+                    location: "Ikorodu",
+                    charge: 4000,
                 },
                 {
-                id: 7,
-                location: "Apapa",
-                charge: 3500,
+                    id: 7,
+                    location: "Apapa",
+                    charge: 3500,
                 },
                 {
-                id: 8,
-                location: "Epe",
-                charge: 4000,
+                    id: 8,
+                    location: "Epe",
+                    charge: 4000,
                 }
             ]
         },
@@ -183,44 +183,44 @@ const Locations = ({navigation, route}) => {
             opened: false,
             locations: [
                 {
-                id: 1,
-                location: "Awka",
-                charge: 4000,
+                    id: 1,
+                    location: "Awka",
+                    charge: 4000,
                 },
                 {
-                id: 2,
-                location: "Onitsha",
-                charge: 3500,
+                    id: 2,
+                    location: "Onitsha",
+                    charge: 3500,
                 },
                 {
-                id: 3,
-                location: "Nnewi",
-                charge: 3000,
+                    id: 3,
+                    location: "Nnewi",
+                    charge: 3000,
                 },
                 {
-                id: 4,
-                location: "Ekwulobia",
-                charge: 3500,
+                    id: 4,
+                    location: "Ekwulobia",
+                    charge: 3500,
                 },
                 {
-                id: 5,
-                location: "Aguata",
-                charge: 4000,
+                    id: 5,
+                    location: "Aguata",
+                    charge: 4000,
                 },
                 {
-                id: 6,
-                location: "Orumba",
-                charge: 3500,
+                    id: 6,
+                    location: "Orumba",
+                    charge: 3500,
                 },
                 {
-                id: 7,
-                location: "Ogidi",
-                charge: 3000,
+                    id: 7,
+                    location: "Ogidi",
+                    charge: 3000,
                 },
                 {
-                id: 8,
-                location: "Otuocha",
-                charge: 4000,
+                    id: 8,
+                    location: "Otuocha",
+                    charge: 4000,
                 }
             ]
         },
@@ -230,44 +230,44 @@ const Locations = ({navigation, route}) => {
             opened: false, 
             locations: [
                 {
-                id: 1,
-                location: "Port Harcourt",
-                charge: 4500,
+                    id: 1,
+                    location: "Port Harcourt",
+                    charge: 4500,
                 },
                 {
-                id: 2,
-                location: "Obio/Akpor",
-                charge: 4000,
+                    id: 2,
+                    location: "Obio/Akpor",
+                    charge: 4000,
                 },
                 {
-                id: 3,
-                location: "Eleme",
-                charge: 3500,
+                    id: 3,
+                    location: "Eleme",
+                    charge: 3500,
                 },
                 {
-                id: 4,
-                location: "Okrika",
-                charge: 4000,
+                    id: 4,
+                    location: "Okrika",
+                    charge: 4000,
                 },
                 {
-                id: 5,
-                location: "Bonny",
-                charge: 5000,
+                    id: 5,
+                    location: "Bonny",
+                    charge: 5000,
                 },
                 {
-                id: 6,
-                location: "Ahoada",
-                charge: 3500,
+                    id: 6,
+                    location: "Ahoada",
+                    charge: 3500,
                 },
                 {
-                id: 7,
-                location: "Degema",
-                charge: 4000,
+                    id: 7,
+                    location: "Degema",
+                    charge: 4000,
                 },
                 {
-                id: 8,
-                location: "Opobo",
-                charge: 3500,
+                    id: 8,
+                    location: "Opobo",
+                    charge: 3500,
                 }
             ]
         },
@@ -551,6 +551,7 @@ const Locations = ({navigation, route}) => {
                             { searchResults.map(state => (
                                 <Accordion
                                     key={state.id}
+                                    stateId={state.id}
                                     state={state.name}
                                     locations={state.locations}
                                     opened={state.opened}

@@ -20,7 +20,7 @@ if (Platform.OS === 'android') {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-const Accordion = ({state, locations, opened, showEditButton, navigation}) => {
+const Accordion = ({stateId, state, locations, opened, showEditButton, navigation}) => {
     const [expanded, setExpanded] = useState(opened);
 
     const toggleAccordion = () => {
@@ -101,7 +101,10 @@ const Accordion = ({state, locations, opened, showEditButton, navigation}) => {
                         marginTop: 10,
                     }}
                     secondaryButton={true}
-                    onPress={() => navigation.navigate("EditLocation")}
+                    onPress={() => navigation.navigate("EditLocation", {
+                        stateId,
+                        state,
+                    })}
                 />
             )}
         </View>

@@ -21,6 +21,7 @@ import Input from '../components/Input';
 import CustomButton from '../components/CustomButton';
 import CustomBottomSheet from '../components/CustomBottomSheet';
 import Menu from '../components/Menu';
+import LocationListItem from '../components/LocationListItem';
 // colors
 import { background, black, bodyText, listSeparator, primaryColor, subText, white } from '../style/colors';
 // globals
@@ -734,101 +735,25 @@ const AddLocation = ({navigation}) => {
                     ) : (
                         <View style={styles.sublocationsWrapper}>
                             {sublocations.map((sublocation) => (
-                                <View 
-                                    key={sublocation.warehouse_id} 
-                                    style={styles.warehouseWrapper}
-                                    onLayout={(e) => handleWarehouseLayout(sublocation.warehouse_id, e)}
-                                >
-                                    <View style={styles.warehouseInfoWrapper}>
-                                        <Text style={styles.warehouseName}>{sublocation.warehouse_name}</Text>
-                                        <Text style={styles.warehouseLocationCount}>
-                                            {sublocation.towns.length} 
-                                            {sublocation.towns.length > 1 ? " locations" : " location"} 
-                                        </Text>
-                                    </View>
-                                    {sublocation.towns.map((town) => {
-                                        if (town?.editing) return (
-                                            <View key={town.town} style={styles.editTownContainer}>
-                                                <View 
-                                                    style={
-                                                        [styles.townWrapper, 
-                                                        {
-                                                            paddingHorizontal: 16,
-                                                            marginBottom: 4,
-                                                        }
-                                                    ]}
-                                                >
-                                                    <View style={styles.townDetailsWrapper}>
-                                                        <Text style={styles.townNameBold}>{town.town}</Text>
-                                                        <Text style={styles.townEditInstructions}>
-                                                            Edit your sub location details
-                                                        </Text>
-                                                    </View>
-                                                    <TouchableOpacity
-                                                        style={styles.optionButton}
-                                                        onPress={handleCancelEditTown}
-                                                    >
-                                                        <ClearSearch />
-                                                    </TouchableOpacity>
-                                                </View>
-                                                <SelectInput
-                                                    label={"Select Warehouse"}
-                                                    placeholder={"Select Warehouse"}
-                                                    inputFor={"String"}
-                                                    onPress={openStackedModal}
-                                                    value={warehouseInput?.name}
-                                                    active={warehouseInputActive}
-                                                />
-                                                <Input 
-                                                    label={"Charge"}
-                                                    placeholder={"Charge"}
-                                                    value={chargeInput?.toLocaleString()}
-                                                    onChange={updateChargeInput}
-                                                    error={chargeInputError}
-                                                    setError={setChargeInputError}
-                                                    keyboardType={"numeric"}
-                                                />
-                                                <CustomButton 
-                                                    name={"Save"}
-                                                    shrinkWrapper={true}
-                                                    buttonStyle={{width: 152}}
-                                                    wrapperStyle={{        
-                                                        justifyContent: "flex-end",
-                                                        padding: 0,
-                                                    }}
-                                                    inactive={inactiveSaveButton || chargeInput === ""}
-                                                    onPress={handleSaveEditTown}
-                                                />
-                                            </View>
-                                        )
-                                        return (
-                                            <View 
-                                                key={town.town} 
-                                                style={[
-                                                    styles.townWrapper,
-                                                    town?.disabled && {opacity: 0.5}
-                                                ]}
-                                                onLayout={(e) => handleTownLayout(town.id, e)}
-                                            >
-                                                <View style={styles.townDetailsWrapper}>
-                                                    <Text style={styles.townName}>{town.town}</Text>
-                                                    <Text style={styles.townCharge}>
-                                                        ₦ {town.charge.toLocaleString()}.
-                                                        <Text style={styles.decimal}>
-                                                            00
-                                                        </Text>
-                                                    </Text>
-                                                </View>
-                                                <TouchableOpacity
-                                                    style={styles.optionButton}
-                                                    onPress={town?.disabled ? () => {} : () => openMenu(sublocation.warehouse_id, town.id)}
-                                                >
-                                                    <MenuIcon />
-                                                </TouchableOpacity>
-                                            </View>
-                                        )
-                                    })}
-                                </View>
+                                <LocationListItem 
+                                    key={sublocation.warehouse_id}
+                                    warehouseId={sublocation.warehouse_id}
+                                    warehouseName={sublocation.warehouse_name}
+                                    towns={sublocation.towns}
+                                    warehouseInput={warehouseInput}
+                                    warehouseInputActive={warehouseInputActive}
+                                    chargeInput={chargeInput}
+                                    updateChargeInput={updateChargeInput}
+                                    chargeInputError={chargeInputError}
+                                    setChargeInputError={setChargeInputError}
+                                    inactiveSaveButton={inactiveSaveButton}
+                                    openMenu={openMenu}
+                                    openStackedModal={openStackedModal}
+                                    handleSaveEditTown={handleSaveEditTown}
+                                    handleWarehouseLayout={handleWarehouseLayout}
+                                    handleTownLayout={handleTownLayout}
+                                    handleCancelEditTown={handleCancelEditTown}
+                                />
                             ))}
                         </View>
                     )}
@@ -1081,6 +1006,8 @@ const styles = StyleSheet.create({
             }
         ]
     },
+
+    // bottomsheet list styles
     listWrapper: {
         width: "100%",
         display: 'flex',
