@@ -40,47 +40,93 @@ const Locations = ({navigation, route}) => {
                     id: 1,
                     location: "Asaba",
                     charge: 4000,
+                    warehouse_id: 2,
+                    warehouse_name: "Asaba,"
                 },
                 {
                     id: 3,
                     location: "Sapele",
                     charge: 3500,
+                    warehouse_id: 5,
+                    warehouse_name: "Sapele,"
+                },
+                {
+                    id: 10,
+                    location: "Oghara",
+                    charge: 3500,
+                    warehouse_id: 5,
+                    warehouse_name: "Sapele,"
                 },
                 {
                     id: 4,
                     location: "Ughelli",
                     charge: 4000,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 5,
                     location: "Agbor",
                     charge: 3500,
+                    warehouse_id: 4,
+                    warehouse_name: "Agbor,"
                 },
                 {
                     id: 6,
                     location: "Warri",
-                    charge: 4500,
+                    charge: 3000,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 7,
                     location: "Abraka",
                     charge: 4000,
+                    warehouse_id: 6,
+                    warehouse_name: "Abraka,"
+                },
+                {
+                    id: 11,
+                    location: "Obiarurku",
+                    charge: 4000,
+                    warehouse_id: 6,
+                    warehouse_name: "Abraka,"
                 },
                 {
                     id: 8,
                     location: "Ibusa",
                     charge: 3500,
+                    warehouse_id: 2,
+                    warehouse_name: "Asaba,"
                 },
                 {
                     id: 9,
                     location: "Okpanam",
                     charge: 3000,
+                    warehouse_id: 2,
+                    warehouse_name: "Asaba,"
                 },
                 {
                     id: 14,
                     location: "Eku",
                     charge: 4000,
-                }
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
+                },
+                {
+                    id: 12,
+                    location: "Ozoro",
+                    charge: 4000,
+                    warehouse_id: 7,
+                    warehouse_name: "Isoko,"
+                },
+                {
+                    id: 13,
+                    location: "Oleh",
+                    charge: 4000,
+                    warehouse_id: 7,
+                    warehouse_name: "Isoko,"
+                },
             ]
         },
         {
@@ -92,41 +138,57 @@ const Locations = ({navigation, route}) => {
                     id: 1,
                     location: "Benin City",
                     charge: 4000,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 2,
                     location: "Auchi",
                     charge: 3500,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 3,
                     location: "Igarra",
                     charge: 3000,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 4,
                     location: "Okpella",
                     charge: 3500,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 5,
                     location: "Ekpoma",
                     charge: 4000,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 6,
                     location: "Usen",
                     charge: 3500,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 7,
                     location: "Irrua",
                     charge: 3000,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 8,
                     location: "Sabongida-Ora",
                     charge: 4000,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 }
             ]
         },
@@ -139,41 +201,57 @@ const Locations = ({navigation, route}) => {
                     id: 1,
                     location: "Ikeja",
                     charge: 4000,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 2,
                     location: "Victoria Island",
                     charge: 5000,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 3,
                     location: "Surulere",
                     charge: 3500,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 4,
                     location: "Lekki",
                     charge: 4500,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 5,
                     location: "Yaba",
                     charge: 3500,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 6,
                     location: "Ikorodu",
                     charge: 4000,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 7,
                     location: "Apapa",
                     charge: 3500,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 8,
                     location: "Epe",
                     charge: 4000,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 }
             ]
         },
@@ -186,41 +264,57 @@ const Locations = ({navigation, route}) => {
                     id: 1,
                     location: "Awka",
                     charge: 4000,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 2,
                     location: "Onitsha",
                     charge: 3500,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 3,
                     location: "Nnewi",
                     charge: 3000,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 4,
                     location: "Ekwulobia",
                     charge: 3500,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 5,
                     location: "Aguata",
                     charge: 4000,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 6,
                     location: "Orumba",
                     charge: 3500,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 7,
                     location: "Ogidi",
                     charge: 3000,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 8,
                     location: "Otuocha",
                     charge: 4000,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 }
             ]
         },
@@ -233,41 +327,57 @@ const Locations = ({navigation, route}) => {
                     id: 1,
                     location: "Port Harcourt",
                     charge: 4500,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 2,
                     location: "Obio/Akpor",
                     charge: 4000,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 3,
                     location: "Eleme",
                     charge: 3500,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 4,
                     location: "Okrika",
                     charge: 4000,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 5,
                     location: "Bonny",
                     charge: 5000,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 6,
                     location: "Ahoada",
                     charge: 3500,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 7,
                     location: "Degema",
                     charge: 4000,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 8,
                     location: "Opobo",
                     charge: 3500,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 }
             ]
         },
@@ -280,26 +390,36 @@ const Locations = ({navigation, route}) => {
                     id: 1,
                     location: "Yenagoa",
                     charge: 4000,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 2,
                     location: "Brass",
                     charge: 3500,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 3,
                     location: "Nembe",
                     charge: 3000,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 4,
                     location: "Ogbia",
                     charge: 3500,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 5,
                     location: "Sagbama",
                     charge: 4000,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
             ],
         },
@@ -312,26 +432,36 @@ const Locations = ({navigation, route}) => {
                     id: 1,
                     location: "Central Area",
                     charge: 4500,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 2,
                     location: "Garki",
                     charge: 4000,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 3,
                     location: "Wuse",
                     charge: 3500,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 4,
                     location: "Asokoro",
                     charge: 4000,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 5,
                     location: "Maitama",
                     charge: 5000,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
             ],
         },
@@ -344,26 +474,36 @@ const Locations = ({navigation, route}) => {
                     id: 1,
                     location: "Calabar",
                     charge: 4000,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 2,
                     location: "Ikom",
                     charge: 3500,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 3,
                     location: "Ogoja",
                     charge: 3000,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 4,
                     location: "Obudu",
                     charge: 3500,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 5,
                     location: "Ugep",
                     charge: 4000,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
             ],
         },
@@ -376,32 +516,42 @@ const Locations = ({navigation, route}) => {
                     id: 1,
                     location: "Ibadan",
                     charge: 4000,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 2,
                     location: "Ogbomosho",
                     charge: 3500,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 3,
                     location: "Iseyin",
                     charge: 3000,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 4,
                     location: "Oyo",
                     charge: 3500,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
                 {
                     id: 5,
                     location: "Eruwa",
                     charge: 4000,
+                    warehouse_id: 1,
+                    warehouse_name: "Warri,"
                 },
             ],
         }
     ];
 
-        // state to store search results
+    // state to store search results
     const [searchResults, setSearchResults] = useState(states);
 
     const filterStatesAndLocations = (inputString) => {
@@ -551,7 +701,7 @@ const Locations = ({navigation, route}) => {
                             { searchResults.map(state => (
                                 <Accordion
                                     key={state.id}
-                                    stateId={state.id}
+                                    states={states}
                                     state={state.name}
                                     locations={state.locations}
                                     opened={state.opened}

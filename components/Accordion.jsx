@@ -20,7 +20,7 @@ if (Platform.OS === 'android') {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-const Accordion = ({stateId, state, locations, opened, showEditButton, navigation}) => {
+const Accordion = ({states, state, locations, opened, showEditButton, navigation}) => {
     const [expanded, setExpanded] = useState(opened);
 
     const toggleAccordion = () => {
@@ -59,6 +59,8 @@ const Accordion = ({stateId, state, locations, opened, showEditButton, navigatio
 
     const maxCharge = getMaxCharge(locations);
     const minCharge = getMinCharge(locations);
+
+    const stateLocations = states.filter(stateLocation => stateLocation.name === state);
 
     return (<>
         <View style={style.container}>
@@ -102,8 +104,7 @@ const Accordion = ({stateId, state, locations, opened, showEditButton, navigatio
                     }}
                     secondaryButton={true}
                     onPress={() => navigation.navigate("EditLocation", {
-                        stateId,
-                        state,
+                        stateLocations,
                     })}
                 />
             )}

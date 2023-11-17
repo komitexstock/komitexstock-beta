@@ -248,6 +248,8 @@ const AddLocation = ({navigation}) => {
         {id:  4, name: "Agbor"},
         {id:  2, name: "Asaba"},
         {id:  3, name: "Benin"},
+        {id:  8, name: "Kwale"},
+        {id:  7, name: "Isoko"},
         {id:  5, name: "Sapele"},
         {id:  1, name: "Warri"},
     ];
