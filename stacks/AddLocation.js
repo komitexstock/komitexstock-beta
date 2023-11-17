@@ -4,14 +4,12 @@ import {
     View,
     TouchableOpacity,
     TouchableWithoutFeedback,
-    TouchableWithoutFeedbackBase,
     ScrollView,
     Keyboard,
 } from 'react-native'
+// react hooks
 import React, {useState, useEffect, useMemo, useRef} from 'react'
 // icons
-import MenuIcon from "../assets/icons/MenuIcon";
-import ClearSearch from "../assets/icons/ClearSearch";
 import DeleteBlackLargeIcon from "../assets/icons/DeleteBlackLargeIcon";
 import EditBlackLargeIcon from '../assets/icons/EditBlackLargeIcon';
 // components
@@ -23,11 +21,11 @@ import CustomBottomSheet from '../components/CustomBottomSheet';
 import Menu from '../components/Menu';
 import LocationListItem from '../components/LocationListItem';
 // colors
-import { background, black, bodyText, listSeparator, primaryColor, subText, white } from '../style/colors';
+import { background, black, listSeparator, locationItemOverlay, primaryColor, subText, white } from '../style/colors';
 // globals
 import { useGlobals } from '../context/AppContext';
 // helpers
-import { windowHeight } from '../utils/helpers'
+import { windowHeight, windowWidth } from '../utils/helpers'
 // bottom sheet components
 import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 
@@ -37,85 +35,83 @@ const AddLocation = ({navigation}) => {
     // gloabsl
     const { bottomSheetRef, stackedSheetRef, stackedSheetOpen, setToast } = useGlobals();
 
-    const disable = false;
-
     // location state, to store list of locations
     const [sublocations, setSublocations] = useState([
-        {
-            warehouse_id: 1,
-            warehouse_name: "Warri",
-            towns: [
-                {
-                    id: 1,
-                    town: "Warri",
-                    charge: 3000,
-                    editing: false,
-                    disabled: disable,
-                },
-                {
-                    id: 2,
-                    town: "Udu",
-                    charge: 3500,
-                    editing: false,
-                    disabled: disable,
-                },
-                {
-                    id: 3,
-                    town: "Agbarho",
-                    charge: 3500,
-                    editing: false,
-                    disabled: disable,
-                },
-                {
-                    id: 4,
-                    town: "Ughelli",
-                    charge: 4000,
-                    editing: false,
-                    disabled: disable,
-                },
-                {
-                    id: 5,
-                    town: "Jeddo",
-                    charge: 3500,
-                    editing: false,
-                    disabled: disable,
-                }
-            ]
-        },
-        {
-            warehouse_id: 2,
-            warehouse_name: "Asaba",
-            towns: [
-                {
-                    id: 6,
-                    town: "Asaba",
-                    charge: 4000,
-                    editing: false,
-                    disabled: disable,
-                },
-                {
-                    id: 7,
-                    town: "Ibusa",
-                    charge: 4500,
-                    editing: false,
-                    disabled: disable,
-                },
-                {
-                    id: 8,
-                    town: "Ogwashi-Uku",
-                    charge: 5000,
-                    editing: false,
-                    disabled: disable,
-                },
-                {
-                    id: 9,
-                    town: "Ugbolu",
-                    charge: 5000,
-                    editing: false,
-                    disabled: disable,
-                }
-            ]
-        },
+        // {
+        //     warehouse_id: 1,
+        //     warehouse_name: "Warri",
+        //     towns: [
+        //         {
+        //             id: 1,
+        //             town: "Warri",
+        //             charge: 3000,
+        //             editing: false,
+        //             disabled: false,
+        //         },
+        //         {
+        //             id: 2,
+        //             town: "Udu",
+        //             charge: 3500,
+        //             editing: false,
+        //             disabled: false,
+        //         },
+        //         {
+        //             id: 3,
+        //             town: "Agbarho",
+        //             charge: 3500,
+        //             editing: false,
+        //             disabled: false,
+        //         },
+        //         {
+        //             id: 4,
+        //             town: "Ughelli",
+        //             charge: 4000,
+        //             editing: false,
+        //             disabled: false,
+        //         },
+        //         {
+        //             id: 5,
+        //             town: "Jeddo",
+        //             charge: 3500,
+        //             editing: false,
+        //             disabled: false,
+        //         }
+        //     ]
+        // },
+        // {
+        //     warehouse_id: 2,
+        //     warehouse_name: "Asaba",
+        //     towns: [
+        //         {
+        //             id: 6,
+        //             town: "Asaba",
+        //             charge: 4000,
+        //             editing: false,
+        //             disabled: false,
+        //         },
+        //         {
+        //             id: 7,
+        //             town: "Ibusa",
+        //             charge: 4500,
+        //             editing: false,
+        //             disabled: false,
+        //         },
+        //         {
+        //             id: 8,
+        //             town: "Ogwashi-Uku",
+        //             charge: 5000,
+        //             editing: false,
+        //             disabled: false,
+        //         },
+        //         {
+        //             id: 9,
+        //             town: "Ugbolu",
+        //             charge: 5000,
+        //             editing: false,
+        //             disabled: false,
+        //         }
+        //     ]
+        // },
     ]);
 
     // id of selected town
@@ -148,6 +144,7 @@ const AddLocation = ({navigation}) => {
     // warehosue input active
     const [stateInputActive, setStateInputActive] = useState(false);
 
+    // states of nigeria
     const states = [
         "Abia",
         "Adamawa",
@@ -247,12 +244,12 @@ const AddLocation = ({navigation}) => {
 
     // list of warehouse
     const warehouses = [
-        {id:  1, name: "Warri"},
+        {id:  6, name: "Abraka"},
+        {id:  4, name: "Agbor"},
         {id:  2, name: "Asaba"},
         {id:  3, name: "Benin"},
-        {id:  4, name: "Agbor"},
         {id:  5, name: "Sapele"},
-        {id:  6, name: "Abraka"},
+        {id:  1, name: "Warri"},
     ];
 
     // close stacked bottom sheet function
@@ -289,76 +286,78 @@ const AddLocation = ({navigation}) => {
     });
 
 
-    // ref for the warehouses
-    const warehouseComponentRef = useRef([]);
-    // ref for the towns/cities
-    const townComponentRef = useRef([]);
+    // warehouse offsets
+    const [warehouseOffsets, setWarehouseOffsets] = useState([]);
+    // town offsets
+    const [townOffsets, setTownOffsets] = useState([]);
     // scroll view Height
     const scrollViewHeight = useRef(0);
-    // ref of the scroll view component
-    const scrollRef = useRef(null);
-    // scroo view y offset
-    const [scrollYOffset, setScrollYOffset] = useState(0);
-
-    // handle scroll
-    const handleScroll = (offsetY) => {
-        setScrollYOffset(offsetY)
-    }
-
-    // console.log(scrollYOffset);
-
-    // function to scroll to a component
-    const scrollToPosition = (height) => {
-        scrollRef.current?.scrollTo({ y: height, animated: true, duration: 500 });
-    };
-    
 
     // Use onLayout to update warehouse refs
     const handleWarehouseLayout = (warehouse_id, e) => {
-        const index = warehouseComponentRef.current.findIndex(item => item.id === warehouse_id);
-        // console.log(e.nativeEvent.layout);
-        if (index !== -1) {
-            warehouseComponentRef.current[index] = {
-                id: warehouse_id,
-                y: e.nativeEvent.layout.y,
-                height: e.nativeEvent.layout.height,
-            };
-        } else {
-            warehouseComponentRef.current.push({
-                id: warehouse_id,
-                y: e.nativeEvent.layout.y,
-                height: e.nativeEvent.layout.height,
-            });
-        }
 
+        const yOffset = e.nativeEvent.layout.y;
+
+        setWarehouseOffsets(prevOffsets => {
+            if (prevOffsets.some(offset => offset.id === warehouse_id)) {
+                return prevOffsets.map(offset => {
+                    if (offset.id === warehouse_id) {
+                        return {
+                            ...offset,
+                            y: yOffset
+                        }
+                    }
+                    return offset
+                })
+            }
+            return [
+                ...prevOffsets,
+                {
+                    id: warehouse_id,
+                    y: yOffset,
+                }
+
+            ]
+        });
     };
 
     // on layout update town refs
     const handleTownLayout = (town_id, e) => {
-        const index = townComponentRef.current.findIndex(item => item.id === town_id);
-        if (index !== -1) {
-            townComponentRef.current[index] = {
-                id: town_id,
-                y: e.nativeEvent.layout.y,
-            };
-        } else {
-            townComponentRef.current.push({
-                id: town_id,
-                y: e.nativeEvent.layout.y,
-            });
-        }
+
+        const yOffset = e.nativeEvent.layout.y;
+
+        setTownOffsets(prevOffsets => {
+            if (prevOffsets.some(offset => offset.id === town_id)) {
+                return prevOffsets.map(offset => {
+                    if (offset.id === town_id) {
+                        return {
+                            ...offset,
+                            y: yOffset
+                        }
+                    }
+                    return offset
+                })
+            }
+            return [
+                ...prevOffsets,
+                {
+                    id: town_id,
+                    y: yOffset,
+                }
+
+            ]
+        });
     };
 
     // function to get top offset of options menu
-    const getTop = (warehouse_id, town_id) => {
+    const getTopOffset = (warehouse_id, town_id) => {
         // offset of the warehouse container from the top of the screen
         const topOffset = 231;
         // warehouse offset
-        const warehouseOffset = warehouseComponentRef.current.find((item) => item.id === warehouse_id)?.y;
-        const warehouseHeight = warehouseComponentRef.current.find((item) => item.id === warehouse_id)?.height;
-        // console.log("warehouse offset: ", warehouseOffset);
+        const warehouseOffset = warehouseOffsets.find((item) => item.id === warehouse_id)?.y;
+
         // town offset
-        const townOffset = townComponentRef.current.find((item) => item.id === town_id)?.y;
+        const townOffset = townOffsets.find((item) => item.id === town_id)?.y;
         // offset of menu from the top of location component
         // console.log("town offset: ", townOffset);
         const menuOffset = 49;
@@ -369,11 +368,9 @@ const AddLocation = ({navigation}) => {
         // evaluate the top value of menu rendered above option button
         const renderMenuAbove = topOffset + warehouseOffset + townOffset - menuHeight;
 
+        // evaluate final value
         const finalValue = scrollViewHeight.current - renderMenuBelow <= 300 ? renderMenuAbove : renderMenuBelow;
 
-        // evaluate final value
-        if (warehouseOffset === undefined) return scrollViewHeight.current;
-        if (townOffset === undefined) return warehouseOffset + warehouseHeight;
         return finalValue;
     }
 
@@ -383,7 +380,7 @@ const AddLocation = ({navigation}) => {
     const openMenu = (warehouse_id, town_id) => {
 
         // get top offset
-        const top = getTop(warehouse_id, town_id);
+        const top = getTopOffset(warehouse_id, town_id);
         // set menu
         setMenu({
             open: true,
@@ -426,7 +423,10 @@ const AddLocation = ({navigation}) => {
         // dismiss keyboard
         Keyboard.dismiss();
 
-        const checkTownExist = sublocations.some(sublocation => sublocation.towns.some(town => town.town.toLowerCase() === townInput.toLowerCase()));
+        // fujnction to check if town exist in sublocations array
+        const checkTownExist = sublocations.some(sublocation => {
+            return sublocation.towns.some(town => town.town.toLowerCase() === townInput.toLowerCase());
+        });
 
         if (checkTownExist) {
             // show error toast
@@ -459,7 +459,6 @@ const AddLocation = ({navigation}) => {
                         return {
                             ...sublocation,
                             towns: [
-                                ...sublocation.towns,
                                 {
                                     id: generatedTownId,
                                     town: townInput,
@@ -467,6 +466,7 @@ const AddLocation = ({navigation}) => {
                                     editing: false,
                                     disabled: false,
                                 },
+                                ...sublocation.towns,
                             ],
                         }
                     }
@@ -482,9 +482,8 @@ const AddLocation = ({navigation}) => {
                     }
                 });
             }
-            // spread prve warehouses and add the selected town
+            // spread prev warehouses and add the selected town
             return [
-                ...prevSubLocations,
                 {
                     warehouse_id: warehouseInput.id,
                     warehouse_name: warehouseInput.name,
@@ -497,31 +496,18 @@ const AddLocation = ({navigation}) => {
                             disabled: false,
                         }
                     ],
-                }
+                },
+                ...prevSubLocations,
             ]
         });
 
         // reset input states
         setChargeInput("");
         setTownInput("");
-
-        setTimeout(() => {
-            // get top offset required for auto scrolling
-            const scrollTargetHeight = getTop(warehouseInput.id, generatedTownId);
-            // reset warehouse input
-            setWarehouseInput(null);
-
-            // check if component is within the current view
-            if (scrollYOffset - windowHeight < scrollTargetHeight && scrollYOffset + windowHeight > scrollTargetHeight) {
-                // if within view, return auto scroll not required
-                return
-            }
-            // scroll to poition
-            scrollToPosition(scrollTargetHeight);
-            
-        }, 1000);
+        setWarehouseInput(null);
     }
 
+    // handle save location edits
     const handleSaveEditTown = () => {
         // check if warehouse in sub locations
         const warehouseExistInSublocations = sublocations.some(sublocation => sublocation.warehouse_id === warehouseInput.id);
@@ -529,31 +515,74 @@ const AddLocation = ({navigation}) => {
         // set sublocation
         setSublocations(prevSubLocations => {
             // if warehouse exist in sublocation, push into town array
+
+            // get warehouse group from sublocations
+            const subLocationWarehouseGroup = prevSubLocations.find((item) => item.warehouse_id === selectedWarehouseId);
+            // check if multiple towns exist
+            const oneTownsExist = subLocationWarehouseGroup.towns.length === 1;
+            // warehouse changed boolean
+            const warehouseChanged = selectedWarehouseId !== warehouseInput.id;
+            // if only one town exist in warehouse group adjust the array
+            const modSubLocations = oneTownsExist && warehouseChanged ? prevSubLocations.filter(sublocation => sublocation.warehouse_id !== selectedWarehouseId) : prevSubLocations;
+
+            if (oneTownsExist && warehouseChanged) {
+                setWarehouseOffsets(prevOffsets => {
+                    return prevOffsets.filter(offset => offset.id !== selectedWarehouseId);
+                });
+            }
+
             if (warehouseExistInSublocations) {
-                return prevSubLocations.map(sublocation => {
-                    if (sublocation.warehouse_id === selectedWarehouseId) {
+                return modSubLocations.map(sublocation => {
+                    // when warehouse id matches warehouse input id
+                    if (sublocation.warehouse_id === warehouseInput.id) {
+                        // if the original warehouse wasnt changed during edit
+                        if (!warehouseChanged) {
+                            return {
+                                ...sublocation,
+                                towns: sublocation?.towns.map(town => {
+                                    if (town.id === selectedTownId) {
+                                        return {
+                                            ...town,
+                                            charge: chargeInput,
+                                            editing: false,
+                                            disabled: false,
+                                        }
+                                    } else {
+                                        return {
+                                            ...town,
+                                            disabled: false,
+                                        }
+                                    }
+                                }),
+                            }
+                        }
+                        // if the warehouse was changed 
                         return {
                             ...sublocation,
-                            towns: sublocation.towns.map(town => {
-                                if (town.id === selectedTownId) {
-                                    return {
-                                        ...town,
-                                        charge: chargeInput,
-                                        editing: false,
-                                        disabled: false,
-                                    }
-                                } else {
+                            towns: [
+                                ...sublocation?.towns.map(town => {
                                     return {
                                         ...town,
                                         disabled: false,
                                     }
+                                }),
+                                {
+                                    id: selectedTownId,
+                                    town: sublocations.find((item) => item.warehouse_id === selectedWarehouseId)
+                                    .towns.find((item) => item.id === selectedTownId).town,
+                                    charge: chargeInput,
+                                    editing: false,
+                                    disabled: false,
                                 }
-                            }),
+                            ]
                         }
                     }
+
+                    // spread other warehouse
                     return {
                         ...sublocation,
-                        towns: sublocation.towns.map(town => {
+                        // remove that town if it exist in another warehouse
+                        towns: sublocation?.towns.filter(town => town.id !== selectedTownId).map(town => {
                             return {
                                 ...town,
                                 disabled: false,
@@ -562,9 +591,20 @@ const AddLocation = ({navigation}) => {
                     }
                 });
             }
-            // spread prve warehouses and add the selected town
+            // spread prev warehouses and add the selected town
             return [
-                ...prevSubLocations,
+                ...modSubLocations.map(sublocation => {
+                    return {
+                        ...sublocation,
+                        // remove that town if it exist in another warehouse
+                        towns: sublocation.towns.filter(town => town.id !== selectedTownId).map(town => {
+                            return {
+                                ...town,
+                                disabled: false,
+                            }
+                        }),
+                    }
+                }),
                 {
                     warehouse_id: warehouseInput.id,
                     warehouse_name: warehouseInput.name,
@@ -585,6 +625,10 @@ const AddLocation = ({navigation}) => {
         // reset input states
         setWarehouseInput(null);
         setChargeInput("");
+
+        // reset selected ids
+        setSelectedTownId(null);
+        setSelectedWarehouseId(null);
     }
 
     // finction to swicth location to edit state
@@ -646,7 +690,6 @@ const AddLocation = ({navigation}) => {
         setChargeInput("");
     }
 
-
     // handle delete town
     const handleDeleteTown = () => {
         setSublocations(prevSubLocations => {
@@ -656,10 +699,20 @@ const AddLocation = ({navigation}) => {
             const multipleTownsExist = subLocationWarehouseGroup.towns.length > 1;
             // if only one town exist in warehouse group
             if (!multipleTownsExist) {
+                // if warehouse no longer exist, delete warehouse ref from components refs
+                setWarehouseOffsets(prevOffsets => {
+                    return prevOffsets.filter(offset => offset.id !== selectedWarehouseId);
+                });
+
                 return prevSubLocations.filter(sublocation => sublocation.warehouse_id !== selectedWarehouseId);
             }
             // if multiple towns exist
             return prevSubLocations.map(sublocation => {
+                // delete town from component refs
+                setTownOffsets(prevOffsets => {
+                    return prevOffsets.filter(offset => offset.id !== selectedTownId);
+                });
+
                 return {
                     warehouse_id: sublocation.warehouse_id,
                     warehouse_name: sublocation.warehouse_name,
@@ -668,8 +721,11 @@ const AddLocation = ({navigation}) => {
             });
 
         });
+        // reset selected ids
         setSelectedTownId(null);
         setSelectedWarehouseId(null);
+
+        // close menu
         closeMenu();
     }
 
@@ -699,8 +755,6 @@ const AddLocation = ({navigation}) => {
         <ScrollView 
             style={styles.container}
             showsVerticalScrollIndicator={false}
-            ref={scrollRef}
-            onScroll={(e) => handleScroll(e.nativeEvent.contentOffset.y)}
             onContentSizeChange={(contentWidth, contentHeight) => {
                 scrollViewHeight.current = contentHeight;
             }}
@@ -708,9 +762,10 @@ const AddLocation = ({navigation}) => {
             {/* header component */}
             <Header
                 navigation={navigation} 
-                stackName={"Add Location"} 
+                stackName={"Add Location"}
                 unpadded={true}
             />
+            {/* main containers */}
             <View style={styles.main}>
                 <SelectInput
                     // state input
@@ -763,7 +818,7 @@ const AddLocation = ({navigation}) => {
             {menu.open && (
                 <Menu
                     top={menu.top}
-                    right={20}
+                    right={40}
                     menuButtons={menuButtons}
                     closeMenu={closeMenu}
                 />
@@ -921,91 +976,15 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         gap: 10,
     },
-    warehouseWrapper: {
-        width: "100%",
-        display: "flex",
-        flexDirection: 'column',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-        gap: 5,
-        padding: 12,
-        backgroundColor: white,
-        borderRadius: 12,
+    locationItemOverlay: {
+        height: 74,
+        width: windowWidth,
+        backgroundColor: locationItemOverlay,
+        position: "absolute",
+        top: windowHeight/2 - 50,
+        left: 0,
     },
-    warehouseInfoWrapper: {
-        marginTop: 3,
-        marginBottom: 5,
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        width: "100%",
-    },
-    warehouseName: {
-        fontFamily: 'mulish-semibold',
-        fontSize: 12,
-        color: subText,
-    },  
-    warehouseLocationCount: {
-        fontFamily: 'mulish-semibold',
-        fontSize: 10,
-        color: black,
-    },  
-    townWrapper: {
-        width: "100%",
-        display: "flex",
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingVertical: 15,
-        paddingLeft: 16,
-        paddingRight: 12,
-        backgroundColor: background,
-        borderRadius: 12,
-    },
-    editTownContainer: {
-        width: "100%",
-        display: "flex",
-        flexDirection: 'column',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-        gap: 12,
-        marginBottom: 15,
-    },
-    townName: {
-        fontSize: 12,
-        fontFamily: 'mulish-medium',
-        color: bodyText,
-        marginBottom: 4,
-    },
-    townNameBold: {
-        fontSize: 12,
-        fontFamily: 'mulish-bold',
-        color: black,
-        marginBottom: 4,
-    },
-    townEditInstructions: {
-        fontSize: 12,
-        fontFamily: 'mulish-regular',
-        color: bodyText,
-    },
-    townCharge: {
-        fontSize: 12,
-        fontFamily: 'mulish-semibold',
-        color: black,
-    },
-    decimal: {
-        fontSize: 12,
-        fontFamily: 'mulish-semibold',
-        color: subText,
-    },
-    optionButton: {
-        transform: [
-            {
-                rotate: '90deg'
-            }
-        ]
-    },
+
 
     // bottomsheet list styles
     listWrapper: {

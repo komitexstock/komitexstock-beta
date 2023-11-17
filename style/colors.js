@@ -11,6 +11,7 @@ export const subText = "#22222299"; // text color level 3
 export const blackOut = "#000000";
 export const accent = "#E66D1C";
 export const linkText = "#B3DFFD";
+export const locationItemOverlay = "#DEDADA33";
 export const accentLight = "#E66D1C0D";
 export const yellowLight = "#FFFF000D";
 export const greenLight = "#0398550D";

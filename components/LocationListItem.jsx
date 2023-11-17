@@ -122,6 +122,7 @@ const styles = StyleSheet.create({
         padding: 12,
         backgroundColor: white,
         borderRadius: 12,
+        // minHeight: 64,
     },
     warehouseInfoWrapper: {
         marginTop: 3,
@@ -153,6 +154,7 @@ const styles = StyleSheet.create({
         paddingRight: 12,
         backgroundColor: background,
         borderRadius: 12,
+        height: 64,
     },
     editTownContainer: {
         width: "100%",

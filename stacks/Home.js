@@ -49,6 +49,8 @@ import { orderList } from "../data/orderList";
 const Home = ({navigation}) => {
 
     const { authData } = useAuth();
+
+    // console.log("Auth Data:", authData);
       
     // sheef refs
     const { bottomSheetRef, filterSheetRef, calendarSheetRef, calendarSheetOpen } = useGlobals();
