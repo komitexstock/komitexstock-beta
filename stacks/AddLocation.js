@@ -820,7 +820,7 @@ const AddLocation = ({navigation}) => {
             {menu.open && (
                 <Menu
                     top={menu.top}
-                    right={40}
+                    right={20}
                     menuButtons={menuButtons}
                     closeMenu={closeMenu}
                 />

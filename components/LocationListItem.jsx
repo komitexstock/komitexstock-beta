@@ -7,6 +7,7 @@ import CustomButton from './CustomButton'
 // icons
 import MenuIcon from "../assets/icons/MenuIcon";
 import ClearSearch from "../assets/icons/ClearSearch";
+// colors
 import { background, black, bodyText, subText, white } from '../style/colors'
 
 const LocationListItem = ({warehouseId, warehouseName, towns, warehouseInput, warehouseInputActive, chargeInput, updateChargeInput, chargeInputError, setChargeInputError, inactiveSaveButton, openMenu, openStackedModal, handleSaveEditTown, handleWarehouseLayout, handleTownLayout, handleCancelEditTown}) => {
