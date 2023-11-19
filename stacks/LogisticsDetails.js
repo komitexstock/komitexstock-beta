@@ -752,7 +752,7 @@ const LogisticsDetails = ({navigation}) => {
                                     <Text style={style.policyText}>Inactive Inventory: 3 months maximum</Text>
                                 </View>
                                 <TouchableOpacity
-                                    onPress={() => navigation.navigate('CompanyPolicy')}
+                                    onPress={() => navigation.navigate('ReadBusinessPolicy')}
                                 >
                                     <Text style={style.showAll}>Show more</Text>
                                 </TouchableOpacity>

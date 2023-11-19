@@ -55,7 +55,7 @@ import EditLocation from '../stacks/EditLocation';
 import AboutMerchant from '../stacks/AboutMerchant';
 import LogisticsDetails from '../stacks/LogisticsDetails';
 import Reviews from '../stacks/Reviews';
-import CompanyPolicy from '../stacks/CompanyPolicy';
+import BusinessPolicy from '../stacks/BusinessPolicy';
 import CaptureImage from '../stacks/CaptureImage';
 import WriteReview from '../stacks/WriteReview';
 import ViewImage from '../stacks/ViewImage';
@@ -178,8 +178,8 @@ const Navigator = () => {
                     />
                     {/* Company Policy stack */}
                     <Stack.Screen 
-                        name="CompanyPolicy" 
-                        component={CompanyPolicy} 
+                        name="BusinessPolicy" 
+                        component={BusinessPolicy} 
                     />
                     {/* Account stack */}
                     <Stack.Screen 

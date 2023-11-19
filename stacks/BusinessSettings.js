@@ -19,7 +19,7 @@ const BusinessSettings = ({navigation}) => {
             id: 2,
             title: "Business Policy",
             mainInfoText: "Let your merchants know how you operate",
-            onPress: () => {},
+            onPress: () => navigation.navigate("BusinessPolicy"),
         },
         {
             id: 3,
