@@ -655,6 +655,8 @@ const style = StyleSheet.create({
         width: 80,
         height: 80,
         position: 'relative',
+        borderRadius: 40,
+        backgroundColor: white,
     },
     profileImage: {
         width: 80,

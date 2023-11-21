@@ -6,10 +6,8 @@ import {
     StyleSheet,
     Text
 } from "react-native";
-// icons
-import MenuIcon from "../assets/icons/MenuIcon";
 // colors
-import { primaryColor, secondaryColor, white, background, black, subText, verticalRule } from "../style/colors";
+import { white, background, black, subText, verticalRule } from "../style/colors";
 // react hooks
 import { useEffect, useState, useRef } from "react";
 // components
@@ -65,7 +63,7 @@ const Products = ({navigation}) => {
         {
             id: 1,
             logistics: "Komitex Logistics",
-            imageUrl: '../assets/images/komitex.png',
+            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fkomitex.png?alt=media&token=a8039272-66b6-4e24-8ab1-a4dfd40503f8',
             totalLocations: 17,
             totalStock: 25,
             lowStock: true,
@@ -77,7 +75,7 @@ const Products = ({navigation}) => {
         {
             id: 2,
             logistics: "DHL",
-            imageUrl: '../assets/images/dhl.png',
+            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fdhl.png?alt=media&token=e113f106-0eaf-420e-9fe4-488cb8e6c26d',
             totalLocations: 15,
             totalStock: 17,
             lowStock: false,
@@ -89,7 +87,7 @@ const Products = ({navigation}) => {
         {
             id: 3,
             logistics: "Fedex",
-            imageUrl: '../assets/images/fedex.png',
+            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Ffedex.png?alt=media&token=d943aea6-37ec-4f61-a589-01ad7bdd1299',
             totalLocations: 11,
             totalStock: 9,
             lowStock: false,
@@ -101,7 +99,7 @@ const Products = ({navigation}) => {
         {
             id: 4,
             logistics: "UPS",
-            imageUrl: '../assets/images/ups.png',
+            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fups.png?alt=media&token=37224ee1-4460-4fec-a39b-3af040b65fe0',
             totalLocations: 5,
             totalStock: 7,
             lowStock: false,
@@ -113,7 +111,7 @@ const Products = ({navigation}) => {
         {
             id: 5,
             logistics: "Amazon Logistics",
-            imageUrl: '../assets/images/amazon.png',
+            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Famazon.png?alt=media&token=7941fa73-daa6-4840-9ed8-96371d4b67a6',
             totalLocations: 20,
             totalStock: 68,
             lowStock: false,
@@ -125,7 +123,7 @@ const Products = ({navigation}) => {
         {
             id: 6,
             logistics: "On Trac",
-            imageUrl: '../assets/images/ontrac.png',
+            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fontrac.png?alt=media&token=67e52ec4-51e3-4032-a6b7-8f9533e1a7b6',
             totalLocations: 17,
             totalStock: 43,
             lowStock: false,
@@ -137,7 +135,7 @@ const Products = ({navigation}) => {
         {
             id: 7,
             logistics: "Laser Ship",
-            imageUrl: '../assets/images/lasership.png',
+            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Flasership.png?alt=media&token=803e763b-63e7-4c57-ab6e-beb2a9c35e54',
             totalLocations: 18,
             totalStock: 425,
             lowStock: false,
@@ -149,7 +147,7 @@ const Products = ({navigation}) => {
         {
             id: 8,
             logistics: "Tranex",
-            imageUrl: '../assets/images/tranex.png',
+            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Ftranex.png?alt=media&token=b7d75e7b-26f2-4d71-83b8-48a24a3167e2',
             totalLocations: 30,
             totalStock: 72,
             lowStock: false,
@@ -158,6 +156,11 @@ const Products = ({navigation}) => {
                 navigation.navigate("Products");
             }
         },
+        {
+            id: 9,
+            onPress: () => navigation.navigate("AddLogistics"),
+            addNew: true,
+        }
     ];
 
     // logistics list array
@@ -212,17 +215,25 @@ const Products = ({navigation}) => {
         },
     ];
 
-    const [inventories, setInventories] = useState(() => {
-        if (authData?.account_type === "Logistics") {
-            return [
-                {id: "stickyLeft"},
-                {id: "stickyRight"},
-                ...merchantList
-            ];
-        } else {
-            return logisticsList;
-        }
-    });
+    const [inventories, setInventories] = useState([]);
+
+    useEffect(() => {
+
+        setInventories(() => {
+            if (authData?.account_type === "Logistics") {
+                return [
+                    {id: "stickyLeft"},
+                    {id: "stickyRight"},
+                    ...merchantList
+                ];
+            } 
+
+            if (authData?.account_type === "Merchant") {
+                return logisticsList;
+            }
+        });
+        
+    }, [])
 
     // sticky header offset
     const stickyHeaderOffset = useRef(0);
@@ -245,7 +256,7 @@ const Products = ({navigation}) => {
                     inlineArrow={authData?.account_type !== "Merchant"}
                     backgroundColor={background}
                 />
-                {authData?.account_type !== "Merchant" && (
+                {authData?.account_type === "Logistics" && (
                     <View style={style.warehouseBannerWrapper}>
                         <View style={style.warehouseBanner}>
                             <View style={style.warehoseInfo}>
@@ -304,9 +315,9 @@ const Products = ({navigation}) => {
                                     {/* navigate to AddLogistics page/stack */}
                                     <CustomButton
                                         secondaryButton={true}
-                                        name={"Add Logistics"}
+                                        name={"Add Products"}
                                         shrinkWrapper={true}
-                                        onPress={() => navigation.navigate("AddLogistics")}
+                                        onPress={() => navigation.navigate("AddProduct")}
                                         unpadded={true}
                                         wrapperStyle={{marginBottom: 22}}
                                     />
@@ -368,6 +379,7 @@ const Products = ({navigation}) => {
                                             lowStock={item.lowStock}
                                             verified={item.verified}
                                             onPress={item.onPress}
+                                            addNew={item?.addNew}
                                         />
                                     </View>
                                 )   

@@ -36,7 +36,7 @@ const ProductCard = ({product_name, quantity, price, imageUrl, onPress}) => {
             <View style={style.imageWrapper}>
                 <Image 
                     style={style.productImage}
-                    source={imageUrl}
+                    source={{uri: imageUrl}}
                 />
             </View>
             {/* product details */}
