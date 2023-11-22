@@ -11,12 +11,15 @@ import {
     Linking
 } from "react-native";
 // bottomsheet component
-import { black, bodyText, inputLabel, listSeperator3, primaryColor, secondaryColor, white } from "../style/colors";
+import { black, bodyText, inputLabel, listSeparator, listSeperator3, primaryColor, secondaryColor, subText, white } from "../style/colors";
 // components
 import Input from "../components/Input";
 import CustomButton from "../components/CustomButton";
 import AccountButtons from "../components/AccountButtons";
 import CustomBottomSheet from "../components/CustomBottomSheet";
+import WarehouseListItem from "../components/WarehouseListItem";
+// bottomsheet components
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 // react hook
 import { useMemo, useState } from "react";
 // image picker method
@@ -43,8 +46,53 @@ const EditProduct = ({navigation, route}) => {
     // global variables
     const { bottomSheetRef, setToast } = useGlobals();
 
+    // warehouses
+    const warehouses = [
+        {
+            id: 1,
+            warehouse_name: "Warri",
+            warehouse_address: "276 PTI road",
+            stock: 3,
+        },
+        {
+            id: 2,
+            warehouse_name: "Isoko",
+            warehouse_address: "123 Isoko Street",
+            stock: 2,
+        },
+        {
+            id: 3,
+            warehouse_name: "Asaba",
+            warehouse_address: "456 Asaba Avenue",
+            stock: 1,
+        },
+        {
+            id: 4,
+            warehouse_name: "Kwale",
+            warehouse_address: "789 Kwale Road",
+            stock: 1,
+        },
+        {
+            id: 5,
+            warehouse_name: "Agbor",
+            warehouse_address: "101 Agbor Lane",
+            stock: 1,
+        },
+        {
+            id: 6,
+            warehouse_name: "Benin",
+            warehouse_address: "654 Benin Street",
+            stock: 3,
+        },
+    ];
+
+    // total stock
+    const totalStock = warehouses.reduce((acc, curr) => {
+        return acc + curr.stock;
+    }, 0);
+
     // total warehouses
-    const totalWarehouses = 4;
+    const totalWarehouses = warehouses.length;
 
     // total logistics
     const totalLogistics = 5;
@@ -195,7 +243,7 @@ const EditProduct = ({navigation, route}) => {
                                             {product_name}
                                         </Text>
                                         <Text style={style.productStock}>
-                                            {quantity}
+                                            {totalStock}
                                             <Text style={style.faintText}> in stock</Text>
                                         </Text>
                                         <TouchableOpacity 
@@ -313,6 +361,23 @@ const EditProduct = ({navigation, route}) => {
                         unpadded={true}
                     />
                 ))}
+
+                { modalType === "Warehouses" && (
+                    <BottomSheetScrollView 
+                        showsVerticalScrollIndicator={false}
+                    >
+                        <View style={style.warehouseListWrapper}>
+                            {warehouses.map((item) => (
+                                <WarehouseListItem
+                                    warehouse_address={item.warehouse_address}
+                                    warehouse_name={item.warehouse_name}
+                                    stock={item.stock}
+                                    key={item.id}
+                                />
+                            ))}
+                        </View>
+                    </BottomSheetScrollView>
+                )}
             </CustomBottomSheet>
         </>
     );
@@ -453,6 +518,15 @@ const style = StyleSheet.create({
         bottom: 30,
         // marginTop: 50,
     },
+    warehouseListWrapper: {
+        width: "100%",
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
+        gap: 10,
+    },
+
 })
 
 
