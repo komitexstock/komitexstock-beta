@@ -515,7 +515,7 @@ const SendOrder = ({navigation, route}) => {
                 {/* if modal type is logistics, render logistics modal content */}
                 {modal.type === "Logistics" && (
                     <AddLogisticsModalContent 
-                    handleSelectedLogistics={handleSelectedLogistics}
+                        handleSelectedLogistics={handleSelectedLogistics}
                     />
                 )}
                 {/* if modal type is location, render location modal content */}

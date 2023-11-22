@@ -18,6 +18,7 @@ import CustomButton from "../components/CustomButton";
 import AccountButtons from "../components/AccountButtons";
 import CustomBottomSheet from "../components/CustomBottomSheet";
 import WarehouseListItem from "../components/WarehouseListItem";
+import BusinessListItem from "../components/BusinessListItem";
 // bottomsheet components
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 // react hook
@@ -86,6 +87,38 @@ const EditProduct = ({navigation, route}) => {
         },
     ];
 
+    // logistics list
+    const logistics = [
+        {
+            business_id: "E3F7J1g4X6r9L2Y",
+            business_name: "Komitex Logistics",
+            imageUrl: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fkomitex.png?alt=media&token=a8039272-66b6-4e24-8ab1-a4dfd40503f8",
+            verified: true,
+            stock: 3,
+        },
+        {
+            business_id: "H9i2L4t6R3d7K1w",
+            business_name: "Fedex",
+            imageUrl: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Ffedex.png?alt=media&token=d943aea6-37ec-4f61-a589-01ad7bdd1299",
+            verified: true,
+            stock: 5,
+        },
+        {
+            business_id: "X7y2G4z9Q1a3w6J",
+            business_name: "UPS",
+            imageUrl: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fups.png?alt=media&token=37224ee1-4460-4fec-a39b-3af040b65fe0",
+            verified: false,
+            stock: 2,
+        },
+        {
+            business_id: "N5o8V2s6W3D1r4E",
+            business_name: "DHL",
+            imageUrl: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fdhl.png?alt=media&token=e113f106-0eaf-420e-9fe4-488cb8e6c26d",
+            verified: true,
+            stock: 8,
+        },
+    ];
+
     // total stock
     const totalStock = warehouses.reduce((acc, curr) => {
         return acc + curr.stock;
@@ -95,7 +128,7 @@ const EditProduct = ({navigation, route}) => {
     const totalWarehouses = warehouses.length;
 
     // total logistics
-    const totalLogistics = 5;
+    const totalLogistics = logistics.length;
 
     // state to store product name
     const [productName, setProductName] = useState(product_name);
@@ -373,6 +406,25 @@ const EditProduct = ({navigation, route}) => {
                                     warehouse_name={item.warehouse_name}
                                     stock={item.stock}
                                     key={item.id}
+                                />
+                            ))}
+                        </View>
+                    </BottomSheetScrollView>
+                )}
+
+                { modalType === "Logistics" && (
+                    <BottomSheetScrollView 
+                        showsVerticalScrollIndicator={false}
+                    >
+                        <View style={style.warehouseListWrapper}>
+                            {logistics.map((item) => (
+                                <BusinessListItem
+                                    key={item.business_id}
+                                    banner_image={item.imageUrl}
+                                    verified={item.verified}
+                                    business_name={item.business_name}
+                                    stock={item.stock}
+                                    disableClick={true}
                                 />
                             ))}
                         </View>

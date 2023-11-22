@@ -267,7 +267,7 @@ const Products = ({navigation, route}) => {
 
         // product Scope, variable to control whether a product is being viewed
         // accross multiple logistics or across a single logistics with multiple warehouses
-        const productScope = "Warehouses"
+        const productScope = "Warehouses";
 
         navigation.navigate("EditProduct", {
             id: selectedProduct.id,
