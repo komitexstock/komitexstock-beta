@@ -9,7 +9,10 @@ import {
 // colors
 import { black, bodyText, primaryColor, secondaryColor, white } from "../style/colors";
 // components
-import Indicator from '../components/Indicator'
+import Indicator from '../components/Indicator';
+import { windowWidth } from "../utils/helpers";
+
+const maxCardWidth = windowWidth/2 - 28;
 
 const ProductCard = ({product_name, quantity, price, imageUrl, onPress}) => {
     // imageUrl => string | imagePath
@@ -46,7 +49,7 @@ const ProductCard = ({product_name, quantity, price, imageUrl, onPress}) => {
                     <Text style={style.quantity}>{quantity} <Text style={style.stock}>in stock</Text></Text>
                 </View>
                 {/* display price as a string with comma seperations */}
-                <Text style={style.price}>₦{price.toLocaleString()}</Text>
+                <Text style={style.price}>₦{price?.toLocaleString()}</Text>
             </View>
         </TouchableOpacity>
     );

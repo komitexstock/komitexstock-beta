@@ -4,14 +4,16 @@ import {
     FlatList, 
     TouchableWithoutFeedback,
     StyleSheet,
-    Text
+    Text,
+    TouchableOpacity,
 } from "react-native";
 // colors
-import { white, background, black, subText, verticalRule } from "../style/colors";
+import { white, background, black, subText, verticalRule, primaryColor, neutral } from "../style/colors";
 // react hooks
 import { useEffect, useState, useRef } from "react";
 // components
 import BusinessCard from "../components/BusinessCard";
+import ProductCard from "../components/ProductCard";
 import SearchBar from "../components/SearchBar";
 import Header from "../components/Header";
 import CustomButton from "../components/CustomButton";
@@ -29,8 +31,11 @@ const Products = ({navigation}) => {
     // auth data
     const { authData } = useAuth();
 
+    // tabs, default as Outgoing for Merchants
+    const [tab, setTab] = useState("Logistics");
+
     // stats array
-    const stats = [
+    const logisticsStats = [
         {
             id: 1,
             title: "Total Inventories",
@@ -42,6 +47,24 @@ const Products = ({navigation}) => {
             id: 2,
             title: "Total Products",
             presentValue: 215,
+            oldValue: null,
+            decimal: false,
+        },
+    ];
+
+    // merchant stats, stats that would be viewed by a merchnat account
+    const merchantStats = [
+        {
+            id: 1,
+            title: "Total Logistics",
+            presentValue: 8,
+            oldValue: null,
+            decimal: false,
+        },
+        {
+            id: 2,
+            title: "Total Products",
+            presentValue: 9,
             oldValue: null,
             decimal: false,
         },
@@ -215,11 +238,115 @@ const Products = ({navigation}) => {
         },
     ];
 
+    // list of products
+    const productsList = [
+        {
+            id: 1,
+            product_name: "Maybach Sunglasses",
+            quantity: 7,
+            price: 20000,
+            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/products%2Fmaybach-sunglasses.jpg?alt=media&token=95200745-ada8-4787-9779-9d00c56a18a5',
+            onPress: () => handleEditProduct(1),
+        },
+        {
+            id: 2,
+            product_name: "Accurate Watch",
+            quantity: 3,
+            price: 33000,
+            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/products%2Faccurate-watch.png?alt=media&token=4330bcd1-e843-434c-97cb-bf84c49b82b0',
+            onPress: () => handleEditProduct(2),
+        },
+        {
+            id: 3,
+            product_name: "Black Sketchers",
+            quantity: 0,
+            price: 35000,
+            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/products%2Fblack-sketchers.png?alt=media&token=a07e02ac-610d-4da0-9527-2b6e9e85d56d',
+            onPress: () => handleEditProduct(3),
+        },
+        {
+            id: 4,
+            product_name: "Brown Clarks",
+            quantity: 11,
+            price: 40000,
+            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/products%2FClarks.jpg?alt=media&token=70431e2c-fbcd-4e1c-9cf3-3d35861f98d3',
+            onPress: () => handleEditProduct(4),
+        },
+        {
+            id: 5,
+            product_name: "Pheonix Sneakers",
+            quantity: 2,
+            price: 25000,
+            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/products%2Fsneakers.png?alt=media&token=fbb14f47-c2b7-4d2a-b54a-8485ccf7a648',
+            onPress: () => handleEditProduct(5),
+        },
+        {
+            id: 6,
+            product_name: "Perfectly Useless Morning Watch",
+            quantity: 9,
+            price: 32000,
+            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/products%2Fperfectly-useless-mornig-watch.png?alt=media&token=edb35f3a-deb6-498b-9c94-d9392745442c',
+            onPress: () => handleEditProduct(6),
+        },
+        {
+            id: 7,
+            product_name: "Ricochet Watch",
+            quantity: 15,
+            price: 30000,
+            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/products%2Fricochet-watch.png?alt=media&token=fbf05657-e511-4d1f-a0db-3b9419d4ba5a',
+            onPress: () => handleEditProduct(7),
+        },
+        {
+            id: 9,
+            product_name: "Timberland",
+            quantity: 10,
+            price: 35000,
+            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/products%2FTimberland.jpg?alt=media&token=29480738-8990-45c9-9b74-b2d24c0fa722',
+            onPress: () => handleEditProduct(9),
+        },
+        {
+            id: 10,
+            product_name: "Useless Afternoon Watch",
+            quantity: 19,
+            price: 32000,
+            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/products%2Fuseless-afternoon-watch.png?alt=media&token=42f68679-4627-4846-a37e-87a1ff4a2a66',
+            onPress: () => handleEditProduct(10),
+        },
+    ];
+
+    const handleEditProduct = (id) => {
+        // console.log("right here");
+
+        const selectedProduct = inventories.find(product => product.id === id);
+
+        // product Scope, variable to control whether a product is being viewed
+        // accross multiple logistics or across a single logistics with multiple warehouses
+        const productScope = "Logistics";
+
+        navigation.navigate("EditProduct", {
+            id: selectedProduct.id,
+            product_name: selectedProduct.product_name,
+            initial_price: selectedProduct.price,
+            quantity: selectedProduct.quantity,
+            image_uri: selectedProduct.imageUrl,
+            product_scope: productScope,
+        });
+
+    }
+
     const [inventories, setInventories] = useState([]);
 
     useEffect(() => {
 
         setInventories(() => {
+            if (tab === "Products") {
+                return [
+                    {id: "stickyLeft"},
+                    {id: "stickyRight"},
+                    ...productsList
+                ];
+            }
+
             if (authData?.account_type === "Logistics") {
                 return [
                     {id: "stickyLeft"},
@@ -227,13 +354,17 @@ const Products = ({navigation}) => {
                     ...merchantList
                 ];
             } 
-
+            
             if (authData?.account_type === "Merchant") {
-                return logisticsList;
+                return [
+                    {id: "stickyLeft"},
+                    {id: "stickyRight"},
+                    ...logisticsList
+                ];
             }
         });
         
-    }, [])
+    }, [tab])
 
     // sticky header offset
     const stickyHeaderOffset = useRef(0);
@@ -290,28 +421,27 @@ const Products = ({navigation}) => {
                     <FlatList 
                         showsVerticalScrollIndicator={false}
                         onScroll={animateHeaderOnScroll}
-                        stickyHeaderIndices={authData?.account_type === "Logistics" ? [1] : [0]}
+                        stickyHeaderIndices={[1]}
                         ListHeaderComponent={
                             <View 
-                                style={[
-                                    style.headerWrapper,
-                                    // if account is merchant and scroll height is greater than offset activate shadow
-                                    authData?.account_type === "Merchant" && scrollOffset > stickyHeaderOffset.current && {elevation: 3}
-                                ]}
+                                style={style.headerWrapper}
                                 onLayout={e => {
-
-                                    stickyHeaderOffset.current = authData.account_type === "Logistics" ? e.nativeEvent.layout.height : 0;
+                                    stickyHeaderOffset.current = e.nativeEvent.layout.height;
                                 }}
                             >
                                 { authData?.account_type === "Merchant" ? (<>
-                                    {/* search bar */}
-                                    <SearchBar
-                                        placeholder={"Search inventory"}
-                                        searchQuery={searchQuery}
-                                        setSearchQuery={setSearchQuery}
-                                        backgroundColor={white}
-                                        disableFilter={true}
-                                    />
+                                    {/* stats */}
+                                    <StatWrapper containerStyle={{marginBottom: 30}}>
+                                        {merchantStats.map(stat => (
+                                            <StatCard
+                                                key={stat.id}
+                                                title={stat.title}
+                                                presentValue={stat.presentValue}
+                                                oldValue={stat.oldValue}
+                                                decimal={stat.decimal}
+                                            />
+                                        ))}
+                                    </StatWrapper>
                                     {/* navigate to AddLogistics page/stack */}
                                     <CustomButton
                                         secondaryButton={true}
@@ -324,7 +454,7 @@ const Products = ({navigation}) => {
                                 </>) : (<>
                                     {/* stats */}
                                     <StatWrapper containerStyle={{marginBottom: 30}}>
-                                        {stats.map(stat => (
+                                        {logisticsStats.map(stat => (
                                             <StatCard
                                                 key={stat.id}
                                                 title={stat.title}
@@ -337,7 +467,7 @@ const Products = ({navigation}) => {
                                 </>)}
                             </View>
                         }
-                        columnWrapperStyle={style.listContainer}
+                        columnWrapperStyle={tab === "Logistics" ? style.logisticsContainer : style.productContainer}
                         style={style.listWrapper}
                         keyExtractor={item => item.id}
                         data={inventories}
@@ -351,38 +481,72 @@ const Products = ({navigation}) => {
                                         style={[
                                             style.stickyHeader,
                                             // if account is logistics and scroll height is greater than offset activate shadow
-                                            authData?.account_type !== "Merchant" && scrollOffset > stickyHeaderOffset.current && {elevation: 3}
+                                            scrollOffset > stickyHeaderOffset.current && {elevation: 3}
                                         ]}
                                     >
                                         {/* search bar */}
                                         <SearchBar
-                                            placeholder={"Search inventory"}
+                                            placeholder={"Search " + tab}
                                             searchQuery={searchQuery}
                                             setSearchQuery={setSearchQuery}
                                             backgroundColor={white}
                                             disableFilter={true}
                                         />
+                                        {/* show tabs for merchnat account */}
+                                        {/* page tabs */}
+                                        <View style={style.tabContainer}>
+                                            <TouchableOpacity 
+                                                style={tab === "Logistics" ? style.tabButtonSelected : style.tabButton}
+                                                onPress={() => setTab("Logistics")}
+                                            >
+                                                <Text style={tab === "Logistics" ? style.tabButtonTextSelected : style.tabButtonText}>Logistics</Text>
+                                            </TouchableOpacity>
+                                            <TouchableOpacity 
+                                                style={tab === "Products" ? style.tabButtonSelected : style.tabButton}
+                                                onPress={() => setTab("Products")}
+                                            >
+                                                <Text style={tab === "Products" ? style.tabButtonTextSelected : style.tabButtonText}>Products</Text>
+                                            </TouchableOpacity>
+                                        </View>
                                     </View>
                                 )
                             } else if (item.id === "stickyRight") {
                                 return <></>
                             } else {
+                                if (tab === "Logistics") {
+                                    return (
+                                        <View style={index % 2 === 0 ? style.leftCard : style.rightCard}>
+                                            <BusinessCard
+                                                logistics={item?.logistics}
+                                                merchant={item?.merchant}
+                                                imageUrl={item.imageUrl}
+                                                totalLocations={item?.totalLocations}
+                                                totalProducts={item?.totalProducts}
+                                                totalStock={item.totalStock}
+                                                lowStock={item.lowStock}
+                                                verified={item.verified}
+                                                onPress={item.onPress}
+                                                addNew={item?.addNew}
+                                            />
+                                        </View>
+                                    )   
+                                }
                                 return (
-                                    <View style={index % 2 === 0 ? style.leftCard : style.rightCard}>
-                                        <BusinessCard
-                                            logistics={item?.logistics}
-                                            merchant={item?.merchant}
-                                            imageUrl={item.imageUrl}
-                                            totalLocations={item?.totalLocations}
-                                            totalProducts={item?.totalProducts}
-                                            totalStock={item.totalStock}
-                                            lowStock={item.lowStock}
-                                            verified={item.verified}
-                                            onPress={item.onPress}
-                                            addNew={item?.addNew}
+                                    <View 
+                                        style={[
+                                            index % 2 === 0 && style.productCardWrapperLeft,
+                                            index % 2 === 1 && style.productCardWrapperRight,
+                                        ]}
+                                    >
+                                        <ProductCard
+                                            product_name={item?.product_name}
+                                            quantity={item?.quantity}
+                                            price={item?.price}
+                                            imageUrl={item?.imageUrl}
+                                            onPress={item?.onPress}
                                         />
                                     </View>
-                                )   
+                                )
                             }
                         }}
                     />
@@ -401,11 +565,18 @@ const style = StyleSheet.create({
         marginBottom: 70,
         backgroundColor: background,
     },
-    listContainer: {
+    logisticsContainer: {
         display: "flex",
         flexDirection: "row",
         gap: 16,
         alignItems: "center",
+        justifyContent: "space-between",
+        marginBottom: 16,
+    },
+    productContainer: {
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "flex-start",
         justifyContent: "space-between",
         marginBottom: 16,
     },
@@ -422,6 +593,45 @@ const style = StyleSheet.create({
         width: "100%",
         backgroundColor: background,
     },
+    tabContainer: {
+        width: "100%",
+        display: "flex",
+        flexDirection: 'row',
+        height: 32,
+        marginBottom: 20,
+        alignItems: "center",
+        justifyContent: "space-between",
+    },
+    tabButton: {
+        width: "50%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: '100%',
+        flexDirection: "row",
+        gap: 10,
+    },
+    tabButtonSelected: {
+        width: "50%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: '100%',
+        borderBottomWidth: 2,
+        borderBottomColor: primaryColor,
+        flexDirection: "row",
+        gap: 10,
+    },
+    tabButtonText: {
+        fontFamily: 'mulish-semibold',
+        fontSize: 14,
+        color: neutral,
+    },
+    tabButtonTextSelected: {
+        fontFamily: 'mulish-semibold',
+        fontSize: 14,
+        color: black,
+    },
     leftCard: {
         width: (windowWidth - 16)/2,
         display: "flex",
@@ -433,6 +643,16 @@ const style = StyleSheet.create({
         display: "flex",
         flexDirection: 'row',
         justifyContent: 'flex-start',
+    },
+    productCardWrapperLeft: {
+        width: "50%",
+        paddingRight: 8,
+        paddingLeft: 20,
+    },
+    productCardWrapperRight: {
+        width: "50%",
+        paddingRight: 20,
+        paddingLeft: 8,
     },
     warehouseBannerWrapper: {
         backgroundColor: background,

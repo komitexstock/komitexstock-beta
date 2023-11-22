@@ -884,7 +884,7 @@ const Products = ({navigation, route}) => {
                                 )
                             } else if (item.id === "stickyRight") {
                                 return (
-                                    <View style={style.emptyView}/>   
+                                    <></>   
                                 )
                             } else {
                                 return (

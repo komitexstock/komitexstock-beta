@@ -15,8 +15,10 @@ import Avatar from "./Avatar";
 import AddIcon from '../assets/icons/AddIcon';
 import VerifiedIcon from "../assets/icons/VerifiedIcon";
 import { black, secondaryColor, subText, white } from "../style/colors";
+// helper
+import { windowWidth } from "../utils/helpers";
 
-const maxCardWidth = Dimensions.get("window").width/2 - 28;
+const maxCardWidth = windowWidth/2 - 28;
 const BusinessCard = ({logistics, merchant, imageUrl, totalLocations, totalProducts, totalStock, lowStock, onPress, addNew, verified}) => {
     return (
         <>   
