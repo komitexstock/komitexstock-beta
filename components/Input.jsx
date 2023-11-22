@@ -9,12 +9,12 @@ import {
 // react hooks
 import { useState, useEffect, useRef } from "react";
 // colors
-import { black, cancelledText, inputBorder, inputLabel, neutral, primaryColor, white } from "../style/colors";
+import { black, cancelledText, inputBorder, inputLabel, listSeparator, neutral, primaryColor, white } from "../style/colors";
 // icons
 import EyeIcon from "../assets/icons/EyeIcon";
 import EyeSlashIcon from "../assets/icons/EyeSlashIcon";
 
-const Input = ({label, inputRef, placeholder, onChange, value, forceBlur, multiline, disabled, minRows, textAlign, height, keyboardType, adornment, helperText, characterLimit, error, setError, isPasswordInput, segmented, segmentId, handleFocusNextSegment, handleSegmentedInput}) => {
+const Input = ({label, inputRef, placeholder, onChange, value, forceBlur, multiline, disabled, minRows, textAlign, height, keyboardType, adornment, helperText, helperComponent, characterLimit, error, setError, isPasswordInput, segmented, segmentId, handleFocusNextSegment, handleSegmentedInput}) => {
     // label, placeholder, textAlign, keyboardType, helperText  => string
     // value => variable (string or int)
     // forceBlur, multiline, editable, adornment, error, isPasswordInput => Boolean
@@ -109,6 +109,10 @@ const Input = ({label, inputRef, placeholder, onChange, value, forceBlur, multil
                         {
                             // if height is given use that value else use default of 44
                             height: height ? height : 44,
+                        },
+                        disabled && {
+                            backgroundColor: listSeparator,
+                            color: inputLabel,
                         }
                     ]}
                 >   
@@ -170,6 +174,10 @@ const Input = ({label, inputRef, placeholder, onChange, value, forceBlur, multil
                             height: 40,
                             fontSize: 16,
                         },
+                        disabled && {
+                            backgroundColor: listSeparator,
+                            color: inputLabel,
+                        }
                     ] : [
                         // style if input is in focus
                         style.input, 
@@ -187,6 +195,7 @@ const Input = ({label, inputRef, placeholder, onChange, value, forceBlur, multil
             )}
             {/* // display helper text if it's given */}
             {helperText && <Text style={style.label}>{helperText}</Text>}
+            {helperComponent && <>{helperComponent}</>}
             {characterLimit && !segmented && (
                 <Text style={style.limit}>{charactersLeft} character left</Text>
             )}

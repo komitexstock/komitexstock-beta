@@ -88,6 +88,15 @@ const Products = ({navigation, route}) => {
         },
     ];
 
+    
+    const [editProduct, setEditProduct] = useState({
+        id: "",
+        product_name: "",
+        quantity: 0,
+        price: 0,
+        imageUrl: "",
+    });
+
     // list of products
     const productsList = [
         {
@@ -181,13 +190,6 @@ const Products = ({navigation, route}) => {
 
     const [searchedProducts, setSearchedProducts] = useState([]);
 
-    const [editProduct, setEditProduct] = useState({
-        id: "",
-        product_name: "",
-        quantity: 0,
-        price: 0,
-        imageUrl: "",
-    });
 
     // console.log(editProduct);
 
@@ -260,10 +262,21 @@ const Products = ({navigation, route}) => {
 
     const handleEditProduct = (id) => {
         // console.log("right here");
-        setEditProduct(() => {
-            return products.filter(product => product.id === id)[0];
-        }); // return first element of corresponding array
-        openModal("edit");
+
+        const selectedProduct = products.find(product => product.id === id);
+
+        // product Scope, variable to control whether a product is being viewed
+        // accross multiple logistics or across a single logistics with multiple warehouses
+        const productScope = "Warehouses"
+
+        navigation.navigate("EditProduct", {
+            id: selectedProduct.id,
+            product_name: selectedProduct.product_name,
+            initial_price: selectedProduct.price,
+            quantity: selectedProduct.quantity,
+            image_uri: selectedProduct.imageUrl,
+            product_scope: productScope,
+        });
 
     }
 

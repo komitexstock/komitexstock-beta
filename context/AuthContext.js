@@ -100,7 +100,7 @@ const AuthProvider = ({children}) => {
 			// const claims = await user.getIdTokenResult();
 
 			// console.log(claims.claims);
-			// console.log("Stored Data", storedData);
+			console.log("Stored Data", storedData);
 			// if there is a stored data
 			if (storedData) {
 				// You have stored data; use it here if needed

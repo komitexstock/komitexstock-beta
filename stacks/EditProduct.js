@@ -1,0 +1,459 @@
+// react native component
+import {
+    View,
+    Image,
+    Text,
+    TouchableOpacity,
+    TouchableWithoutFeedback,
+    StyleSheet,
+    Keyboard,
+    ScrollView,
+    Linking
+} from "react-native";
+// bottomsheet component
+import { black, bodyText, inputLabel, listSeperator3, primaryColor, secondaryColor, white } from "../style/colors";
+// components
+import Input from "../components/Input";
+import CustomButton from "../components/CustomButton";
+import AccountButtons from "../components/AccountButtons";
+import CustomBottomSheet from "../components/CustomBottomSheet";
+// react hook
+import { useMemo, useState } from "react";
+// image picker method
+import * as ImagePicker from 'expo-image-picker';
+// icon
+import GalleryBlackIcon from "../assets/icons/GalleryBlackIcon";
+import InfoIcon from "../assets/icons/InfoIcon";
+import ArrowLeftSmallIcon from "../assets/icons/ArrowLeftSmallIcon";
+import EmailIcon from "../assets/icons/EmailIcon";
+import SmsIcon from "../assets/icons/SmsIcon";
+import PhoneIcon from "../assets/icons/PhoneIcon";
+// helpers
+import { windowHeight, windowWidth } from "../utils/helpers";
+// globals
+import { useGlobals } from "../context/AppContext";
+
+const EditProduct = ({navigation, route}) => {
+    
+    // route paramsa
+    const {id, product_name, quantity, initial_price, image_uri, product_scope} = route?.params;
+
+    // console.log(product_scope);
+
+    // global variables
+    const { bottomSheetRef, setToast } = useGlobals();
+
+    // total warehouses
+    const totalWarehouses = 4;
+
+    // total logistics
+    const totalLogistics = 5;
+
+    // state to store product name
+    const [productName, setProductName] = useState(product_name);
+    
+    // state to store price value
+    const [price, setPrice] = useState(initial_price);
+
+    // product name error
+    const [errorProductName, setErrorProductName] = useState(false);
+    
+    // price error
+    const [errorPrice, setErrorPrice] = useState(false);
+
+    // state to hold selected image
+    const [selectedImage, setSelectedImage] = useState(null);
+
+    // update price function
+    const updatePrice = (text) => {
+        let newText = text.replace(new RegExp(',', 'g'), '');
+        // remove all occurrence of the comma character ',' in text gloablly
+        if (newText) setPrice(parseFloat(newText));
+        else setPrice(0);
+        
+    }
+
+    // upload image function
+    const pickImageAsync = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            allowsEditing: true,
+            quality: 1,
+        });
+
+        try {
+            if (!result.canceled) {
+                setSelectedImage(!result.canceled[0].uri);
+            } 
+            
+        } catch (error) {
+            // handle error
+        }
+    };
+
+    const [modalType, setModalType] = useState("Support");
+
+    const bottomSheetProps = useMemo(() => {
+        if (modalType === "Support") {
+            return {
+                snapPointsArray: [280],
+                sheetTitle: "Help & Support"
+            }
+        } else if (modalType === "Logistics") {
+            return {
+                snapPointsArray: ["50%", "75%"],
+                sheetTitle: totalLogistics + " Logistics"
+            }
+        } else if (modalType === "Warehouses") {
+            return {
+                snapPointsArray: ["50%", "75%"],
+                sheetTitle: totalWarehouses + `${totalWarehouses > 1 ? " Warehouses" : " Warehouse"}`
+            }
+        } else {
+            return {
+                snapPointsArray: ["50%"],
+                sheetTitle: ""
+            }
+        }
+    }, [modalType])
+
+    // open bottom sheet modal
+    const openModal = (type) => {
+        // set modal type
+        setModalType(type);
+
+        // open bottomsheet 
+        bottomSheetRef.current?.present();
+    }
+
+    const closeModal = () => {
+        bottomSheetRef.current?.close();
+    }
+
+    // buttons in support bottom sheet modal
+    const supportButtons = [
+        {
+            id: 1,
+            title: "Call Us on +234 811 632 0575",
+            icon: <PhoneIcon />,
+            onPress: () => Linking.openURL('tel:+2348116320575'),
+        },
+        {
+            id: 2,
+            title: "Chat with us",
+            icon: <SmsIcon />,
+            onPress: () => Linking.openURL('https://wa.me/+2348116320575'),
+        },
+        {
+            id: 3,
+            title: "Contact us via email",
+            icon: <EmailIcon />,
+            onPress: () => Linking.openURL('mailto:komitexstock@gmail.com'),
+        },
+    ];
+
+    const handleUpdateProduct = () => {
+    }
+
+    return (
+        <>
+            <TouchableWithoutFeedback 
+                onPress={Keyboard.dismiss}
+            >
+                <ScrollView
+                    style={style.container} 
+                    showsVerticalScrollIndicator={false}
+                >
+                    <View style={style.main}>
+                        <View style={style.productImageWrapper}>
+                            {/* product image button */}
+                            <Image 
+                                style={style.productImage}
+                                source={{uri: selectedImage ? selectedImage : image_uri}}
+                            />
+                            {/* upload image button, position absolute */}
+                            <TouchableOpacity 
+                                style={style.editImageButton}
+                                onPress={pickImageAsync}
+                            >
+                                <GalleryBlackIcon />
+                            </TouchableOpacity>
+                            {/* navugate to previous screen button, position absolute */}
+                            <TouchableOpacity 
+                                style={[style.editImageButton, {left: 20}]}
+                                onPress={navigation.goBack}
+                            >
+                                <ArrowLeftSmallIcon />
+                            </TouchableOpacity>
+                            {/* product details */}
+                        </View>
+                        <View style={style.productDetailsWrapper}>
+                            <View style={style.productDetailsContent}>
+
+                                <View style={style.productTextWrapper}>
+                                    <View>
+                                        <Text style={style.productName}>
+                                            {product_name}
+                                        </Text>
+                                        <Text style={style.productStock}>
+                                            {quantity}
+                                            <Text style={style.faintText}> in stock</Text>
+                                        </Text>
+                                        <TouchableOpacity 
+                                            style={style.linkButton}
+                                            onPress={() => openModal(product_scope)}
+                                        >
+                                            {product_scope === "Warehouses" && (
+                                                <Text style={style.linkText}>
+                                                    {   
+                                                        totalWarehouses > 1 ? 
+                                                        totalWarehouses + " Warehouses" : 
+                                                        totalWarehouses + " Warehouse"
+                                                    }
+                                                </Text>
+                                            )}
+                                            {product_scope === "Logistics" && (
+                                                <Text style={style.linkText}>
+                                                    {totalLogistics} Logistics
+                                                </Text>
+                                            )}
+                                        </TouchableOpacity>
+                                        <View style={style.lastDeliveryWrapper}>
+                                            <TouchableOpacity>
+                                                <InfoIcon />
+                                            </TouchableOpacity>
+                                            <Text style={style.productStock}>
+                                                <Text style={style.faintText}>Last delivered </Text>
+                                                yesterday
+                                            </Text>
+                                        </View>
+                                    </View>
+                                    <Text style={style.productPrice}>₦{initial_price.toLocaleString()}</Text>
+                                </View>
+
+
+                                <View style={style.inputContainer}>
+                                    {/* Product name input */}
+                                    <Input 
+                                        label={"Product Name"}
+                                        placeholder={"Type the name of the product"}
+                                        onChange={(text) => setProductName(text)}
+                                        value={productName}
+                                        error={errorProductName}
+                                        setError={setErrorProductName}
+                                        disabled={true}
+                                        helperComponent={<>
+                                            <View style={style.helperComponent}>
+                                                <Text style={style.helperText}>
+                                                    Contact&nbsp;
+                                                </Text>
+                                                <TouchableOpacity 
+                                                    style={style.linkButton}
+                                                    onPress={() => openModal("Support")}
+                                                >
+                                                    <Text style={style.linkText}>support</Text>
+                                                </TouchableOpacity>
+                                                <Text style={style.helperText}>
+                                                    &nbsp;to edit product name
+                                                </Text>
+                                            </View>
+                                        </>}
+                                    />
+
+                                    {/* price input */}
+                                    <Input 
+                                        label={"Price"}
+                                        placeholder={"Price"}
+                                        onChange={updatePrice}
+                                        value={price ? price.toLocaleString() : ''}
+                                        adornment={"₦"}
+                                        error={errorPrice}
+                                        setError={setErrorPrice}
+                                        keyboardType={"numeric"}
+                                    />
+                                </View>
+                            </View>
+                            <View style={style.actionButtonsWrapper}>
+                                <CustomButton
+                                    secondaryButton={true}
+                                    name={"Delete"}
+                                    shrinkWrapper={true}
+                                    onPress={() => {}}
+                                    unpadded={true}
+                                    wrapperStyle={{width: (windowWidth - 56) / 2, height: 44}}
+                                />
+                                <CustomButton
+                                    name={"Save"}
+                                    shrinkWrapper={true}
+                                    onPress={() => {}}
+                                    unpadded={true}
+                                    wrapperStyle={{width: (windowWidth - 56) / 2}}
+                                    inactive={price.toLocaleString() === initial_price.toLocaleString()}
+                                />
+                            </View>
+                        </View>
+                    </View>
+                </ScrollView>
+            </TouchableWithoutFeedback>
+            <CustomBottomSheet
+                bottomSheetModalRef={bottomSheetRef}
+                closeModal={closeModal}
+                snapPointsArray={bottomSheetProps.snapPointsArray}
+                autoSnapAt={0}
+                sheetTitle={bottomSheetProps.sheetTitle}
+            >
+                { modalType === "Support" && supportButtons.map((item, index) => (
+                    <AccountButtons
+                        key={item.id}
+                        title={item.title}
+                        subtitle={false}
+                        icon={item.icon}
+                        length={supportButtons.length - 1}
+                        index={index}
+                        onPress={item.onPress}
+                        unpadded={true}
+                    />
+                ))}
+            </CustomBottomSheet>
+        </>
+    );
+}
+
+// stylesheet
+const style = StyleSheet.create({
+    container: {
+        width: '100%',
+    },
+    main: {
+        width: '100%',
+        minHeight: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+    },
+    productImageWrapper: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'column',
+        width: '100%',
+        height: 186,
+        backgroundColor: secondaryColor,
+    },
+    productImage: {
+        width: '100%',
+        height: 186,
+        resizeMode: 'cover',
+    },
+    editImageButton: {
+        width: 32,
+        height: 32,
+        position: "absolute",
+        top: 12,
+        right: 20,
+        borderRadius: 16,
+        zIndex: 10,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: white,
+        shadowColor: black,
+        elevation: 3,
+    },
+    productDetailsWrapper: {
+        width: "100%",
+        minHeight: windowHeight - 186,
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        flexDirection: 'column',
+        padding: 20,
+        paddingBottom: 90,
+        position: 'relative',
+    },
+    productDetailsContent: {
+        width: "100%",
+        display: 'flex',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        flexDirection: 'column',
+    },
+    productTextWrapper: {
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+        paddingBottom: 20,
+        borderBottomWidth: 1,
+        borderBottomColor: listSeperator3,
+    },
+    productName: {
+        fontFamily: 'mulish-semibold',
+        fontSize: 14,
+        color: black,
+        marginBottom: 4,
+    },
+    productStock: {
+        fontFamily: 'mulish-medium',
+        fontSize: 12,
+        color: black,
+        marginBottom: 8,
+    },
+    faintText: {
+        fontSize: 12,
+        color: bodyText,
+    },
+    lastDeliveryWrapper: {
+        display: 'flex',
+        flexDirection: 'row',
+        gap: 8,
+        justifyContent: 'flex-start',
+        marginTop: 8,
+    },
+    productPrice: {
+        fontFamily: 'mulish-semibold',
+        fontSize: 14,
+        color: primaryColor,
+    },
+    inputContainer: {
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "flex-start",
+        gap: 20,
+        paddingTop: 30,
+    },
+    helperComponent: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+    },
+    helperText: {
+        fontFamily: 'mulish-semibold',
+        fontSize: 12,
+        color: inputLabel,
+    },
+    linkText: {
+        color: primaryColor,
+        textDecorationColor: primaryColor,
+        textDecorationLine: 'underline',
+        fontSize: 12,
+        fontFamily: 'mulish-semibold',
+    },
+    actionButtonsWrapper: {
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 16,
+        position: "absolute",
+        bottom: 30,
+        // marginTop: 50,
+    },
+})
+
+
+export default EditProduct
