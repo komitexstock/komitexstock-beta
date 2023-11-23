@@ -191,7 +191,7 @@ const Products = ({navigation}) => {
         {
             id: 1,
             merchant: "Style Bazaar",
-            imageUrl: '../assets/images/style_bazaar.png',
+            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fstyle_bazaar.png?alt=media&token=b5be5c42-901a-4d49-bb15-a401b630f8a1',
             totalProducts: 17,
             totalStock: 25,
             lowStock: true,
@@ -203,7 +203,7 @@ const Products = ({navigation}) => {
         {
             id: 2,
             merchant: "Luxe Living Ltd",
-            imageUrl: '../assets/images/luxe_living_finds.png',
+            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fluxe_living_finds.png?alt=media&token=91aa3e09-658b-4900-8558-d10a12590513',
             totalProducts: 15,
             totalStock: 17,
             lowStock: false,
@@ -215,7 +215,7 @@ const Products = ({navigation}) => {
         {
             id: 3,
             merchant: "Eco Savvy Emporium",
-            imageUrl: '../assets/images/eco_savvy_emporium.png',
+            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Feco_savvy_emporium.png?alt=media&token=c4985c1d-c6f0-48f7-b744-4b030851d53a',
             totalProducts: 11,
             totalStock: 9,
             lowStock: false,
@@ -316,8 +316,10 @@ const Products = ({navigation}) => {
 
     const handleEditProduct = (id) => {
         // console.log("right here");
+        console.log(inventories);
 
-        const selectedProduct = inventories.find(product => product.id === id);
+        const selectedProduct = productsList.find(product => product.id === id);
+
 
         // product Scope, variable to control whether a product is being viewed
         // accross multiple logistics or across a single logistics with multiple warehouses
@@ -469,6 +471,7 @@ const Products = ({navigation}) => {
                         }
                         columnWrapperStyle={tab === "Logistics" ? style.logisticsContainer : style.productContainer}
                         style={style.listWrapper}
+                        key={tab}
                         keyExtractor={item => item.id}
                         data={inventories}
                         // allows flatlist to render list in two columns
@@ -481,7 +484,10 @@ const Products = ({navigation}) => {
                                         style={[
                                             style.stickyHeader,
                                             // if account is logistics and scroll height is greater than offset activate shadow
-                                            scrollOffset > stickyHeaderOffset.current && {elevation: 3}
+                                            scrollOffset > stickyHeaderOffset.current && {elevation: 3},
+                                            // if account is logistics remove some margin at the bottom
+                                            // this margin is introduced because of the columnWrapperStyle
+                                            authData?.account_type === "Logistics" && {marginBottom: -16}
                                         ]}
                                     >
                                         {/* search bar */}
@@ -494,20 +500,22 @@ const Products = ({navigation}) => {
                                         />
                                         {/* show tabs for merchnat account */}
                                         {/* page tabs */}
-                                        <View style={style.tabContainer}>
-                                            <TouchableOpacity 
-                                                style={tab === "Logistics" ? style.tabButtonSelected : style.tabButton}
-                                                onPress={() => setTab("Logistics")}
-                                            >
-                                                <Text style={tab === "Logistics" ? style.tabButtonTextSelected : style.tabButtonText}>Logistics</Text>
-                                            </TouchableOpacity>
-                                            <TouchableOpacity 
-                                                style={tab === "Products" ? style.tabButtonSelected : style.tabButton}
-                                                onPress={() => setTab("Products")}
-                                            >
-                                                <Text style={tab === "Products" ? style.tabButtonTextSelected : style.tabButtonText}>Products</Text>
-                                            </TouchableOpacity>
-                                        </View>
+                                        {authData?.account_type === "Merchant" && (
+                                            <View style={style.tabContainer}>
+                                                <TouchableOpacity 
+                                                    style={tab === "Logistics" ? style.tabButtonSelected : style.tabButton}
+                                                    onPress={() => setTab("Logistics")}
+                                                >
+                                                    <Text style={tab === "Logistics" ? style.tabButtonTextSelected : style.tabButtonText}>Logistics</Text>
+                                                </TouchableOpacity>
+                                                <TouchableOpacity 
+                                                    style={tab === "Products" ? style.tabButtonSelected : style.tabButton}
+                                                    onPress={() => setTab("Products")}
+                                                >
+                                                    <Text style={tab === "Products" ? style.tabButtonTextSelected : style.tabButtonText}>Products</Text>
+                                                </TouchableOpacity>
+                                            </View>
+                                        )}
                                     </View>
                                 )
                             } else if (item.id === "stickyRight") {

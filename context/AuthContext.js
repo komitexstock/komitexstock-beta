@@ -78,21 +78,21 @@ const AuthProvider = ({children}) => {
 		return data;
 	});
 
-	// The loading state
-	const [loading, setLoading] = useState(true);
+	// The authLoading state
+	const [authLoading, setAuthLoading] = useState(true);
 	
 	// console.log("auth state", authData);
 	
 	// auth listeners
 	useEffect(() => {
-		// setLoading(true);
+		// setAuthLoading(true);
 
 		// detect changes in auth state
 		const unsubscribeFromAuthStateChanged = onAuthStateChanged(auth, async (user) => {
 			// console.log("Auth State Changed", user);
 			if (!user) {
 				await removeStoredData();
-				return setLoading(false);
+				return setAuthLoading(false);
 			}
 
 			const storedData = await getStoredData();
@@ -100,12 +100,12 @@ const AuthProvider = ({children}) => {
 			// const claims = await user.getIdTokenResult();
 
 			// console.log(claims.claims);
-			console.log("Stored Data", storedData);
+			// console.log("Stored Data", storedData);
 			// if there is a stored data
 			if (storedData) {
 				// You have stored data; use it here if needed
 				setAuthData(storedData)
-				return setLoading(false);
+				return setAuthLoading(false);
 			} else {
 				try {
 					// get user data
@@ -131,12 +131,12 @@ const AuthProvider = ({children}) => {
 						};
 						// Wait for setStoredData to complete
 						await setStoredData(data);
-						return setLoading(false);
+						return setAuthLoading(false);
 					}
 	
 				} catch (error) {
 					console.error(error.message);
-					return setLoading(false);
+					return setAuthLoading(false);
 				}
 			}
 
@@ -194,7 +194,7 @@ const AuthProvider = ({children}) => {
 	}, [authData]);
 
 	return (
-		<AuthContext.Provider value={{authData, loading, setStoredData }}>
+		<AuthContext.Provider value={{authData, authLoading, setStoredData }}>
 			{children}
 		</AuthContext.Provider>
 	)

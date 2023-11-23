@@ -308,7 +308,7 @@ const EditProduct = ({navigation, route}) => {
                                             </Text>
                                         </View>
                                     </View>
-                                    <Text style={style.productPrice}>₦{initial_price.toLocaleString()}</Text>
+                                    <Text style={style.productPrice}>₦{initial_price?.toLocaleString()}</Text>
                                 </View>
 
 
@@ -345,7 +345,7 @@ const EditProduct = ({navigation, route}) => {
                                         label={"Price"}
                                         placeholder={"Price"}
                                         onChange={updatePrice}
-                                        value={price ? price.toLocaleString() : ''}
+                                        value={price ? price?.toLocaleString() : ''}
                                         adornment={"₦"}
                                         error={errorPrice}
                                         setError={setErrorPrice}
@@ -368,7 +368,7 @@ const EditProduct = ({navigation, route}) => {
                                     onPress={() => {}}
                                     unpadded={true}
                                     wrapperStyle={{width: (windowWidth - 56) / 2}}
-                                    inactive={price.toLocaleString() === initial_price.toLocaleString()}
+                                    inactive={price?.toLocaleString() === initial_price?.toLocaleString()}
                                 />
                             </View>
                         </View>

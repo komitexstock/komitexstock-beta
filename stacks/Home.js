@@ -48,7 +48,7 @@ import { orderList } from "../data/orderList";
 
 const Home = ({navigation}) => {
 
-    const { authData } = useAuth();
+    const { authData, authLoading } = useAuth();
 
     // console.log("Auth Data:", authData);
       
@@ -56,13 +56,7 @@ const Home = ({navigation}) => {
     const { bottomSheetRef, filterSheetRef, calendarSheetRef, calendarSheetOpen } = useGlobals();
 
     // page loading state
-    const [pageLoading, setPageLoading] = useState(true);
-
-    useEffect(() => {
-        setTimeout(() => {
-            setPageLoading(false);
-        }, 500);
-    })
+    const [pageLoading, setPageLoading] = useState(false);
 
     // searched orders
     const [searchedOrders, setSearchedOrders] = useState([]);
@@ -558,7 +552,7 @@ const Home = ({navigation}) => {
     return (
         <>
             {/* if screen is loading render skeleton else render screen */}
-            {!pageLoading ? (
+            {!pageLoading && !authLoading ? (
                 <TouchableWithoutFeedback 
                     onPress={() => Keyboard.dismiss()}
                 >

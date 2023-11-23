@@ -34,7 +34,7 @@ const BottomNavigation = () => {
     const { currentStack } = useGlobals();
 
     // get Auth data
-    const { authData } = useAuth();
+    const { authData, authLoading } = useAuth();
 
     // console.log(authData?.account_type)
 
@@ -48,7 +48,7 @@ const BottomNavigation = () => {
     // stack where navigation should be visible
     const visibleNavigation = ["Home", "Orders", "Waybill", "Inventory", "Warehouse", "Products", "Account"]; 
 
-    if (!visibleNavigation.includes(currentStack)) return (<></>);
+    if (!visibleNavigation.includes(currentStack) || authLoading) return (<></>);
     else return (
         <View style={style.bottomNavigation}>
             <TouchableOpacity 
