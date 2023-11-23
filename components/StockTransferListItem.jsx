@@ -11,7 +11,7 @@ import Mark from './Mark';
 // icons
 import StockTransferDirectionIcon from '../assets/icons/StockTransferDirectionIcon';
 // colors
-import { black, bodyText, orderDate, white } from '../style/colors';
+import { background, black, bodyText, orderDate, white } from '../style/colors';
 // import helper functions
 
 
@@ -79,18 +79,35 @@ const StockTransferListItem = ({item, index, firstOrder, lastOrder, sideFunction
         >
             {/* order info */}
             <View style={style.orderInfo}>
-                <Text 
-                    style={[
-                        style.orderMainText,
-                        // if order has a new message make text have a color with higher opacity
-                        { color: item.newMessage ? black : bodyText},
-                        // if order has a new message make font have a higher weight
-                        { fontFamily: item.newMessage ? 'mulish-bold' : 'mulish-regular' },
-                        searchQuery && {color: bodyText, fontFamily: 'mulish-regular' },
-                    ]}
-                >
-                    {highlightSearchtext(item?.origin_warehouse)} <StockTransferDirectionIcon /> {highlightSearchtext(item?.destination_warehouse)}
-                </Text>
+                <View style={style.warehouseNameWrapper}>
+                    <Text 
+                        style={[
+                            style.orderMainText,
+                            // if order has a new message make text have a color with higher opacity
+                            { color: item.newMessage ? black : bodyText},
+                            // if order has a new message make font have a higher weight
+                            { fontFamily: item.newMessage ? 'mulish-bold' : 'mulish-regular' },
+                            searchQuery && {color: bodyText, fontFamily: 'mulish-regular' },
+                        ]}
+                    >
+                        {highlightSearchtext(item?.origin_warehouse)}
+                    </Text>
+                    <View style={style.iconWrapper}>
+                        <StockTransferDirectionIcon />
+                    </View>
+                    <Text 
+                        style={[
+                            style.orderMainText,
+                            // if order has a new message make text have a color with higher opacity
+                            { color: item.newMessage ? black : bodyText},
+                            // if order has a new message make font have a higher weight
+                            { fontFamily: item.newMessage ? 'mulish-bold' : 'mulish-regular' },
+                            searchQuery && {color: bodyText, fontFamily: 'mulish-regular' },
+                        ]}
+                    >
+                        {highlightSearchtext(item?.destination_warehouse)}
+                    </Text>
+                </View>
                 <Text 
                     style={[
                         style.orderSubText,
@@ -127,7 +144,7 @@ const style = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         width: "100%",
-        height: 92,
+        height: 90,
         gap: 12,
         backgroundColor: white,
         paddingBottom: 20,
@@ -149,6 +166,25 @@ const style = StyleSheet.create({
         alignItems: 'flex-start',
         gap: 4,
         alignSelf: 'stretch',
+    },
+    warehouseNameWrapper: {
+        width: "100%",
+        display: 'flex',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        flexDirection: 'row',
+        gap: 4,
+    },
+    iconWrapper: {
+        backgroundColor: background,
+        width: 13,
+        height: 13,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 7,
+        borderWidth: 1,
+        borderColor: white,
     },
     orderMainText: {
         fontFamily: 'mulish-bold',
