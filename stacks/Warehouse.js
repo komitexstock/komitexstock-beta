@@ -11,6 +11,7 @@ import {
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 // icons
 import EditBlackLargeIcon from '../assets/icons/EditBlackLargeIcon';
+import CalendarIcon from "../assets/icons/CalendarIcon";
 // component
 import Header from '../components/Header'
 import CustomButton from '../components/CustomButton'
@@ -21,6 +22,13 @@ import StatWrapper from '../components/StatWrapper';
 import StockTransferListItem from '../components/StockTransferListItem'
 import WarehouseCard from '../components/WarehouseCard';
 import CustomBottomSheet from '../components/CustomBottomSheet';
+import FilterBottomSheet from "../components/FilterBottomSheet";
+import FilterButtonGroup from "../components/FilterButtonGroup";
+import SelectInput from "../components/SelectInput";
+import CalendarSheet from "../components/CalendarSheet";
+import FilterPill from "../components/FilterPill";
+// bottom sheet components
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 // colors
 import { background, black, neutral, primaryColor, white } from '../style/colors';
 // utils
@@ -30,7 +38,7 @@ import { useGlobals } from '../context/AppContext';
 
 const Warehouse = ({navigation, route}) => {
 
-    const { bottomSheetRef } = useGlobals();
+    const { bottomSheetRef, filterSheetRef, calendarSheetRef, calendarSheetOpen } = useGlobals();
 
     // tab state
     const [tab, setTab] = useState(route.params?.tab ? route.params.tab : "warehouse")
@@ -53,10 +61,7 @@ const Warehouse = ({navigation, route}) => {
         },
     ];
 
-    // warehouses
-    const warehouses = [
-        { id: "stickyLeft" },
-        { id: "stickyRight" },
+    const warehouseList = [
         {
             id: 1,
             warehouse_name: "Warri",
@@ -67,7 +72,7 @@ const Warehouse = ({navigation, route}) => {
                 full_name: "Abiodun Johnson"
             },
             onPress: () => navigation.navigate("Inventory"),
-            onPressMenu: () => openModal(1),      
+            onPressMenu: () => openModal("Edit", 1),      
             receive_waybill: true,
             add_new: false,
         },
@@ -81,7 +86,7 @@ const Warehouse = ({navigation, route}) => {
                 full_name: "Abiodun Johnson"
             },
             onPress: () => navigation.navigate("Inventory"),
-            onPressMenu: () => openModal(2),
+            onPressMenu: () => openModal("Edit", 2),
             receive_waybill: true,
             add_new: false,
         },
@@ -95,7 +100,7 @@ const Warehouse = ({navigation, route}) => {
                 full_name: "Abiodun Johnson"
             },
             onPress: () => navigation.navigate("Inventory"),
-            onPressMenu: () => openModal(3),
+            onPressMenu: () => openModal("Edit", 3),
             receive_waybill: false,
             add_new: false,
         },
@@ -109,7 +114,7 @@ const Warehouse = ({navigation, route}) => {
                 full_name: "Abiodun Johnson"
             },
             onPress: () => navigation.navigate("Inventory"),
-            onPressMenu: () => openModal(4),
+            onPressMenu: () => openModal("Edit", 4),
             receive_waybill: false,
             add_new: false,
         },
@@ -123,7 +128,7 @@ const Warehouse = ({navigation, route}) => {
                 full_name: "Abiodun Johnson"
             },
             onPress: () => navigation.navigate("Inventory"),
-            onPressMenu: () => openModal(5),
+            onPressMenu: () => openModal("Edit", 5),
             receive_waybill: false,
             add_new: false,
         },
@@ -137,7 +142,7 @@ const Warehouse = ({navigation, route}) => {
                 full_name: "Abiodun Johnson"
             },
             onPress: () => navigation.navigate("Inventory"),
-            onPressMenu: () => openModal(6),
+            onPressMenu: () => openModal("Edit", 6),
             receive_waybill: false,
             add_new: false,
         },
@@ -151,7 +156,7 @@ const Warehouse = ({navigation, route}) => {
                 full_name: "Abiodun Johnson"
             },
             onPress: () => navigation.navigate("Inventory"),
-            onPressMenu: () => openModal(7),
+            onPressMenu: () => openModal("Edit", 7),
             receive_waybill: false,
             add_new: false,
         },
@@ -165,20 +170,26 @@ const Warehouse = ({navigation, route}) => {
                 full_name: "Abiodun Johnson"
             },
             onPress: () => navigation.navigate("Inventory"),
-            onPressMenu: () => openModal(8),
+            onPressMenu: () => openModal("Edit", 8),
             receive_waybill: false,
             add_new: false,
         },
+    ]
+
+
+    // warehouses
+    const [warehouses, setWarehouses] = useState([
+        { id: "stickyLeft" },
+        { id: "stickyRight" },
+        ...warehouseList,
         {
             id: 10,
             add_new: true,
             onPress: () => navigation.navigate("AddWarehouse"),
         },
-    ];
+    ]);
 
-    // stock transfer data
-    const stockTransfer = [
-        { id: "stickyLeft" },
+    const stockTransferList = [
         {
             id: 1,
             onPress: () => navigation.navigate("Chat", {id: "1"}),
@@ -308,7 +319,15 @@ const Warehouse = ({navigation, route}) => {
             newMessage: false,
             status: "Delivered",
         }
-    ];
+    ]
+
+    // stock transfer data
+    const [stockTransfer, setStockTransfer] = useState([
+        { id: "stickyLeft" },
+        ...stockTransferList,
+    ]);
+
+
 
     // warehouse id to be edited
     const [editWarehouseId, setEditWarehouseId] = useState(null);
@@ -321,6 +340,40 @@ const Warehouse = ({navigation, route}) => {
     // search Query
     const [searchQuery, setSearchQuery] = useState("");
 
+    // return order.name.toLowerCase().includes(searchQuery.toLowerCase()) || order.location.toLowerCase().includes(searchQuery.toLowerCase()) || order.logistics.toLowerCase().includes(searchQuery.toLowerCase()) || order.products.some(product => product.product_name.toLowerCase().includes(searchQuery.toLowerCase())) || order.phone_number.some(phone_number => phone_number.toLowerCase().includes(searchQuery.toLowerCase()));
+
+    useEffect(() => {
+        if (!searchQuery) {
+            return setWarehouses([
+                { id: "stickyLeft" },
+                { id: "stickyRight" },
+                ...warehouseList,
+                {
+                    id: 10,
+                    add_new: true,
+                    onPress: () => navigation.navigate("AddWarehouse"),
+                },
+            ])
+        }
+
+        setWarehouses(prevWarehouses => {
+            const searchResult = prevWarehouses.filter(warehouse => {
+                return warehouse?.warehouse_name?.toLowerCase().includes(searchQuery.toLowerCase());
+            });
+
+            return [
+                { id: "stickyLeft" },
+                { id: "stickyRight" },
+                ...searchResult,
+                {
+                    id: 10,
+                    add_new: true,
+                    onPress: () => navigation.navigate("AddWarehouse"),
+                },
+            ]
+        })
+    }, [searchQuery])
+
     // sticky header offset
     const stickyHeaderOffset = useRef(0);
     const [scrollOffset, setScrollOffset] = useState(0);
@@ -331,11 +384,16 @@ const Warehouse = ({navigation, route}) => {
         setScrollOffset(yOffset);
     }
 
-    // function to open BottomSheet
-    const openModal = (id) => {
-        bottomSheetRef?.current?.present();
+    const [modalType, setModalType] = useState("Edit");
 
-        setEditWarehouseId(id);
+    // function to open BottomSheet
+    const openModal = (type, id) => {
+        bottomSheetRef?.current?.present();
+        
+        // set modal type
+        setModalType(type);
+
+        if (type === "Edit") return setEditWarehouseId(id);
     }
 
     const closeModal = () => {
@@ -365,6 +423,352 @@ const Warehouse = ({navigation, route}) => {
             setScrollOffset(scrollHeight);
         } 
     }, [tab])
+
+    // filter order bottom sheet parameters
+    const [filterParameters, setFilterParameters] = useState([
+        {
+            title: "Status",
+            value: "All",
+            default: true,
+            buttons: [
+                {
+                    text: "All",
+                    selected: true,
+                    onPress: () => {
+                        handleFilterParameters("Status", "All")
+                    }
+                },
+                {
+                    text: "Pending",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Status", "Pending")
+                    }
+                },
+                {
+                    text: "Delivered",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Status", "Delivered")
+                    }
+                },
+                {
+                    text: "Cancelled",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Status", "Cancelled")
+                    }
+                },
+            ],
+        },
+        {
+            title: "Origin Warehouse",
+            value: "All",
+            default: true,
+            buttons: [
+                {
+                    text: "All",
+                    selected: true,
+                    onPress: () => {
+                        handleFilterParameters("Origin Warehouse", "All")
+                    }
+                },
+                {
+                    text: "Warri",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Origin Warehouse", "Warri")
+                    }
+                },
+                {
+                    text: "Benin",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Origin Warehouse", "Benin")
+                    }
+                },
+                {
+                    text: "Asaba",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Origin Warehouse", "Asaba")
+                    }
+                },
+            ],
+        },
+        {
+            title: "Destination Warehouse",
+            value: "All",
+            default: true,
+            buttons: [
+                {
+                    text: "All",
+                    selected: true,
+                    onPress: () => {
+                        handleFilterParameters("Destination Warehouse", "All")
+                    }
+                },
+                {
+                    text: "Warri",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Destination Warehouse", "Warri")
+                    }
+                },
+                {
+                    text: "Benin",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Destination Warehouse", "Benin")
+                    }
+                },
+                {
+                    text: "Asaba",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Destination Warehouse", "Asaba")
+                    }
+                },
+            ],
+        },
+        {
+            title: "Period",
+            value: "Today",
+            default: true,
+            buttons: [
+                {
+                    text: "Today",
+                    selected: true,
+                    onPress: () => {
+                        handleFilterParameters("Period", "Today")
+                    }
+                },
+                {
+                    text: "Yesterday",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Period", "Yesterday")
+                    }
+                },
+                {
+                    text: "Current week",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Period", "Current week")
+                    }
+                },
+                {
+                    text: "Last week",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Period", "Last week")
+                    }
+                },
+                {
+                    text: "Custom period",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Period", "Custom period")
+                        openCalendar("StartDate");
+                    }
+                },
+                {
+                    text: "Current month",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Period", "Current month")
+                    }
+                },
+                {
+                    text: "Last month",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Period", "Last month")
+                    }
+                },
+            ]
+        }
+    ]);
+
+    // open filter function
+    const openFilter = () => {
+        Keyboard.dismiss();
+        filterSheetRef.current?.present()
+    }
+    
+    // close filter
+    const closeFilter = () => {
+        // close filter bottomsheet
+        filterSheetRef.current?.close()
+    }
+
+    // function to apply filter
+    const handleApplyFilter = () => {
+        setFilterParameters(prevParamters => {
+            return prevParamters.map(filterParam => {
+                const selectedButton = filterParam.buttons.find(button => button.selected === true);
+                // console.log(selectedButton);
+                if (filterParam.title  !== "Period") {
+                    return {
+                        ...filterParam,
+                        value: selectedButton?.text,
+                        default: selectedButton?.text === "All" ? true : false, 
+                    }
+                } else {
+                    return {
+                        ...filterParam,
+                        value: selectedButton?.text,
+                        default: selectedButton?.text === "Today" ? true : false, 
+                    }
+                }
+            })
+        });
+
+        closeFilter(); // pass true to not reset filter
+    }
+
+    // function to select filter
+    const handleFilterParameters = (title, button) => {
+        setFilterParameters(prevParamters => {
+            return prevParamters.map(filterParam => {
+                if (filterParam.title === title) {
+                    return {
+                        ...filterParam,
+                        buttons: filterParam.buttons.map(filterButton => {
+                            if (filterButton?.text === button) {
+                                return {
+                                    ...filterButton,
+                                    selected: true,
+                                }
+                            } else {
+                                return {
+                                    ...filterButton,
+                                    selected: false,
+                                }
+                            }
+                        }),
+                    }
+                } else {
+                    return {...filterParam}
+                }
+            })
+        });
+        if (title === "Period") {
+            // console.log("Here");
+        }
+        
+    }
+    
+    // remove filter function, applied to the close icon in the filter pill
+    const handleRemoveFilter = (title) => {
+        setFilterParameters(prevParamters => {
+            return prevParamters.map(filterParam => {
+                if (filterParam.title === title) {
+                    return {
+                        ...filterParam,
+                        default: true,
+                        value: title === "Period" ? "Today" : "All",
+                        buttons: filterParam.buttons.map(filterButton => {
+                            if (filterButton.text === "All") {
+                                return {
+                                    ...filterButton,
+                                    selected: true,
+                                }
+                            } else {
+                                return {
+                                    ...filterButton,
+                                    selected: false,
+                                }
+                            }
+                        }),
+                    }
+                } else {
+                    return {...filterParam}
+                }
+            })
+        });
+    }
+
+    // function to clearAll fiter
+    const handleClearAllFilter = () => {
+        // clear all filter
+        handleRemoveFilter("Period");
+        handleRemoveFilter("Status");
+        handleRemoveFilter("Destination Warehouse");
+        handleRemoveFilter("Origin Warehouse");
+        // close filter bottomsheet
+        closeFilter();
+    }
+
+    // function to get filtervlaue
+    // const getFilterValue = (title) => {
+    //     return filterParameters.find(filterParam => filterParam.title === title).value
+    // }
+
+    // previous date
+    const prevDate = new Date();
+    prevDate.setDate(prevDate.getDate() - 1);
+
+    // previous date
+    const today = new Date();
+    // today.setDate(today.getDate());
+
+    // variable to store start date
+    const [startDate, setStartDate] = useState(today);
+    // variable to indicate start date input active state
+    const [activeStartDate, setActiveStartDate] = useState(false);
+    
+    // variable to store end date
+    const [endDate, setEndDate] = useState(today);
+    // variable to indicate end date input active state
+    const [activeEndDate, setActiveEndDate] = useState(false);
+
+    // calendar state
+    const [calendar, setCalendar] = useState({
+        setDate: setStartDate,
+        maxDate: false,
+        minDate: false,
+    });
+
+    // function to open calendar
+    const openCalendar = (inputType) => {
+        if (inputType === "StartDate") {
+            setActiveStartDate(true);
+            setCalendar({
+                setDate: setStartDate,
+                maxDate: endDate ? moment(endDate).subtract(1, 'days') : today,
+                minDate: false
+            });
+        } else {
+            setActiveEndDate(true);
+            setCalendar({
+                setDate: setEndDate,
+                maxDate: today,
+                minDate: startDate ? moment(startDate).add(1, 'days') : startDate,
+            });
+        }
+        calendarSheetRef.current?.present();
+    }
+
+    // close calendar
+    const closeCalendar = () => {
+        setActiveEndDate(false);
+        setActiveStartDate(false);
+        calendarSheetRef.current?.close();
+    }
+
+        // to disable avtive states for date inputs if back button is pressed
+    // ...when calendar sheet if open
+    useEffect(() => {
+        if (!calendarSheetOpen) {
+            setActiveEndDate(false);
+            setActiveStartDate(false);
+        }
+
+    }, [calendarSheetOpen])
+
+
+    
 
     return (
         <>
@@ -442,7 +846,7 @@ const Warehouse = ({navigation, route}) => {
                                         disableFilter={true}
                                         // if tab is switched to stock transfer, turn search input into a button
                                         button={tab !== "warehouse" ? true : false}
-                                        onPress={openModal}
+                                        onPress={() => openModal("Search")}
                                     />
                                     {/* page tabs */}
                                     <View style={styles.tabContainer}>
@@ -506,22 +910,123 @@ const Warehouse = ({navigation, route}) => {
             {/* bottomsheet */}
             <CustomBottomSheet
                 bottomSheetModalRef={bottomSheetRef}
-                snapPointsArray={[124]}
+                snapPointsArray={modalType === "Edit" ? [124] : ["100%"]}
                 autoSnapAt={0}
                 closeModal={closeModal}
+                sheetTitle={modalType === "Edit" ? "" : "Stock Transfers"} 
+                disablePanToClose={modalType === "Edit" ? false : true}
             >
-                <View style={styles.modalWrapper}>
-                    <TouchableOpacity
-                        style={styles.sheetButton}
-                        onPress={handleEditWarehouse}
+                {modalType === "Edit" && (
+                    <View style={styles.modalWrapper}>
+                        <TouchableOpacity
+                            style={styles.sheetButton}
+                            onPress={handleEditWarehouse}
+                        >
+                            <EditBlackLargeIcon />
+                            <Text style={styles.sheetButtonText}>
+                                Edit warehouse
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                )}
+                {modalType === "Search" && <>
+                    {/* text input search bar */}
+                    <SearchBar 
+                        placeholder={"Search stock transfers"}
+                        searchQuery={searchQuery}
+                        setSearchQuery={setSearchQuery}
+                        backgroundColor={background}
+                        openFilter={openFilter}
+                        filterParams={filterParameters}
+                    />
+                    {/* check if any filter has been applied, i.e it is not in its default value */}
+                    {filterParameters.find(filterParam => filterParam.default === false) && (
+                        <View style={styles.searchOrderPillWrapper}>
+                            {filterParameters.map(filterParam => {
+                                if (!filterParam.default) {
+                                    if (filterParam.value !== "Custom period") {
+                                        return (
+                                            <FilterPill
+                                                key={filterParam.title}
+                                                text={filterParam.value}
+                                                onPress={() => handleRemoveFilter(filterParam.title, "search")}
+                                                background={background}
+                                            />
+                                        )
+                                    }
+                                }
+                            })}
+                        </View>
+                    )}
+
+                    {/* search result order list */}
+                    <BottomSheetScrollView 
+                        style={styles.orderSearchResults}
+                        showsVerticalScrollIndicator={false}
                     >
-                        <EditBlackLargeIcon />
-                        <Text style={styles.sheetButtonText}>
-                            Edit warehouse
-                        </Text>
-                    </TouchableOpacity>
-                </View>
+                        {stockTransferList.map((item, index) => (
+                            <StockTransferListItem 
+                                item={item} 
+                                key={item.id}
+                                index={index} 
+                                lastOrder={stockTransfer.length - 1}
+                                firstOrder={1}
+                                extraVerticalPadding={true} 
+                            />
+                        ))}
+                    </BottomSheetScrollView>
+                </>}
             </CustomBottomSheet>
+            {/* filter bottom sheet */}
+            <FilterBottomSheet 
+                fiterSheetRef={filterSheetRef}
+                closeFilter={closeFilter}
+                clearFilterFunction={handleClearAllFilter}
+                applyFilterFunction={handleApplyFilter}
+                height={"80%"}
+            >
+                {filterParameters.map(item => (
+                    <FilterButtonGroup
+                        buttons={item.buttons}
+                        title={item.title}
+                        key={item.title}
+                    />
+                ))}
+
+                <View style={styles.inputContainer}>
+                    {/* Start date */}
+                    <SelectInput 
+                        label={"Start Date"} 
+                        placeholder={"DD MMMM, YYYY"} 
+                        value={startDate}
+                        onPress={() => {openCalendar("StartDate")}}
+                        icon={<CalendarIcon />}
+                        active={activeStartDate}
+                        inputFor={"Date"}
+                    />
+
+                    {/* End date */}
+                    <SelectInput
+                        label={"End Date"}
+                        placeholder={"DD MMMM, YYYY"}
+                        value={endDate}
+                        onPress={() => {openCalendar("EndDate")}}
+                        icon={<CalendarIcon />}
+                        active={activeEndDate}
+                        inputFor={"Date"}
+                    />
+                </View>
+            </FilterBottomSheet>
+            {/* calnedar */}
+            <CalendarSheet 
+                closeCalendar={closeCalendar}
+                setDate={calendar.setDate}
+                disableActionButtons={true}
+                snapPointsArray={["60%"]}
+                minDate={calendar.minDate}
+                maxDate={calendar.maxDate}
+                calendarRef={calendarSheetRef} 
+            />
         </>
     )
 }
@@ -653,5 +1158,26 @@ const styles = StyleSheet.create({
         justifyContent: "flex-start",
         gap: 10,
         paddingVertical: 16,
-    }
+    },
+    searchOrderPillWrapper: {
+        width: '100%',
+        display: "flex",
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        alignItems: "center",
+        justifyContent: "flex-start",
+        gap: 8,
+        marginBottom: 14,
+        marginTop: -4,
+    },
+    inputContainer: {
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "flex-start",
+        gap: 20,
+        paddingEnd: 20,
+        paddingBottom: 90,
+    },
 })

@@ -19,7 +19,13 @@ const SearchBar = ({placeholder, searchQuery, setSearchQuery, filterParams, back
     // render SearchBar component
     return (
         <View style={style.searchBarWrapper}>
-            <View style={[style.searchBar, {backgroundColor: backgroundColor}]}>
+            <View 
+                style={[
+                    style.searchBar, 
+                    button && {paddingVertical: 0},
+                    {backgroundColor: backgroundColor}
+                ]}
+            >
                 {/* search icon */}
                 <SearchIcon />
                 {/* search bar text input */}
@@ -104,6 +110,11 @@ const style = StyleSheet.create({
     },
     searchButton: {
         flex: 1,
+        height: "100%",
+        display: 'flex',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        flexDirection: 'row',
     },
     searchButtonText: {
         color: inputLabel,
