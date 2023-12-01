@@ -12,7 +12,7 @@ import WarehouseDirectionArrowIcon from '../assets/icons/WarehouseDirectionArrow
 
 const StockTransferSummary = ({navigation, route}) => {
 
-    const { originWarehouse, destinationWarehouse, additionalDetails, selectedProducts} = route.params;
+    const { originWarehouse, destinationWarehouse, additionalDetails, selectedProducts } = route.params;
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -46,29 +46,39 @@ const StockTransferSummary = ({navigation, route}) => {
                     <View style={style.warehouseWrapper}>
                         <Text style={style.infoHeading}>Move inventory from</Text>
                         <View style={style.warehouseNamesWrapper}>
-                            <Text style={style.warehouseNames}>{originWarehouse.warehouse_name}</Text>
-                            <WarehouseDirectionArrowIcon />
+                            <View style={style.warehouseContainer}>
+                                <Text style={style.warehouseDesignation}>Origin</Text>
+                                <Text style={style.warehouseNames}>{originWarehouse.warehouse_name}</Text>
+                            </View>
+                            <View style={style.transferArrowWrapper}>
+                                <WarehouseDirectionArrowIcon />
+                            </View>
+                            <View style={style.warehouseContainer}>
+                                <Text style={style.warehouseDesignation}>Origin</Text>
                             <Text style={style.warehouseNames}>{destinationWarehouse.warehouse_name}</Text>
+                            </View>
                         </View>
-                        <Text style={style.infoHeading}>Additional details</Text>
-                        <Text style={style.additionalDetails}>
-                            {additionalDetails ? additionalDetails : "N/A"}
-                        </Text>
-                    </View>
-                    <View style={style.productsWrapper}>
-                        <Text style={style.headingText}>Selected Products ({selectedProducts?.length})</Text>
-                        { selectedProducts.map(product => (
-                            <MerchantProduct
-                                key={product.id}
-                                productName={product.product_name}
-                                merchant={product.merchant}
-                                availableQuantity={product.available_quantity}
-                                imageUrl={product.image_url}
-                                quantity={product.quantity}
-                                selected={product.selected}
-                                summary={true}
-                            />
-                        ))}
+                        <View style={style.additionalDetailsWrapper}>
+                            <Text style={style.infoHeading}>Additional details</Text>
+                            <Text style={style.additionalDetails}>
+                                {additionalDetails ? additionalDetails : "N/A"}
+                            </Text>
+                        </View>
+                        <View style={style.productsWrapper}>
+                            <Text style={style.headingText}>Selected Products ({selectedProducts?.length})</Text>
+                            { selectedProducts.map(product => (
+                                <MerchantProduct
+                                    key={product.id}
+                                    productName={product.product_name}
+                                    merchant={product.merchant}
+                                    availableQuantity={product.available_quantity}
+                                    imageUrl={product.image_url}
+                                    quantity={product.quantity}
+                                    selected={product.selected}
+                                    summary={true}
+                                />
+                            ))}
+                        </View>
                     </View>
                 </View>
 
@@ -118,23 +128,66 @@ const style = StyleSheet.create({
         borderRadius: 12,
     },
     infoHeading: {
-        color: bodyText,
+        color: black,
         fontSize: 10,
-        fontFamily: 'mulish-medium',
+        fontFamily: 'mulish-semibold',
+        lineHeight: 15,
     },
     warehouseNamesWrapper: {
         width: "100%",
         display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+        flexDirection: 'column',
+        justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: 24,
-        marginTop: 12,
+        marginBottom: 20,
+        marginTop: 15,
+        gap: 10,
+        position: 'relative',
+    },
+    warehouseContainer: {
+        width: "100%",
+        backgroundColor: background,
+        borderRadius: 8,
+        paddingVertical: 9,
+        paddingHorizontal: 12,
+        gap: 9,
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
+    },
+    warehouseDesignation: {
+        color: bodyText,
+        fontFamily: 'mulish-medium',
+        fontSize: 10,
     },
     warehouseNames: {
         color: black,
         fontSize: 12,
         fontFamily: 'mulish-bold',
+    },
+    transferArrowWrapper: {
+        width: 24,
+        height: 24,
+        backgroundColor: white,
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: background,
+        position: 'absolute',
+        zIndex: 2,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    additionalDetailsWrapper: {
+        paddingTop: 20,
+        borderColor: background,
+        borderTopWidth: 1,
+        borderBottomWidth: 1,
+        width: '100%',
+        paddingBottom: 20,
+        marginBottom: 20,
     },
     additionalDetails: {
         marginTop: 8,
@@ -151,7 +204,7 @@ const style = StyleSheet.create({
         justifyContent: 'flex-start',
         alignItems: 'flex-start',
         gap: 10,
-        padding: 12,
+        paddingTop: 12,
         backgroundColor: white,
         borderRadius: 12,
     },

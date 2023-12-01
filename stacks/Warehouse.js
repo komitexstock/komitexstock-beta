@@ -406,6 +406,7 @@ const Warehouse = ({navigation, route}) => {
     const handleEditWarehouse = () => {
         // close bottom sheet modal
         closeModal();
+
         // navigate to edit warehouse screen
         navigation.navigate("EditWarehouse", {
             id: selectedWarehouse?.id,
