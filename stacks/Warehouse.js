@@ -41,7 +41,15 @@ const Warehouse = ({navigation, route}) => {
     const { bottomSheetRef, filterSheetRef, calendarSheetRef, calendarSheetOpen } = useGlobals();
 
     // tab state
-    const [tab, setTab] = useState(route.params?.tab ? route.params.tab : "warehouse")
+    const [tab, setTab] = useState("warehouse")
+    
+    useEffect(() => {
+        // if no tab pramameter is passed, return ealry
+        if (!route?.params?.tab) return;
+
+        // else setTabs
+        setTab(route?.params?.tab);
+    }, [route?.params?.tab])
 
     // stats array
     const stats = [
