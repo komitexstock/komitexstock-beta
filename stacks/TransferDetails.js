@@ -1,31 +1,62 @@
-import { StyleSheet, Text, View, ScrollView } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
 // components
 import Header from '../components/Header';
 import CustomButton from '../components/CustomButton';
 import { windowHeight } from '../utils/helpers';
-import { background, black, bodyText, white } from '../style/colors';
+import { background, black, bodyText, white, primaryColor } from '../style/colors';
 import MerchantProduct from '../components/MerchantProduct';
 // icons
 import WarehouseDirectionArrowIcon from '../assets/icons/WarehouseDirectionArrowIcon';
+import EditIcon from "../assets/icons/EditIcon";
 
+const TransferDetails = ({navigation, route}) => {
 
-const StockTransferSummary = ({navigation, route}) => {
+    // origin warehouse
+    const originWarehouse = {
+        id: 1,
+        warehouse_name: "Warri"
+    };
 
-    const { originWarehouse, destinationWarehouse, additionalDetails, selectedProducts } = route.params;
+    // destination warehouse
+    const destinationWarehouse = {
+        id: 2,
+        warehouse_name: "Benin"
+    };
+
+    const selectedProducts = [
+        {
+            id: 2,
+            product_name: "Pheonix Sneakers",
+            image_url: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/products%2Fsneakers.png?alt=media&token=fbb14f47-c2b7-4d2a-b54a-8485ccf7a648",
+            merchant: "Style Bazaar",
+            available_quantity: 5,
+            quantity: 1,
+            selected: false,
+        },
+        {
+            id: 3,
+            product_name: "Timberland Shoe",
+            image_url: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/products%2FTimberland.jpg?alt=media&token=29480738-8990-45c9-9b74-b2d24c0fa722",
+            merchant: "Luxe Living Ltd",
+            available_quantity: 10,
+            quantity: 1,
+            selected: false
+        },
+        {
+            id: 4,
+            product_name: "Ricochet Watch",
+            image_url: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/products%2Fricochet-watch.png?alt=media&token=fbf05657-e511-4d1f-a0db-3b9419d4ba5a",
+            merchant: "Ecosavy Ltd",
+            available_quantity: 8,
+            quantity: 1,
+            selected: false
+        },
+    ]
+
+    const additionalDetails = "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Vel, incidunt.";
 
     const [isLoading, setIsLoading] = useState(false);
-
-    const handleTransferStock = () => {
-        setIsLoading(true)
-
-        setTimeout(() => {
-            setIsLoading(false);
-            navigation.navigate("Warehouse", {
-                tab: "stock transfer",
-            });
-        }, 2000);
-    }
 
     return (
         <>
@@ -34,14 +65,17 @@ const StockTransferSummary = ({navigation, route}) => {
                 style={style.container}
             >
                 <Header
-                    stackName={"Summary"}
+                    stackName={"Transfer Details"}
                     navigation={navigation}
                     unpadded={true}
                 />
+                <TouchableOpacity
+                    style={style.editOrderButton}
+                >
+                    <EditIcon />
+                    <Text style={style.editButtonText}>Edit Transfer</Text>
+                </TouchableOpacity>
                 <View style={style.contentWrapper}>
-                    <Text style={style.paragraph}>
-                        Review your stock transfer details
-                    </Text>
                     <View style={style.warehouseWrapper}>
                         <Text style={style.infoHeading}>Move inventory from</Text>
                         <View style={style.warehouseNamesWrapper}>
@@ -70,10 +104,8 @@ const StockTransferSummary = ({navigation, route}) => {
                                     key={product.id}
                                     productName={product.product_name}
                                     merchant={product.merchant}
-                                    availableQuantity={product.available_quantity}
                                     imageUrl={product.image_url}
                                     quantity={product.quantity}
-                                    selected={product.selected}
                                     summary={true}
                                     containerStyle={{height: 56}}
                                 />
@@ -83,17 +115,11 @@ const StockTransferSummary = ({navigation, route}) => {
                 </View>
 
             </ScrollView>
-            <CustomButton
-                name={"Transfer Stock"}
-                onPress={handleTransferStock}
-                backgroundColor={white}
-                isLoading={isLoading}
-            />
         </>
     )
 }
 
-export default StockTransferSummary
+export default TransferDetails
 
 const style = StyleSheet.create({
     container: {
@@ -102,6 +128,21 @@ const style = StyleSheet.create({
         paddingHorizontal: 20,
         width: "100%"
     },
+    editOrderButton: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'flex-end',
+        justifyContent: 'center',
+        gap: 12,
+        position: 'absolute',
+        top: 57.5,
+        right: 0,
+    },
+    editButtonText: {
+        color: primaryColor,
+        fontFamily: 'mulish-medium',
+        fontSize: 12
+    },
     contentWrapper: {
         width: "100%",
         display: 'flex',
@@ -109,7 +150,7 @@ const style = StyleSheet.create({
         justifyContent: 'flex-start',
         alignItems: 'flex-start',
         gap: 30,
-        paddingTop: 8,
+        paddingTop: 30,
         paddingBottom: 20,
     },
     paragraph: {

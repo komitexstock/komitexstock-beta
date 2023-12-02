@@ -5,14 +5,13 @@ import Header from '../components/Header';
 import MerchantProduct from '../components/MerchantProduct';
 // icons
 import EditIcon from "../assets/icons/EditIcon";
-import InfoBlackIcon from '../assets/icons/InfoBlackIcon';
 // helpers
 import { windowHeight, windowWidth } from '../utils/helpers'
 import { background, black, bodyText, primaryColor, white } from '../style/colors';
 // auth
 import { useAuth } from '../context/AuthContext';
 
-const OrderDetails = ({navigation, route}) => {
+const WaybillDetails = ({navigation, route}) => {
 
     const { authData } = useAuth();
 
@@ -21,28 +20,21 @@ const OrderDetails = ({navigation, route}) => {
             id: 1,
             product_name: "Clarks Shoe",
             image_url: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/products%2FClarks.jpg?alt=media&token=70431e2c-fbcd-4e1c-9cf3-3d35861f98d3",
-            quantity: 1,
+            quantity: 5,
         },
         {
             id: 2,
             product_name: "Pheonix Sneakers",
             image_url: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/products%2Fsneakers.png?alt=media&token=fbb14f47-c2b7-4d2a-b54a-8485ccf7a648",
             merchant: "Style Bazaar",
-            quantity: 1,
+            quantity: 6,
         },
         {
             id: 3,
             product_name: "Timberland Shoe",
             image_url: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/products%2FTimberland.jpg?alt=media&token=29480738-8990-45c9-9b74-b2d24c0fa722",
             merchant: "Luxe Living Ltd",
-            quantity: 1,
-        },
-        {
-            id: 4,
-            product_name: "Ricochet Watch",
-            image_url: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/products%2Fricochet-watch.png?alt=media&token=fbf05657-e511-4d1f-a0db-3b9419d4ba5a",
-            merchant: "Ecosavy Ltd",
-            quantity: 2,
+            quantity: 4,
         },
     ];
 
@@ -52,7 +44,7 @@ const OrderDetails = ({navigation, route}) => {
             style={styles.container}
         >
             <Header
-                stackName={"Order Details"}
+                stackName={"Waybill Details"}
                 navigation={navigation}
                 unpadded={true}
             />
@@ -60,24 +52,24 @@ const OrderDetails = ({navigation, route}) => {
                 style={styles.editOrderButton}
             >
                 <EditIcon />
-                <Text style={styles.editButtonText}>Edit Order</Text>
+                <Text style={styles.editButtonText}>Edit Waybill</Text>
             </TouchableOpacity>
             <View style={styles.detailsWrapper}>
                 <View style={styles.detailsContainer}>
                     {/* customer name */}
                     <View style={styles.detailsGroup}>
-                        <Text style={styles.detailsHeading}>Customer's Name</Text>
-                        <Text style={styles.detailsValue}>Richard Idana</Text>
+                        <Text style={styles.detailsHeading}>Warehouse</Text>
+                        <Text style={styles.detailsValue}>Warri</Text>
+                    </View>
+                    {/* merchant */}
+                    <View style={styles.detailsGroup}>
+                        <Text style={styles.detailsHeading}>Merchant</Text>
+                        <Text style={styles.detailsValue}>Style Bazaar</Text>
                     </View>
                     {/* logistics */}
                     <View style={styles.detailsGroup}>
                         <Text style={styles.detailsHeading}>Logistics</Text>
                         <Text style={styles.detailsValue}>Komitex Logisitcs</Text>
-                    </View>
-                    {/* address */}
-                    <View style={styles.detailsGroup}>
-                        <Text style={styles.detailsHeading}>Delivery Address</Text>
-                        <Text style={styles.detailsValue}>No 3 Izomo Street Udu road Warri</Text>
                     </View>
                 </View>
                 <View style={styles.detailsContainer}>
@@ -86,8 +78,10 @@ const OrderDetails = ({navigation, route}) => {
                         <Text style={styles.detailsValue}>20 May, 2023 10:30am</Text>
                     </View>
                     <View style={[styles.detailsGroup, styles.rightAligned]}>
-                        <Text style={styles.detailsHeading}>Phone Number</Text>
-                        <Text style={styles.detailsValue}>08012345678</Text>
+                        <Text style={styles.detailsHeading}>Waybill Details</Text>
+                        <Text style={styles.detailsValue}>
+                            Hi JOHN DOE Your shipment IY*****WR to KOMITEX with was created...
+                        </Text>
                     </View>
                 </View>
             </View>
@@ -108,32 +102,11 @@ const OrderDetails = ({navigation, route}) => {
                     ))}
                 </View>
             </View>
-            <View style={styles.priceWrapper}>
-                <View style={styles.priceGroup}>
-                    <Text style={styles.priceText}>Subtotal</Text>
-                    <Text style={styles.priceValue}>₦80,000</Text>
-                </View>
-                <View style={styles.priceGroup}>
-                    <View style={styles.priceTextGroup}>
-                        <Text style={styles.priceText}>
-                            Delivery Fee (Warri)
-                        </Text>
-                        <TouchableOpacity>
-                            <InfoBlackIcon />
-                        </TouchableOpacity>
-                    </View>
-                    <Text style={styles.priceValue}>-₦3,000</Text>
-                </View>
-                <View style={styles.priceGroup}>
-                    <Text style={styles.priceText}>Total {authData?.account_type === "Merchant" ? "Receivable" : "Remittance"}</Text>
-                    <Text style={styles.priceValue}>₦77,000</Text>
-                </View>
-            </View>
         </ScrollView>
     )
 }
 
-export default OrderDetails
+export default WaybillDetails
 
 const styles = StyleSheet.create({
     container: {
@@ -220,42 +193,4 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
         gap: 10,
     },
-    priceWrapper: {
-        width: "100%",
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'flex-start',
-        alignItems: 'flex-start',
-        borderRadius: 12,
-        padding: 12,
-        backgroundColor: white,
-        marginTop: 20,
-        gap: 10,
-    },
-    priceGroup: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        width: '100%',
-    },
-    priceText: {
-        color: black,
-        fontSize: 12,
-        fontFamily: 'mulish-medium',
-        lineHeight: 15,
-    },
-    priceTextGroup: {
-        height: 15,
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        gap: 8,
-        alignItems: 'center',
-    },
-    priceValue: {
-        color: black,
-        fontSize: 12,
-        fontFamily: 'mulish-bold',
-    }
 })

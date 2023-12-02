@@ -26,6 +26,8 @@ import SendWaybill from '../stacks/SendWaybill';
 // chat
 import Chat from '../stacks/Chat';
 import OrderDetails from '../stacks/OrderDetails';
+import WaybillDetails from '../stacks/WaybillDetails';
+import TransferDetails from '../stacks/TransferDetails';
 // inventory related stacks
 import Inventory from '../stacks/Inventory';
 import Products from '../stacks/Products';
@@ -122,6 +124,16 @@ const Navigator = () => {
                     <Stack.Screen 
                         name="OrderDetails" 
                         component={OrderDetails} 
+                    />
+                    {/* WaybillDetails screen */}
+                    <Stack.Screen 
+                        name="WaybillDetails" 
+                        component={WaybillDetails} 
+                    />
+                    {/* TransferDetails screen */}
+                    <Stack.Screen 
+                        name="TransferDetails" 
+                        component={TransferDetails} 
                     />
                     {/* View Image stack */}
                     <Stack.Screen 

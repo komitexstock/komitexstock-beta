@@ -1283,7 +1283,8 @@ const Chat = ({navigation, route}) => {
                                                 containerStyle={{
                                                     backgroundColor: background,
                                                     paddingVertical: 0,
-                                                }}                                            />
+                                                }}                                            
+                                            />
                                         ))}
                                     </View>
                                 </View>

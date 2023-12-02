@@ -15,7 +15,7 @@ import CheckBox from "./CheckBox";
 // import react native components
 import { useRef, useState } from "react";
 
-const MerchantProduct = ({id, productName, merchant, availableQuantity, imageUrl, quantity, selected, selectProduct, removeProduct, increaseQuantity, decreaseQuantity, handleQuantityKeyUp, avatarDiameter, summary, containerStyle}) => {
+const MerchantProduct = ({id, productName, merchant, availableQuantity, imageUrl, quantity, selected, selectProduct, removeProduct, increaseQuantity, decreaseQuantity, handleQuantityKeyUp, summary, containerStyle}) => {
     // product => object
     // removeProduct, increaseQuantity, decreaseQuantity => function
 
@@ -53,7 +53,7 @@ const MerchantProduct = ({id, productName, merchant, availableQuantity, imageUrl
             >
                 <Avatar
                     imageUrl={imageUrl}
-                    diameter={avatarDiameter ? avatarDiameter : 40}
+                    diameter={summary ? 30 : 40}
                     squared={true}
                 />
                 <View style={style.textWrapper}>
