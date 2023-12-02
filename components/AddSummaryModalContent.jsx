@@ -5,7 +5,7 @@ import { accent, background, black, bodyText, primaryColor, white } from "../sty
 // icons
 import InfoIconWhite from "../assets/icons/InfoIconWhite";
 // components
-import ProductListSummary from "./ProductListSummary";
+import MerchantProduct from "./MerchantProduct";
 import CustomButton from "./CustomButton";
 
 
@@ -72,11 +72,12 @@ const AddSummaryModalContent = ({logistics, products, customerName, location, ph
                 >   
                     {/* list of products */}
                     {products.map(data => (
-                        <ProductListSummary
+                        <MerchantProduct
                             key={data.id}
-                            product_name={data.product_name}
+                            productName={data.product_name}
                             quantity={data.quantity}
                             imageUrl={data.imageUrl}
+                            summary={true}
                         />
                     ))}
                 </View>

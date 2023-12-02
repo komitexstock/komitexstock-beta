@@ -32,7 +32,6 @@ const StockTransferSummary = ({navigation, route}) => {
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 style={style.container}
-                contentContainerStyle={style.contentContainer}
             >
                 <Header
                     stackName={"Summary"}

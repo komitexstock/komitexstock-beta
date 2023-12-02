@@ -614,7 +614,8 @@ const Home = ({navigation}) => {
                                     <View style={style.homeOrdersHeader}>
                                         <Text style={style.homeOrdersHeading}>Recent Orders</Text>
                                         <TouchableOpacity
-                                            onPress={() => {navigation.navigate("Orders")}}
+                                            // onPress={() => {navigation.navigate("Orders")}}
+                                            onPress={() => {navigation.navigate("OrderDetails")}}
                                             // onPress={() => {navigation.navigate("Share")}}
                                             // onPress={() => {navigation.navigate("WriteReview")}}
                                         >

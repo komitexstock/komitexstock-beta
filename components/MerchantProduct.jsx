@@ -15,7 +15,7 @@ import CheckBox from "./CheckBox";
 // import react native components
 import { useRef, useState } from "react";
 
-const MerchantProduct = ({id, productName, merchant, availableQuantity, imageUrl, quantity, selected, selectProduct, removeProduct, increaseQuantity, decreaseQuantity, handleQuantityKeyUp, summary}) => {
+const MerchantProduct = ({id, productName, merchant, availableQuantity, imageUrl, quantity, selected, selectProduct, removeProduct, increaseQuantity, decreaseQuantity, handleQuantityKeyUp, avatarDiameter, summary, containerStyle}) => {
     // product => object
     // removeProduct, increaseQuantity, decreaseQuantity => function
 
@@ -29,7 +29,8 @@ const MerchantProduct = ({id, productName, merchant, availableQuantity, imageUrl
         <View 
             style={[
                 style.productItem,
-                summary && {paddingVertical: 6, paddingHorizontal: 0}
+                summary && {paddingVertical: 6, paddingHorizontal: 0},
+                containerStyle && containerStyle
             ]}
         >
             {/* <View style={style.productInfoWrapper}>
@@ -52,15 +53,19 @@ const MerchantProduct = ({id, productName, merchant, availableQuantity, imageUrl
             >
                 <Avatar
                     imageUrl={imageUrl}
+                    diameter={avatarDiameter ? avatarDiameter : 40}
                     squared={true}
                 />
                 <View style={style.textWrapper}>
                     <Text style={style.productName}>
                         {productName}
                     </Text>
-                    <Text style={style.merchantName}>
-                        {merchant} {!summary && '\u2022' + availableQuantity + "available"}
-                    </Text>
+                    {/* merchant name */}
+                    {merchant && (
+                        <Text style={style.merchantName}>
+                            {merchant} {!summary && '\u2022' + availableQuantity + "available"}
+                        </Text>
+                    )}
                 </View>
             </TouchableOpacity>
 

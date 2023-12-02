@@ -49,7 +49,7 @@ import CustomButton from "../components/CustomButton";
 import Input from "../components/Input";
 import SelectInput from "../components/SelectInput";
 import MessageContainer from "../components/MessageContainer";
-import ProductListSummary from "../components/ProductListSummary";
+import MerchantProduct from "../components/MerchantProduct";
 import Avatar from "../components/Avatar";
 import Menu from "../components/Menu";
 // import react hooks
@@ -1274,13 +1274,16 @@ const Chat = ({navigation, route}) => {
                                     <View style={style.productsDetailsContainer}>
                                         { products.map((product) => (
                                             // map through selected products
-                                            <ProductListSummary
+                                            <MerchantProduct
                                                 key={product.id}
-                                                product_name={product.product_name}
+                                                productName={product.product_name}
                                                 quantity={product.quantity}
                                                 imageUrl={product.imageUrl}
-                                                padded={true}
-                                            />
+                                                summary={true}
+                                                containerStyle={{
+                                                    backgroundColor: background,
+                                                    paddingVertical: 0,
+                                                }}                                            />
                                         ))}
                                     </View>
                                 </View>
@@ -1336,12 +1339,16 @@ const Chat = ({navigation, route}) => {
                                     <View style={style.productsDetailsContainer}>
                                         { products.map((product) => (
                                             // map through selected products
-                                            <ProductListSummary
+                                            <MerchantProduct
                                                 key={product.id}
-                                                product_name={product.product_name}
+                                                productName={product.product_name}
                                                 quantity={product.quantity}
                                                 imageUrl={product.imageUrl}
-                                                padded={true}
+                                                summary={true}
+                                                containerStyle={{
+                                                    backgroundColor: background,
+                                                    paddingVertical: 0,
+                                                }}
                                             />
                                         ))}
                                     </View>
@@ -1387,12 +1394,16 @@ const Chat = ({navigation, route}) => {
                                     <View style={style.productsDetailsContainer}>
                                         { products.map((product) => (
                                             // map through selected products
-                                            <ProductListSummary
+                                            <MerchantProduct
                                                 key={product.id}
-                                                product_name={product.product_name}
+                                                productName={product.product_name}
                                                 quantity={product.quantity}
                                                 imageUrl={product.imageUrl}
-                                                padded={true}
+                                                summary={true}
+                                                containerStyle={{
+                                                    backgroundColor: background,
+                                                    paddingVertical: 0,
+                                                }}
                                             />
                                         ))}
                                     </View>
@@ -1947,10 +1958,9 @@ const style = StyleSheet.create({
 
     productsDetailsContainer: {
         borderRadius: 12,
-        padding: 12,
+        paddingHorizontal: 12,
         display: 'flex',
         flexDirection: 'column',
-        gap: 12,
         backgroundColor: background,
     }
 })

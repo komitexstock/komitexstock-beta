@@ -747,7 +747,7 @@ const EditLocation = ({navigation, route}) => {
                 <View style={styles.modalWrapper}>
                     <View style={styles.modalContent}>
                         <Text style={styles.modalParagraph}>
-                            Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                            Add new sub-loction an it's corresponding delivery charge
                         </Text>
                         <View style={styles.modalInputWrapper}>
                             <Input 
