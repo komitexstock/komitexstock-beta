@@ -15,7 +15,7 @@ import { background, black, bodyText, orderDate, white } from '../style/colors';
 // import helper functions
 
 
-const StockTransferListItem = ({item, index, firstOrder, lastOrder, sideFunctions, searchQuery}) => {
+const StockTransferListItem = ({item, index, firstOrder, lastOrder, sideFunctions, searchQuery, showListType}) => {
     // lenght, index => int
     // item => object
 
@@ -79,6 +79,7 @@ const StockTransferListItem = ({item, index, firstOrder, lastOrder, sideFunction
         >
             {/* order info */}
             <View style={style.orderInfo}>
+                {showListType && <Text style={style.listTypeText}>Stock transfer</Text>}
                 <View style={style.warehouseNameWrapper}>
                     <Text 
                         style={[
@@ -124,9 +125,11 @@ const StockTransferListItem = ({item, index, firstOrder, lastOrder, sideFunction
                         }
                     })}
                 </Text>
-                <Text style={style.orderDatetime}>
-                    {item.datetime}
-                </Text>
+                {!showListType && (
+                    <Text style={style.orderDatetime}>
+                        {item.datetime}
+                    </Text>
+                )}
             </View>
             <View style={style.orderPriceContainer}>
                 <Indicator type={item.status} text={item.status} />
@@ -166,6 +169,11 @@ const style = StyleSheet.create({
         alignItems: 'flex-start',
         gap: 4,
         alignSelf: 'stretch',
+    },
+    listTypeText: {
+        fontFamily: 'mulish-bold',
+        fontSize: 10,
+        color: neutral,
     },
     warehouseNameWrapper: {
         width: "100%",

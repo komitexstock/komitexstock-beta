@@ -5,13 +5,13 @@ import Indicator from './Indicator';
 import Mark from './Mark';
 import Avatar from './Avatar';
 // colors
-import { black, bodyText, white } from '../style/colors';
+import { black, bodyText, neutral, white } from '../style/colors';
 // import helper functions
 import { windowWidth } from '../utils/helpers';
 // use auth
 import { useAuth } from '../context/AuthContext';
 
-const WaybillListItem = ({item, index, firstWaybill, lastWaybill, sideFunctions, searchQuery}) => {
+const WaybillListItem = ({item, index, firstWaybill, lastWaybill, sideFunctions, searchQuery, waybillType}) => {
     // item => object
     // index, length => int
 
@@ -63,6 +63,8 @@ const WaybillListItem = ({item, index, firstWaybill, lastWaybill, sideFunctions,
         }
     }
 
+    const bullet = '\u2022'
+
     // render WaybillListItem component
     return (
         <TouchableOpacity 
@@ -76,42 +78,53 @@ const WaybillListItem = ({item, index, firstWaybill, lastWaybill, sideFunctions,
             onPress={handleOnPress}
             activeOpacity={0.8}
         >
-            {/* waybill image */}
-            <Avatar 
-                imageUrl={
-                    authData?.account_type === "Logistics" ? 
-                    item?.merchant?.banner_image : 
-                    item?.logistics?.banner_image
-                }
-                squared={true}
-                fullname={
-                    authData?.account_type === "Logistics" ? 
-                    item?.merchant?.business_name : 
-                    item?.logistics?.business_name
-                }
-            />
-            <View style={style.orderInfo}>
-                <Text 
-                    style={[
-                        style.orderMainText,
-                        // if theres a newMessage in the waybill chat, make text color darker
-                        {color: item.newMessage ? black : bodyText},
-                        // if theres a newMessage in the waybill chat, use diffrent font weight
-                        {fontFamily: item.newMessage ? 'mulish-bold' : 'mulish-regular'},
-                        searchQuery && {color: bodyText, fontFamily: 'mulish-regular'},
-                    ]}
-                >
-                    {/* map through product array */}
-                    { item.products.map((product, index) => {
-                        // seperate list of products by commas ','
-                        if (index !== 0) {
-                            return highlightSearchtext(", "+ product.product_name + " x " + product.quantity);
-                        } else {
-                            return highlightSearchtext(product.product_name + " x " + product.quantity);
+            <View style={style.waybillDetailsContainer}>
+                {waybillType && <Text style={style.listTypeText}>
+                    Waybill {bullet} {waybillType}</Text>}
+                <View style={style.waybillDetailsWrapper}>
+                    {/* waybill image */}
+                    <Avatar 
+                        imageUrl={
+                            authData?.account_type === "Logistics" ? 
+                            item?.merchant?.banner_image : 
+                            item?.logistics?.banner_image
                         }
-                    })}
-                </Text>
-                <Text style={style.orderDatetime}>{item.datetime}</Text>
+                        squared={true}
+                        fullname={
+                            authData?.account_type === "Logistics" ? 
+                            item?.merchant?.business_name : 
+                            item?.logistics?.business_name
+                        }
+                    />
+                    {/* waybuill info */}
+                    <View style={style.orderInfo}>
+                        {/* products */}
+                        <Text 
+                            style={[
+                                style.orderMainText,
+                                // if theres a newMessage in the waybill chat, make text color darker
+                                {color: item.newMessage ? black : bodyText},
+                                // if theres a newMessage in the waybill chat, use diffrent font weight
+                                {fontFamily: item.newMessage ? 'mulish-bold' : 'mulish-regular'},
+                                searchQuery && {color: bodyText, fontFamily: 'mulish-regular'},
+                            ]}
+                        >
+                            {/* map through product array */}
+                            { item.products.map((product, index) => {
+                                // seperate list of products by commas ','
+                                if (index !== 0) {
+                                    return highlightSearchtext(", "+ product.product_name + " x " + product.quantity);
+                                } else {
+                                    return highlightSearchtext(product.product_name + " x " + product.quantity);
+                                }
+                            })}
+                        </Text>
+                        {/* datetime */}
+                        {!waybillType && (
+                            <Text style={style.orderDatetime}>{item.datetime}</Text>
+                        )}
+                    </View>
+                </View>
             </View>
             {/* indicate waybill status */}
             <View style={style.orderPriceContainer}>
@@ -135,6 +148,7 @@ const style = StyleSheet.create({
         backgroundColor: white,
         paddingVertical: 15,
     },
+    
     firstOrderWrapper: {
         borderTopStartRadius: 12,
         borderTopEndRadius: 12,
@@ -142,6 +156,27 @@ const style = StyleSheet.create({
     lastOrderWrapper: {
         borderBottomStartRadius: 12,
         borderBottomEndRadius: 12,
+    },
+    waybillDetailsContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
+        gap: 2,
+        width: windowWidth - 142,
+    },
+    listTypeText: {
+        fontFamily: 'mulish-bold',
+        fontSize: 10,
+        color: neutral,
+    },
+    waybillDetailsWrapper: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        gap: 12,
+        width: "100%",
     },
     orderImage: {
         width: 40,
