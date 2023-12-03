@@ -11,13 +11,13 @@ import Indicator from './Indicator';
 import Mark from './Mark';
 import Avatar from './Avatar';
 // colors
-import { background, black, bodyText, orderDate, white } from '../style/colors';
+import { background, black, bodyText, neutral, orderDate, secondaryColor, white } from '../style/colors';
 // import helper functions
 import { windowWidth } from '../utils/helpers';
 // use auth
 import { useAuth } from '../context/AuthContext';
 
-const OrderListItem = ({item, index, firstOrder, lastOrder, selectable, selected, selectFunction, extraVerticalPadding, sideFunctions, searchQuery, navigation, onPress}) => {
+const OrderListItem = ({item, index, firstOrder, lastOrder, selectable, selected, selectFunction, extraVerticalPadding, sideFunctions, searchQuery, navigation, showListType}) => {
     // lenght, index => int
     // item => object
 
@@ -43,12 +43,14 @@ const OrderListItem = ({item, index, firstOrder, lastOrder, selectable, selected
         } else {
             if (sideFunctions) sideFunctions();
             // return onPress;
-            return navigation.navigate("Chat", {
-                chatId: item.id, 
-                chatType: "Order",
-                business_name: handleChatHeaderBusinessName(),
-                banner_image: handleChatHeaderBanner(),
-            });
+            setTimeout(() => {
+                navigation.navigate("Chat", {
+                    chatId: item.id, 
+                    chatType: "Order",
+                    business_name: handleChatHeaderBusinessName(),
+                    banner_image: handleChatHeaderBanner(),
+                });
+            }, 750);
         }
     }
 
@@ -118,60 +120,71 @@ const OrderListItem = ({item, index, firstOrder, lastOrder, selectable, selected
             onPress={handleOnPress}
             activeOpacity={selectable ? 0.8 : 0.5}
         >
-            {/* logistics/merchnat image */}
-            <View style={style.orderImageContainer}>
-                {/* merchant avatar */}
-                {authData.account_type === "Logistics" && (
-                    <Avatar 
-                        imageUrl={item?.merchant?.banner_image}
-                        squared={true}
-                        selected={selectable && selected}
-                        fullname={item?.merchant?.business_name}
-                    />
-                )}
-                {/* logistics avatar */}
-                {authData.account_type === "Merchant" && (
-                    <Avatar 
-                    imageUrl={item?.logistics?.banner_image}
-                    squared={true}
-                    selected={selectable && selected}
-                    fullname={item?.logistics?.business_name}
-                    />
-                )}
-            </View>
-            {/* order info */}
-            <View style={style.orderInfo}>
-                <Text
-                    style={[
-                        style.orderMainText,
-                        // if order has a new message make text have a color with higher opacity
-                        {color: item.newMessage ? black : bodyText},
-                        // if order has a new message make font have a higher weight
-                        {fontFamily: item.newMessage ? 'mulish-bold' : 'mulish-regular'},
-                        searchQuery && {color: bodyText, fontFamily: 'mulish-regular'},
-                    ]}
-                >
-                    {highlightSearchtext(item.name)}, {highlightSearchtext(item.location)}
-                </Text>
-                <Text 
-                    style={[
-                        style.orderSubText,
-                        {color: item.newMessage ? black : bodyText},
-                        searchQuery && {color: bodyText, fontFamily: 'mulish-regular'}
-                    ]}
-                >
-                    {item.products.map((product, index) => {
-                        // seperate list of products by commas ','
-                        if (index !== 0) {
-                            return highlightSearchtext(", "+ product.product_name + " x " + product.quantity);
-                        } else {
-                            return highlightSearchtext(product.product_name + " x " + product.quantity);
-                        }
-                    })}
-                </Text>
-                {/* <Text style={style.orderDatetime}>
-                    {item.datetime}
-                </Text> */}
+            <View style={style.orderDetailsContainer}>
+                {showListType && <Text style={style.listTypeText}>Order</Text>}
+                <View style={style.orderDetailsWrapper}>
+                    {/* logistics/merchnat image */}
+                    <View style={style.orderImageContainer}>
+                        {/* merchant avatar */}
+                        {authData.account_type === "Logistics" && (
+                            <Avatar 
+                                imageUrl={item?.merchant?.banner_image}
+                                squared={true}
+                                selected={selectable && selected}
+                                fullname={item?.merchant?.business_name}
+                            />
+                        )}
+                        {/* logistics avatar */}
+                        {authData.account_type === "Merchant" && (
+                            <Avatar 
+                            imageUrl={item?.logistics?.banner_image}
+                            squared={true}
+                            selected={selectable && selected}
+                            fullname={item?.logistics?.business_name}
+                            />
+                        )}
+                    </View>
+                    {/* order info */}
+                    <View style={style.orderInfo}>
+                        {/* customer name and location */}
+                        <Text
+                            style={[
+                                style.orderMainText,
+                                // if order has a new message make text have a color with higher opacity
+                                {color: item.newMessage ? black : bodyText},
+                                // if order has a new message make font have a higher weight
+                                {fontFamily: item.newMessage ? 'mulish-bold' : 'mulish-regular'},
+                                searchQuery && {color: bodyText, fontFamily: 'mulish-regular'},
+                            ]}
+                        >
+                            {highlightSearchtext(item.name)}, {highlightSearchtext(item.location)}
+                        </Text>
+                        {/* products */}
+                        <Text 
+                            style={[
+                                style.orderSubText,
+                                {color: item.newMessage ? black : bodyText},
+                                searchQuery && {color: bodyText, fontFamily: 'mulish-regular'}
+                            ]}
+                        >
+                            {item.products.map((product, index) => {
+                                // seperate list of products by commas ','
+                                if (index !== 0) {
+                                    return highlightSearchtext(", "+ product.product_name + " x " + product.quantity);
+                                } else {
+                                    return highlightSearchtext(product.product_name + " x " + product.quantity);
+                                }
+                            })}
+                        </Text>
+                        {/* date time */}
+                        {/* if showLIstType is true hide datetime */}
+                        {!showListType && (
+                            <Text style={style.orderDatetime}>
+                                {item.datetime}
+                            </Text>
+                        )}
+                    </View>
+                </View>
             </View>
             <View style={style.orderPriceContainer}>
                   <Text style={style.orderPrice}>
@@ -196,6 +209,27 @@ const style = StyleSheet.create({
         height: 70,
         gap: 12,
         backgroundColor: white,
+    },
+    orderDetailsContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
+        gap: 2,
+        width: windowWidth - 142,
+    },
+    listTypeText: {
+        fontFamily: 'mulish-bold',
+        fontSize: 10,
+        color: neutral,
+    },
+    orderDetailsWrapper: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+        gap: 12,
+        width: "100%",
     },
     extraVerticalPadding: {
         paddingVertical: 15,

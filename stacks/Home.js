@@ -612,7 +612,7 @@ const Home = ({navigation}) => {
                                 {/* recent orders */}
                                 <View style={style.homeOrders}>
                                     <View style={style.homeOrdersHeader}>
-                                        <Text style={style.homeOrdersHeading}>Recent Orders</Text>
+                                        <Text style={style.homeOrdersHeading}>Recent Activities</Text>
                                         <TouchableOpacity
                                             // onPress={() => {navigation.navigate("Orders")}}
                                             // onPress={() => {navigation.navigate("OrderDetails")}}
@@ -640,6 +640,7 @@ const Home = ({navigation}) => {
                                             lastOrder={homeOrders.length - 1} 
                                             firstOrder={0}
                                             extraVerticalPadding={true}
+                                            showListType={true}
                                         />
                                     ))}
                                 </View>
