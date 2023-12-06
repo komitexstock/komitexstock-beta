@@ -13,7 +13,8 @@ import NotificationIcon from "../assets/icons/NotificationIcon";
 import QuickOrderIcon from "../assets/icons/QuickOrderIcon";
 import QuickAnalyticsIcon from "../assets/icons/AnalyticsIcon";
 import QuickInventoryIcon from "../assets/icons/QuickInventoryIcon";
-import QuickWaybiillIcon from "../assets/icons/QuickWaybillIcon";
+import QuickWaybillIcon from "../assets/icons/QuickWaybillIcon";
+import TeamLargeIcon from "../assets/icons/TeamLargeIcon";
 import QuickStockTransferIcon from "../assets/icons/QuickStockTransferIcon";
 import CalendarIcon from "../assets/icons/CalendarIcon";
 import RightArrowIcon from "../assets/icons/RightArrowIcon";
@@ -29,12 +30,13 @@ import FilterButtonGroup from "../components/FilterButtonGroup";
 import SelectInput from "../components/SelectInput";
 import CalendarSheet from "../components/CalendarSheet";
 import FilterPill from "../components/FilterPill";
+import NoResult from "../components/NoResult";
 // react hooks
 import { useState, useEffect } from "react";
 // bottomsheet component
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 // colors
-import { accentLight, background, black, bodyText, greenLight, inputBorder, listSeperator4, primaryColor, secondaryColor, white, yellowLight } from "../style/colors";
+import { accentLight, background, black, bodyText, greenLight, inputBorder, listSeperator4, primaryColor, secondaryColor, subText, white, yellowLight } from "../style/colors";
 // moment
 import moment from "moment";
 // home skeleton
@@ -78,6 +80,12 @@ const Home = ({navigation}) => {
             subtitle: "Add products to your stores inventory",
             icon: <QuickInventoryIcon />,
             onPress: () => navigation.navigate("Inventory", {tab: "Products"}),
+        },
+        {
+            title: "Invite your staffs",
+            subtitle: "Send invites to your staffs (manager, sales representative)",
+            icon: <TeamLargeIcon />,
+            onPress: () => navigation.navigate("TeamMembers"),
         },
         {
             title: "Start earning with Komitex",
@@ -517,7 +525,7 @@ const Home = ({navigation}) => {
         },
         {
             id: 3,
-            icon: <QuickWaybiillIcon />,
+            icon: <QuickWaybillIcon />,
             background: yellowLight,
             mainText: "Send Waybill",
             subText: "Restock your inventory with your preferred partner",
@@ -552,7 +560,7 @@ const Home = ({navigation}) => {
         },
         {
             id: 3,
-            icon: <QuickWaybiillIcon />,
+            icon: <QuickWaybillIcon />,
             background: yellowLight,
             mainText: "Send Waybill",
             subText: "Restock your inventory with your preferred partner",
@@ -751,7 +759,10 @@ const Home = ({navigation}) => {
                         )}
 
                         {/* search result order list */}
-                        <BottomSheetScrollView style={style.orderSearchResults}>
+                        <BottomSheetScrollView 
+                            style={style.orderSearchResults}
+                            showsVerticalScrollIndicator={false}
+                        >
                             {searchedOrders.map((order, index) => (
                                 <OrderListItem 
                                     key={order.id} 
@@ -763,6 +774,10 @@ const Home = ({navigation}) => {
                                     sideFunctions={closeModal}
                                 />
                             ))}
+
+                            {searchQuery !== "" && searchedOrders.length === 0 && (
+                                <NoResult />
+                            )}
                         </BottomSheetScrollView>
                     </> 
                 }

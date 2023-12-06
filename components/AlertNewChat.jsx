@@ -41,7 +41,7 @@ const AlertNotice = ({show, text, copyNumberAlert}) => {
             >   
                 {copyNumberAlert ? (
                     <>
-                        <Image source={require("../assets/splash/komitexsplash1.png")} style={style.noticeImage} />
+                        <Image source={require("../assets/splash/komitexsplash.png")} style={style.noticeImage} />
                         <Text style={style.text}>Number copied</Text>
                     </>
                 ) : (
