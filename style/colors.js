@@ -23,6 +23,7 @@ export const inputBorder = "#E7E5E5";
 export const listSeparator = "#F4F4F4";
 export const listSeparator2 = "#E3E3E3";
 export const listSeperator3 = "#DCDBDB";
+export const listSeperator4 = "#E5E5E5";
 export const toolTipBackground = "#333333";
 export const deliveredMessageBody = "#ECFDF3";
 export const deliveredContainer = "#D1FADF";

@@ -11,7 +11,7 @@ import Mark from './Mark';
 // icons
 import StockTransferDirectionIcon from '../assets/icons/StockTransferDirectionIcon';
 // colors
-import { background, black, bodyText, orderDate, white } from '../style/colors';
+import { background, black, bodyText, orderDate, white, neutral } from '../style/colors';
 // import helper functions
 
 

@@ -10,13 +10,14 @@ import {
 } from "react-native";
 // icons
 import NotificationIcon from "../assets/icons/NotificationIcon";
-import SearchIcon from "../assets/icons/SearchIcon";
 import QuickOrderIcon from "../assets/icons/QuickOrderIcon";
 import QuickAnalyticsIcon from "../assets/icons/AnalyticsIcon";
 import QuickInventoryIcon from "../assets/icons/QuickInventoryIcon";
 import QuickWaybiillIcon from "../assets/icons/QuickWaybillIcon";
 import QuickStockTransferIcon from "../assets/icons/QuickStockTransferIcon";
 import CalendarIcon from "../assets/icons/CalendarIcon";
+import RightArrowIcon from "../assets/icons/RightArrowIcon";
+import CloseIcon from "../assets/icons/CloseIcon";
 // components
 import OrderListItem from "../components/OrderListItem";
 import CustomBottomSheet from "../components/CustomBottomSheet";
@@ -33,7 +34,7 @@ import { useState, useEffect } from "react";
 // bottomsheet component
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 // colors
-import { accentLight, background, black, bodyText, greenLight, primaryColor, secondaryColor, white, yellowLight } from "../style/colors";
+import { accentLight, background, black, bodyText, greenLight, inputBorder, listSeperator4, primaryColor, secondaryColor, white, yellowLight } from "../style/colors";
 // moment
 import moment from "moment";
 // home skeleton
@@ -45,6 +46,7 @@ import { useAuth } from "../context/AuthContext";
 // data
 import { homeOrders } from "../data/homeOrders";
 import { orderList } from "../data/orderList";
+import { windowHeight, windowWidth } from "../utils/helpers";
 
 const Home = ({navigation}) => {
 
@@ -68,6 +70,26 @@ const Home = ({navigation}) => {
     const closeModal = () => {
         bottomSheetRef.current?.close();
     };
+
+    // setup guide array
+    const [setupGuide, setSetupGuide] = useState([
+        {
+            title: "Set up your store",
+            subtitle: "Add products to your stores inventory",
+            icon: <QuickInventoryIcon />,
+            onPress: () => navigation.navigate("Inventory", {tab: "Products"}),
+        },
+        {
+            title: "Start earning with Komitex",
+            subtitle: "Make sales by sending orders to your logistics partners for delivery",
+            icon: <QuickOrderIcon />,
+            onPress: () => navigation.navigate("SendOrder"),
+        },
+    ]);
+
+    const handleDisableSetupGuides = () => {
+        setSetupGuide([]);
+    }
     
     // open bottom sheet functiom
     const openModal = () => {
@@ -579,16 +601,44 @@ const Home = ({navigation}) => {
                                     iconFunction={() => {navigation.navigate("Notifications")}}
                                 />
                                 {/* button search bar to open search modal bottomsheet */}
-                                <View style={style.searchWrapper}>
-                                    <SearchIcon />
-                                    <TouchableOpacity 
-                                        style={style.searchInput}
+                                {setupGuide.length === 0 ? (
+                                    <SearchBar 
+                                        placeholder={"Search Komitex"}
+                                        backgroundColor={white}
+                                        disableFilter={true}
+                                        button={true}
                                         onPress={openModal}
-                                    >
-                                        <Text style={style.searchPlaceholder}>Search Komitex</Text>
-                                    </TouchableOpacity>
-                                </View>
-                                <View>
+                                    />
+                                ) : (
+                                    <View style={style.setupGuideWrapper}>
+                                        <Text style={style.setupGuideHeading}>Setup guide</Text>
+                                        <View style={style.setupGuideList}>
+                                            <TouchableOpacity 
+                                                style={style.closeSetupGuideButton}
+                                                onPress={handleDisableSetupGuides}
+                                            >
+                                                <CloseIcon />
+                                            </TouchableOpacity>
+                                            {setupGuide.map((guide) => (
+                                                <TouchableOpacity 
+                                                    style={style.setupGuideButton}
+                                                    key={guide.title}
+                                                    onPress={guide.onPress}
+                                                >
+                                                    <View style={style.setupGuideTextWrapper}>
+                                                        {guide.icon}
+                                                        <View style={style.setupGuideTextContainer}>
+                                                            <Text style={style.guideHeading}>{guide.title}</Text>
+                                                            <Text style={style.guideParagraph}>{guide.subtitle}</Text>
+                                                        </View>
+                                                    </View>
+                                                    <RightArrowIcon />
+                                                </TouchableOpacity>
+                                            ))}
+                                        </View>
+                                    </View>
+                                )}
+                                <View style={style.callToActionTextWrapper}>
                                     <Text style={style.callToActionText}>What do you want to do today?</Text>
                                 </View>
                                 {/* quick action buttons */}
@@ -643,6 +693,16 @@ const Home = ({navigation}) => {
                                             showListType={true}
                                         />
                                     ))}
+
+                                    {/* no recent activotoes indication */}
+                                    {homeOrders.length === 0 && (
+                                        <View style={style.noRecentActivities}>
+                                            <Text style={style.setupGuideHeading}>No recent activities</Text>
+                                            <Text style={style.noActivitiesParagraph}>
+                                                When you send orders and waybill, you will see them here
+                                            </Text>
+                                        </View>
+                                    )}
                                 </View>
                             </View>
                         </View>
@@ -662,7 +722,7 @@ const Home = ({navigation}) => {
                     <>
                         {/* text input search bar */}
                         <SearchBar 
-                            placeholder={"Search Komitex Stocks"}
+                            placeholder={"Search Komitex"}
                             searchQuery={searchQuery}
                             setSearchQuery={setSearchQuery}
                             backgroundColor={background}
@@ -805,6 +865,60 @@ const style = StyleSheet.create({
     container: {
         backgroundColor: background,
     },
+    setupGuideHeading: {
+        color: black,
+        fontFamily: 'mulish-semibold',
+        fontSize: 14,
+    },
+    setupGuideList: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
+        paddingHorizontal: 12,
+        paddingTop: 40,
+        paddingBottom: 30,
+        backgroundColor: white,
+        borderRadius: 12,
+        position: 'relative',
+        width: windowWidth - 40,
+        gap: 12,
+        marginTop: 12,
+        marginBottom: 20,
+    },
+    closeSetupGuideButton: {
+        position: 'absolute',
+        top: 0,
+        right: 5,
+    },
+    setupGuideButton: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+        flexDirection: 'row',
+        paddingBottom: 8,
+        borderBottomWidth: 1,
+        borderBottomColor: listSeperator4,
+        width: "100%",
+    },
+    setupGuideTextWrapper: {
+        display: 'flex',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
+        flexDirection: 'row',
+        width: "70%",
+        gap: 10,
+    },
+    guideHeading: {
+        color: black,
+        fontFamily: 'mulish-semibold',
+        fontSize: 12,
+    },
+    guideParagraph: {
+        color: bodyText,
+        fontFamily: 'mulish-regular',
+        fontSize: 10,
+    },
     modalWrapper: {
         width: "100%",
         height: "100%",
@@ -842,7 +956,7 @@ const style = StyleSheet.create({
         gap: 16,
     },
     homeScrollView: {
-        minHeight:  "100%",
+        minHeight:  windowHeight - 70,
         paddingHorizontal: 20,
     },  
     homeWrapper: {
@@ -907,12 +1021,13 @@ const style = StyleSheet.create({
         fontSize: 12,  
         color: bodyText,
     },
+    callToActionTextWrapper: {
+        marginVertical: 10,
+    },
     callToActionText: {
         color: bodyText,
         fontFamily: 'mulish-bold',
         fontSize: 12,
-        marginTop: 20,
-        marginBottom: 10,
     },
     quickAccessWrapper: {
         display: 'flex',
@@ -1018,6 +1133,22 @@ const style = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'flex-start',
         alignItems: 'center',
+    },
+
+    noRecentActivities: {
+        height: 100,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: 8,
+    },
+    noActivitiesParagraph: {
+        width: 175,
+        textAlign: 'center',
+        color: bodyText,
+        fontFamily: 'mulish-regular',
+        fontSize: 12,
     },
     searchOrderPillWrapper: {
         width: '100%',

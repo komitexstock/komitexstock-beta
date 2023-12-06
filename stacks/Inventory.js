@@ -26,13 +26,20 @@ import InventorySkeleton from "../skeletons/InventorySkeleton";
 import { useAuth } from "../context/AuthContext"
 import { windowWidth } from "../utils/helpers";
 
-const Products = ({navigation}) => {
+const Products = ({navigation, route}) => {
 
     // auth data
     const { authData } = useAuth();
 
     // tabs, default as Outgoing for Merchants
     const [tab, setTab] = useState("Logistics");
+
+    // listen for tab route parameter
+    useEffect(() => {
+        if (route?.params?.tab) {
+            setTab(route?.params?.tab);
+        }
+    }, [route])
 
     // stats array
     const logisticsStats = [
