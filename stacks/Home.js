@@ -21,6 +21,8 @@ import RightArrowIcon from "../assets/icons/RightArrowIcon";
 import CloseIcon from "../assets/icons/CloseIcon";
 // components
 import OrderListItem from "../components/OrderListItem";
+import WaybillListItem from "../components/WaybillListItem";
+import StockTransferListItem from "../components/StockTransferListItem";
 import CustomBottomSheet from "../components/CustomBottomSheet";
 import SearchBar from "../components/SearchBar";
 import Header from "../components/Header";
@@ -79,7 +81,7 @@ const Home = ({navigation}) => {
             title: "Set up your store",
             subtitle: "Add products to your stores inventory",
             icon: <QuickInventoryIcon />,
-            onPress: () => navigation.navigate("Inventory", {tab: "Products"}),
+            onPress: () => navigation.navigate("AddProduct"),
         },
         {
             title: "Invite your staffs",
@@ -578,6 +580,15 @@ const Home = ({navigation}) => {
 
     const quickButtons = authData?.account_type === "Merchant" ? merchantQuickButtons : logisticsQuickButtons;
 
+    const handleWaybillType = (inventoryAction) => {
+        if (inventoryAction === "increment") {
+            if (authData?.account_type === "Merchant") return "Outgoing";
+            return "Incoming";
+        }
+        if (authData?.account_type === "Merchant") return "Incoming";
+        return "Outcoming";
+    }
+
     // render Home page
     return (
         <>
@@ -593,103 +604,104 @@ const Home = ({navigation}) => {
                         <View
                             style={style.homeScrollView}
                         >
-                            <View style={style.homeWrapper}>
-                                {/* Header Component */}
-                                <Header
-                                    navigation={navigation}
-                                    stackName={
-                                        <View style={style.headerTextContainer}>
-                                            <Text style={style.paragraph}>Welcome back!</Text>
-                                            <Text style={style.heading}>{authData?.full_name}</Text>
-                                        </View>
-                                    }
-                                    removeBackArrow={true}
-                                    unpadded={true}
-                                    icon={<NotificationIcon />}
-                                    iconFunction={() => {navigation.navigate("Notifications")}}
+                            {/* Header Component */}
+                            <Header
+                                navigation={navigation}
+                                stackName={
+                                    <View style={style.headerTextContainer}>
+                                        <Text style={style.paragraph}>Welcome back!</Text>
+                                        <Text style={style.heading}>{authData?.full_name}</Text>
+                                    </View>
+                                }
+                                removeBackArrow={true}
+                                unpadded={true}
+                                icon={<NotificationIcon />}
+                                iconFunction={() => {navigation.navigate("Notifications")}}
+                            />
+                            {/* button search bar to open search modal bottomsheet */}
+                            {setupGuide.length === 0 ? (
+                                <SearchBar 
+                                    placeholder={"Search Komitex"}
+                                    backgroundColor={white}
+                                    disableFilter={true}
+                                    button={true}
+                                    onPress={openModal}
                                 />
-                                {/* button search bar to open search modal bottomsheet */}
-                                {setupGuide.length === 0 ? (
-                                    <SearchBar 
-                                        placeholder={"Search Komitex"}
-                                        backgroundColor={white}
-                                        disableFilter={true}
-                                        button={true}
-                                        onPress={openModal}
-                                    />
-                                ) : (
-                                    <View style={style.setupGuideWrapper}>
-                                        <Text style={style.setupGuideHeading}>Setup guide</Text>
-                                        <View style={style.setupGuideList}>
-                                            <TouchableOpacity 
-                                                style={style.closeSetupGuideButton}
-                                                onPress={handleDisableSetupGuides}
-                                            >
-                                                <CloseIcon />
-                                            </TouchableOpacity>
-                                            {setupGuide.map((guide) => (
-                                                <TouchableOpacity 
-                                                    style={style.setupGuideButton}
-                                                    key={guide.title}
-                                                    onPress={guide.onPress}
-                                                >
-                                                    <View style={style.setupGuideTextWrapper}>
-                                                        {guide.icon}
-                                                        <View style={style.setupGuideTextContainer}>
-                                                            <Text style={style.guideHeading}>{guide.title}</Text>
-                                                            <Text style={style.guideParagraph}>{guide.subtitle}</Text>
-                                                        </View>
-                                                    </View>
-                                                    <RightArrowIcon />
-                                                </TouchableOpacity>
-                                            ))}
-                                        </View>
-                                    </View>
-                                )}
-                                <View style={style.callToActionTextWrapper}>
-                                    <Text style={style.callToActionText}>What do you want to do today?</Text>
-                                </View>
-                                {/* quick action buttons */}
-                                <View style={style.quickAccessWrapper}>
-                                    {/* quick order */}
-                                    {quickButtons.map(button => (
+                            ) : (
+                                <View>
+                                    <Text style={style.setupGuideHeading}>Setup guide</Text>
+                                    <View style={style.setupGuideList}>
                                         <TouchableOpacity 
-                                            key={button.id}
-                                            onPress={button.onPress}
-                                            style={[
-                                                style.quickActionButton,
-                                                {backgroundColor: button.background}
-                                            ]}
+                                            style={style.closeSetupGuideButton}
+                                            onPress={handleDisableSetupGuides}
                                         >
-                                            {button.icon}
-                                            <Text style={style.quickActionHeading}>{button.mainText}</Text>
-                                            <Text style={style.quickActionParagraph}>{button.subText}</Text>
+                                            <CloseIcon />
                                         </TouchableOpacity>
-                                    ))}
-                                </View>
-                                {/* recent orders */}
-                                <View style={style.homeOrders}>
-                                    <View style={style.homeOrdersHeader}>
-                                        <Text style={style.homeOrdersHeading}>Recent Activities</Text>
-                                        <TouchableOpacity
-                                            // onPress={() => {navigation.navigate("Orders")}}
-                                            // onPress={() => {navigation.navigate("OrderDetails")}}
-                                            // onPress={() => {navigation.navigate("WaybillDetails")}}
-                                            onPress={() => {navigation.navigate("TransferDetails")}}
-                                            // onPress={() => {navigation.navigate("Share")}}
-                                            // onPress={() => {navigation.navigate("WriteReview")}}
-                                        >
-                                            <Text style={style.seeMore} >
-                                                See more
-                                            </Text>
-                                        </TouchableOpacity>
+                                        {setupGuide.map((guide) => (
+                                            <TouchableOpacity 
+                                                style={style.setupGuideButton}
+                                                key={guide.title}
+                                                onPress={guide.onPress}
+                                            >
+                                                <View style={style.setupGuideTextWrapper}>
+                                                    {guide.icon}
+                                                    <View style={style.setupGuideTextContainer}>
+                                                        <Text style={style.guideHeading}>{guide.title}</Text>
+                                                        <Text style={style.guideParagraph}>{guide.subtitle}</Text>
+                                                    </View>
+                                                </View>
+                                                <RightArrowIcon />
+                                            </TouchableOpacity>
+                                        ))}
                                     </View>
                                 </View>
-                                <View
-                                    style={style.ordersListWrapper}
-                                >
-                                    {/* order list max 5 items */}
-                                    {homeOrders.map((order, index) => (
+                            )}
+                            <View style={style.callToActionTextWrapper}>
+                                <Text style={style.callToActionText}>What do you want to do today?</Text>
+                            </View>
+                            {/* quick action buttons */}
+                            <View style={style.quickAccessWrapper}>
+                                {/* quick order */}
+                                {quickButtons.map(button => (
+                                    <TouchableOpacity 
+                                        key={button.id}
+                                        onPress={button.onPress}
+                                        style={[
+                                            style.quickActionButton,
+                                            {backgroundColor: button.background}
+                                        ]}
+                                    >
+                                        {button.icon}
+                                        <Text style={style.quickActionHeading}>{button.mainText}</Text>
+                                        <Text style={style.quickActionParagraph}>{button.subText}</Text>
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
+                            {/* recent orders */}
+                            <View style={style.homeOrders}>
+                                <View style={style.homeOrdersHeader}>
+                                    <Text style={style.homeOrdersHeading}>Recent Activities</Text>
+                                    <TouchableOpacity
+                                        // onPress={() => {navigation.navigate("Orders")}}
+                                        // onPress={() => {navigation.navigate("OrderDetails")}}
+                                        // onPress={() => {navigation.navigate("WaybillDetails")}}
+                                        onPress={() => {navigation.navigate("TransferDetails")}}
+                                        // onPress={() => {navigation.navigate("Share")}}
+                                        // onPress={() => {navigation.navigate("WriteReview")}}
+                                    >
+                                        <Text style={style.seeMore} >
+                                            See more
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                            <View
+                                style={style.ordersListWrapper}
+                            >
+                                {/* order list max 5 items */}
+                                {homeOrders.map((order, index) => {
+                                    // order list item
+                                    if (order.activityType === "Order") return (
                                         <OrderListItem 
                                             key={order.id}
                                             navigation={navigation}
@@ -700,18 +712,41 @@ const Home = ({navigation}) => {
                                             extraVerticalPadding={true}
                                             showListType={true}
                                         />
-                                    ))}
+                                    )
+                                    // waybill list item
+                                    if (order.activityType === "Waybill") return (
+                                        <WaybillListItem 
+                                            item={order} 
+                                            navigation={navigation}
+                                            index={index}
+                                            lastWaybill={homeOrders.length - 1}
+                                            firstWaybill={0}
+                                            waybillType={handleWaybillType(order.inventory_action)}
+                                        />
+                                    )
+                                    // stock tranfer list item
+                                    if (order.activityType === "StockTransfer") return (
+                                        <StockTransferListItem 
+                                            item={order} 
+                                            navigation={navigation}
+                                            index={index}
+                                            lastOrder={homeOrders.length - 1}
+                                            firstOrder={0}
+                                            extraVerticalPadding={true} 
+                                            showListType={true}
+                                        />
+                                    )
+                                })}
 
-                                    {/* no recent activotoes indication */}
-                                    {homeOrders.length === 0 && (
-                                        <View style={style.noRecentActivities}>
-                                            <Text style={style.setupGuideHeading}>No recent activities</Text>
-                                            <Text style={style.noActivitiesParagraph}>
-                                                When you send orders and waybill, you will see them here
-                                            </Text>
-                                        </View>
-                                    )}
-                                </View>
+                                {/* no recent activotoes indication */}
+                                {homeOrders.length === 0 && (
+                                    <View style={style.noRecentActivities}>
+                                        <Text style={style.setupGuideHeading}>No recent activities</Text>
+                                        <Text style={style.noActivitiesParagraph}>
+                                            When you send orders and waybill, you will see them here
+                                        </Text>
+                                    </View>
+                                )}
                             </View>
                         </View>
                     </ScrollView>
@@ -973,13 +1008,12 @@ const style = StyleSheet.create({
     homeScrollView: {
         minHeight:  windowHeight - 70,
         paddingHorizontal: 20,
-    },  
-    homeWrapper: {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'flex-start',
-        marginBottom: 90,
-    },
+        paddingBottom: 90,
+        width: "100%",
+    },  
     header: {
         flexDirection: 'row',
         display: 'flex',
@@ -1052,6 +1086,7 @@ const style = StyleSheet.create({
         justifyContent: 'space-between',
         gap: 20,
         marginBottom: 15,
+        width: '100%',
     },
     quickActionButton: {
         width: '45%',

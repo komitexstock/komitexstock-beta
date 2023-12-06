@@ -50,7 +50,8 @@ const OrderListItem = ({item, index, firstOrder, lastOrder, selectable, selected
                     business_name: handleChatHeaderBusinessName(),
                     banner_image: handleChatHeaderBanner(),
                 });
-            }, 750);
+            // if sidefunctions exist, slightly delay before navigating
+            }, sideFunctions ? 750 : 10);
         }
     }
 
@@ -58,10 +59,10 @@ const OrderListItem = ({item, index, firstOrder, lastOrder, selectable, selected
     const highlightSearchtext = (text) => {
         if (!searchQuery) return text;
 
-        const searchIndex = text.toLowerCase().indexOf(searchQuery.toLowerCase());
+        const searchIndex = text?.toLowerCase().indexOf(searchQuery?.toLowerCase());
 
         if (searchIndex !== -1) {
-            let textArray = text.toLowerCase().split(searchQuery.toLowerCase());
+            let textArray = text?.toLowerCase().split(searchQuery?.toLowerCase());
             const fullString = textArray.join(`%!#${searchQuery}%!#`)
 
             textArray = fullString.split('%!#');
@@ -83,7 +84,7 @@ const OrderListItem = ({item, index, firstOrder, lastOrder, selectable, selected
                             key={index}
                             style={textArray[0] === "" && index === 1 && {textTransform: 'capitalize'}}
                         >
-                            <Mark key={index}>{text.toLowerCase()}</Mark>
+                            <Mark key={index}>{text?.toLowerCase()}</Mark>
                         </Text>
                     )
                 }

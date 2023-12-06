@@ -11,18 +11,39 @@ import { windowWidth } from '../utils/helpers';
 // use auth
 import { useAuth } from '../context/AuthContext';
 
-const WaybillListItem = ({item, index, firstWaybill, lastWaybill, sideFunctions, searchQuery, waybillType}) => {
+const WaybillListItem = ({navigation, item, index, firstWaybill, lastWaybill, sideFunctions, searchQuery, waybillType}) => {
     // item => object
     // index, length => int
 
+    // auth data
     const { authData } = useAuth();
 
+    // get the desired business name
+    const handleChatHeaderBusinessName = () => {
+        if (authData?.account_type !== "Merchant") return item?.merchant?.business_name;
+        if (authData?.account_type !== "Logistics") return item?.logistics?.business_name;
+        return null;
+    }
+    
+    // get the desired banner image
+    const handleChatHeaderBanner = () => {
+        if (authData?.account_type !== "Merchant") return item?.merchant?.banner_image;
+        if (authData?.account_type !== "Logistics") return item?.logistics?.banner_image;
+        return null;
+    }
+
     const handleOnPress = () => {
-        if (sideFunctions) {
-            sideFunctions();
-        } else {
-            return item.navigateToChat();
-        }
+        if (sideFunctions) sideFunctions();
+
+        setTimeout(() => {
+            navigation.navigate("Chat", {
+                chatId: item.id, 
+                chatType: "Waybill",
+                business_name: handleChatHeaderBusinessName(),
+                banner_image: handleChatHeaderBanner(),
+            });
+            // if sidefunctions exist, slightly delay before navigating
+        }, sideFunctions ? 750 : 10);
     }
 
     const highlightSearchtext = (text) => {

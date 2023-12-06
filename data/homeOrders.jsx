@@ -26,7 +26,28 @@ export const homeOrders = [
         merchant: {
             business_name: "Style Bazaar",
             banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fstyle_bazaar.png?alt=media&token=b5be5c42-901a-4d49-bb15-a401b630f8a1&_gl=1*l5029i*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYxNDkuMjkuMC4w"
-        }
+        },
+        activityType: "Order",
+    },
+    {
+        products: [
+            { product_name: "Shirt", quantity: 12 },
+            { product_name: "Jeans", quantity: 4 },
+        ],
+        datetime: "2023-03-15 09:30",
+        id: "abc123",
+        inventory_action: "increment",
+        status: "Delivered",
+        newMessage: true,
+        logistics: {
+            business_name: "OnTrac",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fontrac.png?alt=media&token=67e52ec4-51e3-4032-a6b7-8f9533e1a7b6"
+        },
+        merchant: {
+            business_name: "Style Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fstyle_bazaar.png?alt=media&token=b5be5c42-901a-4d49-bb15-a401b630f8a1&_gl=1*l5029i*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYxNDkuMjkuMC4w"
+        },
+        activityType: "Waybill",
     },
     {
         name: "Jane Smith",
@@ -42,13 +63,14 @@ export const homeOrders = [
         imageUrl: '../assets/images/fedex.png',
         newMessage: false,
         logistics: {
-            business_name: "Komitex Logistics",
-            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fkomitex.png?alt=media&token=a8039272-66b6-4e24-8ab1-a4dfd40503f8&_gl=1*xpkuw*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYwMTguNjAuMC4w"
+            business_name: "Amazon Logistics",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Famazon.png?alt=media&token=7941fa73-daa6-4840-9ed8-96371d4b67a6"
         },
         merchant: {
             business_name: "Mega Enterpise",
             banner_image: null,
-        }
+        },
+        activityType: "Order",
     },
     {
         name: "Michael Johnson",
@@ -69,7 +91,8 @@ export const homeOrders = [
         merchant: {
             business_name: "Eco Savvy Emporium Bazaar",
             banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Feco_savvy_emporium.png?alt=media&token=c4985c1d-c6f0-48f7-b744-4b030851d53a&_gl=1*j2ttmz*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYzODAuMjguMC4w"
-        }
+        },
+        activityType: "Order",
     },
     {
         name: "Robert Davis",
@@ -84,33 +107,56 @@ export const homeOrders = [
         imageUrl: '../assets/images/dhl.png',
         newMessage: true,
         logistics: {
-            business_name: "Komitex Logistics",
-            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fkomitex.png?alt=media&token=a8039272-66b6-4e24-8ab1-a4dfd40503f8&_gl=1*xpkuw*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYwMTguNjAuMC4w"
+            business_name: "DHL",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fdhl.png?alt=media&token=e113f106-0eaf-420e-9fe4-488cb8e6c26d"
         },
         merchant: {
             business_name: "Style Bazaar",
             banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fstyle_bazaar.png?alt=media&token=b5be5c42-901a-4d49-bb15-a401b630f8a1&_gl=1*l5029i*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYxNDkuMjkuMC4w"
-        }
+        },
+        activityType: "Order",
     },
     {
-        name: "Sophia Brown",
-        location: "Tokyo",
         products: [
-            { product_name: "T-Shirt", quantity: 3 },
+            { product_name: "Eyeglasses", quantity: 1 },
+            { product_name: "Sneakers", quantity: 2 },
         ],
-        datetime: "2023-02-14 16:55",
-        id: "pqr678",
-        price: 12000,
-        status: "Rescheduled",
-        imageUrl: '../assets/images/ups.png',
-        newMessage: false,
+        datetime: "2023-03-15 09:30",
+        id: "abc123",
+        inventory_action: "decrement",
+        status: "Delivered",
+        newMessage: true,
         logistics: {
-            business_name: "Komitex Logistics",
-            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fkomitex.png?alt=media&token=a8039272-66b6-4e24-8ab1-a4dfd40503f8&_gl=1*xpkuw*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYwMTguNjAuMC4w"
+            business_name: "Fedex",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Ffedex.png?alt=media&token=d943aea6-37ec-4f61-a589-01ad7bdd1299"
         },
         merchant: {
-            business_name: "Luxe Living",
-            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fluxe_living_finds.png?alt=media&token=91aa3e09-658b-4900-8558-d10a12590513&_gl=1*1s90vkk*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjY0MjkuNjAuMC4w"
-        }
-    }
+            business_name: "Style Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fstyle_bazaar.png?alt=media&token=b5be5c42-901a-4d49-bb15-a401b630f8a1&_gl=1*l5029i*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYxNDkuMjkuMC4w"
+        },
+        activityType: "Waybill",
+    },
+    // {
+    //     id: 1,
+    //     origin_warehouse: "Warri",
+    //     destination_warehouse: "Asaba",
+    //     datetime: "12/12/2022",
+    //     products: [
+    //         {
+    //             product_name: "Shirt",
+    //             quantity: 2
+    //         },
+    //         {
+    //             product_name: "Shoe",
+    //             quantity: 5
+    //         },
+    //         {
+    //             product_name: "Maybach Sunglasses",
+    //             quantity: 3
+    //         },
+    //     ],
+    //     newMessage: false,
+    //     status: "Pending",
+    //     activityType: "StockTransfer",
+    // }
 ];

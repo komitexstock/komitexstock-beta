@@ -15,13 +15,20 @@ import { background, black, bodyText, orderDate, white, neutral } from '../style
 // import helper functions
 
 
-const StockTransferListItem = ({item, index, firstOrder, lastOrder, sideFunctions, searchQuery, showListType}) => {
+const StockTransferListItem = ({navigation, item, index, firstOrder, lastOrder, sideFunctions, searchQuery, showListType}) => {
     // lenght, index => int
     // item => object
 
     const handleOnPress = () => {
         if (sideFunctions) sideFunctions();
-        return item?.onPress();
+
+        setTimeout(() => {
+            navigation.navigate("Chat", {
+                chatId: item.id, 
+                chatType: "stockTransfer",
+            });
+            // if sidefunctions exist, slightly delay before navigating
+        }, sideFunctions ? 750 : 10);
     }
 
     const highlightSearchtext = (text) => {
