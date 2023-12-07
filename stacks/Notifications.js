@@ -3,20 +3,20 @@ import {
     View,
     Text,
     StyleSheet,
-    TouchableOpacity,
     ScrollView,
     BackHandler
 } from "react-native";
 // icons
 import FilterIcon from "../assets/icons/FilterIcon";
+import NotificationLargeIcon from "../assets/icons/NotificationLargeIcon";
 // components
 import OrderListItem from "../components/OrderListItem";
 import Header from "../components/Header";
-import FilterButtonGroup from "../components/FilterButtonGroup";
 // react hooks
 import { useState, useRef, useEffect } from "react";
 // colors and global style
-import { background, bodyText } from "../style/colors";
+import { background, black, bodyText } from "../style/colors";
+import { windowHeight } from "../utils/helpers";
 
 const Notifications = ({navigation}) => {
 
@@ -338,48 +338,56 @@ const Notifications = ({navigation}) => {
 
     // render Notifications page
     return (
-        <ScrollView showsVerticalScrollIndicator={false}>
-            <View style={style.main}>
-                {/* Header */}
-                <Header 
-                    navigation={navigation} 
-                    stackName={"Notifications"} 
-                    iconFunction={openModal} 
-                    icon={<FilterIcon />} 
-                    iconExist={true} 
-                    unpadded={true}
-                />
-                {/* Date */}
-                <View style={style.dateWrapper}>
-                    <Text style={style.date}>Today</Text>
-                </View>
-                <View style={style.notificationWrapper}>
-                    {/* Order list */}
-                    {orders.map((item, index) => (
-                        <OrderListItem item={item} index={index} key={index} firstOrder={0} lastOrder={orders.length - 1} extraVerticalPadding={true} />
-                    ))}
-                </View>
-                <View style={style.dateWrapper}>
+        <>
+            <ScrollView showsVerticalScrollIndicator={false}>
+                <View style={style.main}>
+                    {/* Header */}
+                    <Header 
+                        navigation={navigation} 
+                        stackName={"Notifications"} 
+                        iconFunction={openModal} 
+                        icon={<FilterIcon />} 
+                        iconExist={true} 
+                        unpadded={true}
+                    />
                     {/* Date */}
-                    <Text style={style.date}>Tues, May 09, 2023</Text>
+                    <View style={style.dateWrapper}>
+                        <Text style={style.date}>Today</Text>
+                    </View>
+                    <View style={style.notificationWrapper}>
+                        {orders.map((item, index) => (
+                            <OrderListItem item={item} index={index} key={index} firstOrder={0} lastOrder={orders.length - 1} extraVerticalPadding={true} />
+                        ))}
+                    </View>
+                    <View style={style.dateWrapper}>
+                        <Text style={style.date}>Tues, May 09, 2023</Text>
+                    </View>
+                    <View style={style.notificationWrapper}>
+                        {orders1.map((item, index) => (
+                            <OrderListItem item={item} index={index} key={index} firstOrder={0} lastOrder={orders1.length - 1} extraVerticalPadding={true} />
+                        ))}
+                    </View>
+
+                    {/* no notificaton notice */}
+                    {/* <View style={style.noNotificationsWraper}>
+                        <NotificationLargeIcon />
+                        <Text style={style.noNotificationsHeading}>
+                            No notifications yet
+                        </Text>
+                        <Text style={style.noNotificationsParagraph}>
+                            You’ve got a blank state (for now). We’ll let you know when updates arrive!
+                        </Text>
+                    </View> */}
                 </View>
-                <View style={style.notificationWrapper}>
-                    {/* Order list */}
-                    {orders1.map((item, index) => (
-                        <OrderListItem item={item} index={index} key={index} firstOrder={0} lastOrder={orders1.length - 1} extraVerticalPadding={true} />
-                    ))}
-                </View>
-            </View>
-            {/* Filter notifications bottomsheet */}
-            
-        </ScrollView>
+            </ScrollView>
+        </>
     );
 }
 
 // style sheet
 const style = StyleSheet.create({
     main: {
-        minHeight: "100%",
+        minHeight: windowHeight,
         display: 'flex',
         alignItems: 'center',
         backgroundColor: background,
@@ -415,6 +423,29 @@ const style = StyleSheet.create({
 		width: "100%",
 		flex: 1,
         marginBottom: 20,
+    },
+    noNotificationsWraper: {
+        display: 'flex',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        flexDirection: 'column',
+        width: "100%",
+        height: "100%",
+        paddingTop: 202,
+    },
+    noNotificationsHeading: {
+        color: black,
+        fontSize: 14,
+        marginTop: 12,
+        marginBottom: 8,
+        fontFamily: 'mulish-semibold',
+    },
+    noNotificationsParagraph: {
+        color: bodyText,
+        fontSize: 12,
+        fontFamily: 'mulish-regular',
+        width: 230,
+        textAlign: 'center',
     },
 });
  
