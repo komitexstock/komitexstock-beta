@@ -351,33 +351,39 @@ const Notifications = ({navigation}) => {
                         unpadded={true}
                     />
                     {/* Date */}
-                    <View style={style.dateWrapper}>
-                        <Text style={style.date}>Today</Text>
-                    </View>
-                    <View style={style.notificationWrapper}>
-                        {orders.map((item, index) => (
-                            <OrderListItem item={item} index={index} key={index} firstOrder={0} lastOrder={orders.length - 1} extraVerticalPadding={true} />
-                        ))}
-                    </View>
-                    <View style={style.dateWrapper}>
-                        <Text style={style.date}>Tues, May 09, 2023</Text>
-                    </View>
-                    <View style={style.notificationWrapper}>
-                        {orders1.map((item, index) => (
-                            <OrderListItem item={item} index={index} key={index} firstOrder={0} lastOrder={orders1.length - 1} extraVerticalPadding={true} />
-                        ))}
-                    </View>
+                    {orders.length !== 0 && <>
+                        <View style={style.dateWrapper}>
+                            <Text style={style.date}>Today</Text>
+                        </View>
+                        <View style={style.notificationWrapper}>
+                            {orders.map((item, index) => (
+                                <OrderListItem item={item} index={index} key={index} firstOrder={0} lastOrder={orders.length - 1} extraVerticalPadding={true} />
+                            ))}
+                        </View>
+                    </>}
+                    {orders1.length !== 0 && <>
+                        <View style={style.dateWrapper}>
+                            <Text style={style.date}>Tues, May 09, 2023</Text>
+                        </View>
+                        <View style={style.notificationWrapper}>
+                            {orders1.map((item, index) => (
+                                <OrderListItem item={item} index={index} key={index} firstOrder={0} lastOrder={orders1.length - 1} extraVerticalPadding={true} />
+                            ))}
+                        </View>
+                    </>}
 
                     {/* no notificaton notice */}
-                    {/* <View style={style.noNotificationsWraper}>
-                        <NotificationLargeIcon />
-                        <Text style={style.noNotificationsHeading}>
-                            No notifications yet
-                        </Text>
-                        <Text style={style.noNotificationsParagraph}>
-                            You’ve got a blank state (for now). We’ll let you know when updates arrive!
-                        </Text>
-                    </View> */}
+                    {orders.length === 0 && orders1.length === 0 && (
+                        <View style={style.noNotificationsWraper}>
+                            <NotificationLargeIcon />
+                            <Text style={style.noNotificationsHeading}>
+                                No notifications yet
+                            </Text>
+                            <Text style={style.noNotificationsParagraph}>
+                                You’ve got a blank state (for now). We’ll let you know when updates arrive!
+                            </Text>
+                        </View>
+                    )}
                 </View>
             </ScrollView>
         </>
