@@ -13,6 +13,7 @@ import {
 import MenuIcon from "../assets/icons/MenuIcon";
 import SearchIcon from '../assets/icons/SearchIcon'
 import CalendarIcon from "../assets/icons/CalendarIcon";
+import SendOrderIcon from "../assets/icons/SendOrderIcon";
 // colors
 import {
     background,
@@ -1342,8 +1343,8 @@ const Waybill = ({navigation}) => {
                         data={waybill}
                         renderItem={({ item, index }) => {
                             if (item.id === "sticky") {
-                                return (
-                                    // animated view to animated shadow when a scroll offset is met
+                                return (<>
+                                    {/* // animated view to animated shadow when a scroll offset is met */}
                                     <Animated.View 
                                         style={[
                                             style.stickyHeader,
@@ -1424,7 +1425,16 @@ const Waybill = ({navigation}) => {
                                             </View>
                                         )}
                                     </Animated.View>
-                                )
+                                    {waybill.length === 1 && (
+                                        <View style={style.emptyOrderWrapper}>
+                                            <SendOrderIcon />
+                                            <Text style={style.emptyOrderHeading}>No waybill yet</Text>
+                                            <Text style={style.emptyOrderParagraph}>
+                                                Store your products in your logistics  partner’s warehouse
+                                            </Text>
+                                        </View>
+                                    )}
+                                </>)
                             } else {
                                 return (
                                     <View style={style.waybillListWrapper}>
@@ -1713,6 +1723,28 @@ const style = StyleSheet.create({
         gap: 20,
         paddingEnd: 20,
         paddingBottom: 90,
+    },
+    emptyOrderWrapper: {
+        height: 150,
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        flexDirection: 'column',
+    },
+    emptyOrderHeading: {
+        color: black,
+        fontSize: 14,
+        fontFamily: 'mulish-semibold',
+        marginTop: 12,
+        marginBottom: 8,
+    },
+    emptyOrderParagraph: {
+        color: bodyText,
+        fontSize: 12,
+        fontFamily: 'mulish-regular',
+        width: 178,
+        textAlign: 'center',
     },
 })
  

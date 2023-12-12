@@ -8,7 +8,7 @@ import {
     TouchableOpacity,
 } from "react-native";
 // colors
-import { white, background, black, subText, verticalRule, primaryColor, neutral } from "../style/colors";
+import { white, background, black, subText, verticalRule, primaryColor, neutral, bodyText } from "../style/colors";
 // react hooks
 import { useEffect, useState, useRef } from "react";
 // components
@@ -20,6 +20,8 @@ import CustomButton from "../components/CustomButton";
 import StatCard from "../components/StatCard";
 import Avatar from "../components/Avatar";
 import StatWrapper from "../components/StatWrapper";
+// icons
+import SendOrderIcon from "../assets/icons/SendOrderIcon";
 // skeleton screen
 import InventorySkeleton from "../skeletons/InventorySkeleton";
 // auth
@@ -523,6 +525,15 @@ const Products = ({navigation, route}) => {
                                                 </TouchableOpacity>
                                             </View>
                                         )}
+                                        {tab === "Products" &&inventories.length === 2 && (
+                                            <View style={style.emptyOrderWrapper}>
+                                                <SendOrderIcon />
+                                                <Text style={style.emptyOrderHeading}>Add your first product</Text>
+                                                <Text style={style.emptyOrderParagraph}>
+                                                    Add your products to your stores inventory 
+                                                </Text>
+                                            </View>
+                                        )}
                                     </View>
                                 )
                             } else if (item.id === "stickyRight") {
@@ -725,6 +736,28 @@ const style = StyleSheet.create({
         color: black,
         fontSize: 10,
         fontFamily: 'mulish-semibold'
+    },
+    emptyOrderWrapper: {
+        height: 150,
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        flexDirection: 'column',
+    },
+    emptyOrderHeading: {
+        color: black,
+        fontSize: 14,
+        fontFamily: 'mulish-semibold',
+        marginTop: 12,
+        marginBottom: 8,
+    },
+    emptyOrderParagraph: {
+        color: bodyText,
+        fontSize: 12,
+        fontFamily: 'mulish-regular',
+        width: 178,
+        textAlign: 'center',
     },
 })
  

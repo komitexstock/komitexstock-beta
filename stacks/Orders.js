@@ -1488,7 +1488,7 @@ const Orders = ({navigation}) => {
 
     const [orders, setOrders] = useState([
         {id: "sticky"},
-        // ...orderList
+        ...orderList
     ]);
  
     const [searchedOrders, setSearchedOrders] = useState([
@@ -1534,7 +1534,7 @@ const Orders = ({navigation}) => {
 
         setOrders([
             {id: "sticky"},
-            // ...newOrder
+            ...newOrder
         ]);
     }, [getFilterValue("Status"), getFilterValue("Logistics"), getFilterValue("Period")]);
 
