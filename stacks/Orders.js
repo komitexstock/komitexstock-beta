@@ -10,11 +10,12 @@ import {
     Keyboard,
 } from "react-native";
 // colors
-import { background, blackOut, bodyText, primaryColor, white } from "../style/colors";
+import { background, black, blackOut, bodyText, primaryColor, white } from "../style/colors";
 // icons
 import MenuIcon from "../assets/icons/MenuIcon";
 import SearchIcon from '../assets/icons/SearchIcon'
 import CalendarIcon from "../assets/icons/CalendarIcon";
+import SendOrderIcon from "../assets/icons/SendOrderIcon";
 // react hooks
 import { useState, useRef, useEffect } from "react";
 // components
@@ -1487,7 +1488,7 @@ const Orders = ({navigation}) => {
 
     const [orders, setOrders] = useState([
         {id: "sticky"},
-        ...orderList
+        // ...orderList
     ]);
  
     const [searchedOrders, setSearchedOrders] = useState([
@@ -1533,7 +1534,7 @@ const Orders = ({navigation}) => {
 
         setOrders([
             {id: "sticky"},
-            ...newOrder
+            // ...newOrder
         ]);
     }, [getFilterValue("Status"), getFilterValue("Logistics"), getFilterValue("Period")]);
 
@@ -1790,7 +1791,7 @@ const Orders = ({navigation}) => {
                         renderItem={({ item, index }) => {
                             // console.log(index);
                             if (item.id === "sticky") {
-                                return (
+                                return (<>
                                     <Animated.View
                                         style={[
                                             style.stickyBar,
@@ -1835,8 +1836,19 @@ const Orders = ({navigation}) => {
 
                                         </View>
                                     </Animated.View>
-                                )
+                                    {orders.length === 1 && (
+                                        <View style={style.emptyOrderWrapper}>
+                                            <SendOrderIcon />
+                                            <Text style={style.emptyOrderHeading}>Send your first order</Text>
+                                            <Text style={style.emptyOrderParagraph}>
+                                                Makes sales by sending orders to your logistics partners
+                                            </Text>
+                                        </View>
+                                    )}
+                                </>)
                             }
+
+                            // if order list is empty
                             return (
                                 <View style={style.orderWrapper}>
                                     <OrderListItem 
@@ -2081,7 +2093,28 @@ const style = StyleSheet.create({
         paddingEnd: 20,
         paddingBottom: 90,
     },
-
+    emptyOrderWrapper: {
+        height: 150,
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        flexDirection: 'column',
+    },
+    emptyOrderHeading: {
+        color: black,
+        fontSize: 14,
+        fontFamily: 'mulish-semibold',
+        marginTop: 12,
+        marginBottom: 8,
+    },
+    emptyOrderParagraph: {
+        color: bodyText,
+        fontSize: 12,
+        fontFamily: 'mulish-regular',
+        width: 178,
+        textAlign: 'center',
+    },
 })
  
 export default Orders;
