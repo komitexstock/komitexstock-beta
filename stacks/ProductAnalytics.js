@@ -48,6 +48,9 @@ const ProductAnalytics = ({navigation}) => {
         88900
     ];
 
+    // prev duration data
+    const prevData = [0, 0, 0, 0, 0, 0, 0];
+
     // page loading state
     const [pageLoading, setPageLoading] = useState(true);
 
@@ -198,6 +201,7 @@ const ProductAnalytics = ({navigation}) => {
                                 chartHeight={232}
                                 backgroundColor={white}
                                 data={data}
+                                prevData={prevData}
                                 labels={labels}
                                 unit={"₦"}
                                 fullbar={false}

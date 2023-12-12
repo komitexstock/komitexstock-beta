@@ -45,10 +45,14 @@ const Analytics = ({navigation}) => {
     const { calendarSheetRef } = useGlobals();
 
     // bar chart data
-    const data = [57000, 99000, 58000, 81500, 0, 67000, 39000];
+    const data = [57000, 72000, 58000, 81500, 83750, 67000, 39000];
+
+    // prev duration data
+    const prevData = [0, 0, 0, 0, 0, 0, 0];
     
     // bar chart x axis labels
     const labels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']; 
+    // const labels = []; 
 
     // page loading state
     const [pageLoading, setPageLoading] = useState(true);
@@ -229,10 +233,18 @@ const Analytics = ({navigation}) => {
         },
     ];
 
+    // if all the analytics result are empty
+    const emptyAnalytics = merchantAnalyticsList.length === 0 && 
+    productAnalyticsList.length === 0 && 
+    locationAnalyticsList.length === 0 &&
+    logisticsAnalyticsList.length === 0;
+
+    console.log(emptyAnalytics)
+
     // state to control tabs
     const [tabs, setTabs] = useState(authData?.account_type === "Logistics" ? "Merchant" : "Logistics");
 
-    console.log(tabs)
+    // console.log(tabs)
 
     const openCalendar = () => {
         calendarSheetRef.current?.present();
@@ -279,6 +291,7 @@ const Analytics = ({navigation}) => {
                                 chartHeight={232}
                                 backgroundColor={white}
                                 data={data}
+                                prevData={prevData}
                                 labels={labels}
                                 unit={"₦"}
                                 fullbar={false}
@@ -301,123 +314,141 @@ const Analytics = ({navigation}) => {
                         </StatWrapper>
                         <View style={style.topStatsWrapper}>
                             <Text style={style.topStatHeading}>Top Stats</Text>
-                            <View style={style.tabsContainer}>
-                                {/* Tab buttons container */}
-                                <View style={style.tabButtonContainer}>
-                                    {/* logistics tab button */}
-                                    { authData?.account_type !== "Logistics" && (
-                                        <TouchableOpacity
-                                            style={
-                                                tabs === "Logistics" ? style.tabButtonSelected : style.tabButton
-                                            }
-                                            onPress={() => setTabs("Logistics")}
-                                        >
-                                            <Text 
+                            <View 
+                                style={[
+                                    style.tabsContainer,
+                                    emptyAnalytics && {minHeight: 72}
+                                ]}
+                            >
+                                {!emptyAnalytics ? <>
+                                    {/* Tab buttons container */}
+                                    <View style={style.tabButtonWrapper}>
+                                        <View style={style.tabButtonContainer}>
+                                            {/* logistics tab button */}
+                                            { authData?.account_type !== "Logistics" && (
+                                                <TouchableOpacity
+                                                    style={
+                                                        tabs === "Logistics" ? style.tabButtonSelected : style.tabButton
+                                                    }
+                                                    onPress={() => setTabs("Logistics")}
+                                                >
+                                                    <Text 
+                                                        style={
+                                                            tabs === "Logistics" ? style.tabButtonTextSelected : style.tabButtonText
+                                                        }
+                                                    >
+                                                        Logistics
+                                                    </Text>
+                                                </TouchableOpacity>
+                                            )}
+                                            {/* merchant tab button */}
+                                            { authData?.account_type !== "Merchant" && (
+                                                <TouchableOpacity
+                                                    style={
+                                                        tabs === "Merchant" ? style.tabButtonSelected : style.tabButton
+                                                    }
+                                                    onPress={() => setTabs("Merchant")}
+                                                >
+                                                    <Text 
+                                                        style={
+                                                            tabs === "Merchant" ? style.tabButtonTextSelected : style.tabButtonText
+                                                        }
+                                                    >
+                                                        Merchant
+                                                    </Text>
+                                                </TouchableOpacity>
+                                            )}
+                                            {/* location tab buttons */}
+                                            <TouchableOpacity
                                                 style={
-                                                    tabs === "Logistics" ? style.tabButtonTextSelected : style.tabButtonText
+                                                    tabs === "Location" ? style.tabButtonSelected : style.tabButton
                                                 }
+                                                onPress={() => setTabs("Location")}
                                             >
-                                                Logistics
-                                            </Text>
-                                        </TouchableOpacity>
-                                    )}
-                                    {/* merchant tab button */}
-                                    { authData?.account_type !== "Merchant" && (
-                                        <TouchableOpacity
-                                            style={
-                                                tabs === "Merchant" ? style.tabButtonSelected : style.tabButton
-                                            }
-                                            onPress={() => setTabs("Merchant")}
-                                        >
-                                            <Text 
+                                                <Text 
+                                                    style={
+                                                        tabs === "Location" ? style.tabButtonTextSelected : style.tabButtonText
+                                                    }
+                                                >
+                                                    Location
+                                                </Text>
+                                            </TouchableOpacity>
+                                            {/* product tab button */}
+                                            <TouchableOpacity
                                                 style={
-                                                    tabs === "Merchant" ? style.tabButtonTextSelected : style.tabButtonText
+                                                    tabs === "Product" ? style.tabButtonSelected : style.tabButton
                                                 }
+                                                onPress={() => setTabs("Product")}
                                             >
-                                                Merchant
-                                            </Text>
-                                        </TouchableOpacity>
-                                    )}
-                                    {/* location tab buttons */}
-                                    <TouchableOpacity
-                                        style={
-                                            tabs === "Location" ? style.tabButtonSelected : style.tabButton
-                                        }
-                                        onPress={() => setTabs("Location")}
-                                    >
-                                        <Text 
-                                            style={
-                                                tabs === "Location" ? style.tabButtonTextSelected : style.tabButtonText
-                                            }
-                                        >
-                                            Location
+                                                <Text 
+                                                    style={
+                                                        tabs === "Product" ? style.tabButtonTextSelected : style.tabButtonText
+                                                    }
+                                                >
+                                                    Product
+                                                </Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    </View>
+                                    <View style={style.tabContentList}>
+                                        {/* Merchant Tab content */}
+                                        {tabs === "Merchant" && merchantAnalyticsList.map(item => (
+                                            <BusinessAnalyticsItem
+                                                key={item.id}
+                                                logistics={item.logistics}
+                                                numberOfDeliveries={item.numberOfDeliveries}
+                                                totalPrice={item.totalPrice}
+                                                oldTotalPrice={item.oldTotalPrice}
+                                                imageUrl={item?.imageUrl}
+                                                onPress={item.onPress}
+                                            />
+                                        ))}
+                                        {/* Logistics Tab content */}
+                                        {tabs === "Logistics" && logisticsAnalyticsList.map(item => (
+                                            <BusinessAnalyticsItem
+                                                key={item.id}
+                                                logistics={item.logistics}
+                                                numberOfDeliveries={item.numberOfDeliveries}
+                                                totalPrice={item.totalPrice}
+                                                oldTotalPrice={item.oldTotalPrice}
+                                                imageUrl={item?.imageUrl}
+                                                onPress={item.onPress}
+                                            />
+                                        ))}
+                                        {/* Location Tab content */}
+                                        {tabs === "Location" && locationAnalyticsList.map(item => (
+                                            <LocationAnalyticsItem
+                                                key={item.id}
+                                                location={item.location}
+                                                numberOfDeliveries={item.numberOfDeliveries}
+                                                totalPrice={item.totalPrice}
+                                                oldTotalPrice={item.oldTotalPrice}
+                                                onPress={item.onPress}
+                                            />
+                                        ))}
+                                        {/* Product Tab content */}
+                                        {tabs === "Product" && productAnalyticsList.map(item => (
+                                            <ProductAnalyticsItem
+                                                key={item.id}
+                                                product={item.product}
+                                                numberOfDeliveries={item.numberOfDeliveries}
+                                                totalPrice={item.totalPrice}
+                                                oldTotalPrice={item.oldTotalPrice}
+                                                imageUrl={item?.imageUrl}
+                                                onPress={item.onPress}
+                                            />
+                                        ))}
+                                    </View>
+                                </> : <>
+                                    <View style={style.noResultWrapper}>
+                                        <Text style={style.emptyAnalyticsHeading}>
+                                            Nothing to show yet
                                         </Text>
-                                    </TouchableOpacity>
-                                    {/* product tab button */}
-                                    <TouchableOpacity
-                                        style={
-                                            tabs === "Product" ? style.tabButtonSelected : style.tabButton
-                                        }
-                                        onPress={() => setTabs("Product")}
-                                    >
-                                        <Text 
-                                            style={
-                                                tabs === "Product" ? style.tabButtonTextSelected : style.tabButtonText
-                                            }
-                                        >
-                                            Product
+                                        <Text style={style.emptyAnalyticsParagraph}>
+                                            Top stats is shown after 3 successful deliveries
                                         </Text>
-                                    </TouchableOpacity>
-                                </View>
-                                <View style={style.tabContentList}>
-                                    {/* Merchant Tab content */}
-                                    {tabs === "Merchant" && merchantAnalyticsList.map(item => (
-                                        <BusinessAnalyticsItem
-                                            key={item.id}
-                                            logistics={item.logistics}
-                                            numberOfDeliveries={item.numberOfDeliveries}
-                                            totalPrice={item.totalPrice}
-                                            oldTotalPrice={item.oldTotalPrice}
-                                            imageUrl={item?.imageUrl}
-                                            onPress={item.onPress}
-                                        />
-                                    ))}
-                                    {/* Logistics Tab content */}
-                                    {tabs === "Logistics" && logisticsAnalyticsList.map(item => (
-                                        <BusinessAnalyticsItem
-                                            key={item.id}
-                                            logistics={item.logistics}
-                                            numberOfDeliveries={item.numberOfDeliveries}
-                                            totalPrice={item.totalPrice}
-                                            oldTotalPrice={item.oldTotalPrice}
-                                            imageUrl={item?.imageUrl}
-                                            onPress={item.onPress}
-                                        />
-                                    ))}
-                                    {/* Location Tab content */}
-                                    {tabs === "Location" && locationAnalyticsList.map(item => (
-                                        <LocationAnalyticsItem
-                                            key={item.id}
-                                            location={item.location}
-                                            numberOfDeliveries={item.numberOfDeliveries}
-                                            totalPrice={item.totalPrice}
-                                            oldTotalPrice={item.oldTotalPrice}
-                                            onPress={item.onPress}
-                                        />
-                                    ))}
-                                    {/* Product Tab content */}
-                                    {tabs === "Product" && productAnalyticsList.map(item => (
-                                        <ProductAnalyticsItem
-                                            key={item.id}
-                                            product={item.product}
-                                            numberOfDeliveries={item.numberOfDeliveries}
-                                            totalPrice={item.totalPrice}
-                                            oldTotalPrice={item.oldTotalPrice}
-                                            imageUrl={item?.imageUrl}
-                                            onPress={item.onPress}
-                                        />
-                                    ))}
-                                </View>
+                                    </View>
+                                </>}
                             </View>
                         </View>
                     </View>
@@ -502,7 +533,11 @@ const style = StyleSheet.create({
         backgroundColor: white,
         minHeight: 200,
         borderRadius: 12,
-        padding: 10,
+        paddingVertical: 10,
+    },
+    tabButtonWrapper: {
+        paddingHorizontal: 10,
+        width: "100%",
     },
     tabButtonContainer: {
         display: 'flex',
@@ -541,6 +576,25 @@ const style = StyleSheet.create({
     },
     tabContentList: {
         paddingTop: 10,
+    },
+    noResultWrapper: {
+        width: "100%",
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        justifyContent: 'flex-start',
+        gap: 4,
+        padding: 10,
+    },
+    emptyAnalyticsHeading: {
+        color: black,
+        fontFamily: 'mulish-semibold',
+        fontSize: 12,
+    },
+    emptyAnalyticsParagraph: {
+        color: bodyText,
+        fontFamily: 'mulish-regular',
+        fontSize: 10,
     }
 })
  

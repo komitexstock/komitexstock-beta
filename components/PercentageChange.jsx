@@ -52,7 +52,12 @@ const PercentageChange = ({presentValue, oldValue}) => {
         return style.neutralText;
     }
 
-    // rener PercentageChange component
+    // if both values are 0, return nothing
+    if (oldValue === 0 && presentValue === 0) {
+        return <></>;
+    }
+
+    // render PercentageChange component
     return (
         <View 
             style={[
@@ -87,6 +92,9 @@ const style = StyleSheet.create({
         minWidth: 30,
         borderRadius: 18,
         maxWidth: 40,
+    },
+    noPercentage: {
+        backgroundColor: 'transparent',
     },
     neutralPercentage: {
         backgroundColor: background,

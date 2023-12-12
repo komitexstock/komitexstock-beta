@@ -716,6 +716,7 @@ const Home = ({navigation}) => {
                                     // waybill list item
                                     if (order.activityType === "Waybill") return (
                                         <WaybillListItem 
+                                            key={order.id}
                                             item={order} 
                                             navigation={navigation}
                                             index={index}
@@ -727,6 +728,7 @@ const Home = ({navigation}) => {
                                     // stock tranfer list item
                                     if (order.activityType === "StockTransfer") return (
                                         <StockTransferListItem 
+                                            key={order.id}
                                             item={order} 
                                             navigation={navigation}
                                             index={index}

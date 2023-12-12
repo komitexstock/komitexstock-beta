@@ -47,6 +47,9 @@ const LocationAnalytics = ({navigation}) => {
         52900
     ];
 
+    // prev duration data
+    const prevData = [0, 0, 0, 0, 0, 0, 0];
+
     // page loading state
     const [pageLoading, setPageLoading] = useState(true);
 
@@ -191,6 +194,7 @@ const LocationAnalytics = ({navigation}) => {
                                 chartHeight={232}
                                 backgroundColor={white}
                                 data={data}
+                                prevData={prevData}
                                 labels={labels}
                                 unit={"₦"}
                                 fullbar={false}
