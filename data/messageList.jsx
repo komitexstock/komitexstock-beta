@@ -18,7 +18,7 @@ export const messageList = [
         account_type: 'Merchant',
         file: null,
         reply: false,
-        text: "Customer's Name: *Richard Idana*\nPhone Number: 08078945612, 08123456789\nDelivery Address: *No 3 Izono street Udu road, Warri*\nProduct: *Maybach Sunglasses x 1, Accurate Watch x 1*\nPrice: *₦50,000*\nLocation: *Warri, Delta State*\nCharge: *₦3,000*\nLogistics: *Komitex Logistics*\nMerchant: *Mega Enterprise*",
+        text: "Customer's Name: *Richard Idana*\nPhone Number: 08078945612, 08123456789\nDelivery Address: *No 3 Izono street Udu road, Warri*\nProduct: *Maybach Sunglasses x 1, Accurate Watch x 1*\nPrice: *₦50,000*\nLocation: *Warri, Delta State*\nCharge: *₦3,000*\nLogistics: *Komitex Logistics*",
     },
     {
         reschedule_date: () => {},
@@ -75,7 +75,7 @@ export const messageList = [
         account_type: 'Logistics',
         file: null,
         reply: false,
-        text: "*Warri* &arrow& *Asaba*\nProduct: *Maybach Sunglasses x 4, Accurate Watch x 8, Brown Clarks Shoe x 13*\nAdditional Details: Delta Line Parcel Service\nWaybill Number: 123456",
+        text: "Origin\n*Warri*\nDestination\n*Asaba*\nProduct: *Maybach Sunglasses x 4, Accurate Watch x 8, Brown Clarks Shoe x 13*\nAdditional Details: Delta Line Parcel Service\nWaybill Number: 123456",
     },
     {
         reschedule_date: () => {},

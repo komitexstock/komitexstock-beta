@@ -77,24 +77,24 @@ const Home = ({navigation}) => {
 
     // setup guide array
     const [setupGuide, setSetupGuide] = useState([
-        {
-            title: "Set up your store",
-            subtitle: "Add products to your stores inventory",
-            icon: <QuickInventoryIcon />,
-            onPress: () => navigation.navigate("AddProduct"),
-        },
-        {
-            title: "Invite your staffs",
-            subtitle: "Send invites to your staffs (manager, sales representative)",
-            icon: <TeamLargeIcon />,
-            onPress: () => navigation.navigate("TeamMembers"),
-        },
-        {
-            title: "Start earning with Komitex",
-            subtitle: "Make sales by sending orders to your logistics partners for delivery",
-            icon: <QuickOrderIcon />,
-            onPress: () => navigation.navigate("SendOrder"),
-        },
+        // {
+        //     title: "Set up your store",
+        //     subtitle: "Add products to your stores inventory",
+        //     icon: <QuickInventoryIcon />,
+        //     onPress: () => navigation.navigate("AddProduct"),
+        // },
+        // {
+        //     title: "Invite your staffs",
+        //     subtitle: "Send invites to your staffs (manager, sales representative)",
+        //     icon: <TeamLargeIcon />,
+        //     onPress: () => navigation.navigate("TeamMembers"),
+        // },
+        // {
+        //     title: "Start earning with Komitex",
+        //     subtitle: "Make sales by sending orders to your logistics partners for delivery",
+        //     icon: <QuickOrderIcon />,
+        //     onPress: () => navigation.navigate("SendOrder"),
+        // },
     ]);
 
     const handleDisableSetupGuides = () => {
