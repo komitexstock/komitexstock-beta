@@ -325,7 +325,7 @@ const Products = ({navigation, route}) => {
 
     const handleEditProduct = (id) => {
         // console.log("right here");
-        console.log(inventories);
+        // console.log(inventories);
 
         const selectedProduct = productsList.find(product => product.id === id);
 

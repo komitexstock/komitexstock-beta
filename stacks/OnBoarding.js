@@ -73,6 +73,7 @@ const OnBoarding = ({navigation}) => {
                 showsHorizontalScrollIndicator={false}
                 onScroll={handleScroll}
                 snapToInterval={windowWidth}
+                scrollEventThrottle={16}
             >
                 {onBoardingInfo.map(info => (
                     <View key={info.id} style={style.infoWrapper}>

@@ -36,6 +36,9 @@ import PhoneIcon from "../assets/icons/PhoneIcon";
 import { windowHeight, windowWidth } from "../utils/helpers";
 // globals
 import { useGlobals } from "../context/AppContext";
+// shadow
+import { Shadow } from "react-native-shadow-2";
+
 
 const EditProduct = ({navigation, route}) => {
     
@@ -252,19 +255,35 @@ const EditProduct = ({navigation, route}) => {
                                 source={{uri: selectedImage ? selectedImage : image_uri}}
                             />
                             {/* upload image button, position absolute */}
-                            <TouchableOpacity 
-                                style={style.editImageButton}
-                                onPress={pickImageAsync}
+                            <Shadow
+                                containerStyle={[style.shadowStyle]}
+                                offset={[0, 4]}
+                                distance={8}
+                                startColor={"rgba(0, 0, 0, 0.10)"}
+                                safeRender={true}
                             >
-                                <GalleryBlackIcon />
-                            </TouchableOpacity>
-                            {/* navugate to previous screen button, position absolute */}
-                            <TouchableOpacity 
-                                style={[style.editImageButton, {left: 20}]}
-                                onPress={navigation.goBack}
+                                <TouchableOpacity 
+                                    style={style.editImageButton}
+                                    onPress={pickImageAsync}
+                                >
+                                    <GalleryBlackIcon />
+                                </TouchableOpacity>
+                            </Shadow>
+                            {/* navigate to previous screen button, position absolute */}
+                            <Shadow
+                                containerStyle={[style.shadowStyle]}
+                                offset={[0, 4]}
+                                distance={8}
+                                startColor={"rgba(0, 0, 0, 0.10)"}
+                                safeRender={true}
                             >
-                                <ArrowLeftSmallIcon />
-                            </TouchableOpacity>
+                                <TouchableOpacity 
+                                    style={[style.editImageButton]}
+                                    onPress={navigation.goBack}
+                                >
+                                    <ArrowLeftSmallIcon />
+                                </TouchableOpacity>
+                            </Shadow>
                             {/* product details */}
                         </View>
                         <View style={style.productDetailsWrapper}>
@@ -464,17 +483,37 @@ const style = StyleSheet.create({
     editImageButton: {
         width: 32,
         height: 32,
-        position: "absolute",
-        top: 12,
-        right: 20,
-        borderRadius: 16,
-        zIndex: 10,
+        // position: "absolute",
+        // top: 12,
+        // right: 20,
+        // zIndex: 10,
+        borderRadius: 28,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         backgroundColor: white,
-        shadowColor: black,
-        elevation: 3,
+        // shadowColor: black,
+        // elevation: 3,
+    },
+    shadowStyle: {
+        width: 32, 
+        height: 32, 
+        position: "absolute",
+        top: 12,
+        right: 20,
+        zIndex: 10,
+        borderRadius: 16,
+        shadowColor: "#000",
+        shadowOffset: {
+          width: 0,
+          height: 4,
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 16,
+        // display: "flex",
+        // alignItems: "center",
+        // justifyContent: "center",
+        // backgroundColor: white,
     },
     productDetailsWrapper: {
         width: "100%",

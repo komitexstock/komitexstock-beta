@@ -19,7 +19,7 @@ import { StatusBar, AppRegistry } from 'react-native';
 // colors
 import { white } from './style/colors';
 // react safe area provider
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native';
 // navigator
 import Navigator from './router/Navigator';
 
@@ -53,7 +53,7 @@ export default function App() {
 
     return (
         // Safe area provider
-        <SafeAreaProvider>
+        <SafeAreaView style={{flex: 1}}>
             {/* // navigation container */}
             <NavigationContainer>
                 {/* provides authentication function and variables to the whole software */}
@@ -79,7 +79,7 @@ export default function App() {
                     </AppProvider>
                 </AuthProvider>
             </NavigationContainer>
-        </SafeAreaProvider>
+        </SafeAreaView>
     );
 }
 
