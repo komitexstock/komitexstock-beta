@@ -255,35 +255,19 @@ const EditProduct = ({navigation, route}) => {
                                 source={{uri: selectedImage ? selectedImage : image_uri}}
                             />
                             {/* upload image button, position absolute */}
-                            <Shadow
-                                containerStyle={[style.shadowStyle]}
-                                offset={[0, 4]}
-                                distance={8}
-                                startColor={"rgba(0, 0, 0, 0.10)"}
-                                safeRender={true}
+                            <TouchableOpacity 
+                                style={style.editImageButton}
+                                onPress={pickImageAsync}
                             >
-                                <TouchableOpacity 
-                                    style={style.editImageButton}
-                                    onPress={pickImageAsync}
-                                >
-                                    <GalleryBlackIcon />
-                                </TouchableOpacity>
-                            </Shadow>
+                                <GalleryBlackIcon />
+                            </TouchableOpacity>
                             {/* navigate to previous screen button, position absolute */}
-                            <Shadow
-                                containerStyle={[style.shadowStyle]}
-                                offset={[0, 4]}
-                                distance={8}
-                                startColor={"rgba(0, 0, 0, 0.10)"}
-                                safeRender={true}
+                            <TouchableOpacity 
+                                style={[style.editImageButton, {left: 20}]}
+                                onPress={navigation.goBack}
                             >
-                                <TouchableOpacity 
-                                    style={[style.editImageButton]}
-                                    onPress={navigation.goBack}
-                                >
-                                    <ArrowLeftSmallIcon />
-                                </TouchableOpacity>
-                            </Shadow>
+                                <ArrowLeftSmallIcon />
+                            </TouchableOpacity>
                             {/* product details */}
                         </View>
                         <View style={style.productDetailsWrapper}>
@@ -483,17 +467,17 @@ const style = StyleSheet.create({
     editImageButton: {
         width: 32,
         height: 32,
-        // position: "absolute",
-        // top: 12,
-        // right: 20,
-        // zIndex: 10,
+        position: "absolute",
+        top: 12,
+        right: 20,
+        zIndex: 10,
         borderRadius: 28,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         backgroundColor: white,
-        // shadowColor: black,
-        // elevation: 3,
+        shadowColor: black,
+        elevation: 1,
     },
     shadowStyle: {
         width: 32, 

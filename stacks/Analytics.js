@@ -239,7 +239,7 @@ const Analytics = ({navigation}) => {
     locationAnalyticsList.length === 0 &&
     logisticsAnalyticsList.length === 0;
 
-    console.log(emptyAnalytics)
+    // console.log(emptyAnalytics)
 
     // state to control tabs
     const [tabs, setTabs] = useState(authData?.account_type === "Logistics" ? "Merchant" : "Logistics");

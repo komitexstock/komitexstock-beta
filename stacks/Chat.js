@@ -65,6 +65,8 @@ import {
     accentLight,
     messageSenderColors,
     subText,
+    deliveredText,
+    cancelledText,
 } from "../style/colors";
 // bottomsheet components
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
@@ -231,8 +233,9 @@ const Chat = ({navigation, route}) => {
     // chat rout parameters
     const {chatId, chatType, business_name, banner_image} = route.params;
 
+    const status = "Dispatched";
+
     // accoutntype, retreived from global variables
-    const accountType = "Merchant";
     const userId = "hjsdjkji81899";
     const companyName = "Mega Enterprise";
     const fullname = "Iffie Ovie";
@@ -1002,6 +1005,27 @@ const Chat = ({navigation, route}) => {
                     inlineArrow={true}
                     backgroundColor={white}
                 />
+                {/* status indicator */}
+                {status !== "Pending" && (
+                    <View style={style.statusIndicator}>
+                        <Text style={style.statusChatType}>
+                            {chatType} status:&nbsp;
+                            <Text
+                                style={[
+                                    status === "Delivered" && style.deliveredStatus,
+                                    status === "Cancelled" && style.cancelledStatus,
+                                    status === "Dispatched" && style.dispatchedStatus,
+                                    status === "rescheduled" && style.rescheduledStatus,
+                                ]}
+                            >
+                                {status}
+                            </Text>
+                        </Text>
+                        <Text style={style.statusDateTime}>
+                            3:28 pm, Jan 09, 2024
+                        </Text>
+                    </View>
+                )}
             </View>
 
             {/* out of stock indicator */}
@@ -1053,7 +1077,12 @@ const Chat = ({navigation, route}) => {
                 <View style={style.container}>
                     {/* fixed header container */}
                     {/* chat scroll view */}
-                    <View style={style.messagesWrapper}>
+                    <View 
+                        style={[
+                            style.messagesWrapper,
+                            status !== "Pending" && {paddingTop: 94},
+                        ]}
+                    >
                         <View style={style.dateWrapper}>
                             <Text style={style.dateText}>{"Friday July 7, 2023"}</Text>
                         </View>
@@ -1177,7 +1206,7 @@ const Chat = ({navigation, route}) => {
                 {/* edit order */}
                 { modal.type === "Edit order" && (
                     <>
-                        <BottomSheetScrollView contentContainerStyle={style.modalWrapper}>
+                        <BottomSheetScrollView showsVerticalScrollIndicator={false} contentContainerStyle={style.modalWrapper}>
                             <View style={style.modalContent}>
                                 <Text style={style.editModalParagragh}>
                                     We all make mistakes, use the available fields to make to edit your order
@@ -1579,10 +1608,37 @@ const style = StyleSheet.create({
         flex: 1,
         gap: 10,
     },  
-    headerImage: {
-        width: 30,
-        height: 30,
-        borderRadius: 6,
+    statusIndicator: {
+        height: 34,
+        width: "100%",
+        backgroundColor: background,
+        display: 'flex',
+        paddingHorizontal: 20,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    statusChatType: {
+        fontFamily: 'mulish-medium',
+        color: black,
+        fontSize: 12,
+    },
+    deliveredStatus: {
+        color: deliveredText,
+    },
+    dispatchedStatus: {
+        color: primaryColor
+    },
+    cancelledStatus: {
+        color: cancelledText,
+    },
+    rescheduledStatus: {
+        color: black,
+    },
+    statusDateTime: {
+        fontFamily: 'mulish-medium',
+        color: black,
+        fontSize: 10,
     },
     headerPrimaryText: {
         fontSize: 14,
