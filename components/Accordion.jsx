@@ -60,7 +60,7 @@ const Accordion = ({states, state, locations, opened, showEditButton, navigation
     const maxCharge = getMaxCharge(locations);
     const minCharge = getMinCharge(locations);
 
-    const stateLocations = states.find(stateLocation => stateLocation.name === state);
+    const stateLocations = states?.find(stateLocation => stateLocation.name === state);
 
     return (<>
         <View style={style.container}>

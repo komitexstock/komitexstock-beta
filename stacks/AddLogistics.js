@@ -20,6 +20,7 @@ import AddLogisticsSkeleton from "../skeletons/AddLogisticsSkeleton";
 
 const AddLogistics = ({navigation}) => {
 
+    // to store search query
     const [searchQuery, setSearchQuery] = useState("");
 
     // state to indicate page loading
@@ -33,39 +34,55 @@ const AddLogistics = ({navigation}) => {
     const logisticsList = [
         {
             id: 1,
-            logistics: "Komitex Logistics",
-            imageUrl: '../assets/images/komitex.png',
+            bussiness_name: "Komitex Logistics",
+            banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fkomitex.png?alt=media&token=a8039272-66b6-4e24-8ab1-a4dfd40503f8',
             verified: true,
             destinations: 14,
             rating: 4.9,
-            onPress: () => {navigation.navigate("LogisticsDetails")}
+            onPress: () => {navigation.navigate("LogisticsDetails", {
+                bussiness_name: "Komitex Logistics",
+                banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fkomitex.png?alt=media&token=a8039272-66b6-4e24-8ab1-a4dfd40503f8',
+                verified: true,
+            })}
         },
         {
             id: 2,
-            logistics: "DHL",
-            imageUrl: '../assets/images/dhl.png',
+            bussiness_name: "DHL",
+            banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fdhl.png?alt=media&token=e113f106-0eaf-420e-9fe4-488cb8e6c26d',
             verified: true,
             destinations: 28,
             rating: 4.2,
-            onPress: () => {navigation.navigate("LogisticsDetails")}
+            onPress: () => {navigation.navigate("LogisticsDetails", {
+                bussiness_name: "DHL",
+                banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fdhl.png?alt=media&token=e113f106-0eaf-420e-9fe4-488cb8e6c26d',
+                verified: true,
+            })}
         },
         {
             id: 3,
-            logistics: "Fedex",
-            imageUrl: '../assets/images/fedex.png',
+            bussiness_name: "Fedex",
+            banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Ffedex.png?alt=media&token=d943aea6-37ec-4f61-a589-01ad7bdd1299',
             verified: true,
             destinations: 33,
             rating: 4.0,
-            onPress: () => {navigation.navigate("LogisticsDetails")}
+            onPress: () => {navigation.navigate("LogisticsDetails", {
+                bussiness_name: "Fedex",
+                banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Ffedex.png?alt=media&token=d943aea6-37ec-4f61-a589-01ad7bdd1299',
+                verified: true,
+            })}
         },
         {
             id: 4,
-            logistics: "UPS",
-            imageUrl: '../assets/images/ups.png',
+            bussiness_name: "UPS",
+            banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fups.png?alt=media&token=37224ee1-4460-4fec-a39b-3af040b65fe0',
             verified: false,
             destinations: 14,
             rating: 3.5,
-            onPress: () => {navigation.navigate("LogisticsDetails")}
+            onPress: () => {navigation.navigate("LogisticsDetails", {
+                bussiness_name: "UPS",
+                banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fups.png?alt=media&token=37224ee1-4460-4fec-a39b-3af040b65fe0',
+                verified: false,
+            })}
         },
     ];
 
@@ -93,6 +110,7 @@ const AddLogistics = ({navigation}) => {
                                     icon={null}
                                     unpadded={true}
                                 />
+                                {/* paragaraph */}
                                 <Text style={style.headingText}>
                                     Select a preferred logistics partner for efficient 
                                     inventory management and timely order fulfillment.
@@ -112,10 +130,11 @@ const AddLogistics = ({navigation}) => {
                         keyExtractor={item => item.id}
                         data={logisticsList}
                         numColumns={2}
+                        // render select logistics card
                         renderItem={({ item }) => (
                             <SelectLogisticsCard
-                                logistics={item.logistics}
-                                imageUrl={item.imageUrl}
+                                logistics={item.bussiness_name}
+                                imageUrl={item.banner_image}
                                 destinations={item.destinations}
                                 rating={item.rating}
                                 verified={item.verified}
@@ -124,8 +143,7 @@ const AddLogistics = ({navigation}) => {
                         )}
                     />
                 </TouchableWithoutFeedback>
-            ) : <AddLogisticsSkeleton />}
-
+            ) : <AddLogisticsSkeleton /> /* Add logistics skeleton */} 
         </>
     );
 }

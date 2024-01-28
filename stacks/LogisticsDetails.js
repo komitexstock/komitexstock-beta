@@ -50,10 +50,12 @@ if (Platform.OS === 'android') {
     UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-const LogisticsDetails = ({navigation}) => {
+const LogisticsDetails = ({navigation, route}) => {
 
     // calendar sheet
     const { successSheetRef } = useGlobals();
+
+    const { bussiness_name, banner_image, verified } = route?.params;
 
     // states and delivery locations
     const states = [
@@ -594,11 +596,12 @@ const LogisticsDetails = ({navigation}) => {
                                 stackName={
                                     <View style={style.headerWrapper}>
                                         <Avatar 
-                                            imageUrl={'../assets/images/komitex.png'}
+                                            fullname={bussiness_name}
+                                            imageUrl={banner_image}
                                             squared={true}
                                         />
-                                        <Text style={style.headerText}>Komitex Logistics</Text>
-                                        <VerifiedIcon />
+                                        <Text style={style.headerText}>{bussiness_name}</Text>
+                                        { verified && <VerifiedIcon /> }
                                     </View>
                                 }
                                 component={true}
