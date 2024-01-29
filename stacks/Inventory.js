@@ -27,8 +27,13 @@ import InventorySkeleton from "../skeletons/InventorySkeleton";
 // auth
 import { useAuth } from "../context/AuthContext"
 import { windowWidth } from "../utils/helpers";
+// globals
+import { useGlobals } from "../context/AppContext";
 
 const Products = ({navigation, route}) => {
+
+    // toast parameters
+    const { setToast } = useGlobals();
 
     // auth data
     const { authData } = useAuth();
@@ -41,6 +46,16 @@ const Products = ({navigation, route}) => {
         if (route?.params?.tab) {
             setTab(route?.params?.tab);
         }
+
+        // show toast if toast parameters are passed
+        if (route?.params?.toastType) {
+            setToast({
+                visible: true,
+                type: route?.params?.toastType,
+                text: route?.params?.toastText,
+            });   
+        }
+
     }, [route])
 
     // stats array
@@ -101,7 +116,11 @@ const Products = ({navigation, route}) => {
             lowStock: true,
             verified: true,
             onPress: () => {
-                navigation.navigate("Products");
+                navigation.navigate("Products", {
+                    business_id: 1,
+                    business_name: "Komitex Logistics",
+                    verified: true,
+                });
             }
         },
         {
@@ -113,7 +132,11 @@ const Products = ({navigation, route}) => {
             lowStock: false,
             verified: true,
             onPress: () => {
-                navigation.navigate("Products");
+                navigation.navigate("Products", {
+                    business_id: 2,
+                    business_name: "DHL",
+                    verified: true,
+                });
             }
         },
         {
@@ -125,7 +148,11 @@ const Products = ({navigation, route}) => {
             lowStock: false,
             verified: true,
             onPress: () => {
-                navigation.navigate("Products");
+                navigation.navigate("Products", {
+                    business_id: 1,
+                    business_name: "Fedex",
+                    verified: true,
+                });
             }
         },
         {
@@ -137,7 +164,11 @@ const Products = ({navigation, route}) => {
             lowStock: false,
             verified: false,
             onPress: () => {
-                navigation.navigate("Products");
+                navigation.navigate("Products", {
+                    business_id: 1,
+                    business_name: "UPS",
+                    verified: false,
+                });
             }
         },
         {
@@ -149,7 +180,11 @@ const Products = ({navigation, route}) => {
             lowStock: false,
             verified: true,
             onPress: () => {
-                navigation.navigate("Products");
+                navigation.navigate("Products", {
+                    business_id: 1,
+                    business_name: "Amazon Logistics",
+                    verified: true,
+                });
             }
         },
         {
@@ -161,7 +196,11 @@ const Products = ({navigation, route}) => {
             lowStock: false,
             verified: true,
             onPress: () => {
-                navigation.navigate("Products");
+                navigation.navigate("Products", {
+                    business_id: 1,
+                    business_name: "On Trac",
+                    verified: true,
+                });
             }
         },
         {
@@ -173,7 +212,11 @@ const Products = ({navigation, route}) => {
             lowStock: false,
             verified: true,
             onPress: () => {
-                navigation.navigate("Products");
+                navigation.navigate("Products", {
+                    business_id: 1,
+                    business_name: "Laser Ship",
+                    verified: true,
+                });
             }
         },
         {
@@ -185,7 +228,11 @@ const Products = ({navigation, route}) => {
             lowStock: false,
             verified: false,
             onPress: () => {
-                navigation.navigate("Products");
+                navigation.navigate("Products", {
+                    business_id: 1,
+                    business_name: "Tranex",
+                    verified: false,
+                });
             }
         },
         {
@@ -206,7 +253,11 @@ const Products = ({navigation, route}) => {
             lowStock: true,
             verified: true,
             onPress: () => {
-                navigation.navigate("Products");
+                navigation.navigate("Products", {
+                    business_id: 1,
+                    business_name: "Style Bazaar",
+                    verified: true,
+                });
             }
         },
         {
@@ -218,7 +269,11 @@ const Products = ({navigation, route}) => {
             lowStock: false,
             verified: true,
             onPress: () => {
-                navigation.navigate("Products");
+                navigation.navigate("Products", {
+                    business_id: 1,
+                    business_name: "Luxe Living Ltd",
+                    verified: true,
+                });
             }
         },
         {
@@ -230,7 +285,11 @@ const Products = ({navigation, route}) => {
             lowStock: false,
             verified: true,
             onPress: () => {
-                navigation.navigate("Products");
+                navigation.navigate("Products", {
+                    business_id: 1,
+                    business_name: "Eco Savvy Emporium",
+                    verified: true,
+                });
             }
         },
         {
@@ -242,7 +301,11 @@ const Products = ({navigation, route}) => {
             lowStock: false,
             verified: false,
             onPress: () => {
-                navigation.navigate("Products");
+                navigation.navigate("Products", {
+                    business_id: 1,
+                    business_name: "Tech Treasure Haven",
+                    verified: false,
+                });
             }
         },
     ];

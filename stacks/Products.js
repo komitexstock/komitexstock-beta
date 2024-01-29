@@ -12,29 +12,22 @@ import {
 // react hooks
 import { useState, useRef, useEffect } from "react";
 // icons
-import MenuIcon from "../assets/icons/MenuIcon";
 import SearchIcon from '../assets/icons/SearchIcon'
-import AddProduct from "../assets/icons/AddProduct";
 import VerifiedIcon from "../assets/icons/VerifiedIcon";
 // colors
-import { background, black, bodyText, primaryColor, secondaryColor, subText, white } from "../style/colors";
+import { background, black, bodyText, primaryColor, subText, white } from "../style/colors";
 // components
 import StatWrapper from "../components/StatWrapper";
 import StatCard from "../components/StatCard";
 import CustomBottomSheet from "../components/CustomBottomSheet";
 import SearchBar from "../components/SearchBar";
 import ProductCard from "../components/ProductCard";
-import AlertNotice from "../components/AlertNotice";
-import EditProductContent from "../components/EditProductContent";
 import ProductListItem from "../components/ProductListItem";
 import Header from "../components/Header";
 import FilterBottomSheet from "../components/FilterBottomSheet";
 import FilterButtonGroup from "../components/FilterButtonGroup";
 import FilterPill from "../components/FilterPill";
 import Avatar from "../components/Avatar";
-import Menu from "../components/Menu";
-import ImportInventory from "../assets/icons/ImportInventory";
-import CustomButton from "../components/CustomButton";
 import OpenFilterButton from "../components/OpenFilterButton";
 // bottomsheet component
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
@@ -49,6 +42,9 @@ import { useAuth } from "../context/AuthContext";
 
 
 const Products = ({navigation, route}) => {
+
+    // business details
+    const { business_id, business_name, verified } = route?.params || {};
 
     // auth data
     const { authData } = useAuth();
@@ -87,15 +83,6 @@ const Products = ({navigation, route}) => {
             decimal: false,
         },
     ];
-
-    
-    const [editProduct, setEditProduct] = useState({
-        id: "",
-        product_name: "",
-        quantity: 0,
-        price: 0,
-        imageUrl: "",
-    });
 
     // list of products
     const productsList = [
@@ -190,55 +177,6 @@ const Products = ({navigation, route}) => {
 
     const [searchedProducts, setSearchedProducts] = useState([]);
 
-
-    // console.log(editProduct);
-
-    const [alert, setAlert] = useState({
-        show: false,
-        type: "Success",
-        text: ""
-    });
-
-    const closeAlert = () => {
-        setAlert(prevAlert => {
-            return {
-                ...prevAlert,
-                show: false
-            }
-        });
-    }
-
-    const openAlert = (type, text) => {
-        setAlert({
-            show: true,
-            type: type,
-            text: text
-        });
-
-        // auto close alert after 4 seconds
-        setTimeout(() => {
-            closeAlert();
-        }, 4000);
-    }
-
-    // modal state
-    const [modal, setModal] = useState({
-        snapPointsArray: ["100%"],
-        autoSnapAt: 0,
-        sheetTitle: "Edit Product",
-        modalContent: 'edit'
-    });
-
-    // use effect to remove add product or edit product success propmt after 3 seconds
-    useEffect(() => {
-
-        if (route.params) {
-            setMenu(false);
-            openAlert(route.params.type, route.params.text);
-        }
-
-    }, [route.params]);
-
     // state to store search query
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -248,15 +186,7 @@ const Products = ({navigation, route}) => {
     };
 
     // open modal function
-    const openModal = (type) => {
-        // console.log("here");
-        setModal(prevModal => {
-            return {
-                ...prevModal,
-                sheetTitle: type === "search" ? "Products" : "Edit Product",
-                modalContent: type
-            }
-        });
+    const openModal = () => {
         bottomSheetRef.current?.present();
     }
 
@@ -279,38 +209,6 @@ const Products = ({navigation, route}) => {
         });
 
     }
-
-    // console.log(editProduct);
-
-    // function to update selected product
-    const handleUpdateProduct = () => {
-        closeModal();
-
-        openAlert("Success", "Product edited successfully!");
-    }
-
-    // const menu state
-    const [menu, setMenu] = useState(false);
-
-    // close Menu function
-    const closeMenu = () => {
-        setMenu(false);
-    }
-    
-    // open Menu function
-    const openMenu = () => {
-        setMenu(true);
-    }
-    
-
-    const menuButtons = [
-        {
-            id: 1,
-            icon: <ImportInventory />,
-            text: "Import Inventory",
-            onPress: () => navigation.navigate("ImportInventory"),
-        }
-    ]
 
     // sticky header offset
     const stickyHeaderOffset = useRef(0);
@@ -768,14 +666,13 @@ const Products = ({navigation, route}) => {
                     navigation={navigation}
                     stackName={ authData.account_type === "Merchant" && (
                         <View style={style.header}>
-                            <Text style={style.headerText}>Komitex</Text>
-                            <VerifiedIcon />
+                            <Text style={style.headerText}>{business_name}</Text>
+                            { verified && <VerifiedIcon /> }
                         </View>
                     )}
                     removeBackArrow={true}
                     inlineArrow={true}
-                    icon={<MenuIcon />}
-                    iconFunction={openMenu}
+                    component={true}
                     backgroundColor={background}
                 />
                 {/* Merchant Banner */}
@@ -851,7 +748,7 @@ const Products = ({navigation, route}) => {
                                                 {/* open bottomsheet search modal */}
                                                 <TouchableOpacity 
                                                     style={style.menuIcon}
-                                                    onPress={() => openModal("search")}
+                                                    onPress={openModal}
                                                 >
                                                     <SearchIcon />
                                                 </TouchableOpacity>
@@ -894,6 +791,7 @@ const Products = ({navigation, route}) => {
                                             index % 2 === 1 && style.productCardWrapperRight,
                                         ]}
                                     >
+                                        {/* Product card */}
                                         <ProductCard
                                             product_name={item.product_name}
                                             quantity={item.quantity}
@@ -904,101 +802,63 @@ const Products = ({navigation, route}) => {
                                     </View>
                                 )
                             }
-                            // product card
                         }}
-                        ListFooterComponent={products.length <= 2 && (
-                            <View style={style.noProductsContainer}>
-                                <View style={style.noProductTextWrapper}>
-                                    <AddProduct />
-                                    <Text style={style.noProductHeading}>No products in inventory... yet!</Text>
-                                    <Text style={style.noProductParagraph}>
-                                        Start by adding your first product. You could as well import from an already existing inventory
-                                    </Text>
-                                </View>
-                                <CustomButton
-                                    name={"Add product"}
-                                    shrinkWrapper={true}
-                                    onPress={() => navigation.navigate("AddProduct")}
-                                    unpadded={true}
-                                />
-                                <CustomButton
-                                    secondaryButton={true}
-                                    name={"Import Inventory"}
-                                    shrinkWrapper={true}
-                                    onPress={() => navigation.navigate("ImportInventory")}
-                                    unpadded={true}
-                                />
-                            </View>
-                        )}
                     />
                 </TouchableWithoutFeedback>
             </> : <ProductsSkeleton />}
-            {/* custom bottomsheet modal */}
+            {/* search products bottomsheet */}
             <CustomBottomSheet 
                 bottomSheetModalRef={bottomSheetRef}
                 closeModal={closeModal}
-                snapPointsArray={modal.snapPointsArray}
-                autoSnapAt={modal.autoSnapAt}
-                sheetTitle={ modal.sheetTitle }
-                disablePanToClose={modal.modalContent === "search" ? true : false}
+                snapPointsArray={["100%"]}
+                autoSnapAt={0}
+                sheetTitle={"Products"}
+                disablePanToClose={true}
             >
-                { modal.modalContent === "search" && (
-                    <>
-                        <SearchBar 
-                            placeholder={"Search prodcuts"}
+                <SearchBar 
+                    placeholder={"Search prodcuts"}
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                    backgroundColor={background}
+                    openFilter={() => openFilter("search")}
+                    filterParams={searchFilterParameters}
+                />
+                
+                {searchFilterParameters.find(filterParam => filterParam.default === false) && (
+                    <View style={style.searchFilterPillWrapper}>
+                        {searchFilterParameters.map(filterParam => {
+                            if (!filterParam.default) {
+                                if (filterParam.value !== "Custom period") {
+                                    return (
+                                        <FilterPill
+                                            key={filterParam.title}
+                                            text={filterParam.value}
+                                            onPress={() => handleRemoveFilter(filterParam.title, "search")}
+                                            background={background}
+                                        />
+                                    )
+                                }
+                            }
+                        })}
+                    </View>
+                )}
+                <BottomSheetScrollView 
+                    showsVerticalScrollIndicator={false} 
+                    style={style.orderSearchResults}
+                >
+                    {searchedProducts.map(item => (
+                        <ProductListItem 
+                            key={item.id}
+                            product_name={item.product_name}
+                            quantity={item.quantity}
+                            price={item.price}
+                            imageUrl={item.imageUrl}
+                            onPress={item.onPress}
                             searchQuery={searchQuery}
-                            setSearchQuery={setSearchQuery}
-                            backgroundColor={background}
-                            openFilter={() => openFilter("search")}
-                            filterParams={searchFilterParameters}
                         />
-                        
-                        {searchFilterParameters.find(filterParam => filterParam.default === false) && (
-                            <View style={style.searchFilterPillWrapper}>
-                                {searchFilterParameters.map(filterParam => {
-                                    if (!filterParam.default) {
-                                        if (filterParam.value !== "Custom period") {
-                                            return (
-                                                <FilterPill
-                                                    key={filterParam.title}
-                                                    text={filterParam.value}
-                                                    onPress={() => handleRemoveFilter(filterParam.title, "search")}
-                                                    background={background}
-                                                />
-                                            )
-                                        }
-                                    }
-                                })}
-                            </View>
-                        )}
-                        <BottomSheetScrollView showsVerticalScrollIndicator={false} style={style.orderSearchResults}>
-                            {searchedProducts.map(item => (
-                                <ProductListItem 
-                                    key={item.id}
-                                    product_name={item.product_name}
-                                    quantity={item.quantity}
-                                    price={item.price}
-                                    imageUrl={item.imageUrl}
-                                    onPress={item.onPress}
-                                    searchQuery={searchQuery}
-                                />
-                            ))}
-                        </BottomSheetScrollView>
-                    </>
-                )}
+                    ))}
+                </BottomSheetScrollView>
 
-                { modal.modalContent === "edit" && (
-                    <>
-                        <EditProductContent 
-                            handleUpdateProduct={handleUpdateProduct}
-                            product_name={editProduct.product_name}
-                            quantity={editProduct.quantity}
-                            imageUrl={editProduct.imageUrl}
-                            initialPrice={editProduct.price}
-                        />
-                    </>
-                )}
-                    
             </CustomBottomSheet>
             {/* filter bottom sheet */}
             <FilterBottomSheet 
@@ -1024,24 +884,6 @@ const Products = ({navigation, route}) => {
                     />
                 ))}
             </FilterBottomSheet>
-
-            {/* success alert to display on addproduct or edit product */}
-            { alert.show && (
-                <AlertNotice 
-                    show={alert.show}
-                    type={alert.type}
-                    text={alert.text}
-                    closeAlert={closeAlert}
-                />
-            )}
-
-            {/* menu */}
-            {menu && (
-                <Menu
-                    closeMenu={closeMenu}
-                    menuButtons={menuButtons}
-                />
-            )}
         </>
     );
 }

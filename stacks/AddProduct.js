@@ -16,11 +16,16 @@ import CustomButton from "../components/CustomButton";
 import { useState } from "react";
 // icon
 import CameraPrimaryIcon from '../assets/icons/CameraPrimaryIcon';
+// globals variables
+import { useGlobals } from '../context/AppContext';
 // expo image picker method
 import * as ImagePicker from "expo-image-picker";
 import { background, bodyText, inputBorder, inputLabel, secondaryColor, white } from "../style/colors";
 
 const AddProduct = ({navigation, route}) => {
+
+    // toast function
+    const { setToast } = useGlobals();
     
     // state to store product name
     const [productName, setProductName] = useState("");
@@ -61,23 +66,37 @@ const AddProduct = ({navigation, route}) => {
 
     // pick image from gallery function
     const pickImageAsync = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-          allowsEditing: true,
-          quality: 1,
-        });
-    
-        if (!result.canceled) {
-            setSelectedImage(!result.canceled[0].uri);
+        try {
+            let result = await ImagePicker.launchImageLibraryAsync({
+                allowsEditing: true,
+                quality: 1,
+            });
+
+            console.log(result);
+        
+            if (!result.assets[0].canceled) {
+                return setSelectedImage(result.assets[0].uri);
+            }
+
+            throw new Error("Image not found");
+
+
+        } catch (error) {
+            setToast({
+                visible: true,
+                type: "error",
+                text: error.message,
+            });                    
         }
     };
 
-    // navigate to products with success parammeter
-    // success parameter triggers a success prompt
+    // function to handle adding a new products
     const handleAddProduct = () => {
-        navigation.navigate(origin, {
-            show: true,
-            type: "Success",
-            text: "Product successfully created and saved!"
+        // navigate to Inventory Products tab with success toast parammeter
+        navigation.navigate("Inventory", {
+            tab: "Products",
+            toastType: "Success",
+            toastText: "Product successfully created and saved!"
         });
     }
 
