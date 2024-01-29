@@ -25,7 +25,7 @@ const AddWarehouse = ({navigation}) => {
     const [isLoading, setIsLoading] = useState(false);
 
     // bottomsheet refs
-    const { bottomSheetRef, bottomSheetOpen, popUpSheetRef, successSheetRef } = useGlobals();
+    const { bottomSheetRef, bottomSheetOpen, successSheetRef } = useGlobals();
 
     // warehouse name 
     const [warehouseName, setWarehouseName] = useState("");
@@ -37,6 +37,7 @@ const AddWarehouse = ({navigation}) => {
     // warehouse address input error
     const [errorWarehouseAddress, setErrorWarehouseAddress] = useState(false);
 
+    // list of managers
     const managers = [
         {
             id: 1,
@@ -64,6 +65,7 @@ const AddWarehouse = ({navigation}) => {
     // reacieve waybill state
     const [receiveWaybill, setReceiveWaybill] = useState(false);
     
+    // handle selected warehouse, function runs when a warehouse is clicked in select warehouse nottomsheet
     const handleWarehouseSelection = (id) => {
         setWarehouseManager(() => {
             return managers.find(manager => manager.id === id);
@@ -74,30 +76,30 @@ const AddWarehouse = ({navigation}) => {
     // search query
     const [searchQuery, setSearchQuery] = useState(null);
 
+    // open bottomsheet modal function
     const openModal = () => {
         bottomSheetRef?.current?.present();
         setActiveWarehouseManager(true);
         Keyboard.dismiss();
     }
 
-    // close modal function
+    // close bottomsheet modal modal function
     const closeModal = () => {
         bottomSheetRef?.current?.close();
         setActiveWarehouseManager(false);
     }
     
-    // open pop up modal
+    // open success pop up bottomsheet modal
     const openPopUpModal = () => {
-        // popUpSheetRef?.current?.present();
         successSheetRef?.current?.present();
     }
 
-    // close pop up modal
+    // close success pop up bottomsheet modal
     const closePopUpModal = () => {
-        popUpSheetRef?.current?.close();
-
+        successSheetRef?.current?.present();
     }
 
+    // handle create new warehouse
     const handleCreateWarehouse = () => {
         setIsLoading(true);
 
@@ -107,6 +109,7 @@ const AddWarehouse = ({navigation}) => {
         }, 3000);
     }
 
+    // handle confirm add warehouse
     const handleConfirmAddWarehouse = () => {
         closePopUpModal();
         navigation.navigate("Warehouse");
@@ -136,7 +139,6 @@ const AddWarehouse = ({navigation}) => {
                             Create a new warehouse for your business
                         </Text>
                         <View style={style.inputWrapper}>
-
                             {/* warehouse name */}
                             <Input 
                                 label={"Warehouse Name"}
@@ -146,7 +148,6 @@ const AddWarehouse = ({navigation}) => {
                                 error={errorWarehouseName}
                                 setError={setErrorWarehouseName}
                             />
-
                             {/* warehouse address */}
                             <Input 
                                 label={"Warehouse Address"}
@@ -156,7 +157,6 @@ const AddWarehouse = ({navigation}) => {
                                 error={errorWarehouseAddress}
                                 setError={setErrorWarehouseAddress}
                             />
-
                             {/* warehouse manager select input */}
                             <SelectInput
                                 label={"Warehouse Manager"}
@@ -176,6 +176,7 @@ const AddWarehouse = ({navigation}) => {
                             </View>
                         </View>
                     </View>
+                    {/* create warehouse button, disabled if inputs are empty */}
                     <CustomButton
                         name={"Create Warehouse"}
                         unpadded={true}
@@ -194,6 +195,7 @@ const AddWarehouse = ({navigation}) => {
                 autoSnapAt={0}
                 closeModal={closeModal}
             >
+                {/* search bar to search for managers */}
                 <SearchBar
                     searchQuery={searchQuery}
                     setSearchQuery={setSearchQuery}
@@ -205,22 +207,23 @@ const AddWarehouse = ({navigation}) => {
                     <Text style={style.headingText}>
                         Managers in your team
                     </Text>
+                    {/* list of managers */}
                     <View style={style.listWrapper}>
                         {managers.filter(manager => manager.id !== warehouseManager?.id).map(manager => (
-                                <TouchableOpacity
-                                    key={manager.id}
-                                    style={style.listItemButton}
-                                    onPress={() => handleWarehouseSelection(manager.id)}
-                                >
-                                    <Text style={style.listItemText}>
-                                        {manager.fullname}
-                                    </Text>
-                                </TouchableOpacity>
-                            ))
-                        }
+                            <TouchableOpacity
+                                key={manager.id}
+                                style={style.listItemButton}
+                                onPress={() => handleWarehouseSelection(manager.id)}
+                            >
+                                <Text style={style.listItemText}>
+                                    {manager.fullname}
+                                </Text>
+                            </TouchableOpacity>
+                        ))}
                     </View>
                 </BottomSheetScrollView>
             </CustomBottomSheet>
+            {/* success bottom sheet to indicate warehouse was created successfully */}
             <SuccessSheet
                 successSheetRef={successSheetRef}
                 heading={"New warehouse created"}

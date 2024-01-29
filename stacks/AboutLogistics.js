@@ -5,7 +5,6 @@ import {
     ScrollView,
     StyleSheet,
     TouchableOpacity,
-    Dimensions,
     Linking,
 } from "react-native";
 // colors
@@ -23,9 +22,7 @@ import StatWrapper from "../components/StatWrapper";
 import StatCard from "../components/StatCard";
 import Accordion from "../components/Accordion";
 import CustomButton from "../components/CustomButton";
-import PopUpBottomSheet from "../components/PopUpBottomSheet";
-import SuccessPrompt from "../components/SuccessPrompt";
-import CautionPrompt from "../components/CautionPrompt";
+import SuccessSheet from "../components/SuccessSheet";
 import Avatar from "../components/Avatar";
 // icons
 import VerifiedIcon from '../assets/icons/VerifiedIcon';
@@ -48,7 +45,7 @@ const AboutLogistics = ({navigation, route}) => {
     const {business_id, business_name, banner_image, verified} = route?.params
 
     // reference for popup bottomsheet
-    const { popUpSheetRef } = useGlobals();
+    const { successSheetRef } = useGlobals();
 
     // array of states covered and delivery locations
     const states = [
@@ -425,6 +422,8 @@ const AboutLogistics = ({navigation, route}) => {
     // page loading state
     const [pageLoading, setPageLoading] = useState(true);
 
+    // varaible to indiacte button loading state
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         setTimeout(() => {
@@ -458,23 +457,32 @@ const AboutLogistics = ({navigation, route}) => {
     const [confirmDeactivation, setConfirmDeactivation] = useState(false);
 
 
-    // state to control popupModal snap points array
-    const [snapPointsArray, setSnapPointsArray] = useState([381])
-
     // close popup modal bottomsheet function
     const closePopUpModal = () => {
-        popUpSheetRef.current?.close();
+        successSheetRef.current?.close();
     };
 
     // function to open bottom sheet modal to deactivate logistics
     const openPopUpModal = () => {
-        popUpSheetRef.current?.present();
+        successSheetRef.current?.present();
     }
 
     // function to confirm deactivation of logistics
     const handleDeactivation = () => {
-        setSnapPointsArray([320])
-        setConfirmDeactivation(true);
+        setIsLoading(true);
+
+        // simulate query delay
+        setTimeout(() => {
+            setConfirmDeactivation(true);
+
+            setIsLoading(false);
+        }, 2000);
+    }
+
+    // confirm deactivation of merchant
+    const handleConfirmDeactivation = () => {
+        closePopUpModal();
+        navigation.goBack();
     }
 
     // render AboutLogistics page
@@ -622,63 +630,25 @@ const AboutLogistics = ({navigation, route}) => {
                 backgroundColor={background}
                 secondaryButton={true}
             />
-            {/* pop up modal */}
-            <PopUpBottomSheet
-                bottomSheetModalRef={popUpSheetRef}
-                closeModal={closePopUpModal}
-                snapPointsArray={snapPointsArray}
-                autoSnapAt={0}
-                sheetTitle={false}
-                sheetSubtitle={false}
-            >   
-                {/* modal content to confirm deactivation */}
-                { !confirmDeactivation ? (
-                    <View style={style.popUpContent}>
-                        <CautionPrompt />
-                        <Text style={style.popUpHeading}>
-                            Deactivate Logistics
-                        </Text>
-                        <Text style={style.popUpParagraph}>
-                            Are you sure you want to deactivate Komitex Logistics
-                        </Text>
-                        <View style={style.popUpButtonWrapper}>
-                            <CustomButton
-                                name={"Yes, deactivate"}
-                                shrinkWrapper={true}
-                                onPress={handleDeactivation}
-                                unpadded={true}
-                            />
-                            <CustomButton
-                                secondaryButton={true}
-                                name={"No, cancel"}
-                                shrinkWrapper={true}
-                                onPress={closePopUpModal}
-                                unpadded={true}
-                            />
-                        </View>
-                    </View>
-                ) : (
-                    // modal content to acknowledge deactivation
-                    <View style={style.popUpContent}>
-                        <SuccessPrompt />
-                        <Text style={style.popUpHeading}>
-                            Komitex Succesfully Deactivated
-                        </Text>
-                        <Text style={style.popUpParagraph}>
-                            You have successfully deactivated Komitex Logistics
-                        </Text>
-                        <CustomButton
-                            name={"Done"}
-                            shrinkWrapper={true}
-                            onPress={() => {
-                                closePopUpModal();
-                                navigation.goBack();
-                            }}
-                            unpadded={true}
-                        />
-                    </View>
-                )}
-            </PopUpBottomSheet>
+            {/* success bottom sheet */}
+            <SuccessSheet
+                caution={!confirmDeactivation}
+                successSheetRef={successSheetRef}
+                height={!confirmDeactivation ? 381 : 320}
+                heading={!confirmDeactivation ? 
+                    "Deactivate Logistics" : 
+                    business_name + " Successfully Deactivated"
+                }
+                paragraph={!confirmDeactivation ?
+                    "Are you sure you want to deactivate " + business_name : 
+                    "You have successfully deactivated " + business_name
+                }
+                primaryFunction={!confirmDeactivation ? handleDeactivation : handleConfirmDeactivation}
+                primaryButtonText={!confirmDeactivation ? "Yes, deactivate" : "Done"}
+                secondaryFunction={!confirmDeactivation && closePopUpModal}
+                secondaryButtonText={!confirmDeactivation && "No, cancel"}
+                isLoadingPrimary={isLoading}
+            />
         </>
     );
 }
