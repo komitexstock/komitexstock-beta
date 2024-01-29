@@ -47,6 +47,7 @@ const BusinessSettings = ({navigation}) => {
                 unpadded={true}
             />
             <View style={styles.buttonsWrapper}>
+                {/* buttons list */}
                 {businessButtons.map((button, index) => (
                     <AccountButtons
                         index={index}

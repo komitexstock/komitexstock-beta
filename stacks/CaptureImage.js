@@ -32,24 +32,43 @@ import * as ImageManipulator from 'expo-image-manipulator';
 
 const CaptureImage = ({navigation, route}) => {
 
+    // camera type
     const [type, setType] = useState(CameraType.back);
+    // camera flash light mode
     const [flashMode, setFlashMode] = useState(FlashMode.off);
+    // state to store captured image
     const [picture, setPicture ] = useState(null);
 
+    // state to store origin (prev satck in the navigation)
     const [origin, setOrigin] = useState(null)
+
+    // image type
     const [imageType, setImageType] = useState(null)
 
+    // camera ref
     const cameraRef = useRef();
 
+    // request permission to use phone camera
     const requestPermission = async () => {
-        await requestCameraPermissionsAsync();
+        try {
+            await requestCameraPermissionsAsync();
+        } catch (error) {
+            // go back to previous screen/stack
+            navigation.goBack();   
+        }
     }
 
+    // Parameters neccessary when using the camera from a chat, so to navigate back to the right chat
+    // states for chat
     const [chatId, setChatId] = useState(null);
+    // chat name
     const [chatName, setChatName] = useState(null);
+    // chat type
     const [chatType, setChatType] = useState(null);
+    // chat header image
     const [chatHeaderImage, setChatHeaderImage] = useState(null);
 
+    // request permission on load
     useEffect(() => {
         requestPermission();
     }, []);
@@ -72,26 +91,31 @@ const CaptureImage = ({navigation, route}) => {
 
     }, []);
 
-    // console.log(origin);
-
+    // get permission to use camera
     const getPermission = async () => {
-        const cameraPermission = await getCameraPermissionsAsync();
-
-        return cameraPermission.granted;
+        try {
+            const cameraPermission = await getCameraPermissionsAsync();
+            return cameraPermission.granted;
+        } catch (error) {
+            console.log(error.message);
+        }
     }
 
     if (!getPermission()) {
         navigation.goBack();
     }
 
+    // function to swicth btw front and back camera
     const toggleCameraType = () => {
         setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));
-      }
+    }
 
+    // function to toggle flash light
     const toggleFlashMode = () => {
         setFlashMode(flash => (flash === FlashMode.off ? FlashMode.on : FlashMode.off));
     }
 
+    // function to crop image
     const cropImage = async () => {
         try {
             const manipResult = await ImageManipulator.manipulateAsync(
@@ -102,10 +126,11 @@ const CaptureImage = ({navigation, route}) => {
             // console.log(manipResult);
             setPicture(manipResult);
         } catch (error) {
-            // console.log(error);
+            console.log(error.message);
         }
     }
 
+    // take picture function
     const takePicture = async () => {
         const photo = await cameraRef.current.takePictureAsync({
             quality: 1,
@@ -114,16 +139,17 @@ const CaptureImage = ({navigation, route}) => {
         setPicture(photo);
     }
 
+    // go back to previous screen function
     const goBack = () => {
         navigation.goBack();
     }
 
+    // function to reset captured image
     const resetImage = () => {
         setPicture(null)
     }
-    // console.log(picture);
-    // console.log(imageType);
 
+    // function to confirm captured image
     const confirmImage = () => {
         if (origin === "Account") {
             return navigation.navigate(origin, {
@@ -152,19 +178,22 @@ const CaptureImage = ({navigation, route}) => {
                     style={style.camera}
                     type={type}
                     flashMode={flashMode}
-                    ratio='16:9'
+                    ratio={'16:9'}
                     autoFocus={AutoFocus.on}
                     whiteBalance={WhiteBalance.cloudy}
                 >
+                    {/* flash button */}
                     <TouchableOpacity style={style.flash} onPress={toggleFlashMode}  >
                         { flashMode === FlashMode.off ? <FlashSlashIcon /> : <FlashIcon /> }
                     </TouchableOpacity>
                 </Camera>
             ) : (
                 <View style={style.imageContainer}>
+                    {/* crop image buttton */}
                     <TouchableOpacity style={style.flash} onPress={cropImage}>
                         <CropImageIcon />
                     </TouchableOpacity>
+                    {/* display captured image */}
                     <Image 
                         source={{uri: picture.uri}}
                         style={style.imageCaptured}
@@ -172,23 +201,26 @@ const CaptureImage = ({navigation, route}) => {
                 </View> 
             )}
 
+            {/* footer butttons */}
             <View style={style.buttonContainer}>
                 <Text style={[style.text, {opacity: !picture ? 1 : 0}]}>Photo</Text>
                 <View style={style.buttonWrapper}>
+                    {/* close camera */}
                     <TouchableOpacity 
                         style={style.button}
                         onPress={!picture ? goBack : resetImage} 
                     >
                         <CloseCameraIcon />
                     </TouchableOpacity>
+                    {/* shutter button to capture image */}
                     { !picture && <TouchableOpacity style={style.shutterButton} onPress={takePicture}>
                         <View style={style.shutter}></View>
                     </TouchableOpacity> }
-                    { !picture ? (
+                    { !picture ? ( // flip camera button
                         <TouchableOpacity style={style.button} onPress={toggleCameraType }>
                             <FlipCameraIcon />
                         </TouchableOpacity>
-                    ) : (
+                    ) : ( // confirm image button
                         <TouchableOpacity style={style.button} onPress={confirmImage}>
                             <ConfirmImageIcon />
                         </TouchableOpacity>
