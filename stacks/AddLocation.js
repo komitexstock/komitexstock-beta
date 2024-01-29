@@ -184,19 +184,24 @@ const AddLocation = ({navigation}) => {
         "Zamfara",
     ];
 
+    // function to select a state where delivery location is to be added to
     const handleSelectState = (selectedState) => {
         setStateInput(selectedState);
+        // close state select bottomsheet after state has been selected
         closeModal();
     }
 
     // update warehouse function
-    const updateWarehouse = (id, setWarehouse) => {
+    const updateWarehouse = (id) => {
+        // close stacked bottomsheet
         closeStackedModal();
-        setWarehouse(warehouses.find((item) => item.id === id));
+        // set warehouse input
+        setWarehouseInput(warehouses.find((item) => item.id === id));
+        // disable input active state
         setWarehouseInputActive(false);
     }
 
-    // update charge
+    // update charge state on text change in input component
     const updateChargeInput = (text) => {
         let newText = text.replace(new RegExp(',', 'g'), '');
         // remove all occurrence of the comma character ',' in text gloablly
@@ -204,16 +209,11 @@ const AddLocation = ({navigation}) => {
         else setChargeInput("");
     }
     
-    // console.log(townInput);
-
     // open bottom sheet function
     const openModal = (type) => {
         bottomSheetRef?.current?.present();
         // set modal type
         setModalType(type);
-
-        // close menu if open, close menu
-        if (menu.open) closeMenu();
 
         // set state select input active if select bottomsheet is triggered
         if (type === "Select") setStateInputActive(true);
@@ -222,6 +222,7 @@ const AddLocation = ({navigation}) => {
     // close bottom sheet function
     const closeModal = () => {
         bottomSheetRef?.current?.close();
+        // deactivate active state in state input
         setStateInputActive(false);
     }
 
@@ -237,7 +238,6 @@ const AddLocation = ({navigation}) => {
         stackedSheetRef?.current?.present();
         // set modal type
         setWarehouseInputActive(true);
-
         // dismiss keyboard
         Keyboard.dismiss();
     }
@@ -259,8 +259,10 @@ const AddLocation = ({navigation}) => {
         stackedSheetRef?.current?.close();
     }
 
+    // state to store modaltype, which controls some of the bottomsheet parameters
     const [modalType, setModalType] = useState("")
 
+    // memorize the bottomsheet paramters according to the modal type
     const bottomSheetProps = useMemo(() => {
         return {
             snapPointsArray: modalType === "Select" ? ["50%", "75%", "100%"] : ["100%"],
@@ -268,10 +270,6 @@ const AddLocation = ({navigation}) => {
             sheetTitle: modalType === "Select" ? "Select State" : `Add${sublocations.length !== 0 ? " New" : ""} Sub-Location`,
         }
     }, [modalType]);
-
-    // const showLocationOptions = (id) => {
-    //     setMenuOpen(true);
-    // }
 
     // handle confirm location
     const handleConfirmLocations = () => {
@@ -281,6 +279,7 @@ const AddLocation = ({navigation}) => {
         })
     }
 
+    // state to store menu
     const [menu, setMenu] = useState({
         open: false,
         // position the menu initially off screen
@@ -351,7 +350,7 @@ const AddLocation = ({navigation}) => {
         });
     };
 
-    // function to get top offset of options menu
+    // function to get top offset of options menu (i.e the height from the top of the screen)
     const getTopOffset = (warehouse_id, town_id) => {
         // offset of the warehouse container from the top of the screen
         const topOffset = 231;
@@ -407,12 +406,16 @@ const AddLocation = ({navigation}) => {
         });
     }
 
+    // default values of charge input when a sublocation is about to be edited
     const defaultChargeInput = useMemo(() => {
+        // get the charge value where the selected warehouse and selected town id match
         return sublocations.find((item) => item.warehouse_id === selectedWarehouseId)
         ?.towns.find((item) => item.id === selectedTownId).charge;
     }, [selectedTownId, selectedWarehouseId]);
 
+    // default values of warehouse input when a sublocation is about to be edited
     const defaultWarehouseInput = useMemo(() => {
+        // get the warehouse value where a particular sublocation is about to be edited
         return warehouses.find((item) => item.id === selectedWarehouseId);
     }, [selectedTownId, selectedWarehouseId]);
 
@@ -425,11 +428,12 @@ const AddLocation = ({navigation}) => {
         // dismiss keyboard
         Keyboard.dismiss();
 
-        // fujnction to check if town exist in sublocations array
+        // function to check if town exist in sublocations array
         const checkTownExist = sublocations.some(sublocation => {
             return sublocation.towns.some(town => town.town.toLowerCase() === townInput.toLowerCase());
         });
 
+        // if town exist, return early with an error message
         if (checkTownExist) {
             // show error toast
             setToast({
@@ -447,6 +451,7 @@ const AddLocation = ({navigation}) => {
         // close add sub location bottom sheet
         closeModal();
 
+        // generate a random id for that newly added town
         const generatedTownId = Math.random();
 
         // check if warehouse in sub locations
@@ -484,6 +489,7 @@ const AddLocation = ({navigation}) => {
                     }
                 });
             }
+            // if warehouse doesn't exist create new warehouse group
             // spread prev warehouses and add the selected town
             return [
                 {
@@ -522,18 +528,21 @@ const AddLocation = ({navigation}) => {
             const subLocationWarehouseGroup = prevSubLocations.find((item) => item.warehouse_id === selectedWarehouseId);
             // check if multiple towns exist
             const oneTownsExist = subLocationWarehouseGroup.towns.length === 1;
-            // warehouse changed boolean
+            // parameter to detect if a warehouse was changed when a sublocation was edited
             const warehouseChanged = selectedWarehouseId !== warehouseInput.id;
-            // if only one town exist in warehouse group adjust the array
+            // if only one town exist in warehouse and warehouse was changed filter that warehouse out otherwise keep it
             const modSubLocations = oneTownsExist && warehouseChanged ? prevSubLocations.filter(sublocation => sublocation.warehouse_id !== selectedWarehouseId) : prevSubLocations;
 
+            // remove offset of warehouse if it doesnt exist anymore
             if (oneTownsExist && warehouseChanged) {
                 setWarehouseOffsets(prevOffsets => {
                     return prevOffsets.filter(offset => offset.id !== selectedWarehouseId);
                 });
             }
 
+            // if edited warehouse of sublocation exist in the current sublocation array
             if (warehouseExistInSublocations) {
+                // map through sublocations
                 return modSubLocations.map(sublocation => {
                     // when warehouse id matches warehouse input id
                     if (sublocation.warehouse_id === warehouseInput.id) {
@@ -633,7 +642,8 @@ const AddLocation = ({navigation}) => {
         setSelectedWarehouseId(null);
     }
 
-    // finction to swicth location to edit state
+    // function to swicth location list item from readonly state to edit state
+    // triggered when the edit button is clicked in the town options menu
     const handleEditTown = () => {
 
         // set ware house input
@@ -643,6 +653,7 @@ const AddLocation = ({navigation}) => {
         setChargeInput(sublocations.find((item) => item.warehouse_id === selectedWarehouseId)
         .towns.find((item) => item.id === selectedTownId).charge);
 
+        // swicth chosen town to edit state an other towns to diabled
         setSublocations(prevSubLocations => {
             return prevSubLocations.map(sublocation => {
                 return {
@@ -665,10 +676,12 @@ const AddLocation = ({navigation}) => {
             });
         });
 
+        // close menu after swicthing states
         closeMenu();
     }
 
     // function to cancel edit
+    // switch location list item from editing state to readonly state
     const handleCancelEditTown = () => {
         setSublocations(prevSubLocations => {
             return prevSubLocations.map(sublocation => {
@@ -686,7 +699,6 @@ const AddLocation = ({navigation}) => {
             });
         });
     
-        closeMenu();
         // reset input states
         setWarehouseInput(null);
         setChargeInput("");
@@ -734,12 +746,14 @@ const AddLocation = ({navigation}) => {
     // menu buttons
     const menuButtons = [
         {
+            // edit button
             id: 1,
             text: "Edit",
             onPress: handleEditTown,
             icon: <EditBlackLargeIcon />
         },
         {
+            // delete button
             id: 2,
             text: "Delete",
             onPress: handleDeleteTown,
@@ -791,6 +805,7 @@ const AddLocation = ({navigation}) => {
                         </Text>
                     ) : (
                         <View style={styles.sublocationsWrapper}>
+                            {/* location list items */}
                             {sublocations.map((sublocation) => (
                                 <LocationListItem 
                                     key={sublocation.warehouse_id}
@@ -816,7 +831,7 @@ const AddLocation = ({navigation}) => {
                     )}
                 </View>
             </View>
-            {/* menu */}
+            {/* option menu for edit and delete option of sublocation */}
             {menu.open && (
                 <Menu
                     top={menu.top}
@@ -834,6 +849,7 @@ const AddLocation = ({navigation}) => {
             sheetTitle={bottomSheetProps.sheetTitle}
             closeModal={closeModal}
         >
+            {/* select state buttom sheet */}
             {modalType === "Select" ? (
                 <BottomSheetScrollView 
                     showsVerticalScrollIndicator={false}
@@ -861,6 +877,7 @@ const AddLocation = ({navigation}) => {
                                 Add sub-loction an it's corresponding delivery charge
                             </Text>
                             <View style={styles.modalInputWrapper}>
+                                {/*Delivery Town/City input */}
                                 <Input 
                                     label={"City/Town"}
                                     placeholder={"City/Town"}
@@ -869,17 +886,19 @@ const AddLocation = ({navigation}) => {
                                     error={townInputError}
                                     setError={setTownInputError}
                                 />
+                                {/* select warehouse input */}
                                 <SelectInput
                                     label={"Select Warehouse"}
-                                    placeholder={"Select Warehouse"}
+                                    placeholder={"Select Warehouse for The City Above"}
                                     inputFor={"String"}
                                     onPress={openStackedModal}
                                     value={warehouseInput?.name}
                                     active={warehouseInputActive}
                                 />
+                                {/* delivery charge input */}                                
                                 <Input 
                                     label={"Charge"}
-                                    placeholder={"Charge"}
+                                    placeholder={"Delivery Charge"}
                                     value={chargeInput?.toLocaleString()}
                                     onChange={updateChargeInput}
                                     error={chargeInputError}
@@ -888,6 +907,7 @@ const AddLocation = ({navigation}) => {
                                 />
                             </View>
                         </View>
+                        {/* save date button */}
                         <CustomButton
                             shrinkWrapper={true}
                             name={"Save"}
@@ -917,7 +937,7 @@ const AddLocation = ({navigation}) => {
                         <TouchableOpacity 
                             key={warehouse.id} 
                             style={styles.listItem}
-                            onPress={() => updateWarehouse(warehouse.id, setWarehouseInput)}
+                            onPress={() => updateWarehouse(warehouse.id)}
                         >
                             <Text style={styles.listText}>{warehouse.name}</Text>
                         </TouchableOpacity>
@@ -986,8 +1006,6 @@ const styles = StyleSheet.create({
         top: windowHeight/2 - 50,
         left: 0,
     },
-
-
     // bottomsheet list styles
     listWrapper: {
         width: "100%",
@@ -1013,8 +1031,6 @@ const styles = StyleSheet.create({
         fontFamily: 'mulish-semibold',
         color: black,
     },
-
-
     // bottoms sheet style
     modalWrapper: {
         width: "100%",

@@ -55,7 +55,7 @@ const LogisticsDetails = ({navigation, route}) => {
     // calendar sheet
     const { successSheetRef } = useGlobals();
 
-    const { bussiness_name, banner_image, verified } = route?.params;
+    const { business_id, business_name, banner_image, verified } = route?.params;
 
     // states and delivery locations
     const states = [
@@ -596,11 +596,11 @@ const LogisticsDetails = ({navigation, route}) => {
                                 stackName={
                                     <View style={style.headerWrapper}>
                                         <Avatar 
-                                            fullname={bussiness_name}
+                                            fullname={business_name}
                                             imageUrl={banner_image}
                                             squared={true}
                                         />
-                                        <Text style={style.headerText}>{bussiness_name}</Text>
+                                        <Text style={style.headerText}>{business_name}</Text>
                                         { verified && <VerifiedIcon /> }
                                     </View>
                                 }
@@ -694,7 +694,10 @@ const LogisticsDetails = ({navigation, route}) => {
                                 </View>
                                 { states.length > 5 && (
                                     <TouchableOpacity
-                                        onPress={() => navigation.navigate('AvailableLocations')}
+                                        onPress={() => navigation.navigate('AvailableLocations', {
+                                            business_id: business_id,
+                                            business_name: business_name,
+                                        })}
                                     >
                                         <Text style={style.showAll}>Show all locations</Text>
                                     </TouchableOpacity>

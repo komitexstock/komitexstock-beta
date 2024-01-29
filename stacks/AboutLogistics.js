@@ -5,10 +5,8 @@ import {
     ScrollView,
     StyleSheet,
     TouchableOpacity,
-    Image,
     Dimensions,
     Linking,
-    BackHandler
 } from "react-native";
 // colors
 import {
@@ -17,7 +15,7 @@ import {
     white,
     bodyText,
     subText,
-    primaryColor
+    primaryColor,
 } from "../style/colors";
 // components
 import Header from "../components/Header";
@@ -39,17 +37,20 @@ import ReportFlagIcon from "../assets/icons/ReportFlagIcon";
 import { useState, useEffect } from "react";
 // skeleton screen
 import AboutLogisticsSkeleton from "../skeletons/AboutLogisticsSkeleton";
-// globals
+// global context to access bottom sheet parameter
 import { useGlobals } from "../context/AppContext";
+// utilities
+import { windowHeight } from "../utils/helpers";
 
-// windows width
-const windowsHeight = Dimensions.get("window").height;
+// this screen can be used to deactivate logistics and provide a secondary link to view that logistics analytics
+const AboutLogistics = ({navigation, route}) => {
 
-const AboutLogistics = ({navigation}) => {
+    const {business_id, business_name, banner_image, verified} = route?.params
 
+    // reference for popup bottomsheet
     const { popUpSheetRef } = useGlobals();
 
-    // states and delivery locations
+    // array of states covered and delivery locations
     const states = [
         {
             id: 1,
@@ -424,13 +425,14 @@ const AboutLogistics = ({navigation}) => {
     // page loading state
     const [pageLoading, setPageLoading] = useState(true);
 
+
     useEffect(() => {
         setTimeout(() => {
             setPageLoading(false);
         }, 500);
     })
 
-    // stats array
+    // about logistics stats, total deliveries and delivery success rate
     const stats = [
         {
             id: 1,
@@ -452,23 +454,26 @@ const AboutLogistics = ({navigation}) => {
         },
     ];
 
+    // state to confirm deactivation of logisitics
     const [confirmDeactivation, setConfirmDeactivation] = useState(false);
 
 
     // state to control popupModal snap points array
-    const [snapPointsArray, setSnapPointsArray] = useState(["45%"])
+    const [snapPointsArray, setSnapPointsArray] = useState([381])
 
     // close popup modal bottomsheet function
     const closePopUpModal = () => {
         popUpSheetRef.current?.close();
     };
-    // function to open bottom sheet modal
+
+    // function to open bottom sheet modal to deactivate logistics
     const openPopUpModal = () => {
         popUpSheetRef.current?.present();
     }
+
     // function to confirm deactivation of logistics
     const handleDeactivation = () => {
-        setSnapPointsArray(["38%"])
+        setSnapPointsArray([320])
         setConfirmDeactivation(true);
     }
 
@@ -483,24 +488,28 @@ const AboutLogistics = ({navigation}) => {
                     <View style={style.main}>
                         <View style={style.paddedContent}> 
                             {/* header component */}
+                            {/* header component showing logsitics banner, business name and verified status */}
                             <Header 
                                 navigation={navigation} 
                                 stackName={
                                     <View style={style.headerWrapper}>
                                         <Avatar 
-                                            imageUrl={'../assets/images/komitex.png'}
+                                            fullname={business_name}
+                                            imageUrl={banner_image}
                                             squared={true}
                                         />
-                                        <Text style={style.headerText}>Komitex Logistics</Text>
-                                        <VerifiedIcon />
+                                        <Text style={style.headerText}>{business_name}</Text>
+                                        { verified && <VerifiedIcon />}
                                     </View>
                                 }  
                                 component={true} 
                                 unpadded={true}
                             />
 
+                            {/* logistics contatct information */}
                             <View style={style.contactInformationWrapper}>
                                 <View style={style.contactDetailsWrapper}>
+                                    {/* email address */}
                                     <View style={style.contactDetails}>
                                         <EmailIcon />
                                         <TouchableOpacity 
@@ -512,6 +521,7 @@ const AboutLogistics = ({navigation}) => {
                                             </Text>
                                         </TouchableOpacity>
                                     </View>
+                                    {/* phone number */}
                                     <View style={style.contactDetails}>
                                         <PhoneIcon />
                                         <TouchableOpacity 
@@ -524,6 +534,7 @@ const AboutLogistics = ({navigation}) => {
                                         </TouchableOpacity>
                                     </View>
                                 </View>
+                                {/* numbner of locations covered */}
                                 <View style={style.contactDetailsWrapper}>
                                     <View style={style.contactDetails}>
                                         <LocationIcon />
@@ -534,6 +545,7 @@ const AboutLogistics = ({navigation}) => {
                                 </View>
                             </View>
 
+                            {/* total delivereies and delivery success rate stats */}
                             <StatWrapper>
                                 {stats.map(stat => (
                                     <StatCard
@@ -549,8 +561,14 @@ const AboutLogistics = ({navigation}) => {
                                 ))}
                             </StatWrapper>
 
+                            {/* link to logistics analytics screen */}
                             <TouchableOpacity
-                                onPress={() => navigation.navigate('LogisticsAnalytics')}
+                                onPress={() => navigation.navigate('BusinessAnalytics', {
+                                    business_id: business_id,
+                                    business_name: business_name,
+                                    banner_image: banner_image,
+                                    verified: true,
+                                })}
                             >
                                 <Text style={[style.showAll, style.smallerText]}>View Full Analytics</Text>
                             </TouchableOpacity>
@@ -576,7 +594,10 @@ const AboutLogistics = ({navigation}) => {
                                 </View>
                                 { states.length > 5 && (
                                     <TouchableOpacity
-                                        onPress={() => navigation.navigate('AvailableLocations')}
+                                        onPress={() => navigation.navigate('AvailableLocations', {
+                                            business_id: business_id,
+                                            business_name: business_name,
+                                        })}
                                     >
                                         <Text style={style.showAll}>Show all locations</Text>
                                     </TouchableOpacity>
@@ -668,7 +689,7 @@ const style = StyleSheet.create({
         flex: 1,
         backgroundColor: background,
         minHeight: '100%',
-        minHeight: windowsHeight - 100,
+        minHeight: windowHeight - 100,
     },
     headerWrapper: {
         display: 'flex',
@@ -851,6 +872,6 @@ const style = StyleSheet.create({
         textDecorationLine: "underline",
         textDecorationColor: black,
     }
-})
+});
  
 export default AboutLogistics;

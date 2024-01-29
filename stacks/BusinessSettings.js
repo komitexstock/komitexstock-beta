@@ -4,8 +4,14 @@ import React from 'react'
 import Header from '../components/Header'
 import AccountButtons from '../components/AccountButtons'
 import { background } from '../style/colors'
+// use auth
+import { useAuth } from '../context/AuthContext'
+
 
 const BusinessSettings = ({navigation}) => {
+
+    // auth data
+    const { authData } = useAuth();
 
     // business button list
     const businessButtons = [
@@ -13,7 +19,10 @@ const BusinessSettings = ({navigation}) => {
             id: 1,
             title: "Locations",
             mainInfoText: "Manage all your delivery locations and fees",
-            onPress: () => navigation.navigate("Locations"),
+            onPress: () => navigation.navigate("AvailableLocations", {
+                business_id: authData.business_id,
+                business_name: authData.business_name,
+            }),
         },
         {
             id: 2,

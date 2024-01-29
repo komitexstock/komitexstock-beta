@@ -53,7 +53,7 @@ import Merchants from '../stacks/Merchants';
 import Security from '../stacks/Security';
 // others stacks
 import AboutLogistics from '../stacks/AboutLogistics';
-import Locations from '../stacks/Locations';
+// import Locations from '../stacks/Locations';
 import AddLocation from '../stacks/AddLocation';
 import EditLocation from '../stacks/EditLocation';
 import AboutMerchant from '../stacks/AboutMerchant';
@@ -181,10 +181,10 @@ const Navigator = () => {
                         component={AvailableLocations} 
                     />
                     {/* Locations stack */}
-                    <Stack.Screen 
+                    {/* <Stack.Screen 
                         name="Locations" 
                         component={Locations} 
-                    />
+                    /> */}
                     {/* AddLocations stack */}
                     <Stack.Screen 
                         name="AddLocation" 

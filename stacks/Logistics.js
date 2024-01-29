@@ -19,51 +19,79 @@ const Logistics = ({navigation}) => {
     // logistics list
     const logisticsList = [
         {
-            id: 1,
-            logistics: "Komitex Logistics",
-            imageUrl: '../assets/images/komitex.png',
+            business_id: 1,
+            business_name: "Komitex Logistics",
+            banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fkomitex.png?alt=media&token=a8039272-66b6-4e24-8ab1-a4dfd40503f8',
+            verified: true,
             totalLocations: 17,
             totalStock: 25,
             lowStock: true,
             onPress: () => {
-                navigation.navigate("AboutLogistics");
+                navigation.navigate("AboutLogistics", {
+                    business_id: 1,
+                    business_name: "Komitex Logistics",
+                    banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fkomitex.png?alt=media&token=a8039272-66b6-4e24-8ab1-a4dfd40503f8',
+                    verified: true,
+                })
             },
+            deactivated: false, 
             addNew: false 
         },
         {
-            id: 2,
-            logistics: "DHL",
-            imageUrl: '../assets/images/dhl.png',
+            business_id: 2,
+            business_name: "DHL",
+            banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fdhl.png?alt=media&token=e113f106-0eaf-420e-9fe4-488cb8e6c26d',
+            verified: true,
             totalLocations: 15,
             totalStock: 17,
             lowStock: false,
             onPress: () => {
-                navigation.navigate("AboutLogistics");
+                navigation.navigate("AboutLogistics", {
+                    business_id: 2,
+                    business_name: "DHL",
+                    banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fdhl.png?alt=media&token=e113f106-0eaf-420e-9fe4-488cb8e6c26d',
+                    verified: true,
+                })
             },
+            deactivated: false, 
             addNew: false,
         },
         {
-            id: 3,
-            logistics: "Fedex",
-            imageUrl: '../assets/images/fedex.png',
+            business_id: 3,
+            business_name: "Fedex",
+            banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Ffedex.png?alt=media&token=d943aea6-37ec-4f61-a589-01ad7bdd1299',
+            verified: true,
             totalLocations: 11,
             totalStock: 9,
             lowStock: false,
             onPress: () => {
-                navigation.navigate("AboutLogistics");
+                navigation.navigate("AboutLogistics", {
+                    business_id: 3,
+                    business_name: "Fedex",
+                    banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Ffedex.png?alt=media&token=d943aea6-37ec-4f61-a589-01ad7bdd1299',
+                    verified: true,
+                })
             },
+            deactivated: false, 
             addNew: false,
         },
         {
-            id: 4,
-            logistics: "UPS",
-            imageUrl: '../assets/images/ups.png',
+            business_id: 4,
+            business_name: "UPS",
+            banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fups.png?alt=media&token=37224ee1-4460-4fec-a39b-3af040b65fe0',
+            verified: false,
             totalLocations: 5,
             totalStock: 7,
             lowStock: false,
             onPress: () => {
-                navigation.navigate("AboutLogistics");
+                navigation.navigate("AboutLogistics", {
+                    business_id: 4,
+                    business_name: "UPS",
+                    banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fups.png?alt=media&token=37224ee1-4460-4fec-a39b-3af040b65fe0',
+                    verified: false,
+                })
             },
+            deactivated: true, 
             addNew: false,
         },
         {
@@ -74,7 +102,7 @@ const Logistics = ({navigation}) => {
             totalStock: null,
             lowStock: false,
             onPress: () => {
-                navigation.navigate("AddLogistics");
+                navigation.navigate("AddLogistics")
             },
             addNew: true
         }
@@ -98,6 +126,7 @@ const Logistics = ({navigation}) => {
                     showsVerticalScrollIndicator={false}
                     ListHeaderComponent={
                         <View style={style.headerWrapper}>
+                            {/* header components */}
                             <Header 
                                 navigation={navigation} 
                                 stackName={"Logistics"} 
@@ -109,24 +138,27 @@ const Logistics = ({navigation}) => {
                     }
                     columnWrapperStyle={style.listContainer}
                     style={style.listWrapper}
-                    keyExtractor={item => item.id}
+                    // extract data key/unique id
+                    keyExtractor={item => item.business_id}
+                    // data to be iterated
                     data={logisticsList}
                     // render list items in two columns
                     numColumns={2}
                     renderItem={({ item }) => (
-                        // logistics card
+                        // logistics card item
                         <BusinessCard
-                            logistics={item.logistics}
-                            imageUrl={item.imageUrl}
-                            totalLocations={item.totalLocations}
-                            totalStock={item.totalStock}
-                            lowStock={item.lowStock}
-                            onPress={item.onPress}
-                            addNew={item.addNew}
+                            businessName={item?.business_name}
+                            bannerImage={item?.banner_image}
+                            totalLocations={item?.totalLocations}
+                            totalStock={item?.totalStock}
+                            lowStock={item?.lowStock}
+                            onPress={item?.onPress}
+                            addNew={item?.addNew}
+                            deactivated={item?.deactivated}
                         />
                     )}
                 />
-            ) : <LogisticsSkeleton />}
+            ) : <LogisticsSkeleton /> /* logistics loading skeleton */}
         </>
     );
 }
@@ -164,7 +196,6 @@ const style = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "flex-start",
     },
-    
     popUpContent: {
         flex: 1,
         height: "100%",

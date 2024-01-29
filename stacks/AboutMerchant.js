@@ -32,13 +32,10 @@ import ReportFlagIcon from "../assets/icons/ReportFlagIcon";
 import { useState, useEffect } from "react";
 // skeleton screen
 import AboutLogisticsSkeleton from "../skeletons/AboutLogisticsSkeleton";
-// globals
-
-// windows width
-const windowsHeight = Dimensions.get("window").height;
+// utilities
+import { windowHeight } from "../utils/helpers";
 
 const AboutMerchant = ({navigation}) => {
-
 
     // states and delivery locations
     const states = [
@@ -443,6 +440,7 @@ const AboutMerchant = ({navigation}) => {
         },
     ];
 
+    // warehouse array
     const warehouses = [
         {
             id: 1,
@@ -484,7 +482,8 @@ const AboutMerchant = ({navigation}) => {
                                 navigation={navigation} 
                                 stackName={
                                     <View style={style.headerWrapper}>
-                                        <Avatar 
+                                        {/* merchant banner and business name */}
+                                        <Avatar
                                             imageUrl={null}
                                             fullname={"Style Bazaar"}
                                             squared={true}
@@ -497,6 +496,7 @@ const AboutMerchant = ({navigation}) => {
                                 unpadded={true}
                             />
 
+                            {/* merchant business information */}
                             <View style={style.contactInformationWrapper}>
                                 <View style={style.contactDetailsWrapper}>
                                     <View style={style.contactDetails}>
@@ -532,7 +532,9 @@ const AboutMerchant = ({navigation}) => {
                                 </View>
                             </View>
 
+                            {/* stats wrapper component */}
                             <StatWrapper>
+                                {/* stat card component */}
                                 {stats.map(stat => (
                                     <StatCard
                                         key={stat.id}
@@ -547,12 +549,14 @@ const AboutMerchant = ({navigation}) => {
                                 ))}
                             </StatWrapper>
 
+                            {/* show all analytics button */}
                             <TouchableOpacity
                                 onPress={() => navigation.navigate('LogisticsAnalytics')}
                             >
                                 <Text style={[style.showAll, style.smallerText]}>View Full Analytics</Text>
                             </TouchableOpacity>
                             
+                            {/* locations */}
                             <View style={style.locationsContainer}>
                                 <Text style={style.locationsHeading}>Available Products</Text>
                                 <Text style={style.locationsParagraph}>
@@ -571,6 +575,8 @@ const AboutMerchant = ({navigation}) => {
                                 </View>
                             </View>
                         </View>
+
+                        {/* report merchant button */}
                         <View style={style.reportWrapper}>
                             <TouchableOpacity
                                 style={style.reportButton}
@@ -593,7 +599,7 @@ const style = StyleSheet.create({
         flex: 1,
         backgroundColor: background,
         minHeight: '100%',
-        minHeight: windowsHeight - 100,
+        minHeight: windowHeight - 100,
     },
     headerWrapper: {
         display: 'flex',

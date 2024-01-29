@@ -20,8 +20,8 @@ const Merchants = ({navigation}) => {
     const logisticsList = [
         {
             id: 1,
-            logistics: "Komitex Logistics",
-            imageUrl: '../assets/images/komitex.png',
+            business_name: "Komitex Logistics",
+            banner_image: '../assets/images/komitex.png',
             totalProducts: 17,
             totalStock: 25,
             lowStock: true,
@@ -32,8 +32,8 @@ const Merchants = ({navigation}) => {
         },
         {
             id: 2,
-            logistics: "DHL",
-            imageUrl: '../assets/images/dhl.png',
+            business_name: "DHL",
+            banner_image: '../assets/images/dhl.png',
             totalProducts: 15,
             totalStock: 17,
             lowStock: false,
@@ -44,8 +44,8 @@ const Merchants = ({navigation}) => {
         },
         {
             id: 3,
-            logistics: "Fedex",
-            imageUrl: '../assets/images/fedex.png',
+            business_name: "Fedex",
+            banner_image: '../assets/images/fedex.png',
             totalProducts: 11,
             totalStock: 9,
             lowStock: false,
@@ -56,8 +56,8 @@ const Merchants = ({navigation}) => {
         },
         {
             id: 4,
-            logistics: "UPS",
-            imageUrl: '../assets/images/ups.png',
+            business_name: "UPS",
+            banner_image: '../assets/images/ups.png',
             totalProducts: 5,
             totalStock: 7,
             lowStock: false,
@@ -104,8 +104,8 @@ const Merchants = ({navigation}) => {
                     renderItem={({ item }) => (
                         // logistics card
                         <BusinessCard
-                            logistics={item?.logistics}
-                            imageUrl={item?.imageUrl}
+                            businessName={item?.business_name}
+                            bannerImage={item?.banner_image}
                             totalStock={item?.totalStock}
                             totalProducts={item?.totalProducts}
                             lowStock={item?.lowStock}

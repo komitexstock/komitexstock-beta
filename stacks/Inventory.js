@@ -94,8 +94,8 @@ const Products = ({navigation, route}) => {
     const logisticsList = [
         {
             id: 1,
-            logistics: "Komitex Logistics",
-            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fkomitex.png?alt=media&token=a8039272-66b6-4e24-8ab1-a4dfd40503f8',
+            business_name: "Komitex Logistics",
+            banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fkomitex.png?alt=media&token=a8039272-66b6-4e24-8ab1-a4dfd40503f8',
             totalLocations: 17,
             totalStock: 25,
             lowStock: true,
@@ -106,8 +106,8 @@ const Products = ({navigation, route}) => {
         },
         {
             id: 2,
-            logistics: "DHL",
-            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fdhl.png?alt=media&token=e113f106-0eaf-420e-9fe4-488cb8e6c26d',
+            business_name: "DHL",
+            banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fdhl.png?alt=media&token=e113f106-0eaf-420e-9fe4-488cb8e6c26d',
             totalLocations: 15,
             totalStock: 17,
             lowStock: false,
@@ -118,8 +118,8 @@ const Products = ({navigation, route}) => {
         },
         {
             id: 3,
-            logistics: "Fedex",
-            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Ffedex.png?alt=media&token=d943aea6-37ec-4f61-a589-01ad7bdd1299',
+            business_name: "Fedex",
+            banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Ffedex.png?alt=media&token=d943aea6-37ec-4f61-a589-01ad7bdd1299',
             totalLocations: 11,
             totalStock: 9,
             lowStock: false,
@@ -130,8 +130,8 @@ const Products = ({navigation, route}) => {
         },
         {
             id: 4,
-            logistics: "UPS",
-            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fups.png?alt=media&token=37224ee1-4460-4fec-a39b-3af040b65fe0',
+            business_name: "UPS",
+            banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fups.png?alt=media&token=37224ee1-4460-4fec-a39b-3af040b65fe0',
             totalLocations: 5,
             totalStock: 7,
             lowStock: false,
@@ -142,8 +142,8 @@ const Products = ({navigation, route}) => {
         },
         {
             id: 5,
-            logistics: "Amazon Logistics",
-            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Famazon.png?alt=media&token=7941fa73-daa6-4840-9ed8-96371d4b67a6',
+            business_name: "Amazon Logistics",
+            banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Famazon.png?alt=media&token=7941fa73-daa6-4840-9ed8-96371d4b67a6',
             totalLocations: 20,
             totalStock: 68,
             lowStock: false,
@@ -154,8 +154,8 @@ const Products = ({navigation, route}) => {
         },
         {
             id: 6,
-            logistics: "On Trac",
-            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fontrac.png?alt=media&token=67e52ec4-51e3-4032-a6b7-8f9533e1a7b6',
+            business_name: "On Trac",
+            banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fontrac.png?alt=media&token=67e52ec4-51e3-4032-a6b7-8f9533e1a7b6',
             totalLocations: 17,
             totalStock: 43,
             lowStock: false,
@@ -166,8 +166,8 @@ const Products = ({navigation, route}) => {
         },
         {
             id: 7,
-            logistics: "Laser Ship",
-            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Flasership.png?alt=media&token=803e763b-63e7-4c57-ab6e-beb2a9c35e54',
+            business_name: "Laser Ship",
+            banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Flasership.png?alt=media&token=803e763b-63e7-4c57-ab6e-beb2a9c35e54',
             totalLocations: 18,
             totalStock: 425,
             lowStock: false,
@@ -178,8 +178,8 @@ const Products = ({navigation, route}) => {
         },
         {
             id: 8,
-            logistics: "Tranex",
-            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Ftranex.png?alt=media&token=b7d75e7b-26f2-4d71-83b8-48a24a3167e2',
+            business_name: "Tranex",
+            banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Ftranex.png?alt=media&token=b7d75e7b-26f2-4d71-83b8-48a24a3167e2',
             totalLocations: 30,
             totalStock: 72,
             lowStock: false,
@@ -199,8 +199,8 @@ const Products = ({navigation, route}) => {
     const merchantList = [
         {
             id: 1,
-            merchant: "Style Bazaar",
-            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fstyle_bazaar.png?alt=media&token=b5be5c42-901a-4d49-bb15-a401b630f8a1',
+            business_name: "Style Bazaar",
+            banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fstyle_bazaar.png?alt=media&token=b5be5c42-901a-4d49-bb15-a401b630f8a1',
             totalProducts: 17,
             totalStock: 25,
             lowStock: true,
@@ -211,8 +211,8 @@ const Products = ({navigation, route}) => {
         },
         {
             id: 2,
-            merchant: "Luxe Living Ltd",
-            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fluxe_living_finds.png?alt=media&token=91aa3e09-658b-4900-8558-d10a12590513',
+            business_name: "Luxe Living Ltd",
+            banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fluxe_living_finds.png?alt=media&token=91aa3e09-658b-4900-8558-d10a12590513',
             totalProducts: 15,
             totalStock: 17,
             lowStock: false,
@@ -223,8 +223,8 @@ const Products = ({navigation, route}) => {
         },
         {
             id: 3,
-            merchant: "Eco Savvy Emporium",
-            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Feco_savvy_emporium.png?alt=media&token=c4985c1d-c6f0-48f7-b744-4b030851d53a',
+            business_name: "Eco Savvy Emporium",
+            banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Feco_savvy_emporium.png?alt=media&token=c4985c1d-c6f0-48f7-b744-4b030851d53a',
             totalProducts: 11,
             totalStock: 9,
             lowStock: false,
@@ -235,8 +235,8 @@ const Products = ({navigation, route}) => {
         },
         {
             id: 4,
-            merchant: "Tech Treasure Haven",
-            imageUrl: null,
+            business_name: "Tech Treasure Haven",
+            banner_image: null,
             totalProducts: 5,
             totalStock: 7,
             lowStock: false,
@@ -543,9 +543,8 @@ const Products = ({navigation, route}) => {
                                     return (
                                         <View style={index % 2 === 0 ? style.leftCard : style.rightCard}>
                                             <BusinessCard
-                                                logistics={item?.logistics}
-                                                merchant={item?.merchant}
-                                                imageUrl={item.imageUrl}
+                                                businessName={item.business_name}
+                                                bannerImage={item.banner_image}
                                                 totalLocations={item?.totalLocations}
                                                 totalProducts={item?.totalProducts}
                                                 totalStock={item.totalStock}

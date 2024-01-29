@@ -55,14 +55,6 @@ const Account = ({navigation, route}) => {
     // auth data
     const { authData, setStoredData } = useAuth();
 
-    // console.log(authData);
-
-    
-    // const token = auth.currentUser.getIdTokenResult().then(data => {
-    //     console.log(data.claims);
-    //     return data.claims;
-    // });
-
     // merchant account business group buttons
     const merchantBusinessButtons = () => {
 
@@ -107,7 +99,7 @@ const Account = ({navigation, route}) => {
             return [...buttons, ...managerButtons];
         };
 
-        // return all the buttons
+        // else return just common buttons
         return buttons;
     };
 
@@ -174,6 +166,7 @@ const Account = ({navigation, route}) => {
             icon: <EditUserIcon />,
             onPress: () => {navigation.navigate("Profile")},
         },
+        // select business button group according to account type
         business: authData?.account_type === "Logistics" ? logisticsBusinessButtons() : merchantBusinessButtons(),
         security: [
             {
@@ -224,6 +217,7 @@ const Account = ({navigation, route}) => {
     // state to indicate what type of image is being uploade "Banner" or "Profile"
     const [imageType, setImageType] = useState("");
 
+    // function to handle uploading profile image after navigating from Camera Screen
     useEffect(() => {        
         const handleUploadProfile = async (image, type, id) => {
             try {
@@ -258,8 +252,6 @@ const Account = ({navigation, route}) => {
             id = authData?.business_id;
             handleUploadProfile(image, type, id);
         }
-        // handleImageFromCamera(route.params.imageType);
-
     }, [route?.params]);
 
     // close modal function
@@ -275,19 +267,19 @@ const Account = ({navigation, route}) => {
         if (type === "Notifications") {
             return setModal({
                 type: type,
-                snapPoints: ["35%"],
+                snapPoints: [271],
             });
         }
         else if (type === "Help & Support") {
             return setModal({
                 type: type,
-                snapPoints: ["40%"],
+                snapPoints: [368],
             });
         } 
         else if (type === "Open with") {
             return setModal({
                 type: type,
-                snapPoints: ["25%"],
+                snapPoints: [198],
             });
         } 
     }
@@ -322,8 +314,7 @@ const Account = ({navigation, route}) => {
         },
     ];
 
-    // console.log(authData);
-    // function to select image for profile photo
+    // function to select image for profile photo selected from Gallery
     const pickImageAsync = async () => {
         imageType === "Profile" ? setUploadingProfile(true) : setUploadingBanner(true);
 
@@ -397,11 +388,13 @@ const Account = ({navigation, route}) => {
                                     <CameraIcon />
                                 </TouchableOpacity>
                             )}
+                            {/* banner image */}
                             <Image
                                 style={style.bannerImage}
                                 source={uploadingBanner ? {uri: selectedBanner} : {uri: authData?.banner_image}}
                             />
                         </View>
+
                         <View style={style.accountInfoWrapper}> 
                             <View style={style.profileWrapper}>
                                 <View style={style.imageContainer}>
@@ -428,6 +421,7 @@ const Account = ({navigation, route}) => {
                                 <View>
                                     <View style={style.fullnameWrapper}>
                                         <Text style={style.fullname}>{authData?.full_name}</Text>
+                                        {/* user role */}
                                         <Indicator type={"Dispatched"} text={authData?.role}/>
                                     </View>
                                     <Text style={style.businessName}>{authData?.business_name}</Text>
@@ -436,6 +430,7 @@ const Account = ({navigation, route}) => {
                         </View>
                     </View>
                     <View style={style.body}>
+                        {/* profile button group */}
                         <View style={style.infoWrapper}>
                             <Text style={style.infoHeading}>Person Info</Text>
                             {/* Profile button to navigate to profile page */}
@@ -448,6 +443,8 @@ const Account = ({navigation, route}) => {
                                 onPress={accountButtons.profile.onPress}
                             />
                         </View>
+
+                        {/* business buttons group */}
                         <View style={style.infoWrapper}>
                             <Text style={style.infoHeading}>Business</Text>
                             {/* Business button to navigate to business related pages like...*/}
@@ -466,6 +463,8 @@ const Account = ({navigation, route}) => {
                                 )
                             })}
                         </View>
+
+                        {/* security and support button group */}
                         <View style={style.infoWrapper}>
                             <Text style={style.infoHeading}>Security & Support</Text>
                             {/* Security and Support buttons to navigate to security and page and... */}
@@ -495,7 +494,9 @@ const Account = ({navigation, route}) => {
                     </View>
                 </View>
             </ScrollView>
+            
             {/* Bottom sheet component */}
+            {/* Bottom sheet for Notification, Help and Supoort and image upload option */}
             <CustomBottomSheet 
                 bottomSheetModalRef={bottomSheetRef}
                 closeModal={closeModal}
@@ -518,6 +519,7 @@ const Account = ({navigation, route}) => {
                         unpadded={true}
                     />
                 )}
+
                 {/* Help and support bittonsheet content */}
                 { modal.type === "Help & Support" && supportButtons.map((item, index) => (
                     <AccountButtons
@@ -531,9 +533,12 @@ const Account = ({navigation, route}) => {
                         unpadded={true}
                     />
                 ))}
+
                 {/* Upload profile photo bottomsheet */}
                 { modal.type === "Open with" && (
                     <View style={style.uploadButtonsWrapper}>
+                        
+                        {/* navigate to camera screen button */}
                         <TouchableOpacity
                             style={style.uploadButton}
                             onPress={() => { 
@@ -549,6 +554,8 @@ const Account = ({navigation, route}) => {
                             </View>
                             <Text style={style.uploadButtonText}>Camera</Text>
                         </TouchableOpacity>
+
+                        {/* open gallery image picker button */}
                         <TouchableOpacity
                             style={style.uploadButton}
                             onPress={pickImageAsync}
@@ -558,6 +565,7 @@ const Account = ({navigation, route}) => {
                             </View>
                             <Text style={style.uploadButtonText}>Gallery</Text>
                         </TouchableOpacity>
+                        
                     </View>   
                 )}
             </CustomBottomSheet>

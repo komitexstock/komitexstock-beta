@@ -19,7 +19,7 @@ import { black, secondaryColor, subText, white } from "../style/colors";
 import { windowWidth } from "../utils/helpers";
 
 const maxCardWidth = windowWidth/2 - 28;
-const BusinessCard = ({logistics, merchant, imageUrl, totalLocations, totalProducts, totalStock, lowStock, onPress, addNew, verified}) => {
+const BusinessCard = ({businessName, bannerImage, totalLocations, totalProducts, totalStock, lowStock, onPress, addNew, verified, deactivated}) => {
     return (
         <>   
             { !addNew ? (
@@ -29,33 +29,41 @@ const BusinessCard = ({logistics, merchant, imageUrl, totalLocations, totalProdu
                 >   
                     <View style={style.primaryWrapper}>
                         <View style={style.imageContainer}>
+                            {/* banner image */}
                             <Avatar
-                                fullname={merchant ? merchant : logistics}
+                                fullname={businessName}
                                 squared={true}
-                                imageUrl={imageUrl}
+                                imageUrl={bannerImage}
                             />
-                            {lowStock && <Indicator text={"Low Stock"} type={"Pending"} />}
+                            {/* if deactived indicate so */}
+                            {!deactivated && lowStock && <Indicator text={"Low Stock"} type={"Pending"} />}
+
+                            {/* only indiocate low stock if logistics hasn't been deactivated and stock is low */}
+                            {deactivated && <Indicator text={"Deactivated"} type={"Cancelled"} />}
                         </View>
+                        {/* business name */}
                         <View style={style.logisticsWrapper}>
-                            {logistics && <Text style={style.logistics}>{logistics}</Text>}
-                            {merchant && <Text style={style.logistics}>{merchant}</Text>}
+                            <Text style={style.logistics}>{businessName}</Text>
                             { verified && <VerifiedIcon />}
                         </View>
+                        {/* display total locations or total products */}
                         {totalLocations && <Text style={style.location}>{totalLocations} Locations</Text>}
                         {totalProducts && <Text style={style.location}>{totalProducts} Products</Text>}
                     </View>
+                    {/* display number of items in stock */}
                     <View style={style.secondaryWrapper}>
                         <Text style={style.items}>{totalStock} items <Text style={style.faintText}>in stock</Text></Text>
                     </View>
                 </TouchableOpacity>
-            ) : (
+            ) : (<>
+                {/* add logistics card */}
                 <View style={style.addNewCardWrapper}>
                     <TouchableOpacity style={style.addNewButton} onPress={onPress}>
                         <AddIcon />
                     </TouchableOpacity>
                     <Text style={style.addNewText}>Add New Logistics</Text>
                 </View>   
-            )}
+            </>)}
         </>
     );
 }
