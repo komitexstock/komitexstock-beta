@@ -1,5 +1,5 @@
 // react native components
-import { TouchableOpacity, Image, View, Text, StyleSheet } from 'react-native';
+import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
 // colors
 import { black, bodyText, white } from '../style/colors';
 // components
@@ -9,11 +9,11 @@ import Avatar from './Avatar';
 import { windowWidth } from '../utils/helpers';
 
 // product list item that shows up in search results
-const BusinessAnalyticsItem = ({logistics, numberOfDeliveries, totalPrice, oldTotalPrice, imageUrl, onPress, disableClick}) => {
+const BusinessAnalyticsItem = ({businessName, numberOfDeliveries, totalPrice, oldTotalPrice, bannerImage, onPress, disableClick}) => {
     // product_name => string
     // quantity => int
     // price => float
-    // imageUrl => string | pathToImage
+    // bannerImage => string | pathToImage
     // onPress => function
 
     // render BusinessAnalyticsItem component
@@ -26,14 +26,14 @@ const BusinessAnalyticsItem = ({logistics, numberOfDeliveries, totalPrice, oldTo
         >
             {/* product image */}
             <Avatar 
-                imageUrl={imageUrl}
+                imageUrl={bannerImage}
                 squared={true}
-                fullname={logistics}
+                fullname={businessName}
             />
             {/* product information */}
             <View style={style.orderInfo}>
                 <Text style={style.orderMainText}>
-                    {logistics}
+                    {businessName}
                 </Text>
                 <Text style={style.orderSubText}>
                     {numberOfDeliveries} deliveries

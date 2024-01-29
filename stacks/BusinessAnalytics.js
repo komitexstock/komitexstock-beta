@@ -34,7 +34,10 @@ import LogisticsAnalyticsSkeleton from "../skeletons/LogisticsAnalyticsSkeleton"
 // globals
 import { useGlobals } from "../context/AppContext";
 
-const BusinessAnalytics = ({navigation}) => {
+const BusinessAnalytics = ({navigation, route}) => {
+
+    // get route paramters
+    const {business_id, business_name, banner_image, verified} = route?.params || {};
 
     // calendar sheet
     const { calendarSheetRef } = useGlobals();
@@ -149,113 +152,117 @@ const BusinessAnalytics = ({navigation}) => {
         },
     ];
 
-
+    // open calendar function
     const openCalendar = () => {
         calendarSheetRef.current?.present();
     }
     
+    // close calendar function
     const closeCalendar = () => {
         calendarSheetRef.current?.close();
     }
 
+    // date selected
     const [date, setDate] = useState(null);
 
     // render BusinessAnalytics page
-    return (
-        <>
-            {!pageLoading ? (
-                <ScrollView
-                    showsVerticalScrollIndicator={false}
-                    style={style.container}
-                >
-                    <View style={style.main}>
-                        {/* header component */}
-                        <Header 
-                            navigation={navigation} 
-                            stackName={
-                                <View style={style.headerWrapper}>
-                                    <Avatar 
-                                        imageUrl={'../assets/images/komitex.png'}
-                                        squared={true}
-                                    />
-                                    <Text style={style.headerText} >Komitex Logistics</Text>
-                                    <VerifiedIcon />
-                                </View>
-                            } 
-                            component={true}
-                            unpadded={true}
-                        />
-                        <View style={style.chartContainer}>
-                            {/* range wrapper */}
-                            <View style={style.rangeWrapper}>
-                                <TouchableOpacity 
-                                    style={style.rangeButton}
-                                    onPress={openCalendar}
-                                >
-                                    <Text style={style.rangeButtonText}>Lat 7 Days</Text>
-                                    <ArrowDownSmall />
-                                </TouchableOpacity>
-                            </View>
-                            {/* Bar Chart component */}
-                            <BarChart
-                                chartTitle={"Total Earnings"}
-                                chartWidth={"100%"}
-                                chartHeight={232}
-                                backgroundColor={white}
-                                data={data}
-                                prevData={prevData}
-                                labels={labels}
-                                unit={"₦"}
-                                fullbar={false}
-                                rotateXAxisLabel={false}
-                                enableGrid={false}
-                            />
-                        </View>
-                        <StatWrapper>
-                            {stats.map(stat => (
-                                <StatCard
-                                    key={stat.id}
-                                    title={stat.title}
-                                    presentValue={stat.presentValue}
-                                    oldValue={stat.oldValue}
-                                    decimal={stat.decimal}
-                                    unit={stat.unit}
-                                    unitPosition={stat.unitPosition}
+    return (<>
+        {!pageLoading ? (
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                style={style.container}
+            >
+                <View style={style.main}>
+                    {/* header component */}
+                    <Header 
+                        navigation={navigation} 
+                        stackName={
+                            <View style={style.headerWrapper}>
+                                <Avatar 
+                                    imageUrl={banner_image}
+                                    squared={true}
+                                    fullname={business_name}
                                 />
-                            ))}
-                        </StatWrapper>
-                        <View style={style.topStatsWrapper}>
-                            <Text style={style.topStatHeading}>Top Locations</Text>
-                            <View style={style.tabsContainer}>
-                                <View style={style.tabContentList}>
-                                    {/* Location list */}
-                                    {locationAnalyticsList.map(item => (
-                                        <LocationAnalyticsItem
-                                            key={item.id}
-                                            location={item.location}
-                                            numberOfDeliveries={item.numberOfDeliveries}
-                                            totalPrice={item.totalPrice}
-                                            oldTotalPrice={item.oldTotalPrice}
-                                            disableClick={true}
-                                        />
-                                    ))}
-                                </View>
+                                <Text style={style.headerText}>{business_name}</Text>
+                                {verified && <VerifiedIcon />}
+                            </View>
+                        } 
+                        component={true}
+                        unpadded={true}
+                    />
+                    <View style={style.chartContainer}>
+                        {/* range wrapper */}
+                        <View style={style.rangeWrapper}>
+                            <TouchableOpacity 
+                                style={style.rangeButton}
+                                onPress={openCalendar}
+                            >
+                                <Text style={style.rangeButtonText}>Lat 7 Days</Text>
+                                <ArrowDownSmall />
+                            </TouchableOpacity>
+                        </View>
+                        {/* Bar Chart component */}
+                        <BarChart
+                            chartTitle={"Total Earnings"}
+                            chartWidth={"100%"}
+                            chartHeight={232}
+                            backgroundColor={white}
+                            data={data}
+                            prevData={prevData}
+                            labels={labels}
+                            unit={"₦"}
+                            fullbar={false}
+                            rotateXAxisLabel={false}
+                            enableGrid={false}
+                        />
+                    </View>
+                    {/* stat wrapper */}
+                    <StatWrapper>
+                        {/* stat cars list list */}
+                        {stats.map(stat => (
+                            <StatCard
+                                key={stat.id}
+                                title={stat.title}
+                                presentValue={stat.presentValue}
+                                oldValue={stat.oldValue}
+                                decimal={stat.decimal}
+                                unit={stat.unit}
+                                unitPosition={stat.unitPosition}
+                            />
+                        ))}
+                    </StatWrapper>
+                    {/* top locations */}
+                    <View style={style.topStatsWrapper}>
+                        <Text style={style.topStatHeading}>Top Locations</Text>
+                        <View style={style.tabsContainer}>
+                            <View style={style.tabContentList}>
+                                {/* Location list */}
+                                {locationAnalyticsList.map(item => (
+                                    <LocationAnalyticsItem
+                                        key={item.id}
+                                        location={item.location}
+                                        numberOfDeliveries={item.numberOfDeliveries}
+                                        totalPrice={item.totalPrice}
+                                        oldTotalPrice={item.oldTotalPrice}
+                                        disableClick={true}
+                                    />
+                                ))}
                             </View>
                         </View>
                     </View>
-                </ScrollView>
-            ) : <LogisticsAnalyticsSkeleton />}
-            {/* calendar */}
-            <CalendarSheet 
-                closeCalendar={closeCalendar}
-                setDate={setDate}
-                disableActionButtons={false}
-                snapPointsArray={["70%"]}
-                maxDate={new Date()}
-                calendarRef={calendarSheetRef} 
-            />
-        </>
-    );
+                </View>
+            </ScrollView>
+        ) : <LogisticsAnalyticsSkeleton />}
+        {/* calendar bottomsheet*/}
+        <CalendarSheet 
+            closeCalendar={closeCalendar}
+            setDate={setDate}
+            disableActionButtons={false}
+            snapPointsArray={["70%"]}
+            maxDate={new Date()}
+            calendarRef={calendarSheetRef} 
+        />
+    </>);
 }
 
 // stylesheet

@@ -107,30 +107,45 @@ const Analytics = ({navigation}) => {
     const logisticsAnalyticsList = [
         {
             id: 1,
-            logistics: 'Komitex Logistics',
+            business_name: 'Komitex Logistics',
             numberOfDeliveries: 10,
             totalPrice: 72500,
             oldTotalPrice: 67000,
-            imageUrl: '../assets/images/komitex.png',
-            onPress: () => {navigation.navigate("BusinessAnalytics")}
+            banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fkomitex.png?alt=media&token=a8039272-66b6-4e24-8ab1-a4dfd40503f8',
+            onPress: () => {navigation.navigate("BusinessAnalytics", {
+                business_name: "Komitex Logistics",
+                business_id: 1,
+                banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fkomitex.png?alt=media&token=a8039272-66b6-4e24-8ab1-a4dfd40503f8',
+                verified: true,
+            })}
         },
         {
             id: 2,
-            logistics: 'DHL',
+            business_name: 'DHL',
             numberOfDeliveries: 13,
             totalPrice: 49500,
             oldTotalPrice: 67000,
-            imageUrl: '../assets/images/dhl.png',
-            onPress: () => {navigation.navigate("BusinessAnalytics")}
+            banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fdhl.png?alt=media&token=e113f106-0eaf-420e-9fe4-488cb8e6c26d',
+            onPress: () => {navigation.navigate("BusinessAnalytics", {
+                business_name: "DHL",
+                business_id: 2,
+                banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fdhl.png?alt=media&token=e113f106-0eaf-420e-9fe4-488cb8e6c26d',
+                verified: false,
+            })}
         },
         {
             id: 3,
-            logistics: 'Fedex',
+            business_name: 'Fedex',
             numberOfDeliveries: 7,
             totalPrice: 70000,
             oldTotalPrice: 67000,
-            imageUrl: '../assets/images/fedex.png',
-            onPress: () => {navigation.navigate("BusinessAnalytics")}
+            banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Ffedex.png?alt=media&token=d943aea6-37ec-4f61-a589-01ad7bdd1299',
+            onPress: () => {navigation.navigate("BusinessAnalytics", {
+                business_name: "Fedex",
+                business_id: 3,
+                banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Ffedex.png?alt=media&token=d943aea6-37ec-4f61-a589-01ad7bdd1299',
+                verified: true,
+            })}
         },
     ];
 
@@ -138,30 +153,45 @@ const Analytics = ({navigation}) => {
     const merchantAnalyticsList = [
         {
             id: 1,
-            logistics: 'Style Bazaar',
+            business_name: 'Style Bazaar',
             numberOfDeliveries: 10,
             totalPrice: 72500,
             oldTotalPrice: 67000,
-            imageUrl: '../assets/images/komitex.png',
-            onPress: () => {navigation.navigate("BusinessAnalytics")}
+            banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fstyle_bazaar.png?alt=media&token=b5be5c42-901a-4d49-bb15-a401b630f8a1',
+            onPress: () => {navigation.navigate("BusinessAnalytics", {
+                business_name: "Style Bazaar",
+                business_id: 1,
+                banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fstyle_bazaar.png?alt=media&token=b5be5c42-901a-4d49-bb15-a401b630f8a1',
+                verified: true,
+            })}
         },
         {
             id: 2,
-            logistics: 'Tech Haven',
+            business_name: 'Tech Haven',
             numberOfDeliveries: 13,
             totalPrice: 49500,
             oldTotalPrice: 67000,
-            imageUrl: '../assets/images/dhl.png',
-            onPress: () => {navigation.navigate("BusinessAnalytics")}
+            banner_image: null,
+            onPress: () => {navigation.navigate("BusinessAnalytics", {
+                business_name: "Tech Haven",
+                business_id: 2,
+                banner_image: null,
+                verified: false,
+            })}
         },
         {
             id: 3,
-            logistics: 'Mega Enterpise',
+            business_name: 'Luxe Living Ltd',
             numberOfDeliveries: 7,
             totalPrice: 70000,
             oldTotalPrice: 67000,
-            imageUrl: '../assets/images/fedex.png',
-            onPress: () => {navigation.navigate("BusinessAnalytics")}
+            banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fluxe_living_finds.png?alt=media&token=91aa3e09-658b-4900-8558-d10a12590513',
+            onPress: () => {navigation.navigate("BusinessAnalytics", {
+                business_name: "Luxe Living Ltd",
+                business_id: 3,
+                banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fluxe_living_finds.png?alt=media&token=91aa3e09-658b-4900-8558-d10a12590513',
+                verified: true,
+            })}
         },
     ];
 
@@ -169,39 +199,55 @@ const Analytics = ({navigation}) => {
     const productAnalyticsList = [
         {
             id: 1,
-            product: 'Maybach Sunglasses',
+            product_name: 'Maybach Sunglasses',
             numberOfDeliveries: 10,
             totalPrice: 72500,
             oldTotalPrice: 67000,
-            imageUrl: '../assets/images/maybach-sunglasses.png',
-            onPress: () => {navigation.navigate("ProductAnalytics")}
+            product_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/products%2Fmaybach-sunglasses.jpg?alt=media&token=95200745-ada8-4787-9779-9d00c56a18a5',
+            onPress: () => {navigation.navigate("ProductAnalytics", {
+                product_id: 1,
+                product_name: "Maybach Sunglasses",
+                product_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/products%2Fmaybach-sunglasses.jpg?alt=media&token=95200745-ada8-4787-9779-9d00c56a18a5',
+            })}
         },
         {
             id: 2,
-            product: 'Pheonix Sneakers',
+            product_name: 'Pheonix Sneakers',
             numberOfDeliveries: 13,
             totalPrice: 49500,
             oldTotalPrice: 67000,
-            imageUrl: '../assets/images/sneakers.png',
-            onPress: () => {navigation.navigate("ProductAnalytics")}
+            product_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/products%2Fsneakers.png?alt=media&token=fbb14f47-c2b7-4d2a-b54a-8485ccf7a648',
+            onPress: () => {navigation.navigate("ProductAnalytics", {
+                product_id: 1,
+                product_name: "Pheonix Sneakers",
+                product_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/products%2Fsneakers.png?alt=media&token=fbb14f47-c2b7-4d2a-b54a-8485ccf7a648',
+            })}
         },
         {
             id: 3,
-            product: 'Black Sneakers', 
+            product_name: 'Black Sneakers', 
             numberOfDeliveries: 7,
             totalPrice: 70000,
             oldTotalPrice: 67000,
-            imageUrl: '../assets/images/black-sketchers.png',
-            onPress: () => {navigation.navigate("ProductAnalytics")}
+            product_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/products%2Fblack-sketchers.png?alt=media&token=a07e02ac-610d-4da0-9527-2b6e9e85d56d',
+            onPress: () => {navigation.navigate("ProductAnalytics", {
+                product_id: 1,
+                product_name: "Black Sneakers",
+                product_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/products%2Fblack-sketchers.png?alt=media&token=a07e02ac-610d-4da0-9527-2b6e9e85d56d',
+            })}
         },
         {
             id: 4,
-            product: 'Timberland Shoe', 
+            product_name: 'Timberland Shoe', 
             numberOfDeliveries: 13,
             totalPrice: 150000,
             oldTotalPrice: 89000,
-            imageUrl: "../assets/images/Timberland.jpg",
-            onPress: () => {navigation.navigate("ProductAnalytics")}
+            product_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/products%2FTimberland.jpg?alt=media&token=29480738-8990-45c9-9b74-b2d24c0fa722',
+            onPress: () => {navigation.navigate("ProductAnalytics", {
+                product_id: 1,
+                product_name: "Timberland Shoe",
+                product_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/products%2FTimberland.jpg?alt=media&token=29480738-8990-45c9-9b74-b2d24c0fa722',
+            })}
         },
     ];
 
@@ -213,7 +259,9 @@ const Analytics = ({navigation}) => {
             numberOfDeliveries: 17,
             totalPrice: 88500,
             oldTotalPrice: 68000,
-            onPress: () => {navigation.navigate("LocationAnalytics")}
+            onPress: () => {navigation.navigate("LocationAnalytics", {
+                location_id: 1,
+            })}
         },
         {
             id: 2,
@@ -221,7 +269,9 @@ const Analytics = ({navigation}) => {
             numberOfDeliveries: 13,
             totalPrice: 49500,
             oldTotalPrice: 48000,
-            onPress: () => {navigation.navigate("LocationAnalytics")}
+            onPress: () => {navigation.navigate("LocationAnalytics", {
+                location_id: 1,
+            })}
         },
         {
             id: 3,
@@ -229,7 +279,9 @@ const Analytics = ({navigation}) => {
             numberOfDeliveries: 5,
             totalPrice: 35000,
             oldTotalPrice: 40000,
-            onPress: () => {navigation.navigate("LocationAnalytics")}
+            onPress: () => {navigation.navigate("LocationAnalytics", {
+                location_id: 1,
+            })}
         },
     ];
 
@@ -257,214 +309,215 @@ const Analytics = ({navigation}) => {
     const [date, setDate] = useState("");
 
     // render Analytics page
-    return (
-        <>
-            {!pageLoading ? (
-                <ScrollView
-                    showsVerticalScrollIndicator={false}
-                    style={style.container}
-                >
-                    <View style={style.main}>
-                        {/* header component */}
-                        <Header 
-                            navigation={navigation} 
-                            stackName={"Analytics"} 
-                            iconFunction={null} 
-                            icon={null} 
-                            unpadded={true}
-                        />
-                        <View style={style.chartContainer}>
-                            {/* range wrapper */}
-                            <View style={style.rangeWrapper}>
-                                <TouchableOpacity 
-                                    style={style.rangeButton}
-                                    onPress={openCalendar}
-                                >
-                                    <Text style={style.rangeButtonText}>Last 7 Days</Text>
-                                    <ArrowDownSmall />
-                                </TouchableOpacity>
-                            </View>
-                            {/* Bar Chart component */}
-                            <BarChart
-                                chartTitle={"Total Earnings"}
-                                chartWidth={"100%"}
-                                chartHeight={232}
-                                backgroundColor={white}
-                                data={data}
-                                prevData={prevData}
-                                labels={labels}
-                                unit={"₦"}
-                                fullbar={false}
-                                rotateXAxisLabel={false}
-                                enableGrid={false}
-                            />
-                        </View>
-                        <StatWrapper>
-                            {stats.map(stat => (
-                                <StatCard
-                                    key={stat.id}
-                                    title={stat.title}
-                                    presentValue={stat.presentValue}
-                                    oldValue={stat.oldValue}
-                                    decimal={stat.decimal}
-                                    unit={stat.unit}
-                                    unitPosition={stat.unitPosition}
-                                />
-                            ))}
-                        </StatWrapper>
-                        <View style={style.topStatsWrapper}>
-                            <Text style={style.topStatHeading}>Top Stats</Text>
-                            <View 
-                                style={[
-                                    style.tabsContainer,
-                                    emptyAnalytics && {minHeight: 72}
-                                ]}
+    return (<>
+        {!pageLoading ? (
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                style={style.container}
+            >
+                <View style={style.main}>
+                    {/* header component */}
+                    <Header 
+                        navigation={navigation} 
+                        stackName={"Analytics"} 
+                        iconFunction={null} 
+                        icon={null} 
+                        unpadded={true}
+                    />
+                    <View style={style.chartContainer}>
+                        {/* range wrapper */}
+                        <View style={style.rangeWrapper}>
+                            <TouchableOpacity 
+                                style={style.rangeButton}
+                                onPress={openCalendar}
                             >
-                                {!emptyAnalytics ? <>
-                                    {/* Tab buttons container */}
-                                    <View style={style.tabButtonWrapper}>
-                                        <View style={style.tabButtonContainer}>
-                                            {/* logistics tab button */}
-                                            { authData?.account_type !== "Logistics" && (
-                                                <TouchableOpacity
-                                                    style={
-                                                        tabs === "Logistics" ? style.tabButtonSelected : style.tabButton
-                                                    }
-                                                    onPress={() => setTabs("Logistics")}
-                                                >
-                                                    <Text 
-                                                        style={
-                                                            tabs === "Logistics" ? style.tabButtonTextSelected : style.tabButtonText
-                                                        }
-                                                    >
-                                                        Logistics
-                                                    </Text>
-                                                </TouchableOpacity>
-                                            )}
-                                            {/* merchant tab button */}
-                                            { authData?.account_type !== "Merchant" && (
-                                                <TouchableOpacity
-                                                    style={
-                                                        tabs === "Merchant" ? style.tabButtonSelected : style.tabButton
-                                                    }
-                                                    onPress={() => setTabs("Merchant")}
-                                                >
-                                                    <Text 
-                                                        style={
-                                                            tabs === "Merchant" ? style.tabButtonTextSelected : style.tabButtonText
-                                                        }
-                                                    >
-                                                        Merchant
-                                                    </Text>
-                                                </TouchableOpacity>
-                                            )}
-                                            {/* location tab buttons */}
+                                <Text style={style.rangeButtonText}>Last 7 Days</Text>
+                                <ArrowDownSmall />
+                            </TouchableOpacity>
+                        </View>
+                        {/* Bar Chart component */}
+                        <BarChart
+                            chartTitle={"Total Earnings"}
+                            chartWidth={"100%"}
+                            chartHeight={232}
+                            backgroundColor={white}
+                            data={data}
+                            prevData={prevData}
+                            labels={labels}
+                            unit={"₦"}
+                            fullbar={false}
+                            rotateXAxisLabel={false}
+                            enableGrid={false}
+                        />
+                    </View>
+                    {/* stats wrapper */}
+                    <StatWrapper>
+                        {/* stats card list items */}
+                        {stats.map(stat => (
+                            <StatCard
+                                key={stat.id}
+                                title={stat.title}
+                                presentValue={stat.presentValue}
+                                oldValue={stat.oldValue}
+                                decimal={stat.decimal}
+                                unit={stat.unit}
+                                unitPosition={stat.unitPosition}
+                            />
+                        ))}
+                    </StatWrapper>
+                    <View style={style.topStatsWrapper}>
+                        <Text style={style.topStatHeading}>Top Stats</Text>
+                        <View 
+                            style={[
+                                style.tabsContainer,
+                                emptyAnalytics && {minHeight: 72}
+                            ]}
+                        >
+                            {!emptyAnalytics ? <>
+                                {/* Tab buttons container */}
+                                <View style={style.tabButtonWrapper}>
+                                    <View style={style.tabButtonContainer}>
+                                        {/* logistics tab button */}
+                                        { authData?.account_type !== "Logistics" && (
                                             <TouchableOpacity
                                                 style={
-                                                    tabs === "Location" ? style.tabButtonSelected : style.tabButton
+                                                    tabs === "Logistics" ? style.tabButtonSelected : style.tabButton
                                                 }
-                                                onPress={() => setTabs("Location")}
+                                                onPress={() => setTabs("Logistics")}
                                             >
                                                 <Text 
                                                     style={
-                                                        tabs === "Location" ? style.tabButtonTextSelected : style.tabButtonText
+                                                        tabs === "Logistics" ? style.tabButtonTextSelected : style.tabButtonText
                                                     }
                                                 >
-                                                    Location
+                                                    Logistics
                                                 </Text>
                                             </TouchableOpacity>
-                                            {/* product tab button */}
+                                        )}
+                                        {/* merchant tab button */}
+                                        { authData?.account_type !== "Merchant" && (
                                             <TouchableOpacity
                                                 style={
-                                                    tabs === "Product" ? style.tabButtonSelected : style.tabButton
+                                                    tabs === "Merchant" ? style.tabButtonSelected : style.tabButton
                                                 }
-                                                onPress={() => setTabs("Product")}
+                                                onPress={() => setTabs("Merchant")}
                                             >
                                                 <Text 
                                                     style={
-                                                        tabs === "Product" ? style.tabButtonTextSelected : style.tabButtonText
+                                                        tabs === "Merchant" ? style.tabButtonTextSelected : style.tabButtonText
                                                     }
                                                 >
-                                                    Product
+                                                    Merchant
                                                 </Text>
                                             </TouchableOpacity>
-                                        </View>
+                                        )}
+                                        {/* location tab buttons */}
+                                        <TouchableOpacity
+                                            style={
+                                                tabs === "Location" ? style.tabButtonSelected : style.tabButton
+                                            }
+                                            onPress={() => setTabs("Location")}
+                                        >
+                                            <Text 
+                                                style={
+                                                    tabs === "Location" ? style.tabButtonTextSelected : style.tabButtonText
+                                                }
+                                            >
+                                                Location
+                                            </Text>
+                                        </TouchableOpacity>
+                                        {/* product tab button */}
+                                        <TouchableOpacity
+                                            style={
+                                                tabs === "Product" ? style.tabButtonSelected : style.tabButton
+                                            }
+                                            onPress={() => setTabs("Product")}
+                                        >
+                                            <Text 
+                                                style={
+                                                    tabs === "Product" ? style.tabButtonTextSelected : style.tabButtonText
+                                                }
+                                            >
+                                                Product
+                                            </Text>
+                                        </TouchableOpacity>
                                     </View>
-                                    <View style={style.tabContentList}>
-                                        {/* Merchant Tab content */}
-                                        {tabs === "Merchant" && merchantAnalyticsList.map(item => (
-                                            <BusinessAnalyticsItem
-                                                key={item.id}
-                                                logistics={item.logistics}
-                                                numberOfDeliveries={item.numberOfDeliveries}
-                                                totalPrice={item.totalPrice}
-                                                oldTotalPrice={item.oldTotalPrice}
-                                                imageUrl={item?.imageUrl}
-                                                onPress={item.onPress}
-                                            />
-                                        ))}
-                                        {/* Logistics Tab content */}
-                                        {tabs === "Logistics" && logisticsAnalyticsList.map(item => (
-                                            <BusinessAnalyticsItem
-                                                key={item.id}
-                                                logistics={item.logistics}
-                                                numberOfDeliveries={item.numberOfDeliveries}
-                                                totalPrice={item.totalPrice}
-                                                oldTotalPrice={item.oldTotalPrice}
-                                                imageUrl={item?.imageUrl}
-                                                onPress={item.onPress}
-                                            />
-                                        ))}
-                                        {/* Location Tab content */}
-                                        {tabs === "Location" && locationAnalyticsList.map(item => (
-                                            <LocationAnalyticsItem
-                                                key={item.id}
-                                                location={item.location}
-                                                numberOfDeliveries={item.numberOfDeliveries}
-                                                totalPrice={item.totalPrice}
-                                                oldTotalPrice={item.oldTotalPrice}
-                                                onPress={item.onPress}
-                                            />
-                                        ))}
-                                        {/* Product Tab content */}
-                                        {tabs === "Product" && productAnalyticsList.map(item => (
-                                            <ProductAnalyticsItem
-                                                key={item.id}
-                                                product={item.product}
-                                                numberOfDeliveries={item.numberOfDeliveries}
-                                                totalPrice={item.totalPrice}
-                                                oldTotalPrice={item.oldTotalPrice}
-                                                imageUrl={item?.imageUrl}
-                                                onPress={item.onPress}
-                                            />
-                                        ))}
-                                    </View>
-                                </> : <>
-                                    <View style={style.noResultWrapper}>
-                                        <Text style={style.emptyAnalyticsHeading}>
-                                            Nothing to show yet
-                                        </Text>
-                                        <Text style={style.emptyAnalyticsParagraph}>
-                                            Top stats is shown after 3 successful deliveries
-                                        </Text>
-                                    </View>
-                                </>}
-                            </View>
+                                </View>
+                                <View style={style.tabContentList}>
+                                    {/* Merchant Tab content */}
+                                    {tabs === "Merchant" && merchantAnalyticsList.map(item => (
+                                        <BusinessAnalyticsItem
+                                            key={item.id}
+                                            businessName={item.business_name}
+                                            numberOfDeliveries={item.numberOfDeliveries}
+                                            totalPrice={item.totalPrice}
+                                            oldTotalPrice={item.oldTotalPrice}
+                                            bannerImage={item?.banner_image}
+                                            onPress={item.onPress}
+                                        />
+                                    ))}
+                                    {/* Logistics Tab content */}
+                                    {tabs === "Logistics" && logisticsAnalyticsList.map(item => (
+                                        <BusinessAnalyticsItem
+                                            key={item.id}
+                                            businessName={item.business_name}
+                                            numberOfDeliveries={item.numberOfDeliveries}
+                                            totalPrice={item.totalPrice}
+                                            oldTotalPrice={item.oldTotalPrice}
+                                            bannerImage={item?.banner_image}
+                                            onPress={item.onPress}
+                                        />
+                                    ))}
+                                    {/* Location Tab content */}
+                                    {tabs === "Location" && locationAnalyticsList.map(item => (
+                                        <LocationAnalyticsItem
+                                            key={item.id}
+                                            location={item.location}
+                                            numberOfDeliveries={item.numberOfDeliveries}
+                                            totalPrice={item.totalPrice}
+                                            oldTotalPrice={item.oldTotalPrice}
+                                            onPress={item.onPress}
+                                        />
+                                    ))}
+                                    {/* Product Tab content */}
+                                    {tabs === "Product" && productAnalyticsList.map(item => (
+                                        <ProductAnalyticsItem
+                                            key={item.id}
+                                            product={item.product_name}
+                                            numberOfDeliveries={item.numberOfDeliveries}
+                                            totalPrice={item.totalPrice}
+                                            oldTotalPrice={item.oldTotalPrice}
+                                            imageUrl={item?.product_image}
+                                            onPress={item.onPress}
+                                        />
+                                    ))}
+                                </View>
+                            </> : <>
+                                {/* empty states */}
+                                <View style={style.noResultWrapper}>
+                                    <Text style={style.emptyAnalyticsHeading}>
+                                        Nothing to show yet
+                                    </Text>
+                                    <Text style={style.emptyAnalyticsParagraph}>
+                                        Top stats is shown after 3 successful deliveries
+                                    </Text>
+                                </View>
+                            </>}
                         </View>
                     </View>
-                </ScrollView>
-            ) : <AnalyticsSkeleton />}
-            {/* calendar */}
-            <CalendarSheet 
-                closeCalendar={closeCalendar}
-                setDate={setDate}
-                disableActionButtons={false}
-                snapPointsArray={["70%"]}
-                maxDate={new Date()}
-                calendarRef={calendarSheetRef} 
-            />
-        </>
-    );
+                </View>
+            </ScrollView>
+        ) : <AnalyticsSkeleton />}
+        {/* calendar bottomsheet modal */}
+        <CalendarSheet 
+            closeCalendar={closeCalendar}
+            setDate={setDate}
+            disableActionButtons={false}
+            snapPointsArray={["70%"]}
+            maxDate={new Date()}
+            calendarRef={calendarSheetRef} 
+        />
+    </>);
 }
 
 // stylesheet

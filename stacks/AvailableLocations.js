@@ -37,7 +37,7 @@ const AvailableLocations = ({navigation, route}) => {
     const business_name = route?.params?.business_name;
 
     // parameter to determine if location is read only or writeable
-    const writable = authData.business_id === business_id && authData.account_type === "Logistics";
+    const writable = authData.business_id === business_id && authData.account_type === "Logistics" && authData?.role === "Manager";
 
     // globals
     const { setToast } = useGlobals();
@@ -746,7 +746,7 @@ const AvailableLocations = ({navigation, route}) => {
                                 Find all available locations and the associated fees {business_name} offers 
                             </>}
                         </Text>
-                            {/* logistics search bar */}
+                            {/* location search bar */}
                             <SearchBar
                                 placeholder={"Search for a location"}
                                 searchQuery={searchQuery}
@@ -755,6 +755,7 @@ const AvailableLocations = ({navigation, route}) => {
                                 disableFilter={true}
                             />
                         </View>
+                        {/* locations accordion, grouped by states */}
                         <View style={style.locationsWrapper}>
                             { searchResults.map(state => (
                                 <Accordion
@@ -771,6 +772,7 @@ const AvailableLocations = ({navigation, route}) => {
                     </View>
                 </ScrollView>
             </TouchableWithoutFeedback>
+            {/* show add location button if its a logistics account and a manager */}
             {writable && (
                 <CustomButton 
                     fixed={true}

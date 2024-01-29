@@ -210,17 +210,6 @@ const BusinessPolicy = ({navigation}) => {
     // modal type
     const [modalType, setModalType] = useState("Remittance");
 
-    // const bottomSheetParameters = useMemo(() => {
-    //     switch (modalType) {
-    //         case "Remittance":
-                
-    //             break;
-        
-    //         default:
-    //             break;
-    //     }
-    // }, [modalType]);
-
     // open bottomsheet modal function
     const openModal = (type, enableEdit)  => {
         if (enableEdit && type === "Additional Policy") {
