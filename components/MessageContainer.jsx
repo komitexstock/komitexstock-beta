@@ -40,7 +40,7 @@ import Menu from "./Menu";
 // useAuth
 import { useAuth } from "../context/AuthContext"
 
-const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAlert, products, handleOnPressPhoneNumber, handleScrollToComponent, setReplying, textInputRef, navigation, openMenu}) => {
+const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAlert, products, handleOnPressPhoneNumber, handleScrollToComponent, setReplying, textInputRef, navigation, openMessageOptions}) => {
 
     const { authData } = useAuth()
 
@@ -288,7 +288,7 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
                 onLongPress={() => {
                     const customMessages = ['Rescheduled', 'Cancelled', 'Returned', 'Delivered', 'Dispatched' ];
                     if (customMessages.includes(type)) return;
-                    openMenu("message", id)}
+                    openMessageOptions("message", id)}
                 }
                 activeOpacity={1}
                 onLayout={(e) => {

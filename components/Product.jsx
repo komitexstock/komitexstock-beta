@@ -7,6 +7,8 @@ import {
     Image,
     TextInput
 } from "react-native";
+// components
+import Avatar from "./Avatar";
 // icon
 import ClearSearch from "../assets/icons/ClearSearch";
 import { background, black, white } from "../style/colors";
@@ -21,9 +23,10 @@ const Product = ({product, removeProduct, increaseQuantity, decreaseQuantity, in
         <View style={[style.productItem, invertColor && {backgroundColor: background}]}>
             <View style={style.productDetailsWrapper}>
                 {/* product main detail */}
-                <Image
-                    style={style.productImage}
-                    source={product.imageUrl}
+                <Avatar
+                    fullname={product.product_name}
+                    imageUrl={product.imageUrl}
+                    squared={true}
                 />
                 <Text style={style.productName}>
                     {product.product_name}

@@ -2,6 +2,7 @@
 import { View, TouchableOpacity, Image, Text, StyleSheet } from "react-native";
 //  components
 import CheckBox from "./CheckBox";
+import Avatar from "./Avatar";
 // colors
 import { primaryColor, listSeparator, checkBoxBorder, black } from "../style/colors";
 
@@ -14,9 +15,15 @@ const ProductCheckItem = ({data, onPress, unpadded}) => {
                 onPress={() => onPress(data.id)}
             >   
                 {/* product image */}
-                <Image
+                {/* <Image
                     style={style.logisticsImage}
                     source={data.imageUrl}
+                /> */}
+                <Avatar 
+                    fullname={data.product_name}
+                    imageUrl={data.imageUrl}
+                    squared={true}
+                    diameter={30}
                 />
                 <Text style={style.listText}>{data.product_name}</Text>
             </TouchableOpacity>

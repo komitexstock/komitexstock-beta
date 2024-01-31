@@ -17,6 +17,8 @@ import { white } from "../style/colors";
 import { useRef, useLayoutEffect } from "react";
 // globals
 import { useGlobals } from "../context/AppContext";
+// debounce
+import { debounce } from "lodash";
 
 const Toast = () => {
 
@@ -24,26 +26,35 @@ const Toast = () => {
     const { toast, setToast } = useGlobals();
 
     // animated value
-    const top = useRef(new Animated.Value(50)).current;
+    // const top = useRef(new Animated.Value(50)).current;
+    const translateY = useRef(new Animated.Value(50)).current;
 
     // opacity
     const opacity = useRef(new Animated.Value(0)).current;
 
+    // debounce the toast updates
+    const debouncedSetToast = useRef(debounce(setToast, 500)).current;
+
     // close toast function
     const closeToast = () => {
 
-        setToast(prevToast => {
-            return {
-                ...prevToast,
-                visible: false,
-            }
-        });
+        // setToast(prevToast => {
+        //     return {
+        //         ...prevToast,
+        //         visible: false,
+        //     }
+        // });
+
+        debouncedSetToast((prevToast) => ({
+            ...prevToast,
+            visible: false,
+        }));
 
         Animated.timing(opacity, {
             toValue: 0,
             duration: 100,
             easing: Easing.linear,
-            useNativeDriver: false,
+            useNativeDriver: true,
         }).start();
     }
 
@@ -54,32 +65,24 @@ const Toast = () => {
               toValue: 1,
               duration: 10,
               easing: Easing.linear,
-              useNativeDriver: false,
+              useNativeDriver: true,
               delay: 100,
             }),
-            // Animated.spring(top, {
-            //   toValue: toast.visible ? 0 : 50,
-            //   useNativeDriver: false,
-            //   speed: 0.05,
-            //   bounciness: 5,
-            //   duration: 200,
-            //   delay: 100,
-            // }),
             Animated.timing(opacity, {
                 toValue: 0,
                 duration: 50,
                 easing: Easing.linear,
-                useNativeDriver: false,
-                delay: 4000,
+                useNativeDriver: true,
+                delay: 3000,
             }),
           ]).start(() => {
             closeToast();
           });
         };
       
-        Animated.spring(top, {
-            toValue: toast.visible ? 0 : 30,
-            useNativeDriver: false,
+        Animated.spring(translateY, {
+            toValue: toast.visible ? 20 : -100,
+            useNativeDriver: true,
             tension: 2,
             friction: 2,
             duration: 500,
@@ -98,10 +101,10 @@ const Toast = () => {
             style={[
                 style.container,
                 {
-                    top: top,
-                    // opacity: opacity,
-                    display: toast.visible ? "flex" : "none",
-                    // transform: [{ translateY }], // Apply the animated translation
+                    // top: top,
+                    opacity: opacity,
+                    // display: toast.visible ? "flex" : "none",
+                    transform: [{ translateY }], // Apply the animated translation
                 },
             ]}
         >

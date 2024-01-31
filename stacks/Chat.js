@@ -88,20 +88,38 @@ import { copyToClipboard, windowHeight, windowWidth } from "../utils/helpers";
 
 const Chat = ({navigation, route}) => {
 
+    // auth data
     const { authData } = useAuth()
 
-    const { bottomSheetRef, stackedSheetRef, calendarSheetRef, bottomSheetOpen } = useGlobals();
+    // parameters for all bottomsheets
+    const { bottomSheetRef, stackedSheetRef, calendarSheetRef, bottomSheetOpen, setToast } = useGlobals();
 
-    // messages ref
+    // chat route parameters
+    const {chatId, chatType, business_name, banner_image} = route?.params || {};
+
+    // chat status
+    const status = "Dispatched";
+
+    // accoutntype, retreived from global variables
+    const userId = "hjsdjkji81899";
+    const companyName = "Mega Enterprise";
+    const fullname = "Iffie Ovie";
+    const emptyStock = false;
+    
+
+    // messages ref // would be changed to messages offset state
     const messagesRefs = useRef([]);
 
     // scroll view ref
+    // required for any auto scroll action to be carried out on the screen
     const scrollViewRef = useRef();
+
     // has scrolled to bottom ref
+    // stores if the screen has scrolled to bottom on mount
     const hasScrolledToBottom = useRef(false);
 
     // message overlay to show when auto scroll to replied message
-    // it hightights a replied message
+    // it hightights a replied message, stores the height and offset of overlay
     const [messageOverlay, setMessageOverlay] = useState({
         top: 0,
         height: 0,
@@ -109,22 +127,30 @@ const Chat = ({navigation, route}) => {
 
     // state to indicate replying message state in text field
     const [replying, setReplying] = useState(null);
+
     // state to indicate uploading image or doc state in text field
     const [uploading, setUploading] = useState(false);
 
     // state to store typed text
     const [textInput, setTextInput] = useState('');
+    
+    // ref for the input text
+    // needed to auto focus on the chat text input when a message is pulled/dragged to be relied
     const textInputRef = useRef(null)
 
+    // function to update text in text input
     const updateTextInput = (text) => {
         setTextInput(text === '' ? null : text)
     }
 
+    // indicator for new chat and message copied
     const [newChat, setNewChat] = useState({
         open: false,
         copyAlert: false,
     });
 
+    
+    // function to indicate a new chat has been created for an order, waybill or stock transfer
     const openNewMessageAlert = (copyAlert) => {
         
         setNewChat({
@@ -201,47 +227,7 @@ const Chat = ({navigation, route}) => {
         }, 1500);
     };
 
-    // alert state
-    const [alert, setAlert] = useState({
-        show: false,
-        type: "Success",
-        text: ""
-    });
-
-    const closeAlert = () => {
-        setAlert(prevAlert => {
-            return {
-                ...prevAlert,
-                show: false
-            }
-        });
-    };
-
-    const openAlert = (type, text) => {
-        setAlert({
-            show: true,
-            type: type,
-            text: text
-        });
-
-        // auto close alert after 4 seconds
-        setTimeout(() => {
-            closeAlert();
-        }, 4000);
-    }
-
-    // chat rout parameters
-    const {chatId, chatType, business_name, banner_image} = route.params;
-
-    const status = "Dispatched";
-
-    // accoutntype, retreived from global variables
-    const userId = "hjsdjkji81899";
-    const companyName = "Mega Enterprise";
-    const fullname = "Iffie Ovie";
-    const emptyStock = false;
-
-
+    // variable to store price in price input
     const [price, setPrice] = useState(50000);
     
     // function to update price
@@ -259,18 +245,19 @@ const Chat = ({navigation, route}) => {
             id: 5,
             product_name: "Maybach Sunglasses",
             quantity: 1,
-            imageUrl: "../assets/images/maybach-sunglasses.png",
+            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/products%2Fmaybach-sunglasses.jpg?alt=media&token=95200745-ada8-4787-9779-9d00c56a18a5',
             checked: true,
         },
         {
             id: 6,
             product_name: "Accurate Watch",
             quantity: 1,
-            imageUrl: "../assets/images/accurate-watch.png",
+            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/products%2Faccurate-watch.png?alt=media&token=4330bcd1-e843-434c-97cb-bf84c49b82b0',
             checked: true,
         },
     ]);
 
+    // customer location and address
     const address = "No 3 Izono street Udu road, Warri";
     const [location, setLocation] = useState({
         id: Math.random(),
@@ -278,7 +265,7 @@ const Chat = ({navigation, route}) => {
         charge: 3000,
     });
 
-        // function to update charge
+    // function to update charge
     const updateCharge = (text) => {
         let newText = text.replace(new RegExp(',', 'g'), '');
         // remove all occurrence of the comma character ',' in text gloablly
@@ -351,13 +338,10 @@ const Chat = ({navigation, route}) => {
         </View>
     );
 
-    // modal overlay
-    // const [showOverlay, setShowOverlay] = useState(false);
-
     // modal state
     const [modal, setModal] = useState({
         type: "Open with",
-        snapPoints: ["25%"],
+        snapPoints: [198],
     });
 
     // modal state
@@ -366,16 +350,21 @@ const Chat = ({navigation, route}) => {
         snapPoints: ["75%"],
     });
 
+    // state to temporarily store phone number in a link
+    // before user decides on texting, calling or whatsapp message
     const [linkPhoneNumber, setLinkPhoneNumber] = useState("");
 
+    // function to close calendar bottomsheet
     const closeCalendar = () => {
         calendarSheetRef.current?.close();
     }
     
+    // function to open calendar bottomsheet
     const openCalendar = () => {
         calendarSheetRef.current?.present();
     }
 
+    // function handle selected location when location of an order or waybill is being edited
     const handleSelectedLocation = (data) => {
         closeStackedModal();
         setLocation(data);
@@ -387,32 +376,37 @@ const Chat = ({navigation, route}) => {
         setReason("");
     };
 
-    // open modal function
+    // open bottomsheet modal function
     const openModal = (type) => {
         // open bottomsheet modal
         bottomSheetRef.current?.present();
         // set modal type
-        if (type === "Open with") {
+        if (type === "Open with") { 
+            // bottomsheet parameters to handle onclick phone number
             return setModal({
                 type: type,
                 snapPoints: [198],
             });
-        } else if (type === "Reschedule order") {
+        } else if (type === "Reschedule order") { 
+            // bottomsheet parameters for reschedule order flow
             return setModal({
                 type: type,
                 snapPoints: ["100%"],
             });
         } else if (["Cancel order", "Dispatch order", "Deliver order"].includes(type)) {
+            // bottomsheet parameters for cancel order, dispatch order or deliver order flows
             return setModal({
                 type: type,
                 snapPoints: [520],
             });
         } else if (type === "") {
+            // bottomsheet parameters for the type of file to be attached
             return setModal({
                 type: type,
                 snapPoints: [198],
             });
         } else {
+            // default state
             return setModal({
                 type: type,
                 snapPoints: ["100%"],
@@ -420,8 +414,7 @@ const Chat = ({navigation, route}) => {
         } 
     }
 
-    // console.log(Keyboard.isVisible())
-
+    // function to open stacked bottom sheet
     const openStackedModal = (type) => {
         stackedSheetRef.current?.present();
         if (type === "Products") {
@@ -437,10 +430,12 @@ const Chat = ({navigation, route}) => {
         }
     }
 
+    // function to close stacked bottom sheet
     const closeStackedModal = () => {
         stackedSheetRef.current?.close();
     };
 
+    // function to handle on press phone number link
     const handleOnPressPhoneNumber = (phoneNumber) => {
         // Keyboard.dismiss();
         openModal("Open with");
@@ -448,11 +443,7 @@ const Chat = ({navigation, route}) => {
         setLinkPhoneNumber(phoneNumber);
     }
 
-    const handleEditOrder = () => {
-        openModal("Edit order");
-    }
-
-
+    // to store order reschedule date temporarily
     const [rescheduleDate, setRescheduleDate] = useState("")
 
     // order buttons
@@ -485,25 +476,32 @@ const Chat = ({navigation, route}) => {
         onPress: () => {}
     }
     
+    // template text
     const templateText = `This is Komitex Logistics you ordered for Maybach Sunglasses at ₦38,000 online, would you be available to receive it today?`;
 
+    // function that runs when phone icon button is clicked 
+    // in phone number action bottomsheet 
     const dialPhoneNumber = () => {
         Linking.openURL('tel:'+linkPhoneNumber);
     };
 
+    // send sms function
     const sendSms = () => {
         const url = `sms:${linkPhoneNumber}?body=${encodeURIComponent(templateText)}`;
         Linking.openURL(url);
     };
 
+    // send wahtsapp message function
     const sendWhatsAppMessage = () => {
         const url = `whatsapp://send?phone=${linkPhoneNumber}&text=${encodeURIComponent(templateText)}`;
         Linking.openURL(url);
     };
 
+    // tomorrow date
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
 
+    // function to open document
     const openDocument = async (documentUrl) => {
         try {
             const supported = await Linking.canOpenURL(documentUrl);
@@ -527,6 +525,7 @@ const Chat = ({navigation, route}) => {
         setMessages(messages)
     }, [messages])
 
+    // send message in chat
     const sendMessage = (type) => {
         if (textInput === "" && uploading === false && type === "message") return;
         else {
@@ -629,20 +628,22 @@ const Chat = ({navigation, route}) => {
         }
     }
 
+    // user name of message being replied
     const replyingSenderName = (targetMessage) => {
-
         if (authData?.account_type !== targetMessage.account_type) {
             return targetMessage.company_name;
         }
 
+        // if user id matches user id in authdata, show "You"
         return userId === targetMessage.user_id ? "You" : targetMessage.fullname
     }
 
+    // text of message being replied, if it excede a particular length, cut the string
     const replyingSenderText = (targetMessage) => {
-
         return targetMessage.text.length > 175 ? targetMessage.text.slice(0, 175) + "..." : targetMessage.text;
     }
 
+    // if message being replied to has th character '*', remove it 
     const processText = (text) => {
 
         if (!text.includes('*')) return text;
@@ -656,6 +657,7 @@ const Chat = ({navigation, route}) => {
         }
     }
 
+    // component of message being replied above text area when replying a message
     const ReplyingMessageInput = (id) => {
         const targetMessage = messages.find(message => message.id === id);
         
@@ -665,6 +667,7 @@ const Chat = ({navigation, route}) => {
                     <Text style={style.replyingMessageSender}>
                         Replying to {replyingSenderName(targetMessage)}
                     </Text>
+                    {/* if replied message is an image */}
                     { targetMessage.type === 'image' && (
                         <>
                             <View style={style.replyingImageWrapper}>
@@ -676,6 +679,7 @@ const Chat = ({navigation, route}) => {
                             </View>
                         </>
                     )}
+                    {/* if replied message is a document */}
                     { targetMessage.type === 'document' && (
                         <>
                             <View style={style.replyingImageWrapper}>
@@ -684,6 +688,7 @@ const Chat = ({navigation, route}) => {
                             </View>
                         </>
                     )}
+                    {/* if replied message is a text */}
                     { targetMessage.text && (
                         <Text style={style.replyingMessage}>
                             {/* {replyingSenderText(processText(targetMessage))} */}
@@ -691,6 +696,7 @@ const Chat = ({navigation, route}) => {
                         </Text>
                     )}
                 </View>
+                {/* button to disable replying state */}
                 <TouchableOpacity
                     onPress={() => {
                         setReplying(null)
@@ -704,7 +710,10 @@ const Chat = ({navigation, route}) => {
         )
     }
 
-    const uploadingMesaageInput = (uploadingDataArray) => {
+
+    // component above text feild when uplaoding image or document is taking place
+    const uploadingMessageInput = (uploadingDataArray) => {
+
         return (
             <ScrollView 
                 showsHorizontalScrollIndicator={false} 
@@ -713,10 +722,11 @@ const Chat = ({navigation, route}) => {
             >
                 {/* uplaoding images from Gallery or Camera */}
                 {["Gallery", "Camera"].includes(uploadingDataArray.uploadType) && uploadingDataArray.assets.map(item => (
-                    <View style={style.uploadingImageWrapper} key={item.assetId}>
+                    <View style={style.uploadingImageWrapper} key={item.uri}>
+                        {/* remove image button */}
                         <TouchableOpacity
                             style={style.removeImageButton}
-                            onPress={() => removeImageFromUpload(item.assetId)}
+                            onPress={() => removeImageFromUpload(item.uri)}
                         >
                             <RemoveImageIcon />
                         </TouchableOpacity>
@@ -740,11 +750,12 @@ const Chat = ({navigation, route}) => {
         )
     }
 
-    // function to remiove image from upload list
-    const removeImageFromUpload = (id) => {
+    // function to remove image from upload list
+    // function runs when you click close icon in image being uploaded
+    const removeImageFromUpload = (uri) => {
         setUploading(prevUploading => {
             // filter list
-            const newUploadList = prevUploading.assets.filter(item => item.assetId !== id);
+            const newUploadList = prevUploading.assets.filter(item => item.uri !== uri);
             // check if list is zero
             if (newUploadList.length === 0) return false; // return false if length is zero 
             return { // else return updated list
@@ -754,14 +765,21 @@ const Chat = ({navigation, route}) => {
         })
     }
 
+    // function runs to remove document from upload
     const removeDocFromUpload = () => {
         setUploading(false);
     }
 
+    // state to store text typed into reason text input
     const [reason, setReason] = useState("");
+
+    // state to indicate if the input field has an error/or is left empty
     const [errorReason, setErrorReason] = useState(false);
 
+    // state to indicate if an error was made in the charge input
     const [errorCharge, setErrorCharge] = useState(false);
+
+    // state to indicate if an error was made in the price input
     const [errorPrice, setErrorPrice] = useState(false);
 
     // variable to check for empty fields
@@ -770,7 +788,13 @@ const Chat = ({navigation, route}) => {
         products, 
         price
         ].some((item) => {
-            return item === null || item === '' || item === undefined || item === 0 || item === NaN || (Array.isArray(item) && item.length === 0);
+            return item === null || 
+            item === '' || 
+            item === undefined ||
+            item === 0 ||
+            item === NaN ||
+            (Array.isArray(item) && 
+            item.length === 0);
         }
     );
 
@@ -781,7 +805,11 @@ const Chat = ({navigation, route}) => {
         sendMessage("Edited");
         Keyboard.dismiss();
         closeModal();
-        openAlert('Success', 'Order edited successfully');
+        setToast({
+            visible: true,
+            text: "Order edited successfully",        
+            type: "success",
+        })
     }
     
     // submit order rescheduled information
@@ -791,7 +819,11 @@ const Chat = ({navigation, route}) => {
         scrollToBottom(true); // animate === true
         sendMessage("Rescheduled");
         closeModal();
-        openAlert('Success', 'Order rescheduled successfully');
+        setToast({
+            visible: true,
+            text: "Order rescheduled successfully",        
+            type: "success",
+        })
     }
     
     // submit order cancelled information
@@ -801,7 +833,11 @@ const Chat = ({navigation, route}) => {
         scrollToBottom(true); // animate === true
         sendMessage("Cancelled");
         closeModal();
-        openAlert('Success', 'Order cancelled successfully');
+        setToast({
+            visible: true,
+            text: "Order cancelled successfully",        
+            type: "success",
+        })
     }
 
     const submitDispatchedOrder = () => {
@@ -810,7 +846,11 @@ const Chat = ({navigation, route}) => {
         scrollToBottom(true); // animate === true
         sendMessage("Dispatched");
         closeModal();
-        openAlert('Success', 'Order dispatched successfully');
+        setToast({
+            visible: true,
+            text: "Order dispatched successfully",        
+            type: "success",
+        })
     }
 
     // console.log(moment("today").format('DD MMMM, YYYY'));
@@ -834,7 +874,7 @@ const Chat = ({navigation, route}) => {
         }
     };
 
-    // 
+    // function to select a document from file manager
     const pickDocAsync = async () => {
         let result = await DocumentPicker.getDocumentAsync();
 
@@ -848,7 +888,7 @@ const Chat = ({navigation, route}) => {
         }
     };
 
-    // navugate to camera
+    // navigate to camera
     const navigateToCamera = () => {
         closeModal();
         Keyboard.dismiss();
@@ -861,18 +901,11 @@ const Chat = ({navigation, route}) => {
         })
     };
 
+    // const menu state
+    const [menuOpened, setMenuOpened] = useState(false);
+    
 
-
-    // close Menu function
-    const closeMenu = () => {
-        setMenu(prevMenu => {
-            return  {
-                ...prevMenu,
-                open: false
-            }
-        });
-    }
-
+    // function get right offset of menu
     const getRightPosition = (messageWidth) => {
         const menuWidth = 184;
         const horizontalPadding = 40;
@@ -883,6 +916,7 @@ const Chat = ({navigation, route}) => {
         return messageWidth + horizontalPadding/4;
     }
 
+    // function to get top offset of menu
     const getTopPosition = (messageHeight, messageOffset) => {
 
         // vertical padding in message container
@@ -914,27 +948,33 @@ const Chat = ({navigation, route}) => {
     }
     
     // open Menu function
-    const openMenu = (menuType, id) => {
-        if (menuType === "header") {
-            return setMenu({
-                open: true,
-                buttons: headerMenuButtons,
-            })
-        }
+    const openMenu = () => {
+        
 
-        const targetMessage = messagesRefs.current.find(message => message.id === id);
+        // const targetMessage = messagesRefs.current.find(message => message.id === id);
 
         // console.log(targetMessage);
-        setMenu({
-            open: true,
-            buttons: messageMenuButtons,
-            top: getTopPosition(targetMessage.height, targetMessage.y),
-            right: authData?.account_type === targetMessage.account_type ? getRightPosition(targetMessage.width) : undefined,
-            left: authData?.account_type !== targetMessage.account_type ? getRightPosition(targetMessage.width) : undefined,
-            hideTouchableBackground: false,
-        });
+        // setMenu({
+        //     open: true,
+        //     buttons: messageMenuButtons,
+        //     top: getTopPosition(targetMessage.height, targetMessage.y),
+        //     right: authData?.account_type === targetMessage.account_type ? getRightPosition(targetMessage.width) : undefined,
+        //     left: authData?.account_type !== targetMessage.account_type ? getRightPosition(targetMessage.width) : undefined,
+        //     hideTouchableBackground: false,
+        // });
     }
 
+    // close Menu function
+    const closeMenu = () => {
+        // setMenu(prevMenu => {
+        //     return  {
+        //         ...prevMenu,
+        //         open: false
+        //     }
+        // });
+    }
+
+    // function to handle copying of a chat link
     const handleCopyChatLink = () => {
         copyToClipboard("abc123");
         closeMenu();
@@ -957,12 +997,19 @@ const Chat = ({navigation, route}) => {
         },
     ];
 
-    const headerMenuButtons = [
+    // buttons in header menu
+    const headerMenuButtons =  [
         {
             id: 1,
-            icon: <OrderDetailsIcon />,
-            text: "Order details",
-            onPress: () => navigation.navigate("OrderDetails", {order_id: "abc123"}),
+            icon:<OrderDetailsIcon />,
+            text: (() => {
+                if (chatType === "Stock Transfer") return "Transfer Details";
+                return chatType + " Details";
+            }).call(),
+            onPress: () => {
+                if (chatType === "Stock Transfer") return navigation.navigate("TransferDetails", { chatId: chatId });
+                return navigation.navigate(`${chatType}Details`, { chatId: chatId });
+            },
         },
         {
             id: 2,
@@ -971,12 +1018,6 @@ const Chat = ({navigation, route}) => {
             onPress: handleCopyChatLink,
         },
     ];
-
-    // const menu state
-    const [menu, setMenu] = useState({
-        open: false,
-        buttons: null,
-    });
 
     // menu ref
     const menuRef = useRef(null)
@@ -990,587 +1031,589 @@ const Chat = ({navigation, route}) => {
     const [scrollOffset, setScrollOffset] = useState(null);
     // console.log(scrollOffset);
 
-    return (
-        <>
-            {/* chat header */}
-            <View style={style.headerContainer}>
-                {/* header component */}
-                <Header
-                    navigation={navigation}
-                    stackName={ChatHeader}
-                    component={true}
-                    iconFunction={() => openMenu("header")}
-                    icon={<MenuIcon />}
-                    removeBackArrow={true}
-                    inlineArrow={true}
-                    backgroundColor={white}
-                />
-                {/* status indicator */}
-                {status !== "Pending" && (
-                    <View style={style.statusIndicator}>
-                        <Text style={style.statusChatType}>
-                            {chatType} status:&nbsp;
-                            <Text
-                                style={[
-                                    status === "Delivered" && style.deliveredStatus,
-                                    status === "Cancelled" && style.cancelledStatus,
-                                    status === "Dispatched" && style.dispatchedStatus,
-                                    status === "rescheduled" && style.rescheduledStatus,
-                                ]}
-                            >
-                                {status}
-                            </Text>
+    return (<>
+        {/* chat header */}
+        <View style={style.headerContainer}>
+            {/* header component */}
+            <Header
+                navigation={navigation}
+                stackName={ChatHeader}
+                component={true}
+                iconFunction={() => setMenuOpened(prevState => !prevState)}
+                icon={<MenuIcon />}
+                removeBackArrow={true}
+                inlineArrow={true}
+                backgroundColor={white}
+            />
+            {/* status indicator */}
+            {status !== "Pending" && (
+                <View style={style.statusIndicator}>
+                    <Text style={style.statusChatType}>
+                        {chatType} status:&nbsp;
+                        <Text
+                            style={[
+                                status === "Delivered" && style.deliveredStatus,
+                                status === "Cancelled" && style.cancelledStatus,
+                                status === "Dispatched" && style.dispatchedStatus,
+                                status === "rescheduled" && style.rescheduledStatus,
+                            ]}
+                        >
+                            {status}
                         </Text>
-                        <Text style={style.statusDateTime}>
-                            3:28 pm, Jan 09, 2024
-                        </Text>
-                    </View>
-                )}
-            </View>
-
-            {/* out of stock indicator */}
-            { emptyStock && (
-                <View style={style.indicatorWrapper}>
-                    <Indicator 
-                        type={"Cancelled"}
-                        text={"Out of stock"}
-                    />
+                    </Text>
+                    <Text style={style.statusDateTime}>
+                        3:28 pm, Jan 09, 2024
+                    </Text>
                 </View>
             )}
+        </View>
 
-            {/* chat scrollable view */}
-            <ScrollView 
-                ref={scrollViewRef}
-                onLayout={() => scrollToBottom(false)}
-                showsVerticalScrollIndicator={true}
-                style={style.scrollView}
-                contentContainerStyle={style.scrollViewContent}
-                keyboardShouldPersistTaps="always"
-                onScroll={({nativeEvent}) => {
-                    closeMenu();
-                    setScrollOffset(nativeEvent.contentOffset.y)
-                }}
-            >
-                {/* menu */}
-                {menu.open && (
-                    <Menu
-                        closeMenu={closeMenu}
-                        menuButtons={menu?.buttons}
-                        menuRef={menuRef}
-                        top={menu?.top}
-                        right={menu?.right}
-                        left={menu?.left}
-                        hideTouchableBackground={menu?.hideTouchableBackground}
-                    />
-                )}
-                {/* message overlay */}
+        {/* menu component */}
+        {menuOpened && (
+            <Menu
+                closeMenu={() => setMenuOpened(false)}
+                menuButtons={headerMenuButtons}
+                // top={menu?.top}
+                // right={menu?.right}
+                // left={menu?.left}
+                // hideTouchableBackground={menu?.hideTouchableBackground}
+            />
+        )}
+
+        {/* out of stock indicator */}
+        { emptyStock && (
+            <View style={style.indicatorWrapper}>
+                <Indicator 
+                    type={"Cancelled"}
+                    text={"Out of stock"}
+                />
+            </View>
+        )}
+
+        {/* chat scrollable view */}
+        <ScrollView 
+            ref={scrollViewRef}
+            onLayout={() => scrollToBottom(false)}
+            showsVerticalScrollIndicator={true}
+            style={style.scrollView}
+            contentContainerStyle={style.scrollViewContent}
+            keyboardShouldPersistTaps="always"
+            onScroll={({nativeEvent}) => {
+                closeMenu();
+                setScrollOffset(nativeEvent.contentOffset.y)
+            }}
+        >
+            {/* menu */}
+            {/* {menu.open && (
+                <Menu
+                    closeMenu={closeMenu}
+                    menuButtons={menu?.buttons}
+                    menuRef={menuRef}
+                    top={menu?.top}
+                    right={menu?.right}
+                    left={menu?.left}
+                    hideTouchableBackground={menu?.hideTouchableBackground}
+                />
+            )} */}
+
+            {/* message overlay */}
+            {/* shows when you click a repplied message and it auto scrolls to that message */}
+            <View 
+                style={[
+                    style.messageOverlay,
+                    {
+                        top: messageOverlay.top,
+                        height: messageOverlay.height,
+                        pointerEvents: 'none',
+                    }
+                ]} 
+            />
+            <View style={style.container}>
+                {/* fixed header container */}
+                {/* chat scroll view */}
                 <View 
                     style={[
-                        style.messageOverlay,
-                        {
-                            top: messageOverlay.top,
-                            height: messageOverlay.height,
-                            pointerEvents: 'none',
-                        }
-                    ]} 
-                />
-                <View style={style.container}>
-                    {/* fixed header container */}
-                    {/* chat scroll view */}
-                    <View 
-                        style={[
-                            style.messagesWrapper,
-                            status !== "Pending" && {paddingTop: 94},
-                        ]}
-                    >
-                        <View style={style.dateWrapper}>
-                            <Text style={style.dateText}>{"Friday July 7, 2023"}</Text>
-                        </View>
-
-                        <View style={[style.editButtonWrapper, authData?.account_type === "Merchant" && {justifyContent: 'flex-end'}]}>
-                            <TouchableOpacity 
-                                style={style.editButton}
-                                onPress={handleEditOrder}
-                            >
-                                <EditIcon />
-                                <Text style={style.editButtonText}>Edit Order</Text>
-                            </TouchableOpacity>
-                        </View>
-                        
-
-                        {messages.map((message, index) => {
-                            return (
-                                <MessageContainer
-                                    key={message.id}
-                                    index={index}
-                                    messagesRefs={messagesRefs}
-                                    copyNumberAlert={openNewMessageAlert}
-                                    message={message}
-                                    messages={messages}
-                                    products={products}
-                                    handleOnPressPhoneNumber={handleOnPressPhoneNumber}
-                                    handleScrollToComponent={handleScrollToComponent}
-                                    setReplying={setReplying}
-                                    textInputRef={textInputRef}
-                                    navigation={navigation}
-                                    openMenu={openMenu}
-                                />
-                            );
-                        })}
-
+                        style.messagesWrapper,
+                        status !== "Pending" && {paddingTop: 94},
+                    ]}
+                >
+                    <View style={style.dateWrapper}>
+                        <Text style={style.dateText}>{"Friday July 7, 2023"}</Text>
                     </View>
-                </View>
-            </ScrollView>
 
-            {/* text field wrapper */}
-            <View style={style.textFieldWrapper}>
-                { !replying && !uploading && (
-                    <View style={style.actionButtonsWrapper}>
-                        { chatType === "Order" && orderButtons.map((button) => {
-                            if (authData?.account_type === "Merchant"){
-                                if (button.id === 1 || button.id === 2){
-                                    return <ActionButton
-                                        key={button.id}
-                                        name={button.name}
-                                        onPress={button.onPress}
-                                    />
-                                }
-                            } else {
+                    <View style={[style.editButtonWrapper, authData?.account_type === "Merchant" && {justifyContent: 'flex-end'}]}>
+                        <TouchableOpacity 
+                            style={style.editButton}
+                            onPress={() => openModal("Edit order")}
+                        >
+                            <EditIcon />
+                            <Text style={style.editButtonText}>Edit Order</Text>
+                        </TouchableOpacity>
+                    </View>
+                    
+
+                    {messages.map((message, index) => {
+                        return (
+                            <MessageContainer
+                                key={message.id}
+                                index={index}
+                                messagesRefs={messagesRefs}
+                                copyNumberAlert={openNewMessageAlert}
+                                message={message}
+                                messages={messages}
+                                products={products}
+                                handleOnPressPhoneNumber={handleOnPressPhoneNumber}
+                                handleScrollToComponent={handleScrollToComponent}
+                                setReplying={setReplying}
+                                textInputRef={textInputRef}
+                                navigation={navigation}
+                                openMenu={() => {}}
+                            />
+                        );
+                    })}
+
+                </View>
+            </View>
+        </ScrollView>
+
+        {/* text field wrapper */}
+        <View style={style.textFieldWrapper}>
+            { !replying && !uploading && (
+                <View style={style.actionButtonsWrapper}>
+                    { chatType === "Order" && orderButtons.map((button) => {
+                        if (authData?.account_type === "Merchant"){
+                            if (button.id === 1 || button.id === 2){
                                 return <ActionButton
                                     key={button.id}
                                     name={button.name}
                                     onPress={button.onPress}
                                 />
                             }
-                        })}
-
-                        { chatType === "Waybill" && authData?.account_type === "Logistics" && (
-                            <ActionButton 
-                                name={waybillButton.name}
-                                onPress={waybillButton.onPress}
+                        } else {
+                            return <ActionButton
+                                key={button.id}
+                                name={button.name}
+                                onPress={button.onPress}
                             />
-                        )}
-                    </View>
-                )}
-                { replying && ReplyingMessageInput(replying) }
-                { uploading && uploadingMesaageInput(uploading) }
-                <View style={style.inputGroupWrapper}>
-                    <View style={style.textInputContainer}>
-                        <TextInput 
-                            style={style.textInput}
-                            placeholder="Write a message..."
-                            placeholderTextColor={bodyText}
-                            multiline={true}
-                            numberOfLines={1}
-                            onChangeText={updateTextInput}
-                            defaultValue={textInput}
-                            ref={textInputRef}
+                        }
+                    })}
+
+                    { chatType === "Waybill" && authData?.account_type === "Logistics" && (
+                        <ActionButton 
+                            name={waybillButton.name}
+                            onPress={waybillButton.onPress}
                         />
-                        <TouchableOpacity
-                            style={[style.attachButton, style.fixedButton]}
-                            onPress={() => {
-                                openModal("")
-                            }}
-                        >
-                            <PaperClipIcon />
-                        </TouchableOpacity>
-                    </View>
+                    )}
+                </View>
+            )}
+            { replying && ReplyingMessageInput(replying) }
+            { uploading && uploadingMessageInput(uploading) }
+            <View style={style.inputGroupWrapper}>
+                <View style={style.textInputContainer}>
+                    <TextInput 
+                        style={style.textInput}
+                        placeholder="Write a message..."
+                        placeholderTextColor={bodyText}
+                        multiline={true}
+                        numberOfLines={1}
+                        onChangeText={updateTextInput}
+                        defaultValue={textInput}
+                        ref={textInputRef}
+                    />
                     <TouchableOpacity
-                        style={style.sendButton}
-                        onPress={() => sendMessage("message")}
+                        style={[style.attachButton, style.fixedButton]}
+                        onPress={() => {
+                            openModal("")
+                        }}
                     >
-                        <SendIcon />
+                        <PaperClipIcon />
                     </TouchableOpacity>
                 </View>
+                <TouchableOpacity
+                    style={style.sendButton}
+                    onPress={() => sendMessage("message")}
+                >
+                    <SendIcon />
+                </TouchableOpacity>
             </View>
+        </View>
 
-            {/* calendar */}
-            <CalendarSheet 
-                closeCalendar={closeCalendar}
-                setDate={setRescheduleDate}
-                disableActionButtons={true}
-                snapPointsArray={["55%"]}
-                minDate={tomorrow}
-                calendarRef={calendarSheetRef} 
-            />
-            
-            {/* Bottom sheet component */}
-            <CustomBottomSheet 
-                bottomSheetModalRef={bottomSheetRef}
-                closeModal={closeModal}
-                snapPointsArray={modal.snapPoints}
-                autoSnapAt={0}
-                sheetTitle={modal.type}
-                topContentPadding={8}
-            >
-                {/* edit order */}
-                { modal.type === "Edit order" && (
-                    <>
-                        <BottomSheetScrollView showsVerticalScrollIndicator={false} contentContainerStyle={style.modalWrapper}>
-                            <View style={style.modalContent}>
-                                <Text style={style.editModalParagragh}>
-                                    We all make mistakes, use the available fields to make to edit your order
-                                </Text>
-                                {/* Selected Products Container */}
-                                <View style={style.productsWrapper}>
-                                    <View style={style.productsHeading}>
-                                        <Text style={style.producPlaceholder}>Products ({products.length})</Text>
-                                        <TouchableOpacity
-                                            onPress={() => openStackedModal("Products")}
-                                        >
-                                            <Text style={style.addProduct}>+Add Product</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                    { products.length !== 0 ? products.map((product) => (
+        {/* calendar */}
+        <CalendarSheet 
+            closeCalendar={closeCalendar}
+            setDate={setRescheduleDate}
+            disableActionButtons={true}
+            snapPointsArray={["55%"]}
+            minDate={tomorrow}
+            calendarRef={calendarSheetRef} 
+        />
+        
+        {/* Bottom sheet component */}
+        <CustomBottomSheet 
+            bottomSheetModalRef={bottomSheetRef}
+            closeModal={closeModal}
+            snapPointsArray={modal.snapPoints}
+            autoSnapAt={0}
+            sheetTitle={modal.type}
+            topContentPadding={8}
+        >
+            {/* edit order */}
+            { modal.type === "Edit order" && (<>
+                <BottomSheetScrollView showsVerticalScrollIndicator={false} contentContainerStyle={style.modalWrapper}>
+                    <View style={style.modalContent}>
+                        <Text style={style.editModalParagragh}>
+                            We all make mistakes, use the available fields to make to edit your order
+                        </Text>
+                        {/* Selected Products Container */}
+                        <View style={style.productsWrapper}>
+                            <View style={style.productsHeading}>
+                                <Text style={style.producPlaceholder}>Products ({products.length})</Text>
+                                <TouchableOpacity
+                                    onPress={() => openStackedModal("Products")}
+                                >
+                                    <Text style={style.addProduct}>+Add Product</Text>
+                                </TouchableOpacity>
+                            </View>
+                            { products.length !== 0 ? products.map((product) => (
+                                // map through selected products
+                                <Product 
+                                    key={product.id} 
+                                    product={product} 
+                                    removeProduct={removeProduct}
+                                    increaseQuantity={increaseQuantity}
+                                    decreaseQuantity={decreaseQuantity}
+                                    invertColor={true}
+                                />
+                            )) : (
+                                // show no product selected component
+                                <View style={style.noProductWrapper}>
+                                    <Text style={style.noProductText}>
+                                        No product selected. Kindly add a new product 
+                                        or select one from your inventory
+                                    </Text>
+                                </View>
+                            )}
+                        </View>
+                        {/* select location */}
+                        <SelectInput
+                            label={"Location"}
+                            placeholder={"Location"}
+                            value={location.location}
+                            inputFor={"String"}
+                            onPress={() => {
+                                openStackedModal("Locations")
+                            }}
+                        />
+                        {/* price input fields */}
+                        <Input
+                            label={"Price"}
+                            placeholder={"Price"}
+                            adornment={"₦"}
+                            value={price ? price.toLocaleString() : ''}
+                            onChange={updatePrice}
+                            keyboardType={"numeric"}
+                            error={errorPrice}
+                            setError={setErrorPrice}
+                            
+                            />
+                        {/* charge input fields */}
+                        {authData?.account_type === "Logistics" && 
+                            <Input
+                                label={"Charge"}
+                                placeholder={"Charge"}
+                                adornment={"₦"}
+                                value={location.charge ? location.charge.toLocaleString() : ''}
+                                onChange={updateCharge}
+                                keyboardType={"numeric"}
+                                error={errorCharge}
+                                setError={setErrorCharge}
+                            />
+                        }
+                    </View>
+                </BottomSheetScrollView>
+                <CustomButton
+                    // secondaryButton={true}
+                    name={"Done"}
+                    shrinkWrapper={true}
+                    inactive={isAnyFieldEmpty}
+                    onPress={submitEditOrder}
+                    unpadded={true}
+                />
+            </>)}
+            {/* Reschedule order */}
+            { modal.type === "Reschedule order" && (
+                <>
+                    <BottomSheetScrollView contentContainerStyle={style.modalWrapper}>
+                        <View style={style.modalContent}>
+                            <Text style={style.editModalParagragh}>
+                                Kindly use the form to reschedule your order to a later date
+                            </Text>
+                            {/* Selected Products Container */}
+                            <View style={style.productsWrapper}>
+                                <View style={style.productsHeading}>
+                                    <Text style={style.producPlaceholder}>Products ({products.length})</Text>
+                                </View>
+                                <View style={style.productsDetailsContainer}>
+                                    { products.map((product) => (
                                         // map through selected products
-                                        <Product 
-                                            key={product.id} 
-                                            product={product} 
-                                            removeProduct={removeProduct}
-                                            increaseQuantity={increaseQuantity}
-                                            decreaseQuantity={decreaseQuantity}
-                                            invertColor={true}
+                                        <MerchantProduct
+                                            key={product.id}
+                                            productName={product.product_name}
+                                            quantity={product.quantity}
+                                            imageUrl={product.imageUrl}
+                                            summary={true}
+                                            containerStyle={{
+                                                backgroundColor: background,
+                                                paddingVertical: 0,
+                                            }}                                            
                                         />
-                                    )) : (
-                                        // show no product selected component
-                                        <View style={style.noProductWrapper}>
-                                            <Text style={style.noProductText}>
-                                                No product selected. Kindly add a new product 
-                                                or select one from your inventory
-                                            </Text>
-                                        </View>
-                                    )}
+                                    ))}
                                 </View>
-                                {/* select location */}
-                                <SelectInput
-                                    label={"Location"}
-                                    placeholder={"Location"}
-                                    value={location.location}
-                                    inputFor={"String"}
-                                    onPress={() => {
-                                        openStackedModal("Locations")
-                                    }}
-                                />
-                                {/* price input fields */}
-                                <Input
-                                    label={"Price"}
-                                    placeholder={"Price"}
-                                    adornment={"₦"}
-                                    value={price ? price.toLocaleString() : ''}
-                                    onChange={updatePrice}
-                                    keyboardType={"numeric"}
-                                    error={errorPrice}
-                                    setError={setErrorPrice}
-                                    
-                                    />
-                                {/* charge input fields */}
-                                <Input
-                                    label={"Charge"}
-                                    placeholder={"Charge"}
-                                    adornment={"₦"}
-                                    value={location.charge ? location.charge.toLocaleString() : ''}
-                                    onChange={updateCharge}
-                                    keyboardType={"numeric"}
-                                    error={errorCharge}
-                                    setError={setErrorCharge}
-                                />
-                                
                             </View>
-                        </BottomSheetScrollView>
-                        <CustomButton
-                            // secondaryButton={true}
-                            name={"Done"}
-                            shrinkWrapper={true}
-                            inactive={isAnyFieldEmpty}
-                            onPress={submitEditOrder}
-                            unpadded={true}
-                        />
-                    </>
-                )}
-                {/* Reschedule order */}
-                { modal.type === "Reschedule order" && (
-                    <>
-                        <BottomSheetScrollView contentContainerStyle={style.modalWrapper}>
-                            <View style={style.modalContent}>
-                                <Text style={style.editModalParagragh}>
-                                    Kindly use the form to reschedule your order to a later date
-                                </Text>
-                                {/* Selected Products Container */}
-                                <View style={style.productsWrapper}>
-                                    <View style={style.productsHeading}>
-                                        <Text style={style.producPlaceholder}>Products ({products.length})</Text>
-                                    </View>
-                                    <View style={style.productsDetailsContainer}>
-                                        { products.map((product) => (
-                                            // map through selected products
-                                            <MerchantProduct
-                                                key={product.id}
-                                                productName={product.product_name}
-                                                quantity={product.quantity}
-                                                imageUrl={product.imageUrl}
-                                                summary={true}
-                                                containerStyle={{
-                                                    backgroundColor: background,
-                                                    paddingVertical: 0,
-                                                }}                                            
-                                            />
-                                        ))}
-                                    </View>
-                                </View>
-                                {/* Reschedule date */}
-                                <SelectInput 
-                                    label={"Reschedule Date"} 
-                                    placeholder={"DD MMMM, YYYY"} 
-                                    value={rescheduleDate}
-                                    onPress={openCalendar}
-                                    icon={<CalendarIcon />}
-                                    active={false}
-                                    inputFor={"Date"}
-                                />
+                            {/* Reschedule date */}
+                            <SelectInput 
+                                label={"Reschedule Date"} 
+                                placeholder={"DD MMMM, YYYY"} 
+                                value={rescheduleDate}
+                                onPress={openCalendar}
+                                icon={<CalendarIcon />}
+                                active={false}
+                                inputFor={"Date"}
+                            />
 
-                                <Input
-                                    multiline={true}
-                                    label={"Reason (optional)"}
-                                    placeholder={"Tell us what happened..."}
-                                    value={reason}
-                                    onChange={setReason}
-                                    height={100}
-                                    textAlign={"top"}
-                                    error={errorReason}
-                                    setError={setErrorReason}
-                                />
+                            <Input
+                                multiline={true}
+                                label={"Reason (optional)"}
+                                placeholder={"Tell us what happened..."}
+                                value={reason}
+                                onChange={setReason}
+                                height={100}
+                                textAlign={"top"}
+                                error={errorReason}
+                                setError={setErrorReason}
+                            />
 
-                                
-                            </View>
-                        </BottomSheetScrollView>
-                        <CustomButton
-                            // secondaryButton={true}
-                            name={"Done"}
-                            shrinkWrapper={true}
-                            inactive={!rescheduleDate ? true : false}
-                            onPress={submitRescheduledOrder}
-                            unpadded={true}
-                        />
-                    </>
-                )}
-                {/* cancel order */}
-                { modal.type === "Cancel order" && (
-                    <>
-                        <BottomSheetScrollView contentContainerStyle={style.modalWrapper}>
-                            <View style={style.modalContent}>
-                                <Text style={style.editModalParagragh}>
-                                    Kindly use the form to cancel your order
-                                </Text>
-                                {/* Selected Products Container */}
-                                <View style={style.productsWrapper}>
-                                    <View style={style.productsHeading}>
-                                        <Text style={style.producPlaceholder}>Products ({products.length})</Text>
-                                    </View>
-                                    <View style={style.productsDetailsContainer}>
-                                        { products.map((product) => (
-                                            // map through selected products
-                                            <MerchantProduct
-                                                key={product.id}
-                                                productName={product.product_name}
-                                                quantity={product.quantity}
-                                                imageUrl={product.imageUrl}
-                                                summary={true}
-                                                containerStyle={{
-                                                    backgroundColor: background,
-                                                    paddingVertical: 0,
-                                                }}
-                                            />
-                                        ))}
-                                    </View>
-                                </View>
-                                <Input
-                                    multiline={true}
-                                    label={"Reason"}
-                                    placeholder={"Tell us what happened..."}
-                                    value={reason}
-                                    onChange={setReason}
-                                    height={100}
-                                    textAlign={"top"}
-                                    error={errorReason}
-                                    setError={setErrorReason}
-                                />
-
-                                
-                            </View>
-                        </BottomSheetScrollView>
-                        <CustomButton
-                            // secondaryButton={true}
-                            name={"Done"}
-                            shrinkWrapper={true}
-                            inactive={!reason ? true : false}
-                            onPress={submitCancelledOrder}
-                            unpadded={true}
-                        />
-                    </>
-                )}
-                {/* cancel order */}
-                { modal.type === "Dispatch order" && (
-                    <>
-                        <BottomSheetScrollView contentContainerStyle={style.modalWrapper}>
-                            <View style={style.modalContent}>
-                                <Text style={style.editModalParagragh}>
-                                    Kindly review and confirm this action
-                                </Text>
-                                {/* Selected Products Container */}
-                                <View style={style.productsWrapper}>
-                                    <View style={style.productsHeading}>
-                                        <Text style={style.producPlaceholder}>Products ({products.length})</Text>
-                                    </View>
-                                    <View style={style.productsDetailsContainer}>
-                                        { products.map((product) => (
-                                            // map through selected products
-                                            <MerchantProduct
-                                                key={product.id}
-                                                productName={product.product_name}
-                                                quantity={product.quantity}
-                                                imageUrl={product.imageUrl}
-                                                summary={true}
-                                                containerStyle={{
-                                                    backgroundColor: background,
-                                                    paddingVertical: 0,
-                                                }}
-                                            />
-                                        ))}
-                                    </View>
-                                </View>
-                                <Input
-                                    multiline={true}
-                                    label={"Comments (optional)"}
-                                    placeholder={"Anything you would like to say?"}
-                                    value={reason}
-                                    onChange={setReason}
-                                    height={100}
-                                    textAlign={"top"}
-                                    error={errorReason}
-                                    setError={setErrorReason}
-                                />
-
-                                
-                            </View>
-                        </BottomSheetScrollView>
-                        <CustomButton
-                            // secondaryButton={true}
-                            name={"Done"}
-                            shrinkWrapper={true}
-                            onPress={submitDispatchedOrder}
-                            unpadded={true}
-                        />
-                    </>
-                )}
-                {/* onclick phone number */}
-                { modal.type === "Open with" && (
-                    <View style={style.uploadButtonsWrapper}>
-                        <TouchableOpacity
-                            style={style.uploadButton}
-                            onPress={dialPhoneNumber}
-                        >
-                            <View style={style.uploadIconWrapper}>
-                                <CallPrimaryIcon />
-                            </View>
-                            <Text style={style.uploadButtonText}>Call</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={style.uploadButton}
-                            onPress={sendSms}
-                        >
-                            <View style={style.uploadIconWrapper}>
-                                <SmsPrimaryIcon />
-                            </View>
-                            <Text style={style.uploadButtonText}>Sms</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={style.uploadButton}
-                            onPress={sendWhatsAppMessage}
-                        >
-                            <View style={style.uploadIconWrapper}>
-                                <WhatsAppIcon />
-                            </View>
-                            <Text style={style.uploadButtonText}>WhatsApp</Text>
-                        </TouchableOpacity>
-                    </View>   
-                )}
-                {/* onclick phone number */}
-                { modal.type === "" && (
-                    <View style={style.uploadButtonsWrapper}>
-                        <TouchableOpacity
-                            style={style.uploadButton}
-                            onPress={navigateToCamera}
-                        >
-                            <View style={style.uploadIconWrapper}>
-                                <CameraPrimaryLargeIcon />
-                            </View>
-                            <Text style={style.uploadButtonText}>Camera</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={style.uploadButton}
-                            onPress={pickImageAsync}
-                            >
-                            <View style={style.uploadIconWrapper}>
-                                <GalleryIcon />
-                            </View>
-                            <Text style={style.uploadButtonText}>Gallery</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={style.uploadButton}
-                            onPress={pickDocAsync}
-                        >
-                            <View style={style.uploadIconWrapper}>
-                                <DocumentIcon />
-                            </View>
-                            <Text style={style.uploadButtonText}>Document</Text>
-                        </TouchableOpacity>
-                    </View>   
-                )}
-            </CustomBottomSheet>
-
-            {/* bottom sheet to edit product and location, should have stack behaviour */}
-            <CustomBottomSheet 
-                bottomSheetModalRef={stackedSheetRef}
-                closeModal={closeStackedModal}
-                snapPointsArray={stackedModal.snapPoints}
-                autoSnapAt={0}
-                sheetTitle={stackedModal.type}
-                topContentPadding={8}
-                stacked={true}
-            >
-                {stackedModal.type === "Products" && (
-                    <AddProductsModalContent 
-                        addProducts={addProducts} selectedProducts={products}
+                            
+                        </View>
+                    </BottomSheetScrollView>
+                    <CustomButton
+                        // secondaryButton={true}
+                        name={"Done"}
+                        shrinkWrapper={true}
+                        inactive={!rescheduleDate ? true : false}
+                        onPress={submitRescheduledOrder}
+                        unpadded={true}
                     />
-                )}
+                </>
+            )}
+            {/* cancel order */}
+            { modal.type === "Cancel order" && (
+                <>
+                    <BottomSheetScrollView contentContainerStyle={style.modalWrapper}>
+                        <View style={style.modalContent}>
+                            <Text style={style.editModalParagragh}>
+                                Kindly use the form to cancel your order
+                            </Text>
+                            {/* Selected Products Container */}
+                            <View style={style.productsWrapper}>
+                                <View style={style.productsHeading}>
+                                    <Text style={style.producPlaceholder}>Products ({products.length})</Text>
+                                </View>
+                                <View style={style.productsDetailsContainer}>
+                                    { products.map((product) => (
+                                        // map through selected products
+                                        <MerchantProduct
+                                            key={product.id}
+                                            productName={product.product_name}
+                                            quantity={product.quantity}
+                                            imageUrl={product.imageUrl}
+                                            summary={true}
+                                            containerStyle={{
+                                                backgroundColor: background,
+                                                paddingVertical: 0,
+                                            }}
+                                        />
+                                    ))}
+                                </View>
+                            </View>
+                            <Input
+                                multiline={true}
+                                label={"Reason"}
+                                placeholder={"Tell us what happened..."}
+                                value={reason}
+                                onChange={setReason}
+                                height={100}
+                                textAlign={"top"}
+                                error={errorReason}
+                                setError={setErrorReason}
+                            />
 
-                {stackedModal.type === "Locations" && (
-                    <AddLocationModalContent 
-                        handleSelectedLocation={handleSelectedLocation}
+                            
+                        </View>
+                    </BottomSheetScrollView>
+                    <CustomButton
+                        // secondaryButton={true}
+                        name={"Done"}
+                        shrinkWrapper={true}
+                        inactive={!reason ? true : false}
+                        onPress={submitCancelledOrder}
+                        unpadded={true}
                     />
-                )}
-            </CustomBottomSheet>
+                </>
+            )}
+            {/* cancel order */}
+            { modal.type === "Dispatch order" && (
+                <>
+                    <BottomSheetScrollView contentContainerStyle={style.modalWrapper}>
+                        <View style={style.modalContent}>
+                            <Text style={style.editModalParagragh}>
+                                Kindly review and confirm this action
+                            </Text>
+                            {/* Selected Products Container */}
+                            <View style={style.productsWrapper}>
+                                <View style={style.productsHeading}>
+                                    <Text style={style.producPlaceholder}>Products ({products.length})</Text>
+                                </View>
+                                <View style={style.productsDetailsContainer}>
+                                    { products.map((product) => (
+                                        // map through selected products
+                                        <MerchantProduct
+                                            key={product.id}
+                                            productName={product.product_name}
+                                            quantity={product.quantity}
+                                            imageUrl={product.imageUrl}
+                                            summary={true}
+                                            containerStyle={{
+                                                backgroundColor: background,
+                                                paddingVertical: 0,
+                                            }}
+                                        />
+                                    ))}
+                                </View>
+                            </View>
+                            <Input
+                                multiline={true}
+                                label={"Comments (optional)"}
+                                placeholder={"Anything you would like to say?"}
+                                value={reason}
+                                onChange={setReason}
+                                height={100}
+                                textAlign={"top"}
+                                error={errorReason}
+                                setError={setErrorReason}
+                            />
 
-            {/* success alert to display on addproduct or edit product */}
-            { alert.show && (
-                <AlertNotice 
-                    type={alert.type}
-                    text={alert.text}
-                    closeAlert={closeAlert}
-                    show={alert.show}
+                            
+                        </View>
+                    </BottomSheetScrollView>
+                    <CustomButton
+                        // secondaryButton={true}
+                        name={"Done"}
+                        shrinkWrapper={true}
+                        onPress={submitDispatchedOrder}
+                        unpadded={true}
+                    />
+                </>
+            )}
+            {/* onclick phone number */}
+            { modal.type === "Open with" && (
+                <View style={style.uploadButtonsWrapper}>
+                    <TouchableOpacity
+                        style={style.uploadButton}
+                        onPress={dialPhoneNumber}
+                    >
+                        <View style={style.uploadIconWrapper}>
+                            <CallPrimaryIcon />
+                        </View>
+                        <Text style={style.uploadButtonText}>Call</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={style.uploadButton}
+                        onPress={sendSms}
+                    >
+                        <View style={style.uploadIconWrapper}>
+                            <SmsPrimaryIcon />
+                        </View>
+                        <Text style={style.uploadButtonText}>Sms</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={style.uploadButton}
+                        onPress={sendWhatsAppMessage}
+                    >
+                        <View style={style.uploadIconWrapper}>
+                            <WhatsAppIcon />
+                        </View>
+                        <Text style={style.uploadButtonText}>WhatsApp</Text>
+                    </TouchableOpacity>
+                </View>   
+            )}
+            {/* onclick phone number */}
+            { modal.type === "" && (
+                <View style={style.uploadButtonsWrapper}>
+                    <TouchableOpacity
+                        style={style.uploadButton}
+                        onPress={navigateToCamera}
+                    >
+                        <View style={style.uploadIconWrapper}>
+                            <CameraPrimaryLargeIcon />
+                        </View>
+                        <Text style={style.uploadButtonText}>Camera</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={style.uploadButton}
+                        onPress={pickImageAsync}
+                        >
+                        <View style={style.uploadIconWrapper}>
+                            <GalleryIcon />
+                        </View>
+                        <Text style={style.uploadButtonText}>Gallery</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={style.uploadButton}
+                        onPress={pickDocAsync}
+                    >
+                        <View style={style.uploadIconWrapper}>
+                            <DocumentIcon />
+                        </View>
+                        <Text style={style.uploadButtonText}>Document</Text>
+                    </TouchableOpacity>
+                </View>   
+            )}
+        </CustomBottomSheet>
+
+        {/* bottom sheet to edit product and location, should have stack behaviour */}
+        <CustomBottomSheet 
+            bottomSheetModalRef={stackedSheetRef}
+            closeModal={closeStackedModal}
+            snapPointsArray={stackedModal.snapPoints}
+            autoSnapAt={0}
+            sheetTitle={stackedModal.type}
+            topContentPadding={8}
+            stacked={true}
+        >
+            {stackedModal.type === "Products" && (
+                <AddProductsModalContent 
+                    addProducts={addProducts} selectedProducts={products}
                 />
             )}
 
-            {/* Alert to display whena  new order or waybill is created */}
-            { newChat.open && (
-                <AlertNewChat 
-                    show={newChat.show}
-                    text={type + " successfully created"}
-                    copyNumberAlert={newChat.copyAlert}
+            {stackedModal.type === "Locations" && (
+                <AddLocationModalContent 
+                    handleSelectedLocation={handleSelectedLocation}
                 />
             )}
-        </>
-    );
+        </CustomBottomSheet>
+
+        {/* Alert to display whena  new order or waybill is created */}
+        { newChat.open && (
+            <AlertNewChat 
+                show={newChat.show}
+                text={type + " successfully created"}
+                copyNumberAlert={newChat.copyAlert}
+            />
+        )}
+
+    </>);
 }
 
 const style = StyleSheet.create({

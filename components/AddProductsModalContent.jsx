@@ -19,28 +19,28 @@ const AddProductsModalContent = ({addProducts, selectedProducts, action}) => {
         {
             id: 1,
             product_name: "Clarks Shoe",
-            imageUrl: require("../assets/images/Clarks.jpg"),
+            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/products%2FClarks.jpg?alt=media&token=70431e2c-fbcd-4e1c-9cf3-3d35861f98d3',
             quantity: 1,
             checked: false
         },
         {
             id: 2,
             product_name: "Pheonix Sneakers",
-            imageUrl: require("../assets/images/sneakers.png"),
+            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/products%2Fsneakers.png?alt=media&token=fbb14f47-c2b7-4d2a-b54a-8485ccf7a648',
             quantity: 1,
             checked: false,
         },
         {
             id: 3,
             product_name: "Timberland Shoe",
-            imageUrl: require("../assets/images/Timberland.jpg"),
+            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/products%2FTimberland.jpg?alt=media&token=29480738-8990-45c9-9b74-b2d24c0fa722',
             quantity: 1,
             checked: false
         },
         {
             id: 4,
-            product_name: "Chaos Watch",
-            imageUrl: require("../assets/images/Chaos-Window-Watch.jpg"),
+            product_name: "Perfectly Useless Morning Watch",
+            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/products%2Fperfectly-useless-mornig-watch.png?alt=media&token=edb35f3a-deb6-498b-9c94-d9392745442c',
             quantity: 1,
             checked: false
         },
@@ -48,14 +48,14 @@ const AddProductsModalContent = ({addProducts, selectedProducts, action}) => {
             id: 5,
             product_name: "Maybach Sunglasses",
             quantity: 1,
-            imageUrl: require("../assets/images/maybach-sunglasses.png"),
+            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/products%2Fmaybach-sunglasses.jpg?alt=media&token=95200745-ada8-4787-9779-9d00c56a18a5',
             checked: false,
         },
         {
             id: 6,
             product_name: "Accurate Watch",
             quantity: 2,
-            imageUrl: require("../assets/images/accurate-watch.png"),
+            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/products%2Faccurate-watch.png?alt=media&token=4330bcd1-e843-434c-97cb-bf84c49b82b0',
             checked: false,
         },
     ];
