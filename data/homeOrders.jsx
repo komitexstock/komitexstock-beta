@@ -17,7 +17,6 @@ export const homeOrders = [
         id: "abc123",
         price: 50000,
         status: "Delivered",
-        imageUrl: '../assets/images/komitex.png',
         newMessage: true,
         logistics: {
             business_name: "Komitex Logistics",
@@ -60,7 +59,6 @@ export const homeOrders = [
         id: "def456",
         price: 13000,
         status: "Pending",
-        imageUrl: '../assets/images/fedex.png',
         newMessage: false,
         logistics: {
             business_name: "Amazon Logistics",
@@ -82,7 +80,6 @@ export const homeOrders = [
         id: "ghi789",
         price: 14000,
         status: "Dispatched",
-        imageUrl: '../assets/images/komitex.png',
         newMessage: true,
         logistics: {
             business_name: "Lasership",
@@ -104,7 +101,6 @@ export const homeOrders = [
         id: "mno345",
         price: 16000,
         status: "Cancelled",
-        imageUrl: '../assets/images/dhl.png',
         newMessage: true,
         logistics: {
             business_name: "DHL",

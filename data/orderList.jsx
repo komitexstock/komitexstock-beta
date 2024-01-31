@@ -11,9 +11,14 @@ export const orderList = [
         datetime: "2023-03-15 09:30",
         id: "abc123",
         price: 15000,
-        logistics: "Komitex",
-        status: "Delivered",
-        imageUrl: '../assets/images/komitex.png',
+        logistics: {
+            business_name: "Komitex Logistics",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fkomitex.png?alt=media&token=a8039272-66b6-4e24-8ab1-a4dfd40503f8&_gl=1*xpkuw*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYwMTguNjAuMC4w"
+        },
+        merchant: {
+            business_name: "Style Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fstyle_bazaar.png?alt=media&token=b5be5c42-901a-4d49-bb15-a401b630f8a1&_gl=1*l5029i*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYxNDkuMjkuMC4w"
+        },        status: "Delivered",
         newMessage: true,
     },
     {
@@ -28,8 +33,14 @@ export const orderList = [
         id: "def456",
         price: 13000,
         status: "Pending",
-        logistics: "Fedex",
-        imageUrl: '../assets/images/fedex.png',
+        logistics: {
+            business_name: "Lasership",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Flasership.png?alt=media&token=803e763b-63e7-4c57-ab6e-beb2a9c35e54&_gl=1*1hxhx8b*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYzNDguNjAuMC4w"
+        },
+        merchant: {
+            business_name: "Eco Savvy Emporium Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Feco_savvy_emporium.png?alt=media&token=c4985c1d-c6f0-48f7-b744-4b030851d53a&_gl=1*j2ttmz*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYzODAuMjguMC4w"
+        },
         newMessage: true,
     },
     {
@@ -43,8 +54,14 @@ export const orderList = [
         id: "ghi789",
         price: 14000,
         status: "Dispatched",
-        logistics: "Komitex",
-        imageUrl: '../assets/images/komitex.png',
+        logistics: {
+            business_name: "Lasership",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Flasership.png?alt=media&token=803e763b-63e7-4c57-ab6e-beb2a9c35e54&_gl=1*1hxhx8b*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYzNDguNjAuMC4w"
+        },
+        merchant: {
+            business_name: "Eco Savvy Emporium Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Feco_savvy_emporium.png?alt=media&token=c4985c1d-c6f0-48f7-b744-4b030851d53a&_gl=1*j2ttmz*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYzODAuMjguMC4w"
+        },
         newMessage: true,
     },
     {
@@ -58,8 +75,14 @@ export const orderList = [
         id: "mno345",
         price: 16000,
         status: "Delivered",
-        logistics: "DHL",
-        imageUrl: '../assets/images/dhl.png',
+        logistics: {
+            business_name: "Amazon Logistics",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Famazon.png?alt=media&token=7941fa73-daa6-4840-9ed8-96371d4b67a6"
+        },
+        merchant: {
+            business_name: "Mega Enterpise",
+            banner_image: null,
+        },
         newMessage: true,
     },
     {
@@ -73,8 +96,14 @@ export const orderList = [
         id: "pqr678",
         price: 12000,
         logistics: "UPS",
-        status: "Rescheduled",
-        imageUrl: '../assets/images/ups.png',
+        logistics: {
+            business_name: "Amazon Logistics",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Famazon.png?alt=media&token=7941fa73-daa6-4840-9ed8-96371d4b67a6"
+        },
+        merchant: {
+            business_name: "Mega Enterpise",
+            banner_image: null,
+        },
         newMessage: false,
     },
     {
@@ -89,8 +118,14 @@ export const orderList = [
         id: "stu901",
         price: 25000,
         status: "Delivered",
-        logistics: "Komitex",
-        imageUrl: '../assets/images/komitex.png',
+        logistics: {
+            business_name: "Komitex Logistics",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fkomitex.png?alt=media&token=a8039272-66b6-4e24-8ab1-a4dfd40503f8&_gl=1*xpkuw*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYwMTguNjAuMC4w"
+        },
+        merchant: {
+            business_name: "Style Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fstyle_bazaar.png?alt=media&token=b5be5c42-901a-4d49-bb15-a401b630f8a1&_gl=1*l5029i*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYxNDkuMjkuMC4w"
+        },        
         newMessage: false,
     },
     {
@@ -103,9 +138,15 @@ export const orderList = [
         datetime: "2023-04-01 09:45",
         id: "vwx234",
         price: 18000,
-        logistics: "Fedex",
         status: "Pending",
-        imageUrl: '../assets/images/fedex.png',
+        logistics: {
+            business_name: "OnTrac",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fontrac.png?alt=media&token=67e52ec4-51e3-4032-a6b7-8f9533e1a7b6"
+        },
+        merchant: {
+            business_name: "Eco Savvy Emporium Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Feco_savvy_emporium.png?alt=media&token=c4985c1d-c6f0-48f7-b744-4b030851d53a&_gl=1*j2ttmz*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYzODAuMjguMC4w"
+        },
         newMessage: false,
     },
     {
@@ -118,9 +159,14 @@ export const orderList = [
         datetime: "2023-05-21 15:30",
         id: "yz0123",
         price: 19000,
-        logistics: "Komitex",
-        status: "Dispatched",
-        imageUrl: '../assets/images/komitex.png',
+        logistics: {
+            business_name: "Komitex Logistics",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fkomitex.png?alt=media&token=a8039272-66b6-4e24-8ab1-a4dfd40503f8&_gl=1*xpkuw*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYwMTguNjAuMC4w"
+        },
+        merchant: {
+            business_name: "Style Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fstyle_bazaar.png?alt=media&token=b5be5c42-901a-4d49-bb15-a401b630f8a1&_gl=1*l5029i*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYxNDkuMjkuMC4w"
+        },        status: "Dispatched",
         newMessage: false,
     },
     {
@@ -134,8 +180,14 @@ export const orderList = [
         id: "bcd345",
         price: 22000,
         status: "Cancelled",
-        logistics: "DHL",
-        imageUrl: '../assets/images/dhl.png',
+        logistics: {
+            business_name: "OnTrac",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fontrac.png?alt=media&token=67e52ec4-51e3-4032-a6b7-8f9533e1a7b6"
+        },
+        merchant: {
+            business_name: "Eco Savvy Emporium Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Feco_savvy_emporium.png?alt=media&token=c4985c1d-c6f0-48f7-b744-4b030851d53a&_gl=1*j2ttmz*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYzODAuMjguMC4w"
+        },
         newMessage: false,
     },
     {
@@ -149,8 +201,14 @@ export const orderList = [
         id: "efg567",
         price: 28000,
         status: "Delivered",
-        logistics: "UPS",
-        imageUrl: '../assets/images/ups.png',
+        logistics: {
+            business_name: "OnTrac",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fontrac.png?alt=media&token=67e52ec4-51e3-4032-a6b7-8f9533e1a7b6"
+        },
+        merchant: {
+            business_name: "Eco Savvy Emporium Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Feco_savvy_emporium.png?alt=media&token=c4985c1d-c6f0-48f7-b744-4b030851d53a&_gl=1*j2ttmz*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYzODAuMjguMC4w"
+        },
         newMessage: false,
     },
     {
@@ -163,9 +221,14 @@ export const orderList = [
         datetime: "2023-04-25 16:15",
         id: "ghi678",
         price: 20000,
-        logistics: "Komitex",
-        status: "Rescheduled",
-        imageUrl: '../assets/images/komitex.png',
+        logistics: {
+            business_name: "Komitex Logistics",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fkomitex.png?alt=media&token=a8039272-66b6-4e24-8ab1-a4dfd40503f8&_gl=1*xpkuw*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYwMTguNjAuMC4w"
+        },
+        merchant: {
+            business_name: "Style Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fstyle_bazaar.png?alt=media&token=b5be5c42-901a-4d49-bb15-a401b630f8a1&_gl=1*l5029i*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYxNDkuMjkuMC4w"
+        },        status: "Rescheduled",
         newMessage: true,
     },
     {
@@ -179,9 +242,15 @@ export const orderList = [
         datetime: "2023-06-01 11:30",
         id: "jkl901",
         price: 30000,
-        logistics: "Fedex",
+        logistics: {
+            business_name: "OnTrac",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fontrac.png?alt=media&token=67e52ec4-51e3-4032-a6b7-8f9533e1a7b6"
+        },
+        merchant: {
+            business_name: "Eco Savvy Emporium Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Feco_savvy_emporium.png?alt=media&token=c4985c1d-c6f0-48f7-b744-4b030851d53a&_gl=1*j2ttmz*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYzODAuMjguMC4w"
+        },
         status: "Pending",
-        imageUrl: '../assets/images/fedex.png',
         newMessage: true,
     },
     {
@@ -193,10 +262,15 @@ export const orderList = [
         phone_number: ["080719383444"],
         datetime: "2023-05-17 14:50",
         id: "mno234",
-        logistics: "Komitex",
-        price: 26000,
+        logistics: {
+            business_name: "Komitex Logistics",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fkomitex.png?alt=media&token=a8039272-66b6-4e24-8ab1-a4dfd40503f8&_gl=1*xpkuw*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYwMTguNjAuMC4w"
+        },
+        merchant: {
+            business_name: "Style Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fstyle_bazaar.png?alt=media&token=b5be5c42-901a-4d49-bb15-a401b630f8a1&_gl=1*l5029i*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYxNDkuMjkuMC4w"
+        },        price: 26000,
         status: "Dispatched",
-        imageUrl: '../assets/images/komitex.png',
         newMessage: false,
     },
     {
@@ -208,10 +282,16 @@ export const orderList = [
         phone_number: ["080690847443"],
         datetime: "2023-04-05 12:05",
         id: "pqr345",
-        logistics: "DHL",
         price: 23000,
         status: "Dispatched",
-        imageUrl: '../assets/images/dhl.png',
+        logistics: {
+            business_name: "OnTrac",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fontrac.png?alt=media&token=67e52ec4-51e3-4032-a6b7-8f9533e1a7b6"
+        },
+        merchant: {
+            business_name: "Eco Savvy Emporium Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Feco_savvy_emporium.png?alt=media&token=c4985c1d-c6f0-48f7-b744-4b030851d53a&_gl=1*j2ttmz*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYzODAuMjguMC4w"
+        },
         newMessage: false,
     },
     {
@@ -225,8 +305,14 @@ export const orderList = [
         id: "stu567",
         price: 32000,
         logistics: "UPS",
-        status: "Delivered",
-        imageUrl: '../assets/images/ups.png',
+        logistics: {
+            business_name: "Amazon Logistics",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Famazon.png?alt=media&token=7941fa73-daa6-4840-9ed8-96371d4b67a6"
+        },
+        merchant: {
+            business_name: "Mega Enterpise",
+            banner_image: null,
+        },
         newMessage: true,
     },
     {
@@ -239,9 +325,14 @@ export const orderList = [
         datetime: "2023-05-11 15:55",
         id: "vwx678",
         price: 24000,
-        logistics: "Komitex",
-        status: "Rescheduled",
-        imageUrl: '../assets/images/komitex.png',
+        logistics: {
+            business_name: "Komitex Logistics",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fkomitex.png?alt=media&token=a8039272-66b6-4e24-8ab1-a4dfd40503f8&_gl=1*xpkuw*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYwMTguNjAuMC4w"
+        },
+        merchant: {
+            business_name: "Style Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fstyle_bazaar.png?alt=media&token=b5be5c42-901a-4d49-bb15-a401b630f8a1&_gl=1*l5029i*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYxNDkuMjkuMC4w"
+        },        status: "Rescheduled",
         newMessage: true,
     },
     {
@@ -256,8 +347,14 @@ export const orderList = [
         id: "yz0124",
         price: 35000,
         status: "Delivered",
-        imageUrl: '../assets/images/fedex.png',
-        logistics: "Fedex",
+        logistics: {
+            business_name: "OnTrac",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fontrac.png?alt=media&token=67e52ec4-51e3-4032-a6b7-8f9533e1a7b6"
+        },
+        merchant: {
+            business_name: "Eco Savvy Emporium Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Feco_savvy_emporium.png?alt=media&token=c4985c1d-c6f0-48f7-b744-4b030851d53a&_gl=1*j2ttmz*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYzODAuMjguMC4w"
+        },
         newMessage: false,
     },
     {
@@ -271,8 +368,14 @@ export const orderList = [
         id: "bcd456",
         price: 27000,
         status: "Dispatched",
-        logistics: "Komitex",
-        imageUrl: '../assets/images/komitex.png',
+        logistics: {
+            business_name: "Komitex Logistics",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fkomitex.png?alt=media&token=a8039272-66b6-4e24-8ab1-a4dfd40503f8&_gl=1*xpkuw*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYwMTguNjAuMC4w"
+        },
+        merchant: {
+            business_name: "Style Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fstyle_bazaar.png?alt=media&token=b5be5c42-901a-4d49-bb15-a401b630f8a1&_gl=1*l5029i*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYxNDkuMjkuMC4w"
+        },        
         newMessage: false,
     },
     {
@@ -286,8 +389,14 @@ export const orderList = [
         id: "efg789",
         price: 30000,
         status: "Pending",
-        logistics: "DHL",
-        imageUrl: '../assets/images/dhl.png',
+        logistics: {
+            business_name: "OnTrac",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fontrac.png?alt=media&token=67e52ec4-51e3-4032-a6b7-8f9533e1a7b6"
+        },
+        merchant: {
+            business_name: "Eco Savvy Emporium Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Feco_savvy_emporium.png?alt=media&token=c4985c1d-c6f0-48f7-b744-4b030851d53a&_gl=1*j2ttmz*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYzODAuMjguMC4w"
+        },
         newMessage: true,
     },
     {
@@ -300,9 +409,15 @@ export const orderList = [
         datetime: "2023-06-13 10:25",
         id: "ghi901",
         price: 38000,
-        logistics: "UPS",
         status: "Cancelled",
-        imageUrl: '../assets/images/ups.png',
+        logistics: {
+            business_name: "Fedex",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Ffedex.png?alt=media&token=d943aea6-37ec-4f61-a589-01ad7bdd1299"
+        },
+        merchant: {
+            business_name: "Mega Enterpise",
+            banner_image: null,
+        },
         newMessage: false,
     },
     {
@@ -316,8 +431,14 @@ export const orderList = [
         id: "fedex101",
         price: 22000,
         status: "Dispatched",
-        logistics: "Fedex",
-        imageUrl: '../assets/images/fedex.png',
+        logistics: {
+            business_name: "Fedex",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Ffedex.png?alt=media&token=d943aea6-37ec-4f61-a589-01ad7bdd1299"
+        },
+        merchant: {
+            business_name: "Mega Enterpise",
+            banner_image: null,
+        },
         newMessage: true,
     },
     {
@@ -331,8 +452,14 @@ export const orderList = [
         id: "ups001",
         price: 22000,
         status: "Dispatched",
-        logistics: "UPS",
-        imageUrl: '../assets/images/ups.png',
+        logistics: {
+            business_name: "DHL",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fdhl.png?alt=media&token=e113f106-0eaf-420e-9fe4-488cb8e6c26d"
+        },
+        merchant: {
+            business_name: "Style Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fstyle_bazaar.png?alt=media&token=b5be5c42-901a-4d49-bb15-a401b630f8a1&_gl=1*l5029i*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYxNDkuMjkuMC4w"
+        },
         newMessage: true,
     },
     {
@@ -347,8 +474,14 @@ export const orderList = [
         id: "fedex102",
         price: 18000,
         status: "Delivered",
-        logistics: "Fedex",
-        imageUrl: '../assets/images/fedex.png',
+        logistics: {
+            business_name: "Fedex",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Ffedex.png?alt=media&token=d943aea6-37ec-4f61-a589-01ad7bdd1299"
+        },
+        merchant: {
+            business_name: "Mega Enterpise",
+            banner_image: null,
+        },
         newMessage: false,
     },
     {
@@ -362,8 +495,14 @@ export const orderList = [
         id: "ups002",
         price: 18000,
         status: "Delivered",
-        logistics: "UPS",
-        imageUrl: '../assets/images/ups.png',
+        logistics: {
+            business_name: "Fedex",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Ffedex.png?alt=media&token=d943aea6-37ec-4f61-a589-01ad7bdd1299"
+        },
+        merchant: {
+            business_name: "Mega Enterpise",
+            banner_image: null,
+        },
         newMessage: false,
     },
     {
@@ -377,8 +516,14 @@ export const orderList = [
         id: "ups003",
         price: 15000,
         status: "Cancelled",
-        logistics: "UPS",
-        imageUrl: '../assets/images/ups.png',
+        logistics: {
+            business_name: "Fedex",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Ffedex.png?alt=media&token=d943aea6-37ec-4f61-a589-01ad7bdd1299"
+        },
+        merchant: {
+            business_name: "Mega Enterpise",
+            banner_image: null,
+        },
         newMessage: true,
     },
     {
@@ -392,8 +537,14 @@ export const orderList = [
         id: "fedex103",
         price: 15000,
         status: "Cancelled",
-        logistics: "Fedex",
-        imageUrl: '../assets/images/fedex.png',
+        logistics: {
+            business_name: "Fedex",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Ffedex.png?alt=media&token=d943aea6-37ec-4f61-a589-01ad7bdd1299"
+        },
+        merchant: {
+            business_name: "Mega Enterpise",
+            banner_image: null,
+        },
         newMessage: true,
     },
     {
@@ -407,8 +558,14 @@ export const orderList = [
         id: "fedex104",
         price: 26000,
         status: "Pending",
-        logistics: "Fedex",
-        imageUrl: '../assets/images/fedex.png',
+        logistics: {
+            business_name: "DHL",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fdhl.png?alt=media&token=e113f106-0eaf-420e-9fe4-488cb8e6c26d"
+        },
+        merchant: {
+            business_name: "Style Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fstyle_bazaar.png?alt=media&token=b5be5c42-901a-4d49-bb15-a401b630f8a1&_gl=1*l5029i*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYxNDkuMjkuMC4w"
+        },
         newMessage: false,
     },
     {
@@ -422,8 +579,14 @@ export const orderList = [
         id: "fedex105",
         price: 28000,
         status: "Rescheduled",
-        logistics: "Fedex",
-        imageUrl: '../assets/images/fedex.png',
+        logistics: {
+            business_name: "Amazon Logistics",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Famazon.png?alt=media&token=7941fa73-daa6-4840-9ed8-96371d4b67a6"
+        },
+        merchant: {
+            business_name: "Mega Enterpise",
+            banner_image: null,
+        },
         newMessage: true,
     },
     {
@@ -437,8 +600,14 @@ export const orderList = [
         id: "fedex106",
         price: 25000,
         status: "Delivered",
-        logistics: "Fedex",
-        imageUrl: '../assets/images/fedex.png',
+        logistics: {
+            business_name: "DHL",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fdhl.png?alt=media&token=e113f106-0eaf-420e-9fe4-488cb8e6c26d"
+        },
+        merchant: {
+            business_name: "Style Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fstyle_bazaar.png?alt=media&token=b5be5c42-901a-4d49-bb15-a401b630f8a1&_gl=1*l5029i*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYxNDkuMjkuMC4w"
+        },
         newMessage: false,
     },
     {
@@ -452,8 +621,14 @@ export const orderList = [
         id: "ups004",
         price: 26000,
         status: "Pending",
-        logistics: "UPS",
-        imageUrl: '../assets/images/ups.png',
+        logistics: {
+            business_name: "DHL",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fdhl.png?alt=media&token=e113f106-0eaf-420e-9fe4-488cb8e6c26d"
+        },
+        merchant: {
+            business_name: "Style Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fstyle_bazaar.png?alt=media&token=b5be5c42-901a-4d49-bb15-a401b630f8a1&_gl=1*l5029i*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYxNDkuMjkuMC4w"
+        },
         newMessage: false,
     },
     {
@@ -467,8 +642,14 @@ export const orderList = [
         id: "ups005",
         price: 25000,
         status: "Delivered",
-        logistics: "UPS",
-        imageUrl: '../assets/images/ups.png',
+        logistics: {
+            business_name: "Amazon Logistics",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Famazon.png?alt=media&token=7941fa73-daa6-4840-9ed8-96371d4b67a6"
+        },
+        merchant: {
+            business_name: "Mega Enterpise",
+            banner_image: null,
+        },
         newMessage: true,
     },
     {
@@ -482,8 +663,14 @@ export const orderList = [
         id: "dhl001",
         price: 22000,
         status: "Dispatched",
-        logistics: "DHL",
-        imageUrl: '../assets/images/dhl.png',
+        logistics: {
+            business_name: "DHL",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fdhl.png?alt=media&token=e113f106-0eaf-420e-9fe4-488cb8e6c26d"
+        },
+        merchant: {
+            business_name: "Style Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fstyle_bazaar.png?alt=media&token=b5be5c42-901a-4d49-bb15-a401b630f8a1&_gl=1*l5029i*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYxNDkuMjkuMC4w"
+        },
         newMessage: true,
     },
     {
@@ -498,8 +685,14 @@ export const orderList = [
         id: "dhl002",
         price: 18000,
         status: "Delivered",
-        logistics: "DHL",
-        imageUrl: '../assets/images/dhl.png',
+        logistics: {
+            business_name: "DHL",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fdhl.png?alt=media&token=e113f106-0eaf-420e-9fe4-488cb8e6c26d"
+        },
+        merchant: {
+            business_name: "Style Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fstyle_bazaar.png?alt=media&token=b5be5c42-901a-4d49-bb15-a401b630f8a1&_gl=1*l5029i*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYxNDkuMjkuMC4w"
+        },
         newMessage: false,
     },
     {
@@ -513,8 +706,14 @@ export const orderList = [
         id: "dhl003",
         price: 15000,
         status: "Cancelled",
-        logistics: "DHL",
-        imageUrl: '../assets/images/dhl.png',
+        logistics: {
+            business_name: "DHL",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fdhl.png?alt=media&token=e113f106-0eaf-420e-9fe4-488cb8e6c26d"
+        },
+        merchant: {
+            business_name: "Style Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fstyle_bazaar.png?alt=media&token=b5be5c42-901a-4d49-bb15-a401b630f8a1&_gl=1*l5029i*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYxNDkuMjkuMC4w"
+        },
         newMessage: true,
     },
     {
@@ -528,8 +727,14 @@ export const orderList = [
         id: "dhl004",
         price: 26000,
         status: "Pending",
-        logistics: "DHL",
-        imageUrl: '../assets/images/dhl.png',
+        logistics: {
+            business_name: "DHL",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fdhl.png?alt=media&token=e113f106-0eaf-420e-9fe4-488cb8e6c26d"
+        },
+        merchant: {
+            business_name: "Style Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fstyle_bazaar.png?alt=media&token=b5be5c42-901a-4d49-bb15-a401b630f8a1&_gl=1*l5029i*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYxNDkuMjkuMC4w"
+        },
         newMessage: false,
     },
     {
@@ -543,8 +748,14 @@ export const orderList = [
         id: "dhl005",
         price: 25000,
         status: "Delivered",
-        logistics: "DHL",
-        imageUrl: '../assets/images/dhl.png',
+        logistics: {
+            business_name: "DHL",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fdhl.png?alt=media&token=e113f106-0eaf-420e-9fe4-488cb8e6c26d"
+        },
+        merchant: {
+            business_name: "Style Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fstyle_bazaar.png?alt=media&token=b5be5c42-901a-4d49-bb15-a401b630f8a1&_gl=1*l5029i*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYxNDkuMjkuMC4w"
+        },
         newMessage: true,
     },        
     {
@@ -558,8 +769,14 @@ export const orderList = [
         id: "fedex107",
         price: 23000,
         status: "Dispatched",
-        logistics: "Fedex",
-        imageUrl: '../assets/images/fedex.png',
+        logistics: {
+            business_name: "DHL",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fdhl.png?alt=media&token=e113f106-0eaf-420e-9fe4-488cb8e6c26d"
+        },
+        merchant: {
+            business_name: "Style Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fstyle_bazaar.png?alt=media&token=b5be5c42-901a-4d49-bb15-a401b630f8a1&_gl=1*l5029i*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYxNDkuMjkuMC4w"
+        },
         newMessage: false,
     },
     {
@@ -573,8 +790,14 @@ export const orderList = [
         id: "fedex108",
         price: 32000,
         status: "Rescheduled",
-        logistics: "Fedex",
-        imageUrl: '../assets/images/fedex.png',
+        logistics: {
+            business_name: "Lasership",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Flasership.png?alt=media&token=803e763b-63e7-4c57-ab6e-beb2a9c35e54&_gl=1*1hxhx8b*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYzNDguNjAuMC4w"
+        },
+        merchant: {
+            business_name: "Eco Savvy Emporium Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Feco_savvy_emporium.png?alt=media&token=c4985c1d-c6f0-48f7-b744-4b030851d53a&_gl=1*j2ttmz*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYzODAuMjguMC4w"
+        },        
         newMessage: true,
     },
 ];
