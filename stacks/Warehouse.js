@@ -777,6 +777,7 @@ const Warehouse = ({navigation, route}) => {
                                             index={index} 
                                             lastOrder={stockTransfer.length - 1}
                                             firstOrder={1}
+                                            navigation={navigation}
                                             extraVerticalPadding={true} 
                                         />
                                     </View>

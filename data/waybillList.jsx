@@ -7,20 +7,17 @@ export const waybillList = [
         ],
         datetime: "2023-03-15 09:30",
         id: "abc123",
-        logistics: "Komitex",
         inventory_action: "increment",
         status: "Delivered",
-        imageUrl: '../assets/images/komitex..png',
-        newMessage: true,
-        navigateToChat: () => {
-            navigation.navigate("Chat", {
-                id: "abc123",
-                type: "Waybill",
-                order: "Chat Message",
-                name: "Komitex",
-                imageUrl: '../assets/images/komitex..png',
-            })
+        logistics: {
+            business_name: "Komitex Logistics",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fkomitex.png?alt=media&token=a8039272-66b6-4e24-8ab1-a4dfd40503f8&_gl=1*xpkuw*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYwMTguNjAuMC4w"
         },
+        merchant: {
+            business_name: "Style Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fstyle_bazaar.png?alt=media&token=b5be5c42-901a-4d49-bb15-a401b630f8a1&_gl=1*l5029i*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYxNDkuMjkuMC4w"
+        },
+        newMessage: true,
     },
     {
         products: [
@@ -30,19 +27,16 @@ export const waybillList = [
         datetime: "2023-02-22 14:45",
         id: "def456",
         status: "Pending",
-        logistics: "Fedex",
         inventory_action: "increment",
-        imageUrl: '../assets/images/fedex..png',
-        newMessage: false,
-        navigateToChat: () => {
-            navigation.navigate("Chat", {
-                id: "def456",
-                type: "Waybill",
-                order: "Chat Message",
-                name: "Fedex",
-                imageUrl: '../assets/images/fedex..png',
-            })
+        logistics: {
+            business_name: "Fedex",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Ffedex.png?alt=media&token=d943aea6-37ec-4f61-a589-01ad7bdd1299"
         },
+        merchant: {
+            business_name: "Style Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fstyle_bazaar.png?alt=media&token=b5be5c42-901a-4d49-bb15-a401b630f8a1&_gl=1*l5029i*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYxNDkuMjkuMC4w"
+        },
+        newMessage: false,
     },
     {
         products: [
@@ -50,20 +44,17 @@ export const waybillList = [
         ],
         datetime: "2023-01-10 12:15",
         id: "ghi789",
-        logistics: "Komitex",
         inventory_action: "increment",
         status: "Delivered",
-        imageUrl: '../assets/images/komitex..png',
-        newMessage: false,
-        navigateToChat: () => {
-            navigation.navigate("Chat", {
-                id: "ghi789",
-                type: "Waybill",
-                order: "Chat Message",
-                name: "Komitex",
-                imageUrl: '../assets/images/komitex..png',
-            })
+        logistics: {
+            business_name: "Komitex Logistics",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fkomitex.png?alt=media&token=a8039272-66b6-4e24-8ab1-a4dfd40503f8&_gl=1*xpkuw*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYwMTguNjAuMC4w"
         },
+        merchant: {
+            business_name: "Style Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fstyle_bazaar.png?alt=media&token=b5be5c42-901a-4d49-bb15-a401b630f8a1&_gl=1*l5029i*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYxNDkuMjkuMC4w"
+        },
+        newMessage: false,
     },
     {
         products: [
@@ -71,20 +62,17 @@ export const waybillList = [
         ],
         datetime: "2023-03-01 11:10",
         id: "mno345",
-        logistics: "DHL",
         inventory_action: "increment",
         status: "Pending",
-        imageUrl: '../assets/images/dhl..png',
-        newMessage: true,
-        navigateToChat: () => {
-            navigation.navigate("Chat", {
-                id: "mno345",
-                type: "Waybill",
-                order: "Chat Message",
-                name: "Dhl",
-                imageUrl: '../assets/images/dhl..png',
-            })
+        logistics: {
+            business_name: "DHL",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fdhl.png?alt=media&token=e113f106-0eaf-420e-9fe4-488cb8e6c26d"
         },
+        merchant: {
+            business_name: "Style Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fstyle_bazaar.png?alt=media&token=b5be5c42-901a-4d49-bb15-a401b630f8a1&_gl=1*l5029i*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYxNDkuMjkuMC4w"
+        },
+        newMessage: true,
     },
     {
         products: [
@@ -93,19 +81,16 @@ export const waybillList = [
         datetime: "2023-02-14 16:55",
         id: "pqr678",
         status: "Pending",
-        logistics: "UPS",
         inventory_action: "increment",
-        imageUrl: '../assets/images/ups..png',
-        newMessage: false,
-        navigateToChat: () => {
-            navigation.navigate("Chat", {
-                id: "pqr678",
-                type: "Waybill",
-                order: "Chat Message",
-                name: "Ups",
-                imageUrl: '../assets/images/ups..png',
-            })
+        logistics: {
+            business_name: "Lasership",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Flasership.png?alt=media&token=803e763b-63e7-4c57-ab6e-beb2a9c35e54&_gl=1*1hxhx8b*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYzNDguNjAuMC4w"
         },
+        merchant: {
+            business_name: "Eco Savvy Emporium Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Feco_savvy_emporium.png?alt=media&token=c4985c1d-c6f0-48f7-b744-4b030851d53a&_gl=1*j2ttmz*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYzODAuMjguMC4w"
+        },
+        newMessage: false,
     },
     {
         products: [
@@ -115,19 +100,16 @@ export const waybillList = [
         datetime: "2023-04-05 15:20",
         id: "stu901",
         status: "Pending",
-        logistics: "Fedex",
         inventory_action: "increment",
-        imageUrl: '../assets/images/fedex..png',
-        newMessage: true,
-        navigateToChat: () => {
-            navigation.navigate("Chat", {
-                id: "stu901",
-                type: "Waybill",
-                order: "Chat Message",
-                name: "Fedex",
-                imageUrl: '../assets/images/fedex..png',
-            })
+        logistics: {
+            business_name: "Fedex",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Ffedex.png?alt=media&token=d943aea6-37ec-4f61-a589-01ad7bdd1299"
         },
+        merchant: {
+            business_name: "Style Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fstyle_bazaar.png?alt=media&token=b5be5c42-901a-4d49-bb15-a401b630f8a1&_gl=1*l5029i*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYxNDkuMjkuMC4w"
+        },
+        newMessage: true,
     },
     {
         products: [
@@ -137,19 +119,16 @@ export const waybillList = [
         datetime: "2023-05-12 09:55",
         id: "vwx234",
         status: "Delivered",
-        logistics: "Komitex",
         inventory_action: "increment",
-        imageUrl: '../assets/images/komitex..png',
-        newMessage: false,
-        navigateToChat: () => {
-            navigation.navigate("Chat", {
-                id: "vwx234",
-                type: "Waybill",
-                order: "Chat Message",
-                name: "Komitex",
-                imageUrl: '../assets/images/komitex..png',
-            })
+        logistics: {
+            business_name: "Komitex Logistics",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fkomitex.png?alt=media&token=a8039272-66b6-4e24-8ab1-a4dfd40503f8&_gl=1*xpkuw*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYwMTguNjAuMC4w"
         },
+        merchant: {
+            business_name: "Style Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fstyle_bazaar.png?alt=media&token=b5be5c42-901a-4d49-bb15-a401b630f8a1&_gl=1*l5029i*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYxNDkuMjkuMC4w"
+        },
+        newMessage: false,
     },
     {
         products: [
@@ -158,19 +137,16 @@ export const waybillList = [
         datetime: "2023-06-20 17:30",
         id: "yza567",
         status: "Pending",
-        logistics: "DHL",
         inventory_action: "increment",
-        imageUrl: '../assets/images/dhl..png',
-        newMessage: false,
-        navigateToChat: () => {
-            navigation.navigate("Chat", {
-                id: "yza567",
-                type: "Waybill",
-                order: "Chat Message",
-                name: "Dhl",
-                imageUrl: '../assets/images/dhl..png',
-            })
+        logistics: {
+            business_name: "DHL",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fdhl.png?alt=media&token=e113f106-0eaf-420e-9fe4-488cb8e6c26d"
         },
+        merchant: {
+            business_name: "Style Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fstyle_bazaar.png?alt=media&token=b5be5c42-901a-4d49-bb15-a401b630f8a1&_gl=1*l5029i*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYxNDkuMjkuMC4w"
+        },
+        newMessage: false,
     },
     {
         products: [
@@ -179,19 +155,16 @@ export const waybillList = [
         datetime: "2023-07-15 14:10",
         id: "bcd890",
         status: "Delivered",
-        logistics: "UPS",
         inventory_action: "increment",
-        imageUrl: '../assets/images/ups..png',
-        newMessage: true,
-        navigateToChat: () => {
-            navigation.navigate("Chat", {
-                id: "bcd890",
-                type: "Waybill",
-                order: "Chat Message",
-                name: "Ups",
-                imageUrl: '../assets/images/ups..png',
-            })
+        logistics: {
+            business_name: "Lasership",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Flasership.png?alt=media&token=803e763b-63e7-4c57-ab6e-beb2a9c35e54&_gl=1*1hxhx8b*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYzNDguNjAuMC4w"
         },
+        merchant: {
+            business_name: "Eco Savvy Emporium Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Feco_savvy_emporium.png?alt=media&token=c4985c1d-c6f0-48f7-b744-4b030851d53a&_gl=1*j2ttmz*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYzODAuMjguMC4w"
+        },
+        newMessage: true,
     },
     {
         products: [
@@ -200,19 +173,16 @@ export const waybillList = [
         datetime: "2023-08-08 10:45",
         id: "efg123",
         status: "Pending",
-        logistics: "Fedex",
         inventory_action: "increment",
-        imageUrl: '../assets/images/fedex..png',
-        newMessage: false,
-        navigateToChat: () => {
-            navigation.navigate("Chat", {
-                id: "efg123",
-                type: "Waybill",
-                order: "Chat Message",
-                name: "Fedex",
-                imageUrl: '../assets/images/fedex..png',
-            })
+        logistics: {
+            business_name: "Fedex",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Ffedex.png?alt=media&token=d943aea6-37ec-4f61-a589-01ad7bdd1299"
         },
+        merchant: {
+            business_name: "Style Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fstyle_bazaar.png?alt=media&token=b5be5c42-901a-4d49-bb15-a401b630f8a1&_gl=1*l5029i*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYxNDkuMjkuMC4w"
+        },
+        newMessage: false,
     },
     {
         products: [
@@ -222,19 +192,16 @@ export const waybillList = [
         datetime: "2023-05-03 10:20",
         id: "stu961",
         status: "Pending",
-        logistics: "Komitex",
         inventory_action: "decrement",
-        imageUrl: '../assets/images/komitex..png',
-        newMessage: false,
-        navigateToChat: () => {
-            navigation.navigate("Chat", {
-                id: "stu901",
-                type: "Waybill",
-                order: "Chat Message",
-                name: "Komitex",
-                imageUrl: '../assets/images/komitex..png',
-            })
+        logistics: {
+            business_name: "Komitex Logistics",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fkomitex.png?alt=media&token=a8039272-66b6-4e24-8ab1-a4dfd40503f8&_gl=1*xpkuw*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYwMTguNjAuMC4w"
         },
+        merchant: {
+            business_name: "Style Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fstyle_bazaar.png?alt=media&token=b5be5c42-901a-4d49-bb15-a401b630f8a1&_gl=1*l5029i*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYxNDkuMjkuMC4w"
+        },
+        newMessage: false,
     },
     {
         products: [
@@ -243,19 +210,16 @@ export const waybillList = [
         datetime: "2023-04-01 09:45",
         id: "vwx224",
         status: "Delivered",
-        logistics: "Fedex",
         inventory_action: "decrement",
-        imageUrl: '../assets/images/fedex..png',
-        newMessage: false,
-        navigateToChat: () => {
-            navigation.navigate("Chat", {
-                id: "vwx234",
-                type: "Waybill",
-                order: "Chat Message",
-                name: "Fedex",
-                imageUrl: '../assets/images/fedex..png',
-            })
+        logistics: {
+            business_name: "Fedex",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Ffedex.png?alt=media&token=d943aea6-37ec-4f61-a589-01ad7bdd1299"
         },
+        merchant: {
+            business_name: "Style Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fstyle_bazaar.png?alt=media&token=b5be5c42-901a-4d49-bb15-a401b630f8a1&_gl=1*l5029i*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYxNDkuMjkuMC4w"
+        },
+        newMessage: false,
     },
     {
         products: [
@@ -264,18 +228,15 @@ export const waybillList = [
         datetime: "2023-05-21 15:30",
         id: "yz0183",
         status: "Pending",
-        logistics: "Komitex",
         inventory_action: "decrement",
-        imageUrl: '../assets/images/komitex..png',
-        newMessage: false,
-        navigateToChat: () => {
-            navigation.navigate("Chat", {
-                id: "yz0123",
-                type: "Waybill",
-                order: "Chat Message",
-                name: "Komitex",
-                imageUrl: '../assets/images/komitex..png',
-            })
+        logistics: {
+            business_name: "Komitex Logistics",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fkomitex.png?alt=media&token=a8039272-66b6-4e24-8ab1-a4dfd40503f8&_gl=1*xpkuw*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYwMTguNjAuMC4w"
         },
+        merchant: {
+            business_name: "Style Bazaar",
+            banner_image: "https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fstyle_bazaar.png?alt=media&token=b5be5c42-901a-4d49-bb15-a401b630f8a1&_gl=1*l5029i*_ga*MTQzMDMxNDAxMS4xNjg0NjU0ODky*_ga_CW55HF8NVT*MTY5ODI2NjAxOC43MC4xLjE2OTgyNjYxNDkuMjkuMC4w"
+        },
+        newMessage: false,
     },
 ];

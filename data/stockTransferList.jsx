@@ -2,7 +2,6 @@
 export const stockTransferList = [
     {
         id: 1,
-        onPress: () => navigation.navigate("Chat", {id: "1"}),
         origin_warehouse: "Warri",
         destination_warehouse: "Asaba",
         datetime: "12/12/2022",
@@ -25,7 +24,6 @@ export const stockTransferList = [
     },
     {
         id: 2,
-        onPress: () => navigation.navigate("Chat", {id: "1"}),
         origin_warehouse: "Warri",
         destination_warehouse: "Benin",
         datetime: "12/12/2022",
@@ -48,7 +46,6 @@ export const stockTransferList = [
     },
     {
         id: 3,
-        onPress: () => navigation.navigate("Chat", {id: "1"}),
         origin_warehouse: "Warri",
         destination_warehouse: "Agbor",
         datetime: "12/13/2022",
@@ -67,7 +64,6 @@ export const stockTransferList = [
     },
     {
         id: 4,
-        onPress: () => navigation.navigate("Chat", {id: "1"}),
         origin_warehouse: "Asaba",
         destination_warehouse: "Kwale",
         datetime: "12/14/2022",
@@ -82,7 +78,6 @@ export const stockTransferList = [
     },
     {
         id: 5,
-        onPress: () => navigation.navigate("Chat", {id: "1"}),
         origin_warehouse: "Agbor",
         destination_warehouse: "Isoko",
         datetime: "12/15/2022",
@@ -97,7 +92,6 @@ export const stockTransferList = [
     },
     {
         id: 6,
-        onPress: () => navigation.navigate("Chat", {id: "1"}),
         origin_warehouse: "Kwale",
         destination_warehouse: "Warri",
         datetime: "12/16/2022",
@@ -112,7 +106,6 @@ export const stockTransferList = [
     },
     {
         id: 7,
-        onPress: () => navigation.navigate("Chat", {id: "1"}),
         origin_warehouse: "Isoko",
         destination_warehouse: "Asaba",
         datetime: "12/17/2022",

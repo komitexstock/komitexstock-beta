@@ -1003,11 +1003,12 @@ const Chat = ({navigation, route}) => {
             id: 1,
             icon:<OrderDetailsIcon />,
             text: (() => {
-                if (chatType === "Stock Transfer") return "Transfer Details";
+                if (chatType === "StockTransfer") return "Transfer Details";
                 return chatType + " Details";
             }).call(),
             onPress: () => {
-                if (chatType === "Stock Transfer") return navigation.navigate("TransferDetails", { chatId: chatId });
+                setMenuOpened(false);
+                if (chatType === "StockTransfer") return navigation.navigate("TransferDetails", { chatId: chatId });
                 return navigation.navigate(`${chatType}Details`, { chatId: chatId });
             },
         },

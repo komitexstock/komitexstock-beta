@@ -1163,6 +1163,7 @@ const Waybill = ({navigation}) => {
                                             index={index}
                                             lastWaybill={waybill.length - 1}
                                             firstWaybill={1}
+                                            navigation={navigation}
                                         />
                                     </View>
                                 ) 
