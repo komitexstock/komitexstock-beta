@@ -3,7 +3,7 @@ import { black, blackOut, white } from "../style/colors";
 // helpers
 
 
-const Menu = ({closeMenu, menuButtons, top, right, hideTouchableBackground, left}) => {
+const Menu = ({closeMenu, menuButtons, top, right, hideTouchableBackground, left, shrinkMenu}) => {
 
     return (
         <>  
@@ -24,10 +24,20 @@ const Menu = ({closeMenu, menuButtons, top, right, hideTouchableBackground, left
                     <TouchableOpacity
                         onPress={menuButton.onPress}
                         key={menuButton.id}
-                        style={style.menuButton}
+                        style={[
+                            style.menuButton,
+                            shrinkMenu && {paddingVertical: 12},
+                        ]}
                     >
                         {menuButton.icon}
-                        <Text style={style.menuText}>{menuButton.text}</Text>
+                        <Text 
+                            style={[
+                                style.menuText,
+                                shrinkMenu && {fontSize: 12},
+                            ]}
+                        >
+                            {menuButton.text}
+                        </Text>
                     </TouchableOpacity>
                 ))}
             </View>

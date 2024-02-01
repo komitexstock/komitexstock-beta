@@ -6,7 +6,7 @@ import ArrowLeft from "../assets/icons/ArrowLeft";
 import { black, white } from "../style/colors";
 
 
-const Header = ({navigation, navigateTo, stackName, iconFunction, icon, removeBackArrow, inlineArrow, backgroundColor, unpadded, viewStyle, component}) => {
+const Header = ({navigation, navigateTo, barheight, stackName, iconFunction, icon, removeBackArrow, inlineArrow, backgroundColor, unpadded, viewStyle, component}) => {
     // stack name => string
     // iconfunction => function
     // icon => jsx component
@@ -37,7 +37,8 @@ const Header = ({navigation, navigateTo, stackName, iconFunction, icon, removeBa
                 style={[
                     style.headerBar,
                     removeBackArrow ? {height: 57, paddingTop: 12, paddingBottom: 20} : {paddingTop: 0},
-                    {paddingHorizontal: unpadded ? 0 : 20}
+                    {paddingHorizontal: unpadded ? 0 : 20},
+                    barheight && {height: barheight},
                 ]}
             >
                 {/* inline back arrow, disabled by default */}

@@ -34,6 +34,7 @@ import OrderDetailsIcon from "../assets/icons/OrderDetailsIcon";
 import ChatLinkIcon from "../assets/icons/ChatLinkIcon";
 import CopyTextIcon from "../assets/icons/CopyTextIcon";
 import ReplyIcon from "../assets/icons/ReplyIcon";
+import DeleteBlackIcon from "../assets/icons/DeleteBlackIcon";
 // components
 import ActionButton from "../components/ActionButton";
 import Header from "../components/Header";
@@ -325,14 +326,16 @@ const Chat = ({navigation, route}) => {
     // chat header component
     const ChatHeader = (
         <View style={style.headerInfoWrapper}>
-            <Avatar
-                imageUrl={banner_image}
-                fullname={business_name}
-                squared={true}
-                smallerSize={true}
-            />
+            {chatType !== "StockTransfer" && (
+                <Avatar
+                    imageUrl={banner_image}
+                    fullname={business_name}
+                    squared={true}
+                    smallerSize={true}
+                />
+            )}
             <View style={style.headerTextWrapper}>
-                <Text style={style.headerPrimaryText}>{business_name}</Text>
+                <Text style={style.headerPrimaryText}>{chatType === "StockTransfer" ? "Stock Transfer" : business_name}</Text>
                 <Text style={style.headerSecondaryText}>{chatType} ID: {chatId}</Text>
             </View>
         </View>
@@ -903,6 +906,16 @@ const Chat = ({navigation, route}) => {
 
     // const menu state
     const [menuOpened, setMenuOpened] = useState(false);
+
+    // state to control message options
+    const [messageOptions, setMessageOptions] = useState({
+        open: true,
+        optionsButtons: (() => {})(),
+        buttons: [],
+        top: 0,
+        right: 0,
+        left: 0,
+    })
     
 
     // function get right offset of menu
@@ -948,30 +961,49 @@ const Chat = ({navigation, route}) => {
     }
     
     // open Menu function
-    const openMenu = () => {
-        
+    const openMessageOptions = (messageType, id) => {
+        // target message from messages refs 
+        const targetMessage = messagesRefs.current.find(message => message.id === id);
 
-        // const targetMessage = messagesRefs.current.find(message => message.id === id);
+        console.log(messageType);
 
-        // console.log(targetMessage);
-        // setMenu({
-        //     open: true,
-        //     buttons: messageMenuButtons,
-        //     top: getTopPosition(targetMessage.height, targetMessage.y),
-        //     right: authData?.account_type === targetMessage.account_type ? getRightPosition(targetMessage.width) : undefined,
-        //     left: authData?.account_type !== targetMessage.account_type ? getRightPosition(targetMessage.width) : undefined,
-        //     hideTouchableBackground: false,
-        // });
+        setMessageOverlay({
+            top: targetMessage.y,
+            height: targetMessage.height
+        })
+
+        setMessageOptions({
+            open: true,
+            optionsButtons: (() => {
+                // if message is an image
+                if (messageType === "image") return imageOptionsButtons;
+                // if message is a document
+                if (messageType === "document") return docOptionsButtons;
+                // else return regular message options
+                return messageOptionsButtons
+            })(),
+            // buttons: messageType === "image" && imageOptionsButtons || messageType === "document" && docOptionsButtons || messageOptionsButtons,
+            top: getTopPosition(targetMessage.height, targetMessage.y),
+            right: authData?.account_type === targetMessage.account_type ? getRightPosition(targetMessage.width) : undefined,
+            left: authData?.account_type !== targetMessage.account_type ? getRightPosition(targetMessage.width) : undefined,
+        });
     }
 
     // close Menu function
-    const closeMenu = () => {
-        // setMenu(prevMenu => {
-        //     return  {
-        //         ...prevMenu,
-        //         open: false
-        //     }
-        // });
+    const closeMessageOptions = () => {
+
+        // reset message options
+        setMessageOptions(prevMenu => {
+            return  {
+                ...prevMenu,
+                open: false
+            }
+        });
+
+        setMessageOverlay({
+            top: 0,
+            height: 0
+        })
     }
 
     // function to handle copying of a chat link
@@ -981,8 +1013,8 @@ const Chat = ({navigation, route}) => {
 
     }
     
-    // menu buttons
-    const messageMenuButtons = [
+    // meesage options buttons
+    const messageOptionsButtons = [
         {
             id: 1,
             icon: <ReplyIcon />,
@@ -993,6 +1025,44 @@ const Chat = ({navigation, route}) => {
             id: 2,
             icon: <CopyTextIcon />,
             text: "Copy text",
+            onPress: () => {},
+        },
+        {
+            id: 3,
+            icon: <DeleteBlackIcon />,
+            text: "Delete text",
+            onPress: () => {},
+        },
+    ];
+
+    // image options button
+    const imageOptionsButtons = [
+        {
+            id: 1,
+            icon: <ReplyIcon />,
+            text: "Reply",
+            onPress: () => {},
+        },
+        {
+            id: 2,
+            icon: <DeleteBlackIcon />,
+            text: "Delete image",
+            onPress: () => {},
+        },
+    ];
+
+    // document options button
+    const docOptionsButtons = [
+        {
+            id: 1,
+            icon: <ReplyIcon />,
+            text: "Reply",
+            onPress: () => {},
+        },
+        {
+            id: 2,
+            icon: <DeleteBlackIcon />,
+            text: "Delete document",
             onPress: () => {},
         },
     ];
@@ -1020,9 +1090,6 @@ const Chat = ({navigation, route}) => {
         },
     ];
 
-    // menu ref
-    const menuRef = useRef(null)
-
     // if bottomsheet modal is closed with back button set reason as ""
     useEffect(() => {
         if (!bottomSheetOpen) return setReason("");
@@ -1045,6 +1112,7 @@ const Chat = ({navigation, route}) => {
                 removeBackArrow={true}
                 inlineArrow={true}
                 backgroundColor={white}
+                barheight={45}
             />
             {/* status indicator */}
             {status !== "Pending" && (
@@ -1074,10 +1142,6 @@ const Chat = ({navigation, route}) => {
             <Menu
                 closeMenu={() => setMenuOpened(false)}
                 menuButtons={headerMenuButtons}
-                // top={menu?.top}
-                // right={menu?.right}
-                // left={menu?.left}
-                // hideTouchableBackground={menu?.hideTouchableBackground}
             />
         )}
 
@@ -1100,22 +1164,21 @@ const Chat = ({navigation, route}) => {
             contentContainerStyle={style.scrollViewContent}
             keyboardShouldPersistTaps="always"
             onScroll={({nativeEvent}) => {
-                closeMenu();
                 setScrollOffset(nativeEvent.contentOffset.y)
             }}
         >
             {/* menu */}
-            {/* {menu.open && (
+            {messageOptions.open && (
                 <Menu
-                    closeMenu={closeMenu}
-                    menuButtons={menu?.buttons}
-                    menuRef={menuRef}
-                    top={menu?.top}
-                    right={menu?.right}
-                    left={menu?.left}
-                    hideTouchableBackground={menu?.hideTouchableBackground}
+                    closeMenu={closeMessageOptions}
+                    menuButtons={messageOptions?.optionsButtons}
+                    top={messageOptions?.top}
+                    right={messageOptions?.right}
+                    left={messageOptions?.left}
+                    hideTouchableBackground={true}
+                    shrinkMenu={true}
                 />
-            )} */}
+            )}
 
             {/* message overlay */}
             {/* shows when you click a repplied message and it auto scrolls to that message */}
@@ -1129,7 +1192,12 @@ const Chat = ({navigation, route}) => {
                     }
                 ]} 
             />
-            <View style={style.container}>
+            <View 
+                style={style.container}
+                onTouchStart={() => {
+                    if (messageOptions.open) closeMessageOptions();
+                }}
+            >
                 {/* fixed header container */}
                 {/* chat scroll view */}
                 <View 
@@ -1168,7 +1236,7 @@ const Chat = ({navigation, route}) => {
                                 setReplying={setReplying}
                                 textInputRef={textInputRef}
                                 navigation={navigation}
-                                openMenu={() => {}}
+                                openMessageOptions={openMessageOptions}
                             />
                         );
                     })}

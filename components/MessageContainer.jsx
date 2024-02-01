@@ -261,7 +261,7 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
         const repliedMessage = messages.filter(message => message.id === reply);
         
         return (
-            <TouchableOpacity 
+            <View 
                 style={[
                     style.message,
                     authData?.account_type === account_type ? style.sent : style.received,
@@ -284,13 +284,6 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
                     // always pad custom messages regardless of is text is present
                     customMessages.includes(type) && {paddingTop: 0, padding: 10},
                 ]}
-                delayLongPress={250}
-                onLongPress={() => {
-                    const customMessages = ['Rescheduled', 'Cancelled', 'Returned', 'Delivered', 'Dispatched' ];
-                    if (customMessages.includes(type)) return;
-                    openMessageOptions("message", id)}
-                }
-                activeOpacity={1}
                 onLayout={(e) => {
                     const width = e.nativeEvent.layout.width;
                     // delay for 2 seconds and add the width to the messageRefs
@@ -320,7 +313,7 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
                         onLongPress={() => {
                             const customMessages = ['Rescheduled', 'Cancelled', 'Returned', 'Delivered', 'Dispatched' ];
                             if (customMessages.includes(type)) return;
-                            openMenu("message", id)}
+                            openMessageOptions(type, id)}
                         }
                     >
                         <Text style={style.repliedUser}>
@@ -352,7 +345,7 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
                         onLongPress={() => {
                             const customMessages = ['Rescheduled', 'Cancelled', 'Returned', 'Delivered', 'Dispatched' ];
                             if (customMessages.includes(type)) return;
-                            openMenu("message", id)}
+                            openMessageOptions(type, id)}
                         }
                     >  
                         <View style={style.repliedImageWrapper}>
@@ -392,7 +385,7 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
                         onLongPress={() => {
                             const customMessages = ['Rescheduled', 'Cancelled', 'Returned', 'Delivered', 'Dispatched' ];
                             if (customMessages.includes(type)) return;
-                            openMenu("message", id)}
+                            openMessageOptions(type, id)}
                         }
                     >  
                         <View style={style.repliedImageWrapper}>
@@ -437,11 +430,7 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
                                 accountType: account_type
                             })
                         }}
-                        onLongPress={() => {
-                            const customMessages = ['Rescheduled', 'Cancelled', 'Returned', 'Delivered', 'Dispatched' ];
-                            if (customMessages.includes(type)) return;
-                            openMenu("message", id)}
-                        }
+                        onLongPress={() => openMessageOptions(type, id)}
                         delayLongPress={250}
                     >
                         <Image source={file.path} style={style.postedImage} />
@@ -456,11 +445,7 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
                             !reply && !text && {marginTop: 0}
                         ]}
                         onPress={() => {}}
-                        onLongPress={() => {
-                            const customMessages = ['Rescheduled', 'Cancelled', 'Returned', 'Delivered', 'Dispatched' ];
-                            if (customMessages.includes(type)) return;
-                            openMenu("message", id)}
-                        }
+                        onLongPress={() => openMessageOptions(type, id)}
                         delayLongPress={250}
                     >
                         {authData?.account_type === account_type ? <SentDocumentIcon /> : <ReceivedDocumentIcon />}
@@ -487,14 +472,20 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
                 
                 {/* if it is not an action triggered message i.e a basic text*/}
                 { text && !customMessages.includes(type) &&
-                    <Text 
-                        style={[
-                            style.messageText, 
-                            authData?.account_type === account_type && style.sentText
-                        ]}
+                    <TouchableOpacity 
+                        activeOpacity={1}
+                        onLongPress={() => openMessageOptions(type, id)}
+                        delayLongPress={250}
                     >
-                        {handleTextIcons(text, account_type)}
-                    </Text>
+                        <Text
+                            style={[
+                                style.messageText, 
+                                authData?.account_type === account_type && style.sentText
+                            ]}
+                        >
+                            {handleTextIcons(text, account_type)}
+                        </Text>
+                    </TouchableOpacity>
                 }
 
                 {/* if it's a custome message */}
@@ -590,7 +581,7 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
 
                     </View>
                 }
-            </TouchableOpacity>
+            </View>
         );
     };
 
