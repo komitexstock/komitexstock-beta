@@ -7,6 +7,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 // STACKS
 // Home related stacks 
 import Home from '../stacks/Home';
+import RecentActivities from '../stacks/RecentActivities';
 import Notifications from '../stacks/Notifications';
 // Analytics related stacks
 import Analytics from '../stacks/Analytics';
@@ -104,6 +105,11 @@ const Navigator = () => {
                     <Stack.Screen 
                         name="Home" 
                         component={Home}
+                    />
+                    {/* Recent Activities Stack */}
+                    <Stack.Screen 
+                        name="RecentActivities" 
+                        component={RecentActivities}
                     />
                     {/* Orders Stack */}
                     <Stack.Screen 

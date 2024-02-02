@@ -682,10 +682,10 @@ const Home = ({navigation}) => {
                                 <View style={style.homeOrdersHeader}>
                                     <Text style={style.homeOrdersHeading}>Recent Activities</Text>
                                     <TouchableOpacity
-                                        // onPress={() => {navigation.navigate("Orders")}}
+                                        onPress={() => {navigation.navigate("RecentActivities")}}
                                         // onPress={() => {navigation.navigate("OrderDetails")}}
                                         // onPress={() => {navigation.navigate("WaybillDetails")}}
-                                        onPress={() => {navigation.navigate("TransferDetails")}}
+                                        // onPress={() => {navigation.navigate("TransferDetails")}}
                                         // onPress={() => {navigation.navigate("Share")}}
                                         // onPress={() => {navigation.navigate("WriteReview")}}
                                     >
