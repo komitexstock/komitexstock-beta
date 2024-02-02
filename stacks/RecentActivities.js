@@ -5,7 +5,8 @@ import {
     ScrollView,
     TouchableWithoutFeedback,
     TouchableOpacity,
-    Animated
+    Animated,
+    Keyboard
 } from 'react-native'
 import React from 'react'
 import { background, black } from '../style/colors';
@@ -14,8 +15,13 @@ import { useState, useRef } from 'react';
 import { windowWidth, windowHeight } from '../utils/helpers';
 // icons
 import ArrowLeft from "../assets/icons/ArrowLeft";
+// debouce
+// import { debounce } from 'lodash';
 
 const RecentActivities = ({navigation}) => {
+
+    // debouse function
+    // const debouncedHandleScroll = () => debounce(handleScroll, 16); // 16ms debounce interval (60fps)
 
     // header width
     const headerWidth = 133;
@@ -124,6 +130,7 @@ const RecentActivities = ({navigation}) => {
     const array = [...Array(50).keys()];
 
     return (<>
+        {/* animated header */}
         <Animated.View 
             style={[
                 styles.headerWrapper,
@@ -162,6 +169,8 @@ const RecentActivities = ({navigation}) => {
                 </Animated.Text>
             </Animated.View>
         </Animated.View>
+        {/* search bar */}
+        {/* rest of the content */}
         <TouchableWithoutFeedback>
             <ScrollView
                 contentConctainerStyle={styles.container}
@@ -175,7 +184,7 @@ const RecentActivities = ({navigation}) => {
                 ))}
             </ScrollView>
         </TouchableWithoutFeedback>
-        </>)
+    </>)
 }
 
 export default RecentActivities

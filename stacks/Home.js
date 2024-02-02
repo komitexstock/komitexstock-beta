@@ -677,10 +677,10 @@ const Home = ({navigation}) => {
                                     </TouchableOpacity>
                                 ))}
                             </View>
-                            {/* recent orders */}
+                            {/* recent activities */}
                             <View style={style.homeOrders}>
                                 <View style={style.homeOrdersHeader}>
-                                    <Text style={style.homeOrdersHeading}>Recent Activities</Text>
+                                    <Text style={style.homeOrdersHeading}>Recent Activity</Text>
                                     <TouchableOpacity
                                         onPress={() => {navigation.navigate("RecentActivities")}}
                                         // onPress={() => {navigation.navigate("OrderDetails")}}
@@ -695,6 +695,11 @@ const Home = ({navigation}) => {
                                     </TouchableOpacity>
                                 </View>
                             </View>
+                            {/* day */}
+                            <View style={style.dayWrapper}>
+                                <Text style={style.dayText}>Today</Text>
+                            </View>
+                            {/* order, waybill and stock transfer list items */}
                             <View
                                 style={style.ordersListWrapper}
                             >
@@ -1087,7 +1092,7 @@ const style = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         gap: 20,
-        marginBottom: 15,
+        marginBottom: 30,
         width: '100%',
     },
     quickActionButton: {
@@ -1161,6 +1166,8 @@ const style = StyleSheet.create({
     },
     homeOrders: {
         width: "100%",
+        height: 15,
+        marginBottom: 16,
     },
     homeOrdersHeader: {
         display: 'flex',
@@ -1168,15 +1175,31 @@ const style = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         width: "100%",
-        height: 50,
+        // height: 50,
     },
     homeOrdersHeading: {
         fontFamily: 'mulish-bold',
         color: bodyText,
+        fontSize: 10,
     },
     seeMore: {
         fontFamily: 'mulish-medium',
         color: primaryColor,
+        fontSize: 12,
+    },
+    dayWrapper: {
+        width: "100%",
+        marginBottom: 12,
+        display: 'flex',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        flexDirection: 'row',
+        height: 15,
+    },
+    dayText: {
+        fontFamily: 'mulish-semibold',
+        color: bodyText,
+        fontSize: 12,
     },
     ordersListWrapper: {
         height: "100%",
