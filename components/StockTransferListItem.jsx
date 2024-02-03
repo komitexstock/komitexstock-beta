@@ -25,7 +25,7 @@ const StockTransferListItem = ({navigation, item, index, firstOrder, lastOrder, 
         setTimeout(() => {
             navigation.navigate("Chat", {
                 chatId: item.id, 
-                chatType: "stockTransfer",
+                chatType: "StockTransfer",
             });
             // if sidefunctions exist, slightly delay before navigating
         }, sideFunctions ? 750 : 10);

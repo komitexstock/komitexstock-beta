@@ -580,6 +580,7 @@ const Home = ({navigation}) => {
 
     const quickButtons = authData?.account_type === "Merchant" ? merchantQuickButtons : logisticsQuickButtons;
 
+    // function to indicate the type of waybill
     const handleWaybillType = (inventoryAction) => {
         if (inventoryAction === "increment") {
             if (authData?.account_type === "Merchant") return "Outgoing";
@@ -680,7 +681,7 @@ const Home = ({navigation}) => {
                             {/* recent activities */}
                             <View style={style.homeOrders}>
                                 <View style={style.homeOrdersHeader}>
-                                    <Text style={style.homeOrdersHeading}>Recent Activity</Text>
+                                    <Text style={style.homeOrdersHeading}>Recent Activities</Text>
                                     <TouchableOpacity
                                         onPress={() => {navigation.navigate("RecentActivities")}}
                                         // onPress={() => {navigation.navigate("OrderDetails")}}
