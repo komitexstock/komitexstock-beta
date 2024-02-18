@@ -1,5 +1,13 @@
-import { View, Text, TouchableOpacity, Image, StyleSheet, Animated, PanResponder } from "react-native";
-import { useEffect, useRef, useState } from "react";
+import {
+    View,
+    Text,
+    TouchableOpacity,
+    Image,
+    StyleSheet,
+    Animated,
+    PanResponder,
+} from "react-native";
+import { useRef, useState } from "react";
 // import helper functions
 import { convertUTCToTime } from "../utils/convertUTCToTime";
 // icons
@@ -254,7 +262,6 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
         }
     }
 
-
     // message body function
     const messageBody = (account_type, text, reply, file, timestamp, user_id, full_name, company_name, type, reschedule_date, id) => {
 
@@ -309,7 +316,7 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
                         onPress={() => {
                             handleScrollToComponent(reply)
                         }}
-                        delayLongPress={250}
+                        delayLongPress={350}
                         onLongPress={() => {
                             const customMessages = ['Rescheduled', 'Cancelled', 'Returned', 'Delivered', 'Dispatched' ];
                             if (customMessages.includes(type)) return;
@@ -341,7 +348,7 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
                         onPress={() => {
                             handleScrollToComponent(reply)
                         }}
-                        delayLongPress={250}
+                        delayLongPress={350}
                         onLongPress={() => {
                             const customMessages = ['Rescheduled', 'Cancelled', 'Returned', 'Delivered', 'Dispatched' ];
                             if (customMessages.includes(type)) return;
@@ -381,7 +388,7 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
                         onPress={() => {
                             handleScrollToComponent(reply)
                         }}
-                        delayLongPress={250}
+                        delayLongPress={350}
                         onLongPress={() => {
                             const customMessages = ['Rescheduled', 'Cancelled', 'Returned', 'Delivered', 'Dispatched' ];
                             if (customMessages.includes(type)) return;
@@ -431,7 +438,7 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
                             })
                         }}
                         onLongPress={() => openMessageOptions(type, id)}
-                        delayLongPress={250}
+                        delayLongPress={350}
                     >
                         <Image source={file.path} style={style.postedImage} />
                     </TouchableOpacity>
@@ -446,7 +453,7 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
                         ]}
                         onPress={() => {}}
                         onLongPress={() => openMessageOptions(type, id)}
-                        delayLongPress={250}
+                        delayLongPress={350}
                     >
                         {authData?.account_type === account_type ? <SentDocumentIcon /> : <ReceivedDocumentIcon />}
                         <View style={style.documentDescription}>
@@ -475,7 +482,7 @@ const MessageContainer = ({messages, message, index, messagesRefs, copyNumberAle
                     <TouchableOpacity 
                         activeOpacity={1}
                         onLongPress={() => openMessageOptions(type, id)}
-                        delayLongPress={250}
+                        delayLongPress={500}
                     >
                         <Text
                             style={[

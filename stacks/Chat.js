@@ -4,12 +4,12 @@ import {
     Text, 
     TextInput, 
     TouchableOpacity,
-    TouchableWithoutFeedback,
     ScrollView, 
     StyleSheet, 
     Image,
     Keyboard,
     Linking,
+    Vibration
 } from "react-native";
 // icons
 import SendIcon from '../assets/icons/SendIcon';
@@ -39,7 +39,6 @@ import DeleteBlackIcon from "../assets/icons/DeleteBlackIcon";
 import ActionButton from "../components/ActionButton";
 import Header from "../components/Header";
 import Indicator from "../components/Indicator";
-import AlertNotice from "../components/AlertNotice";
 import AlertNewChat from "../components/AlertNewChat";
 import CustomBottomSheet from "../components/CustomBottomSheet";
 import AddProductsModalContent from "../components/AddProductsModalContent";
@@ -86,7 +85,7 @@ import { useAuth } from "../context/AuthContext";
 // helpers
 import { copyToClipboard, windowHeight, windowWidth } from "../utils/helpers";
 
-
+// Chat Screen
 const Chat = ({navigation, route}) => {
 
     // auth data
@@ -99,14 +98,13 @@ const Chat = ({navigation, route}) => {
     const {chatId, chatType, business_name, banner_image} = route?.params || {};
 
     // chat status
-    const status = "Dispatched";
+    const status = "Pending";
 
     // accoutntype, retreived from global variables
     const userId = "hjsdjkji81899";
     const companyName = "Mega Enterprise";
     const fullname = "Iffie Ovie";
     const emptyStock = false;
-    
 
     // messages ref // would be changed to messages offset state
     const messagesRefs = useRef([]);
@@ -115,6 +113,7 @@ const Chat = ({navigation, route}) => {
     // required for any auto scroll action to be carried out on the screen
     const scrollViewRef = useRef();
 
+    
     // has scrolled to bottom ref
     // stores if the screen has scrolled to bottom on mount
     const hasScrolledToBottom = useRef(false);
@@ -383,6 +382,9 @@ const Chat = ({navigation, route}) => {
     const openModal = (type) => {
         // open bottomsheet modal
         bottomSheetRef.current?.present();
+
+        const orderActionables = ["Cancel order", "Dispatch order", "Deliver order", "Reschedule order", "Return order"];
+
         // set modal type
         if (type === "Open with") { 
             // bottomsheet parameters to handle onclick phone number
@@ -390,17 +392,11 @@ const Chat = ({navigation, route}) => {
                 type: type,
                 snapPoints: [198],
             });
-        } else if (type === "Reschedule order") { 
-            // bottomsheet parameters for reschedule order flow
-            return setModal({
-                type: type,
-                snapPoints: ["100%"],
-            });
-        } else if (["Cancel order", "Dispatch order", "Deliver order"].includes(type)) {
+        } else if (orderActionables.includes(type)) {
             // bottomsheet parameters for cancel order, dispatch order or deliver order flows
             return setModal({
                 type: type,
-                snapPoints: [520],
+                snapPoints: ["100%"],
             });
         } else if (type === "") {
             // bottomsheet parameters for the type of file to be attached
@@ -471,11 +467,16 @@ const Chat = ({navigation, route}) => {
             name: "Deliver",
             onPress: () => openModal("Deliver order")
         },
+        {
+            id: 5,
+            name: "Return",
+            onPress: () => openModal("Return order")
+        },
     ];
 
     // waybill buttons
     const waybillButton = {
-        name: "Received",
+        name: "Delivered",
         onPress: () => {}
     }
     
@@ -620,6 +621,72 @@ const Chat = ({navigation, route}) => {
                         reschedule_date: () => {
                             return moment(rescheduleDate).format('dddd, D MMMM, YYYY');
                         },
+                        text: reason ? reason : "N/A",
+                    }   
+                ]);
+            } else if (type === "Dispatched") {
+                setMessages([
+                    ...messages,
+                    {
+                        id: Math.random(),
+                        seen: false,
+                        user_id: userId,
+                        fullname: fullname,
+                        company_name: companyName,
+                        account_type: authData?.account_type,
+                        color: messageSenderColors[0],
+                        type: 'Dispatched',
+                        timestamp: () => {
+                            const currentTime = new Date();
+                            return currentTime.getTime();
+                        },
+                        file: null,
+                        reply: false,
+                        reschedule_date: () => {},
+                        text: reason ? reason : "N/A",
+                    }   
+                ]);
+            } else if (type === "Returned") {
+                setMessages([
+                    ...messages,
+                    {
+                        id: Math.random(),
+                        seen: false,
+                        user_id: userId,
+                        fullname: fullname,
+                        company_name: companyName,
+                        account_type: authData?.account_type,
+                        color: messageSenderColors[0],
+                        type: 'Returned',
+                        timestamp: () => {
+                            const currentTime = new Date();
+                            return currentTime.getTime();
+                        },
+                        file: null,
+                        reply: false,
+                        reschedule_date: () => {},
+                        text: reason ? reason : "N/A",
+                    }   
+                ]);
+            } else if (type === "Delivered") {
+                setMessages([
+                    ...messages,
+                    {
+                        id: Math.random(),
+                        seen: false,
+                        user_id: userId,
+                        fullname: fullname,
+                        company_name: companyName,
+                        account_type: authData?.account_type,
+                        color: messageSenderColors[0],
+                        type: 'Delivered',
+                        timestamp: () => {
+                            const currentTime = new Date();
+                            return currentTime.getTime();
+                        },
+                        file: null,
+                        reply: false,
+                        reschedule_date: () => {},
                         text: reason ? reason : "N/A",
                     }   
                 ]);
@@ -843,6 +910,7 @@ const Chat = ({navigation, route}) => {
         })
     }
 
+    // switch order status to dispatched
     const submitDispatchedOrder = () => {
         hasScrolledToBottom.current = false;
         Keyboard.dismiss();
@@ -852,6 +920,20 @@ const Chat = ({navigation, route}) => {
         setToast({
             visible: true,
             text: "Order dispatched successfully",        
+            type: "success",
+        })
+    }
+
+    // switch order status to delivered
+    const submitDeliveredOrder = () => {
+        hasScrolledToBottom.current = false;
+        Keyboard.dismiss();
+        scrollToBottom(true); // animate === true
+        sendMessage("Delivered");
+        closeModal();
+        setToast({
+            visible: true,
+            text: "Order delivered successfully",        
             type: "success",
         })
     }
@@ -965,13 +1047,14 @@ const Chat = ({navigation, route}) => {
         // target message from messages refs 
         const targetMessage = messagesRefs.current.find(message => message.id === id);
 
-        console.log(messageType);
+        // console.log(messageType);
 
         setMessageOverlay({
             top: targetMessage.y,
             height: targetMessage.height
         })
 
+        // set options parameters
         setMessageOptions({
             open: true,
             optionsButtons: (() => {
@@ -987,6 +1070,9 @@ const Chat = ({navigation, route}) => {
             right: authData?.account_type === targetMessage.account_type ? getRightPosition(targetMessage.width) : undefined,
             left: authData?.account_type !== targetMessage.account_type ? getRightPosition(targetMessage.width) : undefined,
         });
+
+        // Vibrate the phone slightly
+        Vibration.vibrate(50); // Vibrate for 50ms
     }
 
     // close Menu function
@@ -1005,6 +1091,11 @@ const Chat = ({navigation, route}) => {
             height: 0
         })
     }
+
+    // useEffect(() => {
+    //     if (messageOptions.open === false) return;
+    //     closeMessageOptions();
+    // }, [scrollOffset])
 
     // function to handle copying of a chat link
     const handleCopyChatLink = () => {
@@ -1164,13 +1255,13 @@ const Chat = ({navigation, route}) => {
             contentContainerStyle={style.scrollViewContent}
             keyboardShouldPersistTaps="always"
             onScroll={({nativeEvent}) => {
+                closeMessageOptions();
                 setScrollOffset(nativeEvent.contentOffset.y)
             }}
         >
             {/* menu */}
             {messageOptions.open && (
                 <Menu
-                    closeMenu={closeMessageOptions}
                     menuButtons={messageOptions?.optionsButtons}
                     top={messageOptions?.top}
                     right={messageOptions?.right}
@@ -1194,9 +1285,6 @@ const Chat = ({navigation, route}) => {
             />
             <View 
                 style={style.container}
-                onTouchStart={() => {
-                    if (messageOptions.open) closeMessageOptions();
-                }}
             >
                 {/* fixed header container */}
                 {/* chat scroll view */}
@@ -1248,23 +1336,58 @@ const Chat = ({navigation, route}) => {
         {/* text field wrapper */}
         <View style={style.textFieldWrapper}>
             { !replying && !uploading && (
-                <View style={style.actionButtonsWrapper}>
+                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={style.actionButtonsWrapper}>
                     { chatType === "Order" && orderButtons.map((button) => {
+
+                        // if status is cancelled
+                        if (status === "Cancelled") return;
+
+                        // if account type is merchant and status is Pending or Rescheduled 
                         if (authData?.account_type === "Merchant"){
-                            if (button.id === 1 || button.id === 2){
+                            // if status is not pending or rescheduled, show no buttons
+                            if (!["Pending", "Rescheduled"].includes(status)) return;
+                            // show only reschedule and cancel buttons
+                            if (button.name === "Reschedule" || button.name === "Cancel"){
                                 return <ActionButton
                                     key={button.id}
                                     name={button.name}
                                     onPress={button.onPress}
                                 />
                             }
-                        } else {
-                            return <ActionButton
-                                key={button.id}
-                                name={button.name}
-                                onPress={button.onPress}
-                            />
+                        } else { // Logistics account
+                            // order buttons if status is Pending or Rescheduled
+                            if (["Pending", "Rescheduled"].includes(status)){
+                                if (button.name === "Deliver" || button.name === "Return") return;
+                                return <ActionButton
+                                    key={button.id}
+                                    name={button.name}
+                                    onPress={button.onPress}
+                                />
+                            }
+    
+                            // if order is dispatched, only possible actions are deliver or cancel
+                            if (["Dispatched"].includes(status)){
+                                if (button.name === "Deliver" || button.name === "Return") {
+                                    return <ActionButton
+                                        key={button.id}
+                                        name={button.name}
+                                        onPress={button.onPress}
+                                    />
+                                }
+                            }
+    
+                            // if order is Delivered, only possible action is cancelled within 30mins after delivery
+                            if (["Delivered"].includes(status)){
+                                if (button.name === "Cancel") {
+                                    return <ActionButton
+                                        key={button.id}
+                                        name={button.name}
+                                        onPress={button.onPress}
+                                    />
+                                }
+                            }
                         }
+
                     })}
 
                     { chatType === "Waybill" && authData?.account_type === "Logistics" && (
@@ -1273,7 +1396,7 @@ const Chat = ({navigation, route}) => {
                             onPress={waybillButton.onPress}
                         />
                     )}
-                </View>
+                </ScrollView>
             )}
             { replying && ReplyingMessageInput(replying) }
             { uploading && uploadingMessageInput(uploading) }
@@ -1412,7 +1535,7 @@ const Chat = ({navigation, route}) => {
             {/* Reschedule order */}
             { modal.type === "Reschedule order" && (
                 <>
-                    <BottomSheetScrollView contentContainerStyle={style.modalWrapper}>
+                    <BottomSheetScrollView showsVerticalScrollIndicator={false} contentContainerStyle={style.modalWrapper}>
                         <View style={style.modalContent}>
                             <Text style={style.editModalParagragh}>
                                 Kindly use the form to reschedule your order to a later date
@@ -1478,7 +1601,7 @@ const Chat = ({navigation, route}) => {
             {/* cancel order */}
             { modal.type === "Cancel order" && (
                 <>
-                    <BottomSheetScrollView contentContainerStyle={style.modalWrapper}>
+                    <BottomSheetScrollView showsVerticalScrollIndicator={false} contentContainerStyle={style.modalWrapper}>
                         <View style={style.modalContent}>
                             <Text style={style.editModalParagragh}>
                                 Kindly use the form to cancel your order
@@ -1530,10 +1653,10 @@ const Chat = ({navigation, route}) => {
                     />
                 </>
             )}
-            {/* cancel order */}
+            {/* dispatch order */}
             { modal.type === "Dispatch order" && (
                 <>
-                    <BottomSheetScrollView contentContainerStyle={style.modalWrapper}>
+                    <BottomSheetScrollView showsVerticalScrollIndicator={false} contentContainerStyle={style.modalWrapper}>
                         <View style={style.modalContent}>
                             <Text style={style.editModalParagragh}>
                                 Kindly review and confirm this action
@@ -1580,6 +1703,110 @@ const Chat = ({navigation, route}) => {
                         name={"Done"}
                         shrinkWrapper={true}
                         onPress={submitDispatchedOrder}
+                        unpadded={true}
+                    />
+                </>
+            )}
+            {/* return order bottomsheet */}
+            { modal.type === "Return order" && (
+                <>
+                    <BottomSheetScrollView showsVerticalScrollIndicator={false} contentContainerStyle={style.modalWrapper}>
+                        <View style={style.modalContent}>
+                            <Text style={style.editModalParagragh}>
+                                Kindly review and confirm this action
+                            </Text>
+                            {/* Selected Products Container */}
+                            <View style={style.productsWrapper}>
+                                <View style={style.productsHeading}>
+                                    <Text style={style.producPlaceholder}>Products ({products.length})</Text>
+                                </View>
+                                <View style={style.productsDetailsContainer}>
+                                    { products.map((product) => (
+                                        // map through selected products
+                                        <MerchantProduct
+                                            key={product.id}
+                                            productName={product.product_name}
+                                            quantity={product.quantity}
+                                            imageUrl={product.imageUrl}
+                                            summary={true}
+                                            containerStyle={{
+                                                backgroundColor: background,
+                                                paddingVertical: 0,
+                                            }}
+                                        />
+                                    ))}
+                                </View>
+                            </View>
+                            <Input
+                                multiline={true}
+                                label={"Comments"}
+                                placeholder={"Anything you would like to say?"}
+                                value={reason}
+                                onChange={setReason}
+                                height={100}
+                                textAlign={"top"}
+                                error={errorReason}
+                                setError={setErrorReason}
+                            />
+                        </View>
+                    </BottomSheetScrollView>
+                    <CustomButton
+                        name={"Done"}
+                        shrinkWrapper={true}
+                        onPress={submitDispatchedOrder}
+                        unpadded={true}
+                        inactive={!reason ? true : false}
+                    />
+                </>
+            )}
+            {/* dispatch order */}
+            { modal.type === "Deliver order" && (
+                <>
+                    <BottomSheetScrollView showsVerticalScrollIndicator={false} contentContainerStyle={style.modalWrapper}>
+                        <View style={style.modalContent}>
+                            <Text style={style.editModalParagragh}>
+                                Kindly review and confirm this action
+                            </Text>
+                            {/* Selected Products Container */}
+                            <View style={style.productsWrapper}>
+                                <View style={style.productsHeading}>
+                                    <Text style={style.producPlaceholder}>Products ({products.length})</Text>
+                                </View>
+                                <View style={style.productsDetailsContainer}>
+                                    { products.map((product) => (
+                                        // map through selected products
+                                        <MerchantProduct
+                                            key={product.id}
+                                            productName={product.product_name}
+                                            quantity={product.quantity}
+                                            imageUrl={product.imageUrl}
+                                            summary={true}
+                                            containerStyle={{
+                                                backgroundColor: background,
+                                                paddingVertical: 0,
+                                            }}
+                                        />
+                                    ))}
+                                </View>
+                            </View>
+                            <Input
+                                multiline={true}
+                                label={"Comments (optional)"}
+                                placeholder={"Payment method cash or transfer?"}
+                                value={reason}
+                                onChange={setReason}
+                                height={100}
+                                textAlign={"top"}
+                                error={errorReason}
+                                setError={setErrorReason}
+                            />
+                        </View>
+                    </BottomSheetScrollView>
+                    <CustomButton
+                        name={"Done"}
+                        shrinkWrapper={true}
+                        inactive={!reason ? true : false}
+                        onPress={submitDeliveredOrder}
                         unpadded={true}
                     />
                 </>
@@ -1924,7 +2151,7 @@ const style = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'center',
-        width: "100%",
+        minWidth: "100%",
         gap: 10,
     },
     uploadButtonsWrapper: {
