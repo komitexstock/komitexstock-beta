@@ -81,10 +81,10 @@ const CaptureImage = ({navigation, route}) => {
             route.params.imageType && setImageType(route.params.imageType);
 
             if (route.params.origin === "Chat") {
-                setChatId(route.params.id);
-                setChatType(route.params.type);
-                setChatName(route.params.name);
-                setChatHeaderImage(route.params.imageUrl);
+                setChatId(route.params.chat_id);
+                setChatType(route.params.chat_type);
+                setChatName(route.params.business_name);
+                setChatHeaderImage(route.params.banner_image);
             }
         }
         else return setOrigin("Chat");
@@ -161,10 +161,10 @@ const CaptureImage = ({navigation, route}) => {
         navigation.navigate(origin, {
             imageUri: picture,
             imageType: imageType,
-            id: chatId,
-            type: chatType,
-            name: chatName,
-            imageUrl: chatHeaderImage,
+            chat_id: chatId,
+            chat_type: chatType,
+            business_name: chatName,
+            banner_image: chatHeaderImage,
         });
     };
 

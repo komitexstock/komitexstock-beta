@@ -95,7 +95,10 @@ const Chat = ({navigation, route}) => {
     const { bottomSheetRef, stackedSheetRef, calendarSheetRef, bottomSheetOpen, setToast } = useGlobals();
 
     // chat route parameters
-    const {chatId, chatType, business_name, banner_image} = route?.params || {};
+    const {chat_id, chat_type, business_name, banner_image, inventory_action} = route?.params || {};
+    console.log(inventory_action);
+    console.log(chat_type);
+    console.log(authData?.account_type);
 
     // chat status
     const status = "Pending";
@@ -325,7 +328,7 @@ const Chat = ({navigation, route}) => {
     // chat header component
     const ChatHeader = (
         <View style={style.headerInfoWrapper}>
-            {chatType !== "StockTransfer" && (
+            {chat_type !== "StockTransfer" && (
                 <Avatar
                     imageUrl={banner_image}
                     fullname={business_name}
@@ -334,8 +337,8 @@ const Chat = ({navigation, route}) => {
                 />
             )}
             <View style={style.headerTextWrapper}>
-                <Text style={style.headerPrimaryText}>{chatType === "StockTransfer" ? "Stock Transfer" : business_name}</Text>
-                <Text style={style.headerSecondaryText}>{chatType} ID: {chatId}</Text>
+                <Text style={style.headerPrimaryText}>{chat_type === "StockTransfer" ? "Stock Transfer" : business_name}</Text>
+                <Text style={style.headerSecondaryText}>{chat_type} ID: {chat_id}</Text>
             </View>
         </View>
     );
@@ -475,10 +478,19 @@ const Chat = ({navigation, route}) => {
     ];
 
     // waybill buttons
-    const waybillButton = {
-        name: "Delivered",
-        onPress: () => {}
-    }
+    const waybillButtons = [
+        {
+            id: 1,
+            name: "Deliver",
+            onPress: () => {}
+        },
+        {
+            id: 2,
+            name: "Cancel",
+            onPress: () => {}
+        },
+
+    ] 
     
     // template text
     const templateText = `This is Komitex Logistics you ordered for Maybach Sunglasses at ₦38,000 online, would you be available to receive it today?`;
@@ -979,8 +991,8 @@ const Chat = ({navigation, route}) => {
         Keyboard.dismiss();
         navigation.navigate("CaptureImage", {
             origin: "Chat",
-            chatId: chatId,
-            chatType: chatType,
+            chat_id: chat_id,
+            chat_type: chat_type,
             business_name: business_name,
             banner_image: banner_image,
         })
@@ -1164,13 +1176,13 @@ const Chat = ({navigation, route}) => {
             id: 1,
             icon:<OrderDetailsIcon />,
             text: (() => {
-                if (chatType === "StockTransfer") return "Transfer Details";
-                return chatType + " Details";
+                if (chat_type === "StockTransfer") return "Transfer Details";
+                return chat_type + " Details";
             }).call(),
             onPress: () => {
                 setMenuOpened(false);
-                if (chatType === "StockTransfer") return navigation.navigate("TransferDetails", { chatId: chatId });
-                return navigation.navigate(`${chatType}Details`, { chatId: chatId });
+                if (chat_type === "StockTransfer") return navigation.navigate("TransferDetails", { chat_id: chat_id });
+                return navigation.navigate(`${chat_type}Details`, { chat_id: chat_id });
             },
         },
         {
@@ -1209,7 +1221,7 @@ const Chat = ({navigation, route}) => {
             {status !== "Pending" && (
                 <View style={style.statusIndicator}>
                     <Text style={style.statusChatType}>
-                        {chatType} status:&nbsp;
+                        {chat_type} status:&nbsp;
                         <Text
                             style={[
                                 status === "Delivered" && style.deliveredStatus,
@@ -1337,7 +1349,7 @@ const Chat = ({navigation, route}) => {
         <View style={style.textFieldWrapper}>
             { !replying && !uploading && (
                 <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={style.actionButtonsWrapper}>
-                    { chatType === "Order" && orderButtons.map((button) => {
+                    { chat_type === "Order" && orderButtons.map((button) => {
 
                         // if status is cancelled
                         if (status === "Cancelled") return;
@@ -1390,12 +1402,50 @@ const Chat = ({navigation, route}) => {
 
                     })}
 
-                    { chatType === "Waybill" && authData?.account_type === "Logistics" && (
-                        <ActionButton 
-                            name={waybillButton.name}
-                            onPress={waybillButton.onPress}
-                        />
-                    )}
+                    {/* waybill chat type */}
+                    { chat_type === "Waybill" && waybillButtons.map((button) => {
+                        // if account is merchant
+                        if (authData?.account_type === "Merchant"){
+                            // if status is "Pending", inventory action is increment, render cancel button
+                            if (status === "Pending" && inventory_action === "increment" && button.name === "Cancel"){
+                                return <ActionButton 
+                                    key={button.id}
+                                    name={button.name}
+                                    onPress={button.onPress}
+                                />
+                            }
+                            // if status is "Pending", inventory action is decrement, render deliver button
+                            if (status === "Pending" && inventory_action === "decrement" && button.name === "Deliver"){
+                                return <ActionButton 
+                                    key={button.id}
+                                    name={button.name}
+                                    onPress={button.onPress}
+                                />
+                            }
+                        }
+
+
+                        // if account is logistics
+                        if (authData?.account_type === "Logistics"){
+                            // if status is "Pending", inventory action is decrement, render cancel button
+                            if (status === "Pending" && inventory_action === "decrement" && button.name === "Cancel"){
+                                return <ActionButton 
+                                    key={button.id}
+                                    name={button.name}
+                                    onPress={button.onPress}
+                                />
+                            }
+                            // if status is "Pending", inventory action is increment, render deliver button
+                            if (status === "Pending" && inventory_action === "increment" && button.name === "Deliver"){
+                                return <ActionButton 
+                                    key={button.id}
+                                    name={button.name}
+                                    onPress={button.onPress}
+                                />
+                            }
+                        }
+                    })}
+                    
                 </ScrollView>
             )}
             { replying && ReplyingMessageInput(replying) }

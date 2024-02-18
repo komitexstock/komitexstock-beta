@@ -50,10 +50,15 @@ import moment from "moment";
 import WaybillSkeleton from "../skeletons/WaybillSkeleton";
 // globals
 import { useGlobals } from "../context/AppContext";
+// use auth context
+import { useAuth } from "../context/AuthContext";
 // data
 import { waybillList } from "../data/waybillList";
 
 const Waybill = ({navigation}) => {
+
+    // use auth
+    const { authData } = useAuth();
 
     // bottom sheet refs
     const { bottomSheetRef, filterSheetRef, calendarSheetRef, calendarSheetOpen} = useGlobals();
@@ -107,7 +112,7 @@ const Waybill = ({navigation}) => {
     })
 
     // tabs, default as Outgoing for Merchants
-    const [tab, setTab] = useState("outgoing");
+    const [tab, setTab] = useState(authData?.account_type === "Merchant" ? "outgoing" : "incoming");
 
     // state to store searchQuery
     const [searchQuery, setSearchQuery] = useState("");
@@ -242,9 +247,6 @@ const Waybill = ({navigation}) => {
 
         closeFilter(); // pass true to not reset filter
     }
-
-    // console.log(filter);
-
 
     // function to set filter parameter, runc on click an action button in filter bottomsheet
     const handleFilterParameters = (title, button, filterType) => {
@@ -894,7 +896,7 @@ const Waybill = ({navigation}) => {
 
     const updateWaybillList = (tab) => {
         if (tab === "outgoing") {
-            const outgoingWaybill = waybillList.filter(waybill => waybill.inventory_action === "increment");
+            const outgoingWaybill = waybillList.filter(waybill => waybill.inventory_action === `${authData?.account_type === "Merchant" ? "increment" : "decrement"}`);
 
             const newWaybillList = outgoingWaybill.filter(waybill => {
                 const filterArray = outgoingFilter.map(filterParam => {
@@ -922,7 +924,7 @@ const Waybill = ({navigation}) => {
                 ...newWaybillList
             ]);            
         } else {
-            const incomingWaybill = waybillList.filter(waybill => waybill.inventory_action === "decrement");
+            const incomingWaybill = waybillList.filter(waybill => waybill.inventory_action === `${authData?.account_type === "Merchant" ? "decrement" : "increment"}`);
             // console.log(searchResult);
     
             const newWaybillList = incomingWaybill.filter(waybill => {
@@ -1089,20 +1091,28 @@ const Waybill = ({navigation}) => {
                                             </View>
                                         </View>
                                         {/* page tabs */}
-                                        <View style={style.tabContainer}>
+                                        <View 
+                                            style={[
+                                                style.tabContainer,
+                                                {flexDirection: authData?.account_type === "Merchant" ? 
+                                                    "row" : // for merchant show outgoing tab first
+                                                    "row-reverse" // for logistics show incoming tab first
+                                                },
+                                            ]}
+                                        >
                                             <TouchableOpacity 
                                                 style={tab === "outgoing" ? style.tabButtonSelected : style.tabButton}
                                                 onPress={() => setTab("outgoing")}
                                             >
                                                 <Text style={tab === "outgoing" ? style.tabButtonTextSelected : style.tabButtonText} >Outgoing</Text>
-                                                <Badge number={getNumberOfUnreadMessages("increment")} />
+                                                <Badge number={getNumberOfUnreadMessages(authData?.account_type === "Merchant" ? "increment" : "decrement")} />
                                             </TouchableOpacity>
                                             <TouchableOpacity 
                                                 style={tab === "incoming" ? style.tabButtonSelected : style.tabButton}
                                                 onPress={() => setTab("incoming")}
                                             >
                                                 <Text style={tab === "incoming" ? style.tabButtonTextSelected : style.tabButtonText} >Incoming</Text>
-                                                <Badge number={getNumberOfUnreadMessages("decrement")} />
+                                                <Badge number={getNumberOfUnreadMessages(authData?.account_type === "Merchant" ? "decrement" : "increment")} />
                                             </TouchableOpacity>
                                         </View>
                                         {/* check if any filter has been applied, i.e it is not in its default value */}

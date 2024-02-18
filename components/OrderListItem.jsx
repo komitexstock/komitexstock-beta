@@ -45,8 +45,8 @@ const OrderListItem = ({item, index, firstOrder, lastOrder, selectable, selected
             // return onPress;
             setTimeout(() => {
                 navigation.navigate("Chat", {
-                    chatId: item.id, 
-                    chatType: "Order",
+                    chat_id: item.id, 
+                    chat_type: "Order",
                     business_name: handleChatHeaderBusinessName(),
                     banner_image: handleChatHeaderBanner(),
                 });

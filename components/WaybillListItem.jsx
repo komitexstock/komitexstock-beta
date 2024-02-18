@@ -37,8 +37,9 @@ const WaybillListItem = ({navigation, item, index, firstWaybill, lastWaybill, si
 
         setTimeout(() => {
             navigation.navigate("Chat", {
-                chatId: item.id, 
-                chatType: "Waybill",
+                chat_id: item.id, 
+                chat_type: "Waybill",
+                inventory_action: item?.inventory_action,
                 business_name: handleChatHeaderBusinessName(),
                 banner_image: handleChatHeaderBanner(),
             });
