@@ -184,7 +184,7 @@ const Warehouse = ({navigation, route}) => {
             receive_waybill: false,
             add_new: false,
         },
-    ]
+    ];
 
 
     // warehouses

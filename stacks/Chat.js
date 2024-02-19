@@ -67,6 +67,7 @@ import {
     subText,
     deliveredText,
     cancelledText,
+    listSeparator,
 } from "../style/colors";
 // bottomsheet components
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
@@ -95,10 +96,15 @@ const Chat = ({navigation, route}) => {
     const { bottomSheetRef, stackedSheetRef, calendarSheetRef, bottomSheetOpen, setToast } = useGlobals();
 
     // chat route parameters
-    const {chat_id, chat_type, business_name, banner_image, inventory_action} = route?.params || {};
-    console.log(inventory_action);
-    console.log(chat_type);
-    console.log(authData?.account_type);
+    const {
+        chat_id,
+        chat_type,
+        business_name,
+        banner_image,
+        inventory_action,
+        origin_warehouse,
+        destination_warehouse,
+    } = route?.params || {};
 
     // chat status
     const status = "Pending";
@@ -136,6 +142,74 @@ const Chat = ({navigation, route}) => {
 
     // state to store typed text
     const [textInput, setTextInput] = useState('');
+
+    // retrived from global async sorage
+    const warehouseList = [
+        {
+            id: 1,
+            warehouse_name: "Warri",
+            warehouse_manager: {
+                id: 1,
+                full_name: "Abiodun Johnson"
+            },
+        },
+        {
+            id: 2,
+            warehouse_name: "Isoko",
+            warehouse_manager: {
+                id: 1,
+                full_name: "Abiodun Johnson"
+            },
+        },
+        {
+            id: 3,
+            warehouse_name: "Asaba",
+            warehouse_manager: {
+                id: 1,
+                full_name: "Abiodun Johnson"
+            },
+        },
+        {
+            id: 4,
+            warehouse_name: "Kwale",
+            warehouse_manager: {
+                id: 1,
+                full_name: "Abiodun Johnson"
+            },
+        },
+        {
+            id: 5,
+            warehouse_name: "Agbor",
+            warehouse_manager: {
+                id: 1,
+                full_name: "Abiodun Johnson"
+            },
+        },
+        {
+            id: 6,
+            warehouse_name: "Benin",
+            warehouse_manager: {
+                id: 1,
+                full_name: "Abiodun Johnson"
+            },
+        },
+        {
+            id: 7,
+            warehouse_name: "Auchi",
+            warehouse_manager: {
+                id: 1,
+                full_name: "Abiodun Johnson"
+            },
+        },
+        {
+            id: 8,
+            warehouse_name: "Ekpoma",
+            warehouse_manager: {
+                id: 1,
+                full_name: "Abiodun Johnson"
+            },
+        },
+    ];
     
     // ref for the input text
     // needed to auto focus on the chat text input when a message is pulled/dragged to be relied
@@ -267,6 +341,34 @@ const Chat = ({navigation, route}) => {
         location: "Warri",
         charge: 3000,
     });
+
+    // warehouse input
+    const [warehouseInput, setWarehouseInput] = useState(null);
+
+    // warehosue input active
+    const [warehouseInputActive, setWarehouseInputActive] = useState(false);
+
+     // list of warehouse of logisics for incoming oe outgoing waybill
+     const warehouses = [
+        {id:  6, name: "Abraka"},
+        {id:  4, name: "Agbor"},
+        {id:  2, name: "Asaba"},
+        {id:  3, name: "Benin"},
+        {id:  8, name: "Kwale"},
+        {id:  7, name: "Isoko"},
+        {id:  5, name: "Sapele"},
+        {id:  1, name: "Warri"},
+    ];
+
+    // update warehouse function
+    const updateWarehouse = (id) => {
+        // close stacked bottomsheet
+        closeStackedModal();
+        // set warehouse input
+        setWarehouseInput(warehouses.find((item) => item.id === id));
+        // disable input active state
+        setWarehouseInputActive(false);
+    }
 
     // function to update charge
     const updateCharge = (text) => {
@@ -419,17 +521,12 @@ const Chat = ({navigation, route}) => {
     // function to open stacked bottom sheet
     const openStackedModal = (type) => {
         stackedSheetRef.current?.present();
-        if (type === "Products") {
-            setStackedModal({
-                type: "Products",
-                snapPoints: ["75%"],
-            })
-        } else {
-            setStackedModal({
-                type: "Locations",
-                snapPoints: ["75%"],
-            })
-        }
+        setStackedModal({
+            type: type,
+            snapPoints: ["75%"],
+        })
+        // if (type === "Products") {
+        // }
     }
 
     // function to close stacked bottom sheet
@@ -864,6 +961,28 @@ const Chat = ({navigation, route}) => {
     // state to indicate if an error was made in the price input
     const [errorPrice, setErrorPrice] = useState(false);
 
+    // state to store waybill details
+    const [waybillDetails, setWaybilldetails] = useState(null);
+
+    // state to indicate if the input field has an error/or is left empty
+    const [errorWaybillDetails, setErrorWaybillDetails] = useState(false);
+
+    // function to update waybilldetails
+    const updateWaybillDetails = (text) => {
+        setWaybilldetails(text)
+    }
+
+    // state to store transfer details
+    const [transferDetails, setTransferdetails] = useState(null);
+
+    // state to indicate if the input field has an error/or is left empty
+    const [errorTransferDetails, setErrorTransferDetails] = useState(false);
+
+    // function to update transferdetails
+    const updateTransferDetails = (text) => {
+        setTransferdetails(text)
+    }
+
     // variable to check for empty fields
     const isAnyFieldEmpty = [
         location, 
@@ -892,6 +1011,16 @@ const Chat = ({navigation, route}) => {
             text: "Order edited successfully",        
             type: "success",
         })
+    }
+
+    // submit edit waybill
+    const submitEditWaybill = () => {
+        
+    }
+
+    // submit edit transfer
+    const submitEditTransfer = () => {
+        // Add your logic here for submitting edited transfer
     }
     
     // submit order rescheduled information
@@ -1267,8 +1396,8 @@ const Chat = ({navigation, route}) => {
             contentContainerStyle={style.scrollViewContent}
             keyboardShouldPersistTaps="always"
             onScroll={({nativeEvent}) => {
-                closeMessageOptions();
                 setScrollOffset(nativeEvent.contentOffset.y)
+                if (messageOptions.open) return closeMessageOptions();
             }}
         >
             {/* menu */}
@@ -1278,8 +1407,9 @@ const Chat = ({navigation, route}) => {
                     top={messageOptions?.top}
                     right={messageOptions?.right}
                     left={messageOptions?.left}
-                    hideTouchableBackground={true}
+                    hideTouchableBackground={false}
                     shrinkMenu={true}
+                    closeMenu={closeMessageOptions}
                 />
             )}
 
@@ -1306,21 +1436,28 @@ const Chat = ({navigation, route}) => {
                         status !== "Pending" && {paddingTop: 94},
                     ]}
                 >
+                    {/* date */}
                     <View style={style.dateWrapper}>
                         <Text style={style.dateText}>{"Friday July 7, 2023"}</Text>
                     </View>
 
+                    {/* edi button */}
                     <View style={[style.editButtonWrapper, authData?.account_type === "Merchant" && {justifyContent: 'flex-end'}]}>
                         <TouchableOpacity 
                             style={style.editButton}
-                            onPress={() => openModal("Edit order")}
+                            onPress={() => {
+                                if (chat_type !== "StockTransfer") return openModal("Edit "+chat_type.toLowerCase());
+                                return openModal("Edit transfer");
+                            }}
                         >
                             <EditIcon />
-                            <Text style={style.editButtonText}>Edit Order</Text>
+                            <Text style={style.editButtonText}>
+                                Edit {chat_type === "StockTransfer" ? "Transfer" : chat_type}
+                            </Text>
                         </TouchableOpacity>
                     </View>
                     
-
+                    {/* list of messages */}
                     {messages.map((message, index) => {
                         return (
                             <MessageContainer
@@ -1579,6 +1716,142 @@ const Chat = ({navigation, route}) => {
                     shrinkWrapper={true}
                     inactive={isAnyFieldEmpty}
                     onPress={submitEditOrder}
+                    unpadded={true}
+                />
+            </>)}
+            {/* edit waybill */}
+            { modal.type === "Edit waybill" && (<>
+                <BottomSheetScrollView showsVerticalScrollIndicator={false} contentContainerStyle={style.modalWrapper}>
+                    <View style={style.modalContent}>
+                        <Text style={style.editModalParagragh}>
+                            We all make mistakes, use the available fields to make to edit your waybill
+                        </Text>
+                        {/* Selected Products Container */}
+                        <View style={style.productsWrapper}>
+                            <View style={style.productsHeading}>
+                                <Text style={style.producPlaceholder}>Products ({products.length})</Text>
+                                <TouchableOpacity
+                                    onPress={() => openStackedModal("Products")}
+                                >
+                                    <Text style={style.addProduct}>+Add Product</Text>
+                                </TouchableOpacity>
+                            </View>
+                            { products.length !== 0 ? products.map((product) => (
+                                // map through selected products
+                                <Product 
+                                    key={product.id} 
+                                    product={product} 
+                                    removeProduct={removeProduct}
+                                    increaseQuantity={increaseQuantity}
+                                    decreaseQuantity={decreaseQuantity}
+                                    invertColor={true}
+                                />
+                            )) : (
+                                // show no product selected component
+                                <View style={style.noProductWrapper}>
+                                    <Text style={style.noProductText}>
+                                        No product selected. Kindly add a new product 
+                                        or select one from your inventory
+                                    </Text>
+                                </View>
+                            )}
+                        </View>
+                        {/* select warehouse input */}
+                        <SelectInput
+                            label={"Select Warehouse"}
+                            placeholder={"Select warehouse to receive the waybill"}
+                            inputFor={"String"}
+                            onPress={() => openStackedModal("Warehouses")}
+                            value={warehouseInput?.name}
+                            active={warehouseInputActive}
+                        />
+                        {/* waybill details */}
+                        <Input
+                            multiline={true}
+                            label={"Waybill Details"} 
+                            placeholder={"Driver's number or Waybill number"} 
+                            value={waybillDetails}
+                            onChange={updateWaybillDetails}
+                            height={100}
+                            textAlign={"top"}
+                            error={errorWaybillDetails}
+                            setError={setErrorWaybillDetails}
+                        />
+                    </View>
+                </BottomSheetScrollView>
+                <CustomButton
+                    name={"Done"}
+                    shrinkWrapper={true}
+                    inactive={isAnyFieldEmpty}
+                    onPress={submitEditWaybill}
+                    unpadded={true}
+                />
+            </>)}
+            {/* edit stock transfer */}
+            { modal.type === "Edit transfer" && (<>
+                <BottomSheetScrollView showsVerticalScrollIndicator={false} contentContainerStyle={style.modalWrapper}>
+                    <View style={style.modalContent}>
+                        <Text style={style.editModalParagragh}>
+                            We all make mistakes, use the available fields to make to edit your stock transfer
+                        </Text>
+                        {/* select warehouse input */}
+                        <SelectInput
+                            label={"Change Destination"}
+                            placeholder={"Select warehouse to receive the transfer"}
+                            inputFor={"String"}
+                            onPress={() => openStackedModal("Warehouses")}
+                            value={warehouseInput?.name}
+                            active={warehouseInputActive}
+                        />
+                        {/* Selected Products Container */}
+                        <View style={style.productsWrapper}>
+                            <View style={style.productsHeading}>
+                                <Text style={style.producPlaceholder}>Products ({products.length})</Text>
+                                <TouchableOpacity
+                                    onPress={() => openStackedModal("Products")}
+                                >
+                                    <Text style={style.addProduct}>+Add Product</Text>
+                                </TouchableOpacity>
+                            </View>
+                            { products.length !== 0 ? products.map((product) => (
+                                // map through selected products
+                                <Product 
+                                    key={product.id} 
+                                    product={product} 
+                                    removeProduct={removeProduct}
+                                    increaseQuantity={increaseQuantity}
+                                    decreaseQuantity={decreaseQuantity}
+                                    invertColor={true}
+                                />
+                            )) : (
+                                // show no product selected component
+                                <View style={style.noProductWrapper}>
+                                    <Text style={style.noProductText}>
+                                        No product selected. Kindly add a new product 
+                                        or select one from your inventory
+                                    </Text>
+                                </View>
+                            )}
+                        </View>
+                        {/* waybill details */}
+                        <Input
+                            multiline={true}
+                            label={"Waybill Details"} 
+                            placeholder={"Driver's number or Waybill number"} 
+                            value={transferDetails}
+                            onChange={updateTransferDetails}
+                            height={100}
+                            textAlign={"top"}
+                            error={errorTransferDetails}
+                            setError={setErrorTransferDetails}
+                        />
+                    </View>
+                </BottomSheetScrollView>
+                <CustomButton
+                    name={"Done"}
+                    shrinkWrapper={true}
+                    inactive={isAnyFieldEmpty}
+                    onPress={submitEditTransfer}
                     unpadded={true}
                 />
             </>)}
@@ -1947,6 +2220,22 @@ const Chat = ({navigation, route}) => {
                 <AddLocationModalContent 
                     handleSelectedLocation={handleSelectedLocation}
                 />
+            )}
+
+            {stackedModal.type === "Warehouses" && (
+                <BottomSheetScrollView showsVerticalScrollIndicator={false}>
+                    <View style={style.listWrapper}>
+                        {warehouses.map((warehouse) => (
+                            <TouchableOpacity 
+                                key={warehouse.id} 
+                                style={style.listItem}
+                                onPress={() => updateWarehouse(warehouse.id)}
+                            >
+                                <Text style={style.listText}>{warehouse.name}</Text>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+                </BottomSheetScrollView>
             )}
         </CustomBottomSheet>
 
@@ -2408,7 +2697,33 @@ const style = StyleSheet.create({
         display: 'flex',
         flexDirection: 'column',
         backgroundColor: background,
-    }
+    },
+
+    // select warehouse bottomsheet styles
+    listWrapper: {
+        width: "100%",
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        gap: 10,
+    },
+    listItem: {
+        width: "100%",
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        height: 40,
+        paddingVertical: 6,
+        borderBottomWidth: 1,
+        borderBottomColor: listSeparator,
+    },
+    listText: {
+        fontSize: 14,
+        fontFamily: 'mulish-semibold',
+        color: black,
+    },
 })
  
 export default Chat;

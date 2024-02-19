@@ -889,7 +889,7 @@ const AddLocation = ({navigation}) => {
                                 {/* select warehouse input */}
                                 <SelectInput
                                     label={"Select Warehouse"}
-                                    placeholder={"Select Warehouse for The City Above"}
+                                    placeholder={"Select warehouse for the city above"}
                                     inputFor={"String"}
                                     onPress={openStackedModal}
                                     value={warehouseInput?.name}
@@ -898,7 +898,7 @@ const AddLocation = ({navigation}) => {
                                 {/* delivery charge input */}                                
                                 <Input 
                                     label={"Charge"}
-                                    placeholder={"Delivery Charge"}
+                                    placeholder={"Delivery charge"}
                                     value={chargeInput?.toLocaleString()}
                                     onChange={updateChargeInput}
                                     error={chargeInputError}
