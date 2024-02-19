@@ -8,7 +8,7 @@ import { subText, bodyText, white, secondaryColor, black } from '../style/colors
 // utils
 import { windowWidth } from '../utils/helpers';
 
-const WarehouseCard = ({warehouseName, inventoryCount, address, addNew, onPress, onPressMenu}) => {
+const WarehouseCard = ({warehouseName, inventoriesCount, address, addNew, onPress, onPressMenu}) => {
   return (
         <TouchableOpacity 
             style={styles.warehouseCard}
@@ -29,7 +29,7 @@ const WarehouseCard = ({warehouseName, inventoryCount, address, addNew, onPress,
                             {warehouseName}
                         </Text>
                         <Text style={styles.warehouseInventoryCount}>
-                            {inventoryCount} Inventories
+                            {inventoriesCount} Inventories
                         </Text>
                     </>
                 )}

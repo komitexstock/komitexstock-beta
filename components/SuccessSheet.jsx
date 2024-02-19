@@ -17,7 +17,7 @@ import CautionPrompt from './CautionPrompt';
 import SuccessPrompt from './SuccessPrompt';
 import CustomButton from './CustomButton';
 
-const SuccessSheet = ({successSheetRef, caution, height, heading, paragraph, secondaryFunction, primaryFunction, secondaryButtonText, primaryButtonText, isLoadingPrimary, isLoadingSecondary}) => {
+const SuccessSheet = ({successSheetRef, closeSuccessModal, caution, height, heading, paragraph, secondaryFunction, primaryFunction, secondaryButtonText, primaryButtonText, isLoadingPrimary, isLoadingSecondary}) => {
     // bottomsheet modal ref => useRef variable for bottomsheet modal ref
     // hideCloseButton, centered => boolean
     // closeModal => function
@@ -40,7 +40,13 @@ const SuccessSheet = ({successSheetRef, caution, height, heading, paragraph, sec
                 disappearsOnIndex={-1}
                 appearsOnIndex={0}
                 opacity={0.3}
-                onPress={primaryFunction}
+                onPress={() => {
+                    if (closeSuccessModal === undefined) {
+                        primaryFunction()
+                    } else {
+                        closeSuccessModal()
+                    }
+                }}
             />
         ),
         []
@@ -81,7 +87,13 @@ const SuccessSheet = ({successSheetRef, caution, height, heading, paragraph, sec
                     {/* display close icon by default */}
                     <TouchableOpacity 
                         style={style.closeButtonWrapper} 
-                        onPress={primaryFunction}
+                        onPress={() => {
+                            if (closeSuccessModal === undefined) {
+                                primaryFunction()
+                            } else {
+                                closeSuccessModal()
+                            }
+                        }}
                     >
                         <CloseIcon />
                     </TouchableOpacity>

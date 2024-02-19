@@ -21,7 +21,6 @@ import Avatar from "../components/Avatar";
 import SelectRolePopUpContent from "../components/SelectRolePopUpContent";
 import TeamMemberCard from "../components/TeamMemberCard";
 import SuccessSheet from "../components/SuccessSheet";
-import Toast from "../components/Toast";
 // colors
 import { background, black, bodyText, white } from "../style/colors";
 // bottomsheet components
@@ -34,10 +33,12 @@ import { windowHeight } from "../utils/helpers";
 import { useGlobals } from "../context/AppContext";
 // useAuth
 import { useAuth } from "../context/AuthContext";
-// member functions
-import { getTeamMembers } from "../database/common/teamMembers";
 // firebase
-import { database, functions, auth } from "../Firebase";
+import {
+    database,
+    functions,
+    auth
+} from "../Firebase";
 // firestore functions
 import {
     doc,
@@ -167,6 +168,7 @@ const TeamMembers = ({ navigation }) => {
                             full_name: doc.data().full_name,
                             profile_image: doc.data().profile_image,
                             role: doc.data().role,
+                            onPress: () => openModal("Edit", doc.id),
                         };
                         members.push(member);
                     });
@@ -177,37 +179,30 @@ const TeamMembers = ({ navigation }) => {
                         onPress: () => openModal("Add"),
                     }
 
-                    // console.log("Members: ", members);
-                    const adjustedArray = [
-                        // add openModal function to each member card
-                        ...members.map((member) => {
-                            return {
-                                id: member.id,
-                                admin: member.admin,
-                                email: member.email,
-                                deactivated: member.deactivated,
-                                full_name: member.full_name,
-                                profile_image: member.profile_image,
-                                role: member.role,
-                                onPress: () => openModal("Edit", member.id),
-                            }
-                        })
-                    ];
-
                     // if user is a manager, show them add new member card
-                    if (authData?.role === "Manager") adjustedArray.push(addNewCard);
+                    if (authData?.role === "Manager") members.push(addNewCard);
 
-                    setMembers(adjustedArray);
+                    setMembers(members);
                     setPageLoading(false);
                 }, (error) => { //handle errors
-                    console.log("Error: ", error.message);
+                    // console.log("Error: ", error.message);
+                    setToast({
+                        text: error.message,
+                        visible: true,
+                        type: "error",
+                    })
                 }, (data) => {
                     console.log(data)
                 });
     
                 return unsubscribe;
             } catch (error) {
-                console.log("Caught Error: ", error.message)
+                console.log("Caught Error: ", error.message);
+                setToast({
+                    text: error.message,
+                    visible: true,
+                    type: "error",
+                })
             }
         };
     
