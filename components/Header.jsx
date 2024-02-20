@@ -83,6 +83,7 @@ const style = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'flex-start',
         alignItems: 'flex-start',
+        zIndex: 2,
     },
     backArrow: {
         paddingTop: 10,

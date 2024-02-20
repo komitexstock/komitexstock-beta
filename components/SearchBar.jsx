@@ -9,11 +9,23 @@ import { background, black, bodyText, inputLabel } from "../style/colors";
 // components
 import OpenFilterButton from "./OpenFilterButton";
 
-const SearchBar = ({placeholder, searchQuery, setSearchQuery, filterParams, backgroundColor, disableFilter, openFilter, button, onPress}) => {
+const SearchBar = ({placeholder, searchQuery, setSearchQuery, filterParams, backgroundColor, disableFilter, openFilter, button, onPress, onFocus, onBlur}) => {
 
     // function to update search query
     const handleSearchQuery = (text) => {
         setSearchQuery(text);
+    }
+
+    const handleOnFocus = () => {
+        if (onFocus !== undefined) {
+            onFocus();
+        }
+    }
+
+    const handleOnBlur = () => {
+        if (onBlur !== undefined) {
+            onBlur();
+        }
     }
 
     // render SearchBar component
@@ -35,6 +47,8 @@ const SearchBar = ({placeholder, searchQuery, setSearchQuery, filterParams, back
                         placeholder={placeholder}
                         inputMode="search"
                         value={searchQuery}
+                        onFocus={handleOnFocus}
+                        onBlur={handleOnBlur}
                         onChangeText={handleSearchQuery}
                         placeholderTextColor={inputLabel}
                     />

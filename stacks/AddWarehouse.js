@@ -1,3 +1,4 @@
+// Importing necessary components and libraries
 import {
     StyleSheet,
     TouchableWithoutFeedback,
@@ -5,9 +6,12 @@ import {
     View,
     Keyboard,
     TouchableOpacity
-} from 'react-native'
+} from 'react-native';
+
 // react hooks
+
 import React, { useEffect, useState } from 'react'
+
 // components 
 import Header from '../components/Header';
 import SelectInput from '../components/SelectInput';
@@ -17,20 +21,27 @@ import CustomBottomSheet from '../components/CustomBottomSheet';
 import SearchBar from '../components/SearchBar';
 import SuccessSheet from '../components/SuccessSheet';
 import CheckBox from '../components/CheckBox'
+
 // bottomsheet components
 import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
+
 // globals
 import { useGlobals } from '../context/AppContext';
+
 // colors
 import { background, black, bodyText, listSeparator } from '../style/colors';
+
 // utils
 import { windowHeight } from '../utils/helpers';
+
 // useAuth
 import { useAuth } from "../context/AuthContext";
+
 // firebase
 import {
     database,
 } from "../Firebase";
+
 // firestore functions
 import {
     addDoc,
@@ -80,51 +91,6 @@ const AddWarehouse = ({navigation}) => {
 
     // get managers
     useEffect(() => {
-        // fetch team members data
-        // const fetchTeamMembers = async (business_id) => {
-        //     try {
-        //         const collectionRef = collection(database, "users");
-        //         let q = query(
-        //                 collectionRef, 
-        //                 where("business_id", "==", business_id),
-        //                 where("role", "==", "Manager"),
-        //                 where("deactivated", "==", false),
-        //                 orderBy("created_at"),
-        //             );
-            
-        //         const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        //             let managersList = [];
-        //             querySnapshot.forEach((doc) => {
-        //                 const manager = {
-        //                     id: doc.id,
-        //                     full_name: doc.data().full_name,
-        //                 };
-        //                 managersList.push(manager);
-        //             });
-
-        //             setManagers(managersList);
-        //             setObtainedManagers(true);
-        //         }, (error) => { //handle errors
-        //             console.log("Error: ", error.message);
-        //             setToast({
-        //                 text: error.message,
-        //                 visible: true,
-        //                 type: "error",
-        //             })
-        //         }, (data) => {
-        //             console.log(data)
-        //         });
-    
-        //         return unsubscribe;
-        //     } catch (error) {
-        //         console.log("Caught Error: ", error.message)
-        //         setToast({
-        //             text: error.message,
-        //             visible: true,
-        //             type: "error",
-        //         })
-        //     }
-        // };
         // fetch team members data
         const fetchTeamMembers = async (business_id) => {
             try {

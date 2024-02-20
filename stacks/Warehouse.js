@@ -1,3 +1,4 @@
+// Importing necessary components and libraries
 import {
     StyleSheet,
     Text,
@@ -6,13 +7,17 @@ import {
     TouchableWithoutFeedback,
     TouchableOpacity,
     Keyboard,
+    Platform,
 } from 'react-native'
+
 // react hooks
 import React, { useEffect, useMemo, useRef, useState } from 'react'
+
 // icons
 import EditBlackLargeIcon from '../assets/icons/EditBlackLargeIcon';
 import CalendarIcon from "../assets/icons/CalendarIcon";
-// component
+
+// custom components
 import Header from '../components/Header'
 import CustomButton from '../components/CustomButton'
 import SearchBar from '../components/SearchBar';
@@ -27,24 +32,64 @@ import FilterButtonGroup from "../components/FilterButtonGroup";
 import SelectInput from "../components/SelectInput";
 import CalendarSheet from "../components/CalendarSheet";
 import FilterPill from "../components/FilterPill";
+
+// skeleon screen
+import WarehouseSkeleton from '../skeletons/WarehouseSkeleton';
+
 // bottom sheet components
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+
 // colors
 import { background, black, neutral, primaryColor, white } from '../style/colors';
+
 // utils
 import { windowHeight, windowWidth } from '../utils/helpers';
+
 // globals
 import { useGlobals } from '../context/AppContext';
+
 // data
 import { stockTransferList } from '../data/stockTransferList';
 
+// useAuth
+import { useAuth } from "../context/AuthContext";
+
+// firebase
+import {
+    database,
+} from "../Firebase";
+
+// firestore functions
+import {
+    collection,
+    getDocs,
+    where,
+    query,
+    orderBy,
+} from "firebase/firestore";
+
 const Warehouse = ({navigation, route}) => {
 
-    const { bottomSheetRef, filterSheetRef, calendarSheetRef, calendarSheetOpen } = useGlobals();
+    // use auth
+    const { authData } = useAuth();
+
+    // page loading state
+    const [pageLoading, setPageLoading] = useState(true);
+
+    // globals
+    const {
+        bottomSheetRef,
+        bottomSheetOpen,
+        filterSheetRef,
+        calendarSheetRef,
+        calendarSheetOpen,
+        setToast 
+    } = useGlobals();
 
     // tab state
-    const [tab, setTab] = useState("warehouse")
+    const [tab, setTab] = useState("warehouse");
     
+    // check for tab in navigation paramters
     useEffect(() => {
         // if no tab pramameter is passed, return ealry
         if (!route?.params?.tab) return;
@@ -52,6 +97,9 @@ const Warehouse = ({navigation, route}) => {
         // else setTabs
         setTab(route?.params?.tab);
     }, [route?.params?.tab])
+
+    // refer of the flatlist component
+    const flatListRef = useRef(null);
 
     // stats array
     const stats = [
@@ -71,133 +119,198 @@ const Warehouse = ({navigation, route}) => {
         },
     ];
 
-    const warehouseList = [
-        {
-            id: 1,
-            warehouse_name: "Warri",
-            inventories_count: 12,
-            warehouse_address: "276 PTI road",
-            warehouse_manager: {
-                id: 1,
-                full_name: "Abiodun Johnson"
-            },
-            onPress: () => navigation.navigate("Inventory"),
-            onPressMenu: () => openModal("Edit", 1),      
-            receive_waybill: true,
-            add_new: false,
-        },
-        {
-            id: 2,
-            warehouse_name: "Isoko",
-            inventories_count: 3,
-            warehouse_address: "123 Isoko Street",
-            warehouse_manager: {
-                id: 1,
-                full_name: "Abiodun Johnson"
-            },
-            onPress: () => navigation.navigate("Inventory"),
-            onPressMenu: () => openModal("Edit", 2),
-            receive_waybill: true,
-            add_new: false,
-        },
-        {
-            id: 3,
-            warehouse_name: "Asaba",
-            inventories_count: 7,
-            warehouse_address: "456 Asaba Avenue",
-            warehouse_manager: {
-                id: 1,
-                full_name: "Abiodun Johnson"
-            },
-            onPress: () => navigation.navigate("Inventory"),
-            onPressMenu: () => openModal("Edit", 3),
-            receive_waybill: false,
-            add_new: false,
-        },
-        {
-            id: 4,
-            warehouse_name: "Kwale",
-            inventories_count: 4,
-            warehouse_address: "789 Kwale Road",
-            warehouse_manager: {
-                id: 1,
-                full_name: "Abiodun Johnson"
-            },
-            onPress: () => navigation.navigate("Inventory"),
-            onPressMenu: () => openModal("Edit", 4),
-            receive_waybill: false,
-            add_new: false,
-        },
-        {
-            id: 5,
-            warehouse_name: "Agbor",
-            inventories_count: 6,
-            warehouse_address: "101 Agbor Lane",
-            warehouse_manager: {
-                id: 1,
-                full_name: "Abiodun Johnson"
-            },
-            onPress: () => navigation.navigate("Inventory"),
-            onPressMenu: () => openModal("Edit", 5),
-            receive_waybill: false,
-            add_new: false,
-        },
-        {
-            id: 6,
-            warehouse_name: "Benin",
-            inventories_count: 8,
-            warehouse_address: "654 Benin Street",
-            warehouse_manager: {
-                id: 1,
-                full_name: "Abiodun Johnson"
-            },
-            onPress: () => navigation.navigate("Inventory"),
-            onPressMenu: () => openModal("Edit", 6),
-            receive_waybill: false,
-            add_new: false,
-        },
-        {
-            id: 7,
-            warehouse_name: "Auchi",
-            inventories_count: 2,
-            warehouse_address: "222 Auchi Road",
-            warehouse_manager: {
-                id: 1,
-                full_name: "Abiodun Johnson"
-            },
-            onPress: () => navigation.navigate("Inventory"),
-            onPressMenu: () => openModal("Edit", 7),
-            receive_waybill: false,
-            add_new: false,
-        },
-        {
-            id: 8,
-            warehouse_name: "Ekpoma",
-            inventories_count: 3,
-            warehouse_address: "333 Ekpoma Street",
-            warehouse_manager: {
-                id: 1,
-                full_name: "Abiodun Johnson"
-            },
-            onPress: () => navigation.navigate("Inventory"),
-            onPressMenu: () => openModal("Edit", 8),
-            receive_waybill: false,
-            add_new: false,
-        },
-    ];
+    // const warehouseList = [
+    //     {
+    //         id: 1,
+    //         warehouse_name: "Warri",
+    //         inventories_count: 12,
+    //         warehouse_address: "276 PTI road",
+    //         warehouse_manager: {
+    //             id: 1,
+    //             full_name: "Abiodun Johnson"
+    //         },
+    //         onPress: () => navigation.navigate("Inventory"),
+    //         onPressMenu: () => openModal("Edit", 1),      
+    //         receive_waybill: true,
+    //         add_new: false,
+    //     },
+    //     {
+    //         id: 2,
+    //         warehouse_name: "Isoko",
+    //         inventories_count: 3,
+    //         warehouse_address: "123 Isoko Street",
+    //         warehouse_manager: {
+    //             id: 1,
+    //             full_name: "Abiodun Johnson"
+    //         },
+    //         onPress: () => navigation.navigate("Inventory"),
+    //         onPressMenu: () => openModal("Edit", 2),
+    //         receive_waybill: true,
+    //         add_new: false,
+    //     },
+    //     {
+    //         id: 3,
+    //         warehouse_name: "Asaba",
+    //         inventories_count: 7,
+    //         warehouse_address: "456 Asaba Avenue",
+    //         warehouse_manager: {
+    //             id: 1,
+    //             full_name: "Abiodun Johnson"
+    //         },
+    //         onPress: () => navigation.navigate("Inventory"),
+    //         onPressMenu: () => openModal("Edit", 3),
+    //         receive_waybill: false,
+    //         add_new: false,
+    //     },
+    //     {
+    //         id: 4,
+    //         warehouse_name: "Kwale",
+    //         inventories_count: 4,
+    //         warehouse_address: "789 Kwale Road",
+    //         warehouse_manager: {
+    //             id: 1,
+    //             full_name: "Abiodun Johnson"
+    //         },
+    //         onPress: () => navigation.navigate("Inventory"),
+    //         onPressMenu: () => openModal("Edit", 4),
+    //         receive_waybill: false,
+    //         add_new: false,
+    //     },
+    //     {
+    //         id: 5,
+    //         warehouse_name: "Agbor",
+    //         inventories_count: 6,
+    //         warehouse_address: "101 Agbor Lane",
+    //         warehouse_manager: {
+    //             id: 1,
+    //             full_name: "Abiodun Johnson"
+    //         },
+    //         onPress: () => navigation.navigate("Inventory"),
+    //         onPressMenu: () => openModal("Edit", 5),
+    //         receive_waybill: false,
+    //         add_new: false,
+    //     },
+    //     {
+    //         id: 6,
+    //         warehouse_name: "Benin",
+    //         inventories_count: 8,
+    //         warehouse_address: "654 Benin Street",
+    //         warehouse_manager: {
+    //             id: 1,
+    //             full_name: "Abiodun Johnson"
+    //         },
+    //         onPress: () => navigation.navigate("Inventory"),
+    //         onPressMenu: () => openModal("Edit", 6),
+    //         receive_waybill: false,
+    //         add_new: false,
+    //     },
+    //     {
+    //         id: 7,
+    //         warehouse_name: "Auchi",
+    //         inventories_count: 2,
+    //         warehouse_address: "222 Auchi Road",
+    //         warehouse_manager: {
+    //             id: 1,
+    //             full_name: "Abiodun Johnson"
+    //         },
+    //         onPress: () => navigation.navigate("Inventory"),
+    //         onPressMenu: () => openModal("Edit", 7),
+    //         receive_waybill: false,
+    //         add_new: false,
+    //     },
+    //     {
+    //         id: 8,
+    //         warehouse_name: "Ekpoma",
+    //         inventories_count: 3,
+    //         warehouse_address: "333 Ekpoma Street",
+    //         warehouse_manager: {
+    //             id: 1,
+    //             full_name: "Abiodun Johnson"
+    //         },
+    //         onPress: () => navigation.navigate("Inventory"),
+    //         onPressMenu: () => openModal("Edit", 8),
+    //         receive_waybill: false,
+    //         add_new: false,
+    //     },
+    // ];
 
 
     // warehouses
-    const [warehouses, setWarehouses] = useState([
-        { id: "stickyLeft" },
-        { id: "stickyRight" },
-        ...warehouseList,
-        {
-            id: 10,
-            add_new: true,
-            onPress: () => navigation.navigate("AddWarehouse"),
-        },
-    ]);
+    const [warehouses, setWarehouses] = useState([]);
+
+    // console.log(warehouses)
+
+    // variable to stroe raw warehouse array
+    let warehouseList = [];
+
+    // get managers
+    useEffect(() => {
+        // fetch warehouses
+        const fetchWarehouses = async (business_id) => {
+            try {
+                const collectionRef = collection(database, "warehouses");
+                let q = query(
+                    collectionRef,
+                    where("business_id", "==", business_id),
+                    orderBy("created_at")
+                );
+
+                const querySnapshot = await getDocs(q);
+                querySnapshot.forEach((doc) => {
+                    const warehouse = {
+                        id: doc.id,
+                        warehouse_name: doc.data().warehouse_name,
+                        warehouse_manager: doc.data().warehouse_manager,
+                        warehouse_address: doc.data().warehouse_address,
+                        receive_waybill: doc.data().receive_waybill,
+                        // onPress: () => navigation.navigate("Inventory"),
+                        // onPressMenu: () => openModal("Edit", doc.id),
+                    };
+                    // console.log(warehouse);
+                    warehouseList.push(warehouse);
+                });
+
+
+                setWarehouses([
+                    { id: "stickyLeft" },
+                    { id: "stickyRight" },
+                    ...warehouseList,
+                    {
+                        id: "add_new",
+                        add_new: true,
+                        onPress: () => navigation.navigate("AddWarehouse"),
+                    },
+                ]);
+
+                // disable page loading state
+                setPageLoading(false);
+            } catch (error) {
+                console.log("Caught Error: ", error.message);
+                setToast({
+                    text: error.message,
+                    visible: true,
+                    type: "error",
+                });
+
+                // default values
+                setWarehouses([
+                    { id: "stickyLeft" },
+                    { id: "stickyRight" },
+                    {
+                        id: "add_new",
+                        add_new: true,
+                        onPress: () => navigation.navigate("AddWarehouse"),
+                    },
+                ]);
+
+                // disable page loading state
+                setPageLoading(false);
+            }
+        };
+
+        // fetch warehouses
+        fetchWarehouses(authData?.business_id);
+    }, []);
 
     // stock transfer data
     const [stockTransfer, setStockTransfer] = useState([
@@ -218,49 +331,50 @@ const Warehouse = ({navigation, route}) => {
     // search Query
     const [searchQuery, setSearchQuery] = useState("");
 
-    // return order.name.toLowerCase().includes(searchQuery.toLowerCase()) || order.location.toLowerCase().includes(searchQuery.toLowerCase()) || order.logistics.toLowerCase().includes(searchQuery.toLowerCase()) || order.products.some(product => product.product_name.toLowerCase().includes(searchQuery.toLowerCase())) || order.phone_number.some(phone_number => phone_number.toLowerCase().includes(searchQuery.toLowerCase()));
-
-    useEffect(() => {
-        if (!searchQuery) {
-            return setWarehouses([
-                { id: "stickyLeft" },
-                { id: "stickyRight" },
-                ...warehouseList,
-                {
-                    id: 10,
-                    add_new: true,
-                    onPress: () => navigation.navigate("AddWarehouse"),
-                },
-            ])
-        }
-
-        setWarehouses(prevWarehouses => {
-            const searchResult = prevWarehouses.filter(warehouse => {
-                return warehouse?.warehouse_name?.toLowerCase().includes(searchQuery.toLowerCase());
-            });
-
-            return [
-                { id: "stickyLeft" },
-                { id: "stickyRight" },
-                ...searchResult,
-                {
-                    id: 10,
-                    add_new: true,
-                    onPress: () => navigation.navigate("AddWarehouse"),
-                },
-            ]
-        })
-    }, [searchQuery])
-
     // sticky header offset
     const stickyHeaderOffset = useRef(0);
     const [scrollOffset, setScrollOffset] = useState(0);
 
     // animated shadow when scroll height reaches sticky header
-    const animateHeaderOnScroll = (e) => {
+    const handleScroll = (e) => {
         const yOffset = e.nativeEvent.contentOffset.y;
         setScrollOffset(yOffset);
     }
+
+    const handleScrollToTarget = (offset) => {
+        // scroll to target offset
+        flatListRef.current.scrollToOffset({ offset, animated: true });
+    };
+
+     // const top = useRef(new Animated.Value(50)).current;
+    //  const translateY = useRef(new Animated.Value(0)).current;
+
+    // Inside your functional component
+    useEffect(() => {
+        // if keyboard is open
+        const keyboardDidShowListener = Keyboard.addListener(
+            Platform.OS === 'android' ? 'keyboardDidShow' : 'keyboardWillShow', () => {
+                // if bottom sheet is open just return early
+                if (bottomSheetOpen) return;
+                // if user has already scrolled
+                if (scrollOffset >= stickyHeaderOffset.current) return;
+
+                // just scroll to the point of the sticky header
+                handleScrollToTarget(stickyHeaderOffset.current);
+                setScrollOffset(stickyHeaderOffset.current);
+            }
+        );
+        
+        // keyboard is closed
+        const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+            // run any desired function here
+        });
+    
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        };
+    }, [scrollOffset]);
 
     const [modalType, setModalType] = useState("Edit");
 
@@ -277,8 +391,6 @@ const Warehouse = ({navigation, route}) => {
     const closeModal = () => {
         bottomSheetRef?.current?.close()
     }
-
-    const scrollRef = useRef(null);
 
     // function to navigate to edit warehouse screen
     const handleEditWarehouse = () => {
@@ -297,8 +409,8 @@ const Warehouse = ({navigation, route}) => {
 
     // remove sticky header shadow if scroll height hasn't crossed the required offset
     useEffect(() => {
-        if (scrollRef.current) {
-            const scrollHeight = scrollRef.current?.scrollHeight;
+        if (flatListRef.current) {
+            const scrollHeight = flatListRef.current?.scrollHeight;
             setScrollOffset(scrollHeight);
         } 
     }, [tab])
@@ -636,7 +748,7 @@ const Warehouse = ({navigation, route}) => {
         calendarSheetRef.current?.close();
     }
 
-        // to disable avtive states for date inputs if back button is pressed
+    // to disable avtive states for date inputs if back button is pressed
     // ...when calendar sheet if open
     useEffect(() => {
         if (!calendarSheetOpen) {
@@ -651,142 +763,152 @@ const Warehouse = ({navigation, route}) => {
 
     return (
         <>
-            {/* header */}
-            <Header
-                stackName={"Warehouse"}
-                removeBackArrow={true}
-                backgroundColor={background}
-                // unpadded={true}
-            />
-            <TouchableWithoutFeedback
-                onPress={() => Keyboard.dismiss()}
-            >
-                <FlatList
-                    ref={scrollRef}
-                    style={styles.container}
-                    contentContainerStyle={styles.contentContainer}
-                    showsVerticalScrollIndicator={false}
-                    columnWrapperStyle={tab === "warehouse" ? styles.columnWrapper : null}
-                    onScroll={animateHeaderOnScroll}
-                    stickyHeaderIndices={[1]}
-                    numColumns={tab === "warehouse" ? 2 : 1}
-                    data={tab === "warehouse" ? warehouses : stockTransfer}
-                    key={tab}
-                    keyExtractor={item => {
-                        if (tab === "warehouse") return item.warehouse_name;
-                        return item.id;
-                    }}
-                    ListHeaderComponent={(
-                        <View 
-                            style={styles.headerComponent}
-                            onLayout={e => {
-                                stickyHeaderOffset.current = e.nativeEvent.layout.height;
-                            }}
-                        >
-                            {/* stats */}
-                            <StatWrapper>
-                                {stats.map(stat => (
-                                    <StatCard
-                                        key={stat.id}
-                                        title={stat.title}
-                                        presentValue={stat.presentValue}
-                                        oldValue={stat.oldValue}
-                                        decimal={stat.decimal}
+            { !pageLoading ? (<>
+                {/* header */}
+                <Header
+                    stackName={"Warehouse"}
+                    removeBackArrow={true}
+                    backgroundColor={background}
+                    // unpadded={true}
+                />
+                {/* main screen content */}
+                <TouchableWithoutFeedback
+                    // onPress={() => Keyboard.dismiss()}
+                >
+                    <FlatList
+                        ref={flatListRef}
+                        style={[
+                            styles.container,
+                        ]}
+                        contentContainerStyle={styles.contentContainer}
+                        showsVerticalScrollIndicator={false}
+                        columnWrapperStyle={tab === "warehouse" ? styles.columnWrapper : null}
+                        onScroll={handleScroll}
+                        stickyHeaderIndices={[1]}
+                        numColumns={tab === "warehouse" ? 2 : 1}
+                        data={tab === "warehouse" ? warehouses : stockTransfer}
+                        key={tab + warehouses.length + stockTransfer.length }
+                        keyExtractor={item => {
+                            if (tab === "warehouse") return item.warehouse_name;
+                            return item.id;
+                        }}
+                        ListHeaderComponent={(
+                            <View
+                                style={[
+                                    styles.headerComponent,
+                                    // {opacity}
+                                ]}
+                                onLayout={e => {
+                                    stickyHeaderOffset.current = e.nativeEvent.layout.height;
+                                }}
+                            >
+                                {/* stats */}
+                                <StatWrapper>
+                                    {stats.map(stat => (
+                                        <StatCard
+                                            key={stat.id}
+                                            title={stat.title}
+                                            presentValue={stat.presentValue}
+                                            oldValue={stat.oldValue}
+                                            decimal={stat.decimal}
+                                        />
+                                    ))}
+                                </StatWrapper>
+                                <View style={styles.mainButtonWrapper}>
+                                    <CustomButton 
+                                        name={"Stock Transfer"}
+                                        shrinkWrapper={true}
+                                        secondaryButton={true}
+                                        onPress={() => {navigation.navigate("StockTransfer")}}
+                                        unpadded={true}
                                     />
-                                ))}
-                            </StatWrapper>
-                            <View style={styles.mainButtonWrapper}>
-                                <CustomButton 
-                                    name={"Stock Transfer"}
-                                    shrinkWrapper={true}
-                                    secondaryButton={true}
-                                    onPress={() => {navigation.navigate("StockTransfer")}}
-                                    unpadded={true}
-                                />
-                            </View>
-                        </View>
-                    )}
-                    renderItem={({item, index}) => {
-                        if (item.id === "stickyLeft") {
-                            return (
-                                <View 
-                                    style={[
-                                        styles.stickyHeader,
-                                        {elevation: scrollOffset > stickyHeaderOffset.current ? 3 : 0},
-                                        tab === "warehouse" && {marginBottom: -16}
-                                    ]}
-                                >
-                                    {/* search */}
-                                    <SearchBar 
-                                        placeholder={`Search ${tab}`}
-                                        searchQuery={searchQuery}
-                                        setSearchQuery={setSearchQuery}
-                                        backgroundColor={white}
-                                        disableFilter={true}
-                                        // if tab is switched to stock transfer, turn search input into a button
-                                        button={tab !== "warehouse" ? true : false}
-                                        onPress={() => openModal("Search")}
-                                    />
-                                    {/* page tabs */}
-                                    <View style={styles.tabContainer}>
-                                        <TouchableOpacity 
-                                            style={tab === "warehouse" ? styles.tabButtonSelected : styles.tabButton}
-                                            onPress={() => setTab("warehouse")}
-                                        >
-                                            <Text style={tab === "warehouse" ? styles.tabButtonTextSelected : styles.tabButtonText}>Warehouse</Text>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity 
-                                            style={tab === "stock transfer" ? styles.tabButtonSelected : styles.tabButton}
-                                            onPress={() => setTab("stock transfer")}
-                                        >
-                                            <Text style={tab === "stock transfer" ? styles.tabButtonTextSelected : styles.tabButtonText}>Stock Transfer</Text>
-                                            <Badge number={3} />
-                                        </TouchableOpacity>
-                                    </View>
-                                    <View style={styles.filterPillWrapper}></View>
                                 </View>
-                            )
-                        } else if (item.id === "stickyRight") {
-                            return (
-                                <></>
-                            )
-                        } else {
-                            // console.log(index)
-                            if (tab === "warehouse") {
+                            </View>
+                        )}
+                        renderItem={({item, index}) => {
+                            if (item.id === "stickyLeft") {
                                 return (
                                     <View 
                                         style={[
-                                            index % 2 === 0 ? styles.leftCard : styles.rightCard,
+                                            styles.stickyHeader,
+                                            {elevation: scrollOffset >= stickyHeaderOffset.current ? 3 : 0},
+                                            tab === "warehouse" && {marginBottom: -16}
                                         ]}
                                     >
-                                        <WarehouseCard
-                                            warehouseName={item?.warehouse_name}
-                                            inventoriesCount={item?.inventories_count}
-                                            address={item?.warehouse_address}
-                                            onPress={item?.onPress}
-                                            onPressMenu={item?.onPressMenu}
-                                            addNew={item?.add_new}
+                                        {/* search */}
+                                        <SearchBar 
+                                            placeholder={`Search ${tab}`}
+                                            searchQuery={searchQuery}
+                                            setSearchQuery={setSearchQuery}
+                                            backgroundColor={white}
+                                            disableFilter={true}
+                                            // if tab is switched to stock transfer, turn search input into a button
+                                            button={tab !== "warehouse" ? true : false}
+                                            onPress={() => openModal("Search")}
                                         />
+                                        {/* page tabs */}
+                                        <View style={styles.tabContainer}>
+                                            <TouchableOpacity 
+                                                style={tab === "warehouse" ? styles.tabButtonSelected : styles.tabButton}
+                                                onPress={() => setTab("warehouse")}
+                                            >
+                                                <Text style={tab === "warehouse" ? styles.tabButtonTextSelected : styles.tabButtonText}>Warehouse</Text>
+                                            </TouchableOpacity>
+                                            <TouchableOpacity 
+                                                style={tab === "stock transfer" ? styles.tabButtonSelected : styles.tabButton}
+                                                onPress={() => setTab("stock transfer")}
+                                            >
+                                                <Text style={tab === "stock transfer" ? styles.tabButtonTextSelected : styles.tabButtonText}>Stock Transfer</Text>
+                                                <Badge number={3} />
+                                            </TouchableOpacity>
+                                        </View>
+                                        <View style={styles.filterPillWrapper}></View>
                                     </View>
+                                )
+                            } else if (item.id === "stickyRight") {
+                                return (
+                                    <></>
                                 )
                             } else {
-                                return (
-                                    <View style={styles.stockTransferItemWrapper}>
-                                        <StockTransferListItem 
-                                            item={item} 
-                                            index={index} 
-                                            lastOrder={stockTransfer.length - 1}
-                                            firstOrder={1}
-                                            navigation={navigation}
-                                            extraVerticalPadding={true} 
-                                        />
-                                    </View>
-                                )
+                                // console.log(index)
+                                if (tab === "warehouse") {
+                                    return (
+                                        <View 
+                                            style={[
+                                                index % 2 === 0 ? styles.leftCard : styles.rightCard,
+                                            ]}
+                                        >
+                                            <WarehouseCard
+                                                warehouseName={item?.warehouse_name}
+                                                inventoriesCount={item?.inventories_count}
+                                                address={item?.warehouse_address}
+                                                onPress={item?.onPress}
+                                                onPressMenu={item?.onPressMenu}
+                                                addNew={item?.add_new}
+                                            />
+                                        </View>
+                                    )
+                                } else {
+                                    return (
+                                        <View style={styles.stockTransferItemWrapper}>
+                                            <StockTransferListItem 
+                                                item={item} 
+                                                index={index} 
+                                                lastOrder={stockTransfer.length - 1}
+                                                firstOrder={1}
+                                                navigation={navigation}
+                                                extraVerticalPadding={true} 
+                                            />
+                                        </View>
+                                    )
+                                }
                             }
-                        }
-                    }}
-                />
-            </TouchableWithoutFeedback>
+                        }}
+                    />
+                </TouchableWithoutFeedback>
+            </>) : (
+                <WarehouseSkeleton />
+            )}
             {/* bottomsheet */}
             <CustomBottomSheet
                 bottomSheetModalRef={bottomSheetRef}
@@ -916,10 +1038,10 @@ export default Warehouse
 const styles = StyleSheet.create({
     container: {
         width: "100%",
-        minHeight: windowHeight - 70,
         backgroundColor: background,
     },
     contentContainer: {
+        minHeight: windowHeight + 166 + 90,
         paddingBottom: 90,
     },
     columnWrapper: {

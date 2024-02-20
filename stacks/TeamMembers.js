@@ -190,7 +190,9 @@ const TeamMembers = ({ navigation }) => {
                         text: error.message,
                         visible: true,
                         type: "error",
-                    })
+                    });
+                    setPageLoading(false);
+
                 }, (data) => {
                     console.log(data)
                 });
@@ -203,6 +205,8 @@ const TeamMembers = ({ navigation }) => {
                     visible: true,
                     type: "error",
                 })
+                setPageLoading(false);
+
             }
         };
     

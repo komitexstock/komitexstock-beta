@@ -97,6 +97,7 @@ const styles = StyleSheet.create({
         color: black,
         fontFamily: 'mulish-bold',
         fontSize: 12,
+        textTransform: 'capitalize',
     },
     warehouseInventoryCount: {
         color: bodyText,
