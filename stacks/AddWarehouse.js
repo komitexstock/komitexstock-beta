@@ -87,8 +87,6 @@ const AddWarehouse = ({navigation}) => {
     // state to store members array
     const [managers, setManagers] = useState([]);
 
-    // console.log(managers)
-
     // get managers
     useEffect(() => {
         // fetch team members data
@@ -168,6 +166,7 @@ const AddWarehouse = ({navigation}) => {
         bottomSheetRef?.current?.close();
         // disable active input state for warehouse manager select component
         setActiveWarehouseManager(false);
+        
     }
     
     // open success pop up bottomsheet modal
@@ -252,15 +251,41 @@ const AddWarehouse = ({navigation}) => {
         // navigate back to warehouse screen
         navigation.navigate("Warehouse");
     }
-    
-    // disable active states for select input if back button is pressed
-    // this is useful if the select warehouse bottomsheet is closed 
-    // without selecting a warehouse
+
+    // state to control bottomsheet snap point
+    const [snapPoint, setSnapPoint] = useState(0);
+
+    // listen for keyboard opening or closing
     useEffect(() => {
+        // if keyboard is open
+        const keyboardDidShowListener = Keyboard.addListener(
+            Platform.OS === 'android' ? 'keyboardDidShow' : 'keyboardWillShow', () => {
+                if (!bottomSheetOpen) return;
+                // console.log("got here")
+                setSnapPoint(2);
+            }
+        );
+        
+        // keyboard is closed
+        const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+            // run any desired function here
+            // if wareehouse address is empty
+        });
+
+        // disable active states for select input if back button is pressed
+        // this is useful if the select warehouse bottomsheet is closed 
+        // without selecting a warehouse
         if (!bottomSheetOpen) {
             setActiveWarehouseManager(false);
+            // reset snapoints
+            setSnapPoint(0);
         }
-    }, [bottomSheetOpen]) // depends on bottomSheetOpen state
+
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        };
+    }, [bottomSheetOpen]);
 
 
     return (
@@ -337,9 +362,9 @@ const AddWarehouse = ({navigation}) => {
             {/* bottomsheet to select managers */}
             <CustomBottomSheet
                 bottomSheetModalRef={bottomSheetRef}
-                sheetTitle={"Select Warehouse"}
+                sheetTitle={"Select Manager"}
                 snapPointsArray={["50%", "75%", "100%"]}
-                autoSnapAt={0}
+                autoSnapAt={snapPoint}
                 closeModal={closeModal}
             >
                 {/* search bar to search for managers */}

@@ -63,6 +63,7 @@ import {
 import {
     collection,
     getDocs,
+    onSnapshot,
     where,
     query,
     orderBy,
@@ -88,6 +89,12 @@ const Warehouse = ({navigation, route}) => {
 
     // tab state
     const [tab, setTab] = useState("warehouse");
+
+    // search Query
+    const [searchQuery, setSearchQuery] = useState("");
+    
+    // search warehouse Query
+    const [searchWarehouseQuery, setSearchWarehouseQuery] = useState("");
     
     // check for tab in navigation paramters
     useEffect(() => {
@@ -238,11 +245,6 @@ const Warehouse = ({navigation, route}) => {
     // warehouses
     const [warehouses, setWarehouses] = useState([]);
 
-    // console.log(warehouses)
-
-    // variable to stroe raw warehouse array
-    let warehouseList = [];
-
     // get managers
     useEffect(() => {
         // fetch warehouses
@@ -254,36 +256,57 @@ const Warehouse = ({navigation, route}) => {
                     where("business_id", "==", business_id),
                     orderBy("created_at")
                 );
+                // variable to stroe raw warehouse array
+                
+                const unsubscribe = onSnapshot(q, (querySnapshot) => {
+                    let warehouseList = [];
+                    querySnapshot.forEach((doc) => {
+                        const warehouse = {
+                            id: doc.id,
+                            inventories_count: 0,
+                            warehouse_name: doc.data().warehouse_name,
+                            warehouse_manager: doc.data().warehouse_manager,
+                            warehouse_address: doc.data().warehouse_address,
+                            waybill_receivable: doc.data().waybill_receivable,
+                            onPress: () => navigation.navigate("Inventory", {
+                                warehouse_id: doc.id
+                            }),
+                            onPressMenu: () => openModal("Edit", doc.id),
+                        };
+                        // console.log(warehouse);
+                        warehouseList.push(warehouse);
+                    });
 
-                const querySnapshot = await getDocs(q);
-                querySnapshot.forEach((doc) => {
-                    const warehouse = {
-                        id: doc.id,
-                        warehouse_name: doc.data().warehouse_name,
-                        warehouse_manager: doc.data().warehouse_manager,
-                        warehouse_address: doc.data().warehouse_address,
-                        receive_waybill: doc.data().receive_waybill,
-                        // onPress: () => navigation.navigate("Inventory"),
-                        // onPressMenu: () => openModal("Edit", doc.id),
-                    };
-                    // console.log(warehouse);
-                    warehouseList.push(warehouse);
-                });
+                    //  if search query is empty
+                    setWarehouses([
+                        { id: "stickyLeft" },
+                        { id: "stickyRight" },
+                        ...warehouseList,
+                        {
+                            id: "add_new",
+                            add_new: true,
+                            onPress: () => navigation.navigate("AddWarehouse"),
+                        },
+                    ]);
 
+                    // disable page loading state
+                    setPageLoading(false);
 
-                setWarehouses([
-                    { id: "stickyLeft" },
-                    { id: "stickyRight" },
-                    ...warehouseList,
-                    {
-                        id: "add_new",
-                        add_new: true,
-                        onPress: () => navigation.navigate("AddWarehouse"),
-                    },
-                ]);
-
-                // disable page loading state
-                setPageLoading(false);
+                    // reste warehouse list
+                    // warehouseList = [];
+                    
+                    }, (error) => { //handle errors
+                        // console.log("Error: ", error.message);
+                        setToast({
+                            text: error.message,
+                            visible: true,
+                            type: "error",
+                        });
+                        setPageLoading(false);
+                    }
+                );
+    
+                return unsubscribe;
             } catch (error) {
                 console.log("Caught Error: ", error.message);
                 setToast({
@@ -328,9 +351,6 @@ const Warehouse = ({navigation, route}) => {
         return warehouses.find(warehouse => warehouse.id === editWarehouseId)
     }, [editWarehouseId])
 
-    // search Query
-    const [searchQuery, setSearchQuery] = useState("");
-
     // sticky header offset
     const stickyHeaderOffset = useRef(0);
     const [scrollOffset, setScrollOffset] = useState(0);
@@ -349,7 +369,7 @@ const Warehouse = ({navigation, route}) => {
      // const top = useRef(new Animated.Value(50)).current;
     //  const translateY = useRef(new Animated.Value(0)).current;
 
-    // Inside your functional component
+    // listen for keyboard opening or closing
     useEffect(() => {
         // if keyboard is open
         const keyboardDidShowListener = Keyboard.addListener(
@@ -403,7 +423,7 @@ const Warehouse = ({navigation, route}) => {
             warehouse_name: selectedWarehouse?.warehouse_name,
             warehouse_address: selectedWarehouse?.warehouse_address,
             warehouse_manager: selectedWarehouse?.warehouse_manager,
-            receive_waybill: selectedWarehouse?.receive_waybill,
+            waybill_receivable: selectedWarehouse?.waybill_receivable,
         });
     }
 
@@ -757,8 +777,6 @@ const Warehouse = ({navigation, route}) => {
         }
 
     }, [calendarSheetOpen])
-
-
     
 
     return (
@@ -786,12 +804,29 @@ const Warehouse = ({navigation, route}) => {
                         onScroll={handleScroll}
                         stickyHeaderIndices={[1]}
                         numColumns={tab === "warehouse" ? 2 : 1}
-                        data={tab === "warehouse" ? warehouses : stockTransfer}
+                        // data={tab === "warehouse" ? warehouses : stockTransfer}
+                        data={(() => {
+                            if (tab !== "warehouse") return stockTransfer;
+                            if (!searchWarehouseQuery) return warehouses;
+                            // return searched warehouse
+                            // process searched result 
+                            const searchedResult = warehouses.filter(warehouse => {
+                                return warehouse?.warehouse_name?.toLowerCase()?.includes(searchWarehouseQuery.toLowerCase())
+                            });
+
+                            return [
+                                { id: "stickyLeft" },
+                                { id: "stickyRight" },
+                                ...searchedResult,
+                                {
+                                    id: "add_new",
+                                    add_new: true,
+                                    onPress: () => navigation.navigate("AddWarehouse"),
+                                },
+                            ]
+                        })()}
                         key={tab + warehouses.length + stockTransfer.length }
-                        keyExtractor={item => {
-                            if (tab === "warehouse") return item.warehouse_name;
-                            return item.id;
-                        }}
+                        keyExtractor={item => item.id}
                         ListHeaderComponent={(
                             <View
                                 style={[
@@ -838,8 +873,8 @@ const Warehouse = ({navigation, route}) => {
                                         {/* search */}
                                         <SearchBar 
                                             placeholder={`Search ${tab}`}
-                                            searchQuery={searchQuery}
-                                            setSearchQuery={setSearchQuery}
+                                            searchQuery={searchWarehouseQuery}
+                                            setSearchQuery={setSearchWarehouseQuery}
                                             backgroundColor={white}
                                             disableFilter={true}
                                             // if tab is switched to stock transfer, turn search input into a button
@@ -906,9 +941,7 @@ const Warehouse = ({navigation, route}) => {
                         }}
                     />
                 </TouchableWithoutFeedback>
-            </>) : (
-                <WarehouseSkeleton />
-            )}
+            </>) : <WarehouseSkeleton /> }
             {/* bottomsheet */}
             <CustomBottomSheet
                 bottomSheetModalRef={bottomSheetRef}

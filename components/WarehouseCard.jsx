@@ -29,7 +29,7 @@ const WarehouseCard = ({warehouseName, inventoriesCount, address, addNew, onPres
                             {warehouseName}
                         </Text>
                         <Text style={styles.warehouseInventoryCount}>
-                            {inventoriesCount} Inventories
+                            {inventoriesCount === 0 ? inventoriesCount + " Inventory" : inventoriesCount + " nventories"}
                         </Text>
                     </>
                 )}

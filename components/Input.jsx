@@ -51,8 +51,9 @@ const Input = ({label, inputRef, placeholder, onChange, value, forceBlur, multil
         }
 
         onChange(text);
-        if (text === '') setError(true);
-        else setError(false);
+        if (text === '') return setError(true);
+        
+        setError(false);
     }
 
     const handleKeyPress = (event) => {
@@ -61,6 +62,9 @@ const Input = ({label, inputRef, placeholder, onChange, value, forceBlur, multil
             handleSegmentedInput(segmentId, "", true);
         }
     }
+    
+    // state to indicate input is in focus
+    const [inputInFocus, setInputInFocus] = useState(false);
 
     // handle input out of focus
     const handleBlur = () => {
@@ -72,9 +76,6 @@ const Input = ({label, inputRef, placeholder, onChange, value, forceBlur, multil
         setInputInFocus(true);
         if (segmented && !keyUp) return handleFocusNextSegment();
     }
-
-    // state to indicate input is in focus
-    const [inputInFocus, setInputInFocus] = useState(false);
 
     // state to indicate password visibility
     const [hidePassword, setHidePassword] = useState(true);
@@ -105,7 +106,7 @@ const Input = ({label, inputRef, placeholder, onChange, value, forceBlur, multil
                         // if input is in focus
                         style.input, 
                         style.adornmentWrapper, 
-                        style.focusedInput, 
+                        error ? style.errorInput : style.focusedInput, 
                         {
                             // if height is given use that value else use default of 44
                             height: height ? height : 44,
@@ -181,9 +182,9 @@ const Input = ({label, inputRef, placeholder, onChange, value, forceBlur, multil
                     ] : [
                         // style if input is in focus
                         style.input, 
-                        style.focusedInput, 
+                        error ? style.errorInput : style.focusedInput, 
                         {
-                            height: height ? height : 44
+                            height: height ? height : 44,
                         },
                         segmented && {
                             width: 40, 
@@ -267,6 +268,9 @@ const style = StyleSheet.create({
     },
     focusedInput: {
         borderColor: primaryColor
+    },
+    errorInput: {
+        borderColor: cancelledText
     },
     helperTextWrapper: {
         display: 'flex',

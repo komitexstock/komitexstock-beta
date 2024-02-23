@@ -151,10 +151,10 @@ const TeamMembers = ({ navigation }) => {
             try {
                 const collectionRef = collection(database, "users");
                 let q = query(
-                        collectionRef, 
-                        where("business_id", "==", business_id),
-                        orderBy("created_at"),
-                    );
+                    collectionRef, 
+                    where("business_id", "==", business_id),
+                    orderBy("created_at"),
+                );
             
                 const unsubscribe = onSnapshot(q, (querySnapshot) => {
                     let members = [];
@@ -183,19 +183,22 @@ const TeamMembers = ({ navigation }) => {
                     if (authData?.role === "Manager") members.push(addNewCard);
 
                     setMembers(members);
-                    setPageLoading(false);
-                }, (error) => { //handle errors
-                    // console.log("Error: ", error.message);
-                    setToast({
-                        text: error.message,
-                        visible: true,
-                        type: "error",
-                    });
+
+                    // disable loading state
                     setPageLoading(false);
 
-                }, (data) => {
-                    console.log(data)
-                });
+                    
+                    }, (error) => { //handle errors
+                        // console.log("Error: ", error.message);
+                        setToast({
+                            text: error.message,
+                            visible: true,
+                            type: "error",
+                        });
+                        setPageLoading(false);
+                        
+                    }
+                );
     
                 return unsubscribe;
             } catch (error) {
