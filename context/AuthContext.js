@@ -36,7 +36,7 @@ const AuthProvider = ({children}) => {
 			const parsedData = JSON.parse(data);
 			return parsedData;
 		} catch (error) {
-			console.log(error.message);
+			// console.log(error.message);
 			return null;
 		}
 	}
@@ -46,7 +46,7 @@ const AuthProvider = ({children}) => {
 			await AsyncStorage.removeItem("@user");
 			setAuthData(null);
 		} catch (error) {
-			console.log(error.message)
+			// console.log(error.message)
 		}
 	}
 
@@ -56,7 +56,7 @@ const AuthProvider = ({children}) => {
 			const user = await getDoc(docRef);
 			return user.data()
 		} catch (error) {
-			console.log(error.message);
+			// console.log(error.message);
 			return null;			
 		}
 	}
@@ -67,7 +67,7 @@ const AuthProvider = ({children}) => {
 			const business = await getDoc(docRef);
 			return business.data()
 		} catch (error) {
-			console.log(error.message);
+			// console.log(error.message);
 			return null;
 		}
 	}
@@ -99,7 +99,7 @@ const AuthProvider = ({children}) => {
 
 			const claims = await user.getIdTokenResult();
 
-			console.log(claims.claims);
+			// console.log(claims.claims);
 			// console.log("Stored Data", storedData);
 			// if there is a stored data
 			if (storedData) {

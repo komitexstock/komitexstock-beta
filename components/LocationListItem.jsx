@@ -53,7 +53,7 @@ const LocationListItem = ({warehouseId, warehouseName, towns, warehouseInput, wa
                             placeholder={"Select Warehouse"}
                             inputFor={"String"}
                             onPress={openStackedModal}
-                            value={warehouseInput?.name}
+                            value={warehouseInput?.warehouse_name}
                             active={warehouseInputActive}
                         />
                         <Input 

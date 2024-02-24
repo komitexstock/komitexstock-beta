@@ -29,8 +29,30 @@ import { windowHeight, windowWidth } from '../utils/helpers'
 // bottom sheet components
 import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 
+// useAuth
+import { useAuth } from "../context/AuthContext";
+
+// firebase
+import {
+    database,
+} from "../Firebase";
+
+// firestore functions
+import {
+    doc,
+    updateDoc,
+    collection,
+    getDocs,
+    where,
+    query,
+    orderBy,
+    serverTimestamp,
+} from "firebase/firestore";
 
 const AddLocation = ({navigation}) => {
+        
+    // auth data
+    const { authData } = useAuth();
 
     // gloabsl
     const { bottomSheetRef, stackedSheetRef, stackedSheetOpen, setToast } = useGlobals();
@@ -184,6 +206,48 @@ const AddLocation = ({navigation}) => {
         "Zamfara",
     ];
 
+    // warehouses
+    const [warehouses, setWarehouses] = useState([]);
+
+    // get managers
+    useEffect(() => {
+        // fetch warehouses
+        const fetchWarehouses = async (business_id) => {
+            try {
+                const collectionRef = collection(database, "warehouses");
+                let q = query(
+                    collectionRef,
+                    where("business_id", "==", business_id),
+                    orderBy("warehouse_name")
+                );
+                // variable to stroe raw warehouse array
+                
+                const querySnapshot = await getDocs(q);
+                let warehouseList = [];
+                querySnapshot.forEach((doc) => {
+                    const warehouse = {
+                        id: doc.id,
+                        warehouse_name: doc.data().warehouse_name,
+                    };
+                    // console.log(warehouse);
+                    warehouseList.push(warehouse);
+                });
+
+                setWarehouses(warehouseList);
+            } catch (error) {
+                console.log("Caught Error: ", error.message);
+                setToast({
+                    text: error.message,
+                    visible: true,
+                    type: "error",
+                });
+            }
+        };
+
+        // fetch warehouses
+        fetchWarehouses(authData?.business_id);
+    }, []);
+
     // function to select a state where delivery location is to be added to
     const handleSelectState = (selectedState) => {
         setStateInput(selectedState);
@@ -241,18 +305,6 @@ const AddLocation = ({navigation}) => {
         // dismiss keyboard
         Keyboard.dismiss();
     }
-
-    // list of warehouse
-    const warehouses = [
-        {id:  6, name: "Abraka"},
-        {id:  4, name: "Agbor"},
-        {id:  2, name: "Asaba"},
-        {id:  3, name: "Benin"},
-        {id:  8, name: "Kwale"},
-        {id:  7, name: "Isoko"},
-        {id:  5, name: "Sapele"},
-        {id:  1, name: "Warri"},
-    ];
 
     // close stacked bottom sheet function
     const closeStackedModal = () => {
@@ -494,7 +546,7 @@ const AddLocation = ({navigation}) => {
             return [
                 {
                     warehouse_id: warehouseInput.id,
-                    warehouse_name: warehouseInput.name,
+                    warehouse_name: warehouseInput.warehouse_name,
                     towns: [
                         {
                             id: generatedTownId,
@@ -618,7 +670,7 @@ const AddLocation = ({navigation}) => {
                 }),
                 {
                     warehouse_id: warehouseInput.id,
-                    warehouse_name: warehouseInput.name,
+                    warehouse_name: warehouseInput.warehouse_name,
                     towns: [
                         {
                             id: selectedTownId,
@@ -793,17 +845,20 @@ const AddLocation = ({navigation}) => {
                     value={stateInput}
                 />
                 <View style={styles.locationsWrapper}>
-                    <TouchableOpacity 
-                        style={styles.buttonLink}
-                        onPress={() => openModal("Add")}
-                    >
-                        <Text style={styles.linkText}>+ Add{sublocations.length !== 0 ? " New" : ""} Sub-location</Text>
-                    </TouchableOpacity>
-                    {sublocations.length === 0 ? (
-                        <Text style={styles.paragraph}>
+                    {stateInput !== "" && ( // display button only if state has been selected
+                        <TouchableOpacity 
+                            style={styles.buttonLink}
+                            onPress={() => openModal("Add")}
+                        >
+                            <Text style={styles.linkText}>+ Add{sublocations.length !== 0 ? " New" : ""} Sub-location</Text>
+                        </TouchableOpacity>
+                    )}
+                    {sublocations.length === 0 ? (<>
+                        {/* only display text if a state has been selected */}
+                        {stateInput !== "" && <Text style={styles.paragraph}>
                             Locations you've added an their respective delivery charges would appear here
-                        </Text>
-                    ) : (
+                        </Text>}
+                    </>) : (
                         <View style={styles.sublocationsWrapper}>
                             {/* location list items */}
                             {sublocations.map((sublocation) => (
@@ -892,7 +947,7 @@ const AddLocation = ({navigation}) => {
                                     placeholder={"Select warehouse for the city above"}
                                     inputFor={"String"}
                                     onPress={openStackedModal}
-                                    value={warehouseInput?.name}
+                                    value={warehouseInput?.warehouse_name}
                                     active={warehouseInputActive}
                                 />
                                 {/* delivery charge input */}                                
@@ -939,7 +994,7 @@ const AddLocation = ({navigation}) => {
                             style={styles.listItem}
                             onPress={() => updateWarehouse(warehouse.id)}
                         >
-                            <Text style={styles.listText}>{warehouse.name}</Text>
+                            <Text style={styles.listText}>{warehouse.warehouse_name}</Text>
                         </TouchableOpacity>
                     ))}
                 </View>
@@ -1030,6 +1085,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontFamily: 'mulish-semibold',
         color: black,
+        textTransform: 'capitalize'
     },
     // bottoms sheet style
     modalWrapper: {

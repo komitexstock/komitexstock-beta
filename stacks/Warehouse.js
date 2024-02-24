@@ -62,11 +62,12 @@ import {
 // firestore functions
 import {
     collection,
-    getDocs,
+    getDoc,
     onSnapshot,
     where,
     query,
     orderBy,
+    doc,
 } from "firebase/firestore";
 
 const Warehouse = ({navigation, route}) => {
@@ -126,127 +127,29 @@ const Warehouse = ({navigation, route}) => {
         },
     ];
 
-    // const warehouseList = [
-    //     {
-    //         id: 1,
-    //         warehouse_name: "Warri",
-    //         inventories_count: 12,
-    //         warehouse_address: "276 PTI road",
-    //         warehouse_manager: {
-    //             id: 1,
-    //             full_name: "Abiodun Johnson"
-    //         },
-    //         onPress: () => navigation.navigate("Inventory"),
-    //         onPressMenu: () => openModal("Edit", 1),      
-    //         receive_waybill: true,
-    //         add_new: false,
-    //     },
-    //     {
-    //         id: 2,
-    //         warehouse_name: "Isoko",
-    //         inventories_count: 3,
-    //         warehouse_address: "123 Isoko Street",
-    //         warehouse_manager: {
-    //             id: 1,
-    //             full_name: "Abiodun Johnson"
-    //         },
-    //         onPress: () => navigation.navigate("Inventory"),
-    //         onPressMenu: () => openModal("Edit", 2),
-    //         receive_waybill: true,
-    //         add_new: false,
-    //     },
-    //     {
-    //         id: 3,
-    //         warehouse_name: "Asaba",
-    //         inventories_count: 7,
-    //         warehouse_address: "456 Asaba Avenue",
-    //         warehouse_manager: {
-    //             id: 1,
-    //             full_name: "Abiodun Johnson"
-    //         },
-    //         onPress: () => navigation.navigate("Inventory"),
-    //         onPressMenu: () => openModal("Edit", 3),
-    //         receive_waybill: false,
-    //         add_new: false,
-    //     },
-    //     {
-    //         id: 4,
-    //         warehouse_name: "Kwale",
-    //         inventories_count: 4,
-    //         warehouse_address: "789 Kwale Road",
-    //         warehouse_manager: {
-    //             id: 1,
-    //             full_name: "Abiodun Johnson"
-    //         },
-    //         onPress: () => navigation.navigate("Inventory"),
-    //         onPressMenu: () => openModal("Edit", 4),
-    //         receive_waybill: false,
-    //         add_new: false,
-    //     },
-    //     {
-    //         id: 5,
-    //         warehouse_name: "Agbor",
-    //         inventories_count: 6,
-    //         warehouse_address: "101 Agbor Lane",
-    //         warehouse_manager: {
-    //             id: 1,
-    //             full_name: "Abiodun Johnson"
-    //         },
-    //         onPress: () => navigation.navigate("Inventory"),
-    //         onPressMenu: () => openModal("Edit", 5),
-    //         receive_waybill: false,
-    //         add_new: false,
-    //     },
-    //     {
-    //         id: 6,
-    //         warehouse_name: "Benin",
-    //         inventories_count: 8,
-    //         warehouse_address: "654 Benin Street",
-    //         warehouse_manager: {
-    //             id: 1,
-    //             full_name: "Abiodun Johnson"
-    //         },
-    //         onPress: () => navigation.navigate("Inventory"),
-    //         onPressMenu: () => openModal("Edit", 6),
-    //         receive_waybill: false,
-    //         add_new: false,
-    //     },
-    //     {
-    //         id: 7,
-    //         warehouse_name: "Auchi",
-    //         inventories_count: 2,
-    //         warehouse_address: "222 Auchi Road",
-    //         warehouse_manager: {
-    //             id: 1,
-    //             full_name: "Abiodun Johnson"
-    //         },
-    //         onPress: () => navigation.navigate("Inventory"),
-    //         onPressMenu: () => openModal("Edit", 7),
-    //         receive_waybill: false,
-    //         add_new: false,
-    //     },
-    //     {
-    //         id: 8,
-    //         warehouse_name: "Ekpoma",
-    //         inventories_count: 3,
-    //         warehouse_address: "333 Ekpoma Street",
-    //         warehouse_manager: {
-    //             id: 1,
-    //             full_name: "Abiodun Johnson"
-    //         },
-    //         onPress: () => navigation.navigate("Inventory"),
-    //         onPressMenu: () => openModal("Edit", 8),
-    //         receive_waybill: false,
-    //         add_new: false,
-    //     },
-    // ];
-
-
     // warehouses
     const [warehouses, setWarehouses] = useState([]);
 
     // get managers
     useEffect(() => {
+        // fetch manager
+        // fucntion to get user doc, where user id is given
+        const fetchManager = async (id) => {
+            try {
+                const docRef = doc(database, "users", id);
+                const docSnap = await getDoc(docRef);
+                // return object of {id: id, manager_name: full_name}
+                return docSnap.data().full_name;
+
+            } catch {
+                setToast({
+                    text: error.message,
+                    visible: true,
+                    type: "error",
+                });
+            }
+        }
+
         // fetch warehouses
         const fetchWarehouses = async (business_id) => {
             try {
@@ -258,24 +161,30 @@ const Warehouse = ({navigation, route}) => {
                 );
                 // variable to stroe raw warehouse array
                 
-                const unsubscribe = onSnapshot(q, (querySnapshot) => {
+                const unsubscribe = onSnapshot(q, async (querySnapshot) => {
                     let warehouseList = [];
-                    querySnapshot.forEach((doc) => {
+
+                    for (const doc of querySnapshot.docs) {
+                        const warehouseData = doc.data();
+                        // Fetch manager for the warehouse
+                        const manager = await fetchManager(warehouseData.warehouse_manager);
                         const warehouse = {
                             id: doc.id,
                             inventories_count: 0,
-                            warehouse_name: doc.data().warehouse_name,
-                            warehouse_manager: doc.data().warehouse_manager,
-                            warehouse_address: doc.data().warehouse_address,
-                            waybill_receivable: doc.data().waybill_receivable,
+                            warehouse_name: warehouseData.warehouse_name,
+                            warehouse_manager: {
+                                id: warehouseData.warehouse_manager,
+                                full_name: manager
+                            }, // Assign manager's full name
+                            warehouse_address: warehouseData.warehouse_address,
+                            waybill_receivable: warehouseData.waybill_receivable,
                             onPress: () => navigation.navigate("Inventory", {
                                 warehouse_id: doc.id
                             }),
                             onPressMenu: () => openModal("Edit", doc.id),
                         };
-                        // console.log(warehouse);
                         warehouseList.push(warehouse);
-                    });
+                    }
 
                     //  if search query is empty
                     setWarehouses([
@@ -352,7 +261,7 @@ const Warehouse = ({navigation, route}) => {
     }, [editWarehouseId])
 
     // sticky header offset
-    const stickyHeaderOffset = useRef(0);
+    const [stickyHeaderOffset, setStickyHeaderOffset] = useState(0);
     const [scrollOffset, setScrollOffset] = useState(0);
 
     // animated shadow when scroll height reaches sticky header
@@ -377,11 +286,11 @@ const Warehouse = ({navigation, route}) => {
                 // if bottom sheet is open just return early
                 if (bottomSheetOpen) return;
                 // if user has already scrolled
-                if (scrollOffset >= stickyHeaderOffset.current) return;
+                if (scrollOffset >= stickyHeaderOffset) return;
 
                 // just scroll to the point of the sticky header
-                handleScrollToTarget(stickyHeaderOffset.current);
-                setScrollOffset(stickyHeaderOffset.current);
+                handleScrollToTarget(stickyHeaderOffset);
+                setScrollOffset(stickyHeaderOffset);
             }
         );
         
@@ -802,7 +711,7 @@ const Warehouse = ({navigation, route}) => {
                         showsVerticalScrollIndicator={false}
                         columnWrapperStyle={tab === "warehouse" ? styles.columnWrapper : null}
                         onScroll={handleScroll}
-                        stickyHeaderIndices={[1]}
+                        stickyHeaderIndices={[0, 1]}
                         numColumns={tab === "warehouse" ? 2 : 1}
                         // data={tab === "warehouse" ? warehouses : stockTransfer}
                         data={(() => {
@@ -834,7 +743,7 @@ const Warehouse = ({navigation, route}) => {
                                     // {opacity}
                                 ]}
                                 onLayout={e => {
-                                    stickyHeaderOffset.current = e.nativeEvent.layout.height;
+                                    setStickyHeaderOffset(e.nativeEvent.layout.height);
                                 }}
                             >
                                 {/* stats */}
@@ -866,7 +775,7 @@ const Warehouse = ({navigation, route}) => {
                                     <View 
                                         style={[
                                             styles.stickyHeader,
-                                            {elevation: scrollOffset >= stickyHeaderOffset.current ? 3 : 0},
+                                            {elevation: scrollOffset > stickyHeaderOffset ? 3 : 0},
                                             tab === "warehouse" && {marginBottom: -16}
                                         ]}
                                     >

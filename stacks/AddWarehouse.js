@@ -126,7 +126,6 @@ const AddWarehouse = ({navigation}) => {
         // fetch team members data
         fetchTeamMembers(authData?.business_id);
     }, []);
-    
 
     // warehouse manager state, an object of format { id, full_name }
     const [warehouseManager, setWarehouseManager] = useState(null);
@@ -135,6 +134,14 @@ const AddWarehouse = ({navigation}) => {
     
     // reacieve waybill state, boolean
     const [waybillReceivable, setWaybillReceivable] = useState(false);
+
+    // if manager list has just one manager, auto select that manager
+    useEffect(() => {
+        // managers list has been obtained and only one manager exist
+        if (managers.length === 1 && obtainedManagers) {
+            setWarehouseManager(managers[0]);
+        }
+    }, [obtainedManagers])
     
     // handle selected warehouse, function runs when a warehouse is clicked in select warehouse bottomsheet
     const handleWarehouseSelection = (id) => {

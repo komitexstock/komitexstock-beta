@@ -94,7 +94,7 @@ const EditWarehouse = ({navigation, route}) => {
     const [managers, setManagers] = useState([]);
 
     // warehouse manager
-    const [warehouseManager, setWarehouseManager] = useState({id: '', full_name: ''});
+    const [warehouseManager, setWarehouseManager] = useState(warehouse_manager);
 
     // active input state
     const [activeWarehouseManager, setActiveWarehouseManager] = useState(false);
@@ -125,8 +125,6 @@ const EditWarehouse = ({navigation, route}) => {
                     };
                     managersList.push(manager);
                 });
-
-                setWarehouseManager(managersList.find(manager => manager.id === warehouse_manager));
 
                 setManagers(managersList);
                 setObtainedManagers(true);
@@ -297,7 +295,7 @@ const EditWarehouse = ({navigation, route}) => {
     ];
 
     const detectAnyChanges = warehouseAddress !== warehouse_address || // detect changes in address
-    warehouseManager?.id !== warehouse_manager ||  // detect changes in manager
+    warehouseManager?.id !== warehouse_manager?.id ||  // detect changes in manager
     waybillReceivable !== waybill_receivable; // detect changes in waybill receivble state
 
     return (
