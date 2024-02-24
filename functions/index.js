@@ -30,7 +30,7 @@ exports.setRole = functions.https.onCall(async (data, context) => {
           account_type: data.account_type,
           deactivated: deactivated === undefined ? false : deactivated,
         });
-        return {message: "Role added successfully"};
+        return {message: "Member added successfully"};
       } else {
         // This is the first user with the business_id, so they can be admin
         await admin.auth().setCustomUserClaims(user.uid, {
@@ -39,7 +39,7 @@ exports.setRole = functions.https.onCall(async (data, context) => {
           account_type: data.account_type,
           deactivated: deactivated === undefined ? false : deactivated,
         });
-        return {message: "Role added successfully"};
+        return {message: "Admin added successfully"};
       }
     }
     // if user is not a manager throw error

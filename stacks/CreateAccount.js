@@ -24,7 +24,7 @@ import { windowHeight } from "../utils/helpers";
 // context
 // import { useAuth } from "../context/AuthContext";
 import { auth, database } from "../Firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 // fire store functions
 import {
     collection,
@@ -57,7 +57,7 @@ const CreateAccount = ({navigation}) => {
     const [isLoading, setIsLoading] = useState(false);
 
     // email address
-    const [emailAddress, setEmailAddress] = useState("tonystark@gmail.com");
+    const [emailAddress, setEmailAddress] = useState("johndoe@gmail.com");
 
     // state to email address error
     const [errorEmailAddress, setErrorEmailAddress] = useState(false);
@@ -174,7 +174,7 @@ const CreateAccount = ({navigation}) => {
     }
 
     // businessName
-    const [businessName, setBusinessName] = useState("Stark Industries");
+    const [businessName, setBusinessName] = useState("John Doe Enterprise");
 
     // state to email address error
     const [errorBusinessName, setErrorBusinessName] = useState(false);
@@ -184,7 +184,7 @@ const CreateAccount = ({navigation}) => {
     }
 
     // fullName
-    const [fullName, setFullName] = useState("Tony Stark");
+    const [fullName, setFullName] = useState("John Doe");
 
     // state to fullName error
     const [errorFullName, setErrorFullName] = useState(false);
@@ -235,14 +235,15 @@ const CreateAccount = ({navigation}) => {
     // console.log("Password", password);
 
     // user account type
-    const accountType = "Merchant";
+    const accountType = "Logistics";
 
     // user role
     const role = "Manager";
 
-    // uid avraibel
-    let uid;
-    let businessId;
+    // uid variable
+    const [uid, setUid] = useState("");
+    
+    const [businessId, setBusinessId] = useState("");
 
     const handleSignup = async () => {
         setIsLoading(true);
@@ -255,7 +256,7 @@ const CreateAccount = ({navigation}) => {
             const businessDoc = await getDocs(businessesRef);
 
             // get business data
-            const businessData = businessDoc.docs.map(doc => doc.data());
+            const businessData = businessDoc?.docs?.map(doc => doc.data());
             
             // check if business name exist
             const checkBusinessNameExist = businessData.find(business => business.business_name ===  businessName);
@@ -271,7 +272,7 @@ const CreateAccount = ({navigation}) => {
             const authResponse = await createUserWithEmailAndPassword(auth, emailAddress, password);
 
             // user id from create user doc response
-            uid = authResponse.user.uid;
+            setUid(authResponse.user.uid);
 
             // store business data
             const businessResponse = await addDoc(businessesRef, {
@@ -282,14 +283,14 @@ const CreateAccount = ({navigation}) => {
             });
 
             // business id from add business doc response
-            businessId = businessResponse.id;
+            setBusinessId(businessResponse.id);
 
             // ref to users collection
-            const usersRef = doc(database, "users", uid);
+            const usersRef = doc(database, "users", authResponse.user.uid);
             
             // save data in database
             await setDoc(usersRef, {
-                business_id: businessId,
+                business_id: businessResponse.id,
                 email: emailAddress,
                 created_at: serverTimestamp(),
                 deactivated: false,
@@ -338,7 +339,15 @@ const CreateAccount = ({navigation}) => {
     const handleCompleteSignup = async () => {
         // enable loading state
         setIsLoading(true);
-        // store data in async storage
+
+        // signin user
+        await signInWithEmailAndPassword(
+            auth,
+            emailAddress,
+            password,
+        );
+        
+        // // store data in async storage
         await setStoredData({
             uid: uid,
             email: emailAddress,
