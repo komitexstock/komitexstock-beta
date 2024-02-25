@@ -34,19 +34,19 @@ import { useAuth } from "../context/AuthContext";
 
 // firebase
 import {
+    auth,
     database,
 } from "../Firebase";
 
 // firestore functions
 import {
-    doc,
-    updateDoc,
     collection,
     getDocs,
     where,
     query,
     orderBy,
     serverTimestamp,
+    addDoc,
 } from "firebase/firestore";
 
 const AddLocation = ({navigation}) => {
@@ -56,6 +56,9 @@ const AddLocation = ({navigation}) => {
 
     // gloabsl
     const { bottomSheetRef, stackedSheetRef, stackedSheetOpen, setToast } = useGlobals();
+
+    // main action button loadins state
+    const [isLoading, setIsLoading] = useState(false);
 
     // location state, to store list of locations
     const [sublocations, setSublocations] = useState([
@@ -77,61 +80,6 @@ const AddLocation = ({navigation}) => {
         //             editing: false,
         //             disabled: false,
         //         },
-        //         {
-        //             id: 3,
-        //             town: "Agbarho",
-        //             charge: 3500,
-        //             editing: false,
-        //             disabled: false,
-        //         },
-        //         {
-        //             id: 4,
-        //             town: "Ughelli",
-        //             charge: 4000,
-        //             editing: false,
-        //             disabled: false,
-        //         },
-        //         {
-        //             id: 5,
-        //             town: "Jeddo",
-        //             charge: 3500,
-        //             editing: false,
-        //             disabled: false,
-        //         }
-        //     ]
-        // },
-        // {
-        //     warehouse_id: 2,
-        //     warehouse_name: "Asaba",
-        //     towns: [
-        //         {
-        //             id: 6,
-        //             town: "Asaba",
-        //             charge: 4000,
-        //             editing: false,
-        //             disabled: false,
-        //         },
-        //         {
-        //             id: 7,
-        //             town: "Ibusa",
-        //             charge: 4500,
-        //             editing: false,
-        //             disabled: false,
-        //         },
-        //         {
-        //             id: 8,
-        //             town: "Ogwashi-Uku",
-        //             charge: 5000,
-        //             editing: false,
-        //             disabled: false,
-        //         },
-        //         {
-        //             id: 9,
-        //             town: "Ugbolu",
-        //             charge: 5000,
-        //             editing: false,
-        //             disabled: false,
-        //         }
         //     ]
         // },
     ]);
@@ -165,6 +113,9 @@ const AddLocation = ({navigation}) => {
 
     // warehosue input active
     const [stateInputActive, setStateInputActive] = useState(false);
+
+    // country of user
+    const country = "Nigeria";
 
     // states of nigeria
     const states = [
@@ -324,11 +275,87 @@ const AddLocation = ({navigation}) => {
     }, [modalType]);
 
     // handle confirm location
-    const handleConfirmLocations = () => {
-        navigation.navigate("Locations", {
-            toastType: "Success",
-            toastMessage: "Location successfully added",
-        })
+    const handleConfirmLocations = async () => {
+        // signify loading state for main button
+        setIsLoading(true);
+        try {
+            // check for empty fields
+            if (sublocations.length === 0 || editingLocation || stateInput === "") {
+                // throw error if fields are empty
+                throw new Error("Please fill in all fields");
+            }
+
+            // if user isn't a manager
+            if (authData?.role !== "Manager") {
+                // unautorized to add locations
+                throw new Error("Insufficient Permission");
+            }
+7
+            // ref to warehouses collection
+            const locationsRef = collection(database, "locations");
+
+            await Promise.all(sublocations.map(async (sublocation) => {
+                await Promise.all(sublocation.towns.map(async (town) => {
+                    const q = query(
+                        locationsRef,
+                        where("business_id", "==", authData?.business_id),
+                        where("country", "==", country),
+                        where("state", "==", stateInput),
+                        where("region", "==", town.town.toLowerCase())
+                    );
+              
+                    const querySnapshot = await getDocs(q);
+                    
+                    // if any result exist
+                    if (querySnapshot.size > 0) {
+                        setIsLoading(false);
+                        throw new Error(`${town.town} already exist amongst your locations in ${stateInput}, ${country}`);
+                    }
+                }));
+            }));
+
+            await Promise.all(sublocations.map(async (sublocation) => {
+                await Promise.all(sublocation.towns.map(async (town) => {
+
+                    // save data in database
+                    await addDoc(locationsRef, {
+                        business_id: authData?.business_id, // business id
+                        country: country, // country
+                        state: stateInput, // state
+                        region: town.town.toLowerCase(), // region
+                        delivery_charge: town.charge, // delivery charge 
+                        created_at: serverTimestamp(), // timestamp
+                        created_by: authData?.uid, // uid
+                        edited_at: serverTimestamp(), // timestamp
+                        edited_by: authData?.uid, // uid
+                        warehouse_id: sublocation.warehouse_id, // warehouse id
+                    });
+                    
+                }));
+            }));
+
+            // disable button loading state
+            setIsLoading(false);
+
+            // navigate to available locations screen
+            navigation.navigate("AvailableLocations", {
+                toastType: "Success",
+                toastMessage: "Location successfully added",
+                business_id: authData.business_id,
+                business_name: authData.business_name,
+            });
+
+        } catch (error) { // handke errors
+            console.log(error.message);
+            // show error toast
+            setToast({
+                visible: true,
+                type: "error",
+                text: error.message,
+            });
+            // disable loading state
+            setIsLoading(false);
+        }
     }
 
     // state to store menu
@@ -482,7 +509,9 @@ const AddLocation = ({navigation}) => {
 
         // function to check if town exist in sublocations array
         const checkTownExist = sublocations.some(sublocation => {
-            return sublocation.towns.some(town => town.town.toLowerCase() === townInput.toLowerCase());
+            return sublocation.towns.some(town => {
+                return town.town.toLowerCase() === townInput.toLowerCase() && sublocation.warehouse_name.toLowerCase() === warehouseInput?.warehouse_name.toLowerCase();
+            });
         });
 
         // if town exist, return early with an error message
@@ -934,8 +963,9 @@ const AddLocation = ({navigation}) => {
                             <View style={styles.modalInputWrapper}>
                                 {/*Delivery Town/City input */}
                                 <Input 
-                                    label={"City/Town"}
-                                    placeholder={"City/Town"}
+                                    label={"Region"}
+                                    placeholder={"City or Town"}
+                                    helperText={"Refers to a region grouped under one delivery charge"}
                                     value={townInput}
                                     onChange={setTownInput}
                                     error={townInputError}
@@ -1007,6 +1037,7 @@ const AddLocation = ({navigation}) => {
             name={"Done"}
             onPress={handleConfirmLocations}
             inactive={sublocations.length === 0 || editingLocation || stateInput === ""} 
+            isLoading={isLoading}
         />
     </>)
 }

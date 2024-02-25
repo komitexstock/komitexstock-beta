@@ -30,18 +30,14 @@ const AvailableLocations = ({navigation, route}) => {
     // state to store search query
     const [searchQuery, setSearchQuery] = useState("");
 
-    // business id of logistics company
-    const business_id = route?.params?.business_id;
-
-    // business id of logistics company
-    const business_name = route?.params?.business_name;
+    // business id and business name of logistics company
+    const {business_id, business_name} = route?.params || {};
 
     // parameter to determine if location is read only or writeable
     const writable = authData.business_id === business_id && authData.account_type === "Logistics" && authData?.role === "Manager";
 
     // globals
     const { setToast } = useGlobals();
-
 
     // states and delivery locations 43456709--UIJKNM TY6T VFT5RXC W3W` 
     const states = [

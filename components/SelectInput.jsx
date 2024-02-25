@@ -131,9 +131,12 @@ const style = StyleSheet.create({
     placeholder: {
         fontFamily: 'mulish-semibold',
         color: neutral,
+        fontSize: 12,
     },
     value: {
         fontFamily: 'mulish-semibold',
+        textTransform: 'capitalize',
+        fontSize: 12,
     }
 })
  

@@ -211,6 +211,7 @@ const EditWarehouse = ({navigation, route}) => {
                 warehouse_manager: warehouseManager?.id,
                 waybill_receivable: waybillReceivable,
                 edited_at: serverTimestamp(), // timestamp
+                edited_by: authData?.uid, // uid
             });
 
             setIsLoading(false);

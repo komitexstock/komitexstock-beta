@@ -138,6 +138,7 @@ const styles = StyleSheet.create({
         fontFamily: 'mulish-semibold',
         fontSize: 12,
         color: subText,
+        textTransform: 'capitalize',
     },  
     warehouseLocationCount: {
         fontFamily: 'mulish-semibold',

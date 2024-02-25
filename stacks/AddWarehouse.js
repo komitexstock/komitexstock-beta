@@ -229,7 +229,9 @@ const AddWarehouse = ({navigation}) => {
                 warehouse_address: warehouseAddress, // save address in nomral input format 
                 waybill_receivable: waybillReceivable, 
                 created_at: serverTimestamp(), // timestamp
+                created_by: authData?.uid, // uid
                 edited_at: serverTimestamp(), // timestamp
+                edited_by: authData?.uid, // uid
             });
 
             // disable button loading state
