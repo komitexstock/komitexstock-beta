@@ -22,10 +22,28 @@ import { useGlobals } from '../context/AppContext';
 // auth
 import { useAuth } from "../context/AuthContext";
 
+// firebase
+import {
+    database,
+} from "../Firebase";
+
+// firestore functions
+import {
+    doc,
+    collection,
+    onSnapshot,
+    where,
+    query,
+    getDoc,
+} from "firebase/firestore";
+
 const AvailableLocations = ({navigation, route}) => {
 
     // get auth date
     const { authData } = useAuth();
+
+    // page loading state
+    const [pageLoading, setPageLoading] = useState(true);
 
     // state to store search query
     const [searchQuery, setSearchQuery] = useState("");
@@ -40,526 +58,111 @@ const AvailableLocations = ({navigation, route}) => {
     const { setToast } = useGlobals();
 
     // states and delivery locations 43456709--UIJKNM TY6T VFT5RXC W3W` 
-    const states = [
-        {
-            id: 1,
-            name: "Delta",
-            opened: false,
-            locations: [
-                {
-                    id: 1,
-                    location: "Asaba",
-                    charge: 4000,
-                    warehouse_id: 2,
-                    warehouse_name: "Asaba,"
-                },
-                {
-                    id: 3,
-                    location: "Sapele",
-                    charge: 3500,
-                    warehouse_id: 5,
-                    warehouse_name: "Sapele,"
-                },
-                {
-                    id: 10,
-                    location: "Oghara",
-                    charge: 3500,
-                    warehouse_id: 5,
-                    warehouse_name: "Sapele,"
-                },
-                {
-                    id: 4,
-                    location: "Ughelli",
-                    charge: 4000,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 5,
-                    location: "Agbor",
-                    charge: 3500,
-                    warehouse_id: 4,
-                    warehouse_name: "Agbor,"
-                },
-                {
-                    id: 6,
-                    location: "Warri",
-                    charge: 3000,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 7,
-                    location: "Abraka",
-                    charge: 4000,
-                    warehouse_id: 6,
-                    warehouse_name: "Abraka,"
-                },
-                {
-                    id: 11,
-                    location: "Obiarurku",
-                    charge: 4000,
-                    warehouse_id: 6,
-                    warehouse_name: "Abraka,"
-                },
-                {
-                    id: 8,
-                    location: "Ibusa",
-                    charge: 3500,
-                    warehouse_id: 2,
-                    warehouse_name: "Asaba,"
-                },
-                {
-                    id: 9,
-                    location: "Okpanam",
-                    charge: 3000,
-                    warehouse_id: 2,
-                    warehouse_name: "Asaba,"
-                },
-                {
-                    id: 14,
-                    location: "Eku",
-                    charge: 4000,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 12,
-                    location: "Ozoro",
-                    charge: 4000,
-                    warehouse_id: 7,
-                    warehouse_name: "Isoko,"
-                },
-                {
-                    id: 13,
-                    location: "Oleh",
-                    charge: 4000,
-                    warehouse_id: 7,
-                    warehouse_name: "Isoko,"
-                },
-            ]
-        },
-        {
-            id: 2,
-            name: "Edo",
-            opened: false,
-            locations: [
-                {
-                    id: 1,
-                    location: "Benin City",
-                    charge: 4000,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 2,
-                    location: "Auchi",
-                    charge: 3500,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 3,
-                    location: "Igarra",
-                    charge: 3000,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 4,
-                    location: "Okpella",
-                    charge: 3500,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 5,
-                    location: "Ekpoma",
-                    charge: 4000,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 6,
-                    location: "Usen",
-                    charge: 3500,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 7,
-                    location: "Irrua",
-                    charge: 3000,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 8,
-                    location: "Sabongida-Ora",
-                    charge: 4000,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                }
-            ]
-        },
-        {
-            id: 3,
-            name: "Lagos",
-            opened: false,
-            locations: [
-                {
-                    id: 1,
-                    location: "Ikeja",
-                    charge: 4000,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 2,
-                    location: "Victoria Island",
-                    charge: 5000,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 3,
-                    location: "Surulere",
-                    charge: 3500,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 4,
-                    location: "Lekki",
-                    charge: 4500,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 5,
-                    location: "Yaba",
-                    charge: 3500,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 6,
-                    location: "Ikorodu",
-                    charge: 4000,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 7,
-                    location: "Apapa",
-                    charge: 3500,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 8,
-                    location: "Epe",
-                    charge: 4000,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                }
-            ]
-        },
-        {
-            id: 4,
-            name: "Anambra",
-            opened: false,
-            locations: [
-                {
-                    id: 1,
-                    location: "Awka",
-                    charge: 4000,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 2,
-                    location: "Onitsha",
-                    charge: 3500,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 3,
-                    location: "Nnewi",
-                    charge: 3000,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 4,
-                    location: "Ekwulobia",
-                    charge: 3500,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 5,
-                    location: "Aguata",
-                    charge: 4000,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 6,
-                    location: "Orumba",
-                    charge: 3500,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 7,
-                    location: "Ogidi",
-                    charge: 3000,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 8,
-                    location: "Otuocha",
-                    charge: 4000,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                }
-            ]
-        },
-        {
-            id: 5,
-            name: "Rivers",
-            opened: false, 
-            locations: [
-                {
-                    id: 1,
-                    location: "Port Harcourt",
-                    charge: 4500,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 2,
-                    location: "Obio/Akpor",
-                    charge: 4000,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 3,
-                    location: "Eleme",
-                    charge: 3500,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 4,
-                    location: "Okrika",
-                    charge: 4000,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 5,
-                    location: "Bonny",
-                    charge: 5000,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 6,
-                    location: "Ahoada",
-                    charge: 3500,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 7,
-                    location: "Degema",
-                    charge: 4000,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 8,
-                    location: "Opobo",
-                    charge: 3500,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                }
-            ]
-        },
-        {
-            id: 6,
-            name: "Bayelsa",
-            opened: false,
-            locations: [
-                {
-                    id: 1,
-                    location: "Yenagoa",
-                    charge: 4000,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 2,
-                    location: "Brass",
-                    charge: 3500,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 3,
-                    location: "Nembe",
-                    charge: 3000,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 4,
-                    location: "Ogbia",
-                    charge: 3500,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 5,
-                    location: "Sagbama",
-                    charge: 4000,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-            ],
-        },
-        {
-            id: 7,
-            name: "Abuja",
-            opened: false,
-            locations: [
-                {
-                    id: 1,
-                    location: "Central Area",
-                    charge: 4500,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 2,
-                    location: "Garki",
-                    charge: 4000,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 3,
-                    location: "Wuse",
-                    charge: 3500,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 4,
-                    location: "Asokoro",
-                    charge: 4000,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 5,
-                    location: "Maitama",
-                    charge: 5000,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-            ],
-        },
-        {
-            id: 8,
-            name: "Cross River",
-            opened: false,
-            locations: [
-                {
-                    id: 1,
-                    location: "Calabar",
-                    charge: 4000,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 2,
-                    location: "Ikom",
-                    charge: 3500,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 3,
-                    location: "Ogoja",
-                    charge: 3000,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 4,
-                    location: "Obudu",
-                    charge: 3500,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 5,
-                    location: "Ugep",
-                    charge: 4000,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-            ],
-        },
-        {
-            id: 9,
-            name: "Oyo",
-            opened: false,
-            locations: [
-                {
-                    id: 1,
-                    location: "Ibadan",
-                    charge: 4000,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 2,
-                    location: "Ogbomosho",
-                    charge: 3500,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 3,
-                    location: "Iseyin",
-                    charge: 3000,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 4,
-                    location: "Oyo",
-                    charge: 3500,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-                {
-                    id: 5,
-                    location: "Eruwa",
-                    charge: 4000,
-                    warehouse_id: 1,
-                    warehouse_name: "Warri,"
-                },
-            ],
+    const [states, setStates] = useState([])
+
+    // get managers
+    useEffect(() => {
+        // fetch warehouse name
+        const fetchWarehouseName = async (id) => {
+            try {
+                const docRef = doc(database, "warehouses", id);
+                const docSnap = await getDoc(docRef);
+                // return warehouse name
+                return docSnap.data().warehouse_name;
+
+            } catch (error) {
+                setToast({
+                    text: error.message,
+                    visible: true,
+                    type: "error",
+                });
+            }
         }
-    ];
+
+        // fetch locations
+        const fetchLocations = async (businessId) => {
+            try {
+                const collectionRef = collection(database, "locations");
+                let q = query(
+                    collectionRef,
+                    where("business_id", "==", businessId),
+                );
+
+                const unsubscribe = onSnapshot(q, (querySnapshot) => {
+                    let locationList = [];
+
+                    // Create an array to hold promises for fetching warehouse names
+                    const fetchWarehouseNamePromises = querySnapshot.docs.map(async (doc) => {
+                        // Fetch warehouse name
+                        const warehouse_name = await fetchWarehouseName(doc.data().warehouse_id);
+                        return warehouse_name;
+                    });
+
+                    // Wait for all promises to resolve
+                    Promise.all(fetchWarehouseNamePromises).then((warehouseNames) => {
+                        // Iterate over the query snapshot again to construct locationList
+                        querySnapshot.docs.forEach((doc, index) => {
+                            const location = {
+                                id: doc.id,
+                                delivery_charge: doc.data().delivery_charge,
+                                region: doc.data().region,
+                                state: doc.data().state,
+                                warehouse_id: doc.data().warehouse_id,
+                                warehouse_name: warehouseNames[index], // Use the corresponding warehouse name
+                            };
+                            locationList.push(location);
+                        });
+
+                        const groupByState = (locations) => {
+                            const groupedByState = locations?.reduce((acc, obj) => {
+                                const { state, ...rest } = obj;
+                                // Check if state is defined and not null
+                                if (state !== undefined && state !== null) {
+                                    if (!acc[state]) {
+                                        acc[state] = { name: state, opened: false, locations: [] };
+                                    }
+                                    acc[state].locations.push(rest);
+                                }
+                                return acc;
+                            }, {});
+
+                            return Object.values(groupedByState);
+                        }
+
+                        setStates(groupByState(locationList));
+                    });
+
+                });
+
+                return unsubscribe;
+
+            } catch (error) {
+                console.log("Caught this Error: ", error.message);
+                setToast({
+                    text: error.message,
+                    visible: true,
+                    type: "error",
+                });
+            }
+        };
+
+
+        // fetch warehouses
+        const unsubscribePromise = fetchLocations(business_id);
+
+        // Cleanup function to unsubscribe from snapshot listener
+        return () => {
+            // Unsubscribe from snapshot listener once unsubscribePromise is resolved
+            unsubscribePromise.then(unsubscribe => {
+                if (unsubscribe) {
+                    unsubscribe();
+                }
+            });
+        };
+    }, []);
+
+
+    // console.log(states);
 
     // state to store search results
     const [searchResults, setSearchResults] = useState(states);
@@ -568,7 +171,7 @@ const AvailableLocations = ({navigation, route}) => {
         const filteredStates = states.filter((state) => {
           const isMatch = state.name.toLowerCase().includes(inputString.toLowerCase()) ||
             state.locations.some((location) => {      
-                return location.location.toLowerCase().includes(inputString.toLowerCase())
+                return location.region.toLowerCase().includes(inputString.toLowerCase())
             });
       
             if (isMatch) {
@@ -610,10 +213,10 @@ const AvailableLocations = ({navigation, route}) => {
 
                 })(); 
                 state.locations = state.locations.map((location) => {
-                    const searchIndex = location.location.toLowerCase().indexOf(inputString.toLowerCase());
+                    const searchIndex = location.region.toLowerCase().indexOf(inputString.toLowerCase());
                     if (searchIndex !== -1) {
 
-                        let textArray = location.location.toLowerCase().split(inputString.toLowerCase());
+                        let textArray = location.region.toLowerCase().split(inputString.toLowerCase());
                         const fullString = textArray.join(`%!#${inputString}%!#`)
     
                         textArray = fullString.split('%!#');
@@ -753,9 +356,9 @@ const AvailableLocations = ({navigation, route}) => {
                         </View>
                         {/* locations accordion, grouped by states */}
                         <View style={style.locationsWrapper}>
-                            { searchResults.map(state => (
+                            { states.map(state => (
                                 <Accordion
-                                    key={state.id}
+                                    key={state.name}
                                     states={states}
                                     state={state.name}
                                     locations={state.locations}

@@ -130,7 +130,7 @@ const Warehouse = ({navigation, route}) => {
     // warehouses
     const [warehouses, setWarehouses] = useState([]);
 
-    // get managers
+    // get warehouse
     useEffect(() => {
         // fetch manager
         // fucntion to get user doc, where user id is given
@@ -141,7 +141,7 @@ const Warehouse = ({navigation, route}) => {
                 // return object of {id: id, manager_name: full_name}
                 return docSnap.data().full_name;
 
-            } catch {
+            } catch (error) {
                 setToast({
                     text: error.message,
                     visible: true,
@@ -241,7 +241,18 @@ const Warehouse = ({navigation, route}) => {
         };
 
         // fetch warehouses
-        fetchWarehouses(authData?.business_id);
+        const unsubscribePromise = fetchWarehouses(authData?.business_id);
+
+        // Cleanup function to unsubscribe from snapshot listener
+        return () => {
+            // Unsubscribe from snapshot listener once unsubscribePromise is resolved
+            unsubscribePromise.then(unsubscribe => {
+                if (unsubscribe) {
+                    unsubscribe();
+                }
+            });
+        };
+
     }, []);
 
     // stock transfer data

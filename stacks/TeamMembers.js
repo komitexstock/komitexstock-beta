@@ -214,7 +214,18 @@ const TeamMembers = ({ navigation }) => {
         };
     
         // fetch team members data
-        fetchTeamMembers(authData?.business_id);
+        const unsubscribePromise = fetchTeamMembers(authData?.business_id);
+
+        // Cleanup function to unsubscribe from snapshot listener
+        return () => {
+            // Unsubscribe from snapshot listener once unsubscribePromise is resolved
+            unsubscribePromise.then(unsubscribe => {
+                if (unsubscribe) {
+                    unsubscribe();
+                }
+            });
+        };
+
     }, []);
 
     // function to close Popup modal

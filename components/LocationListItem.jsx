@@ -10,7 +10,8 @@ import ClearSearch from "../assets/icons/ClearSearch";
 // colors
 import { background, black, bodyText, subText, white } from '../style/colors'
 
-const LocationListItem = ({warehouseId, warehouseName, towns, warehouseInput, warehouseInputActive, chargeInput, updateChargeInput, chargeInputError, setChargeInputError, inactiveSaveButton, openMenu, openStackedModal, handleSaveEditTown, handleWarehouseLayout, handleTownLayout, handleCancelEditTown}) => {
+const LocationListItem = ({warehouseId, warehouseName, locations, warehouseInput, warehouseInputActive, chargeInput, updateChargeInput, chargeInputError, setChargeInputError, inactiveSaveButton, openMenu, openStackedModal, handleSaveEditTown, handleWarehouseLayout, handleTownLayout, handleCancelEditTown}) => {
+    // console.log(locations);
     return (
         <View 
             style={styles.warehouseWrapper}
@@ -19,13 +20,13 @@ const LocationListItem = ({warehouseId, warehouseName, towns, warehouseInput, wa
             <View style={styles.warehouseInfoWrapper}>
                 <Text style={styles.warehouseName}>{warehouseName}</Text>
                 <Text style={styles.warehouseLocationCount}>
-                    {towns.length} 
-                    {towns.length > 1 ? " locations" : " location"} 
+                    {locations.length} 
+                    {locations.length > 1 ? " locations" : " location"} 
                 </Text>
             </View>
-            {towns.map((town) => {
-                if (town?.editing) return (
-                    <View key={town.town} style={styles.editTownContainer}>
+            {locations.map((locations) => {
+                if (locations?.editing) return (
+                    <View key={locations.region} style={styles.editTownContainer}>
                         <View 
                             style={
                                 [styles.townWrapper, 
@@ -36,7 +37,7 @@ const LocationListItem = ({warehouseId, warehouseName, towns, warehouseInput, wa
                             ]}
                         >
                             <View style={styles.townDetailsWrapper}>
-                                <Text style={styles.townNameBold}>{town.town}</Text>
+                                <Text style={styles.townNameBold}>{locations.region}</Text>
                                 <Text style={styles.townEditInstructions}>
                                     Edit your sub location details
                                 </Text>
@@ -80,17 +81,17 @@ const LocationListItem = ({warehouseId, warehouseName, towns, warehouseInput, wa
                 )
                 return (
                     <View 
-                        key={town.town} 
+                        key={locations.region} 
                         style={[
                             styles.townWrapper,
-                            town?.disabled && {opacity: 0.5}
+                            locations?.disabled && {opacity: 0.5}
                         ]}
-                        onLayout={(e) => handleTownLayout(town.id, e)}
+                        onLayout={(e) => handleTownLayout(locations.id, e)}
                     >
                         <View style={styles.townDetailsWrapper}>
-                            <Text style={styles.townName}>{town.town}</Text>
+                            <Text style={styles.townName}>{locations.region}</Text>
                             <Text style={styles.townCharge}>
-                                ₦ {town.charge.toLocaleString()}.
+                                ₦ {locations.delivery_charge.toLocaleString()}.
                                 <Text style={styles.decimal}>
                                     00
                                 </Text>
@@ -98,7 +99,7 @@ const LocationListItem = ({warehouseId, warehouseName, towns, warehouseInput, wa
                         </View>
                         <TouchableOpacity
                             style={styles.optionButton}
-                            onPress={town?.disabled ? () => {} : () => openMenu(warehouseId, town.id)}
+                            onPress={locations?.disabled ? () => {} : () => openMenu(warehouseId, locations.id)}
                         >
                             <MenuIcon />
                         </TouchableOpacity>

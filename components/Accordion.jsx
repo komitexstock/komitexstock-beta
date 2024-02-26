@@ -38,7 +38,7 @@ const Accordion = ({states, state, locations, opened, showEditButton, navigation
     const getMaxCharge = (locationsArray) => {
         let maxCharge = -Infinity;
         for (let i = 0; i < locationsArray.length; i++) {
-            const charge = locationsArray[i].charge;
+            const charge = locationsArray[i].delivery_charge;
             if (charge > maxCharge) {
                 maxCharge = charge;
             }
@@ -49,7 +49,7 @@ const Accordion = ({states, state, locations, opened, showEditButton, navigation
     const getMinCharge = (locationsArray) => {
         let minCharge = Infinity;
         for (let i = 0; i < locationsArray.length; i++) {
-            const charge = locationsArray[i].charge;
+            const charge = locationsArray[i].delivery_charge;
             if (charge < minCharge) {
                 minCharge = charge;
             }
@@ -83,9 +83,9 @@ const Accordion = ({states, state, locations, opened, showEditButton, navigation
             >
                 {locations.map((location) => (
                     <View key={location.id} style={style.locationsItems}>
-                        <Text style={style.locationsText}>{location.location}</Text>
+                        <Text style={style.locationsText}>{location?.region}</Text>
                         <Text style={style.locationsPrice}>
-                            ₦{location.charge.toLocaleString()}
+                            ₦{location.delivery_charge.toLocaleString()}
                             <Text style={style.decimal}>.00</Text>    
                         </Text>
                     </View>
@@ -171,6 +171,7 @@ const style = StyleSheet.create({
         fontFamily: 'mulish-regular',
         color: bodyText,
         fontSize: 12,
+        textTransform: 'capitalize',
     },
     locationsPrice: {
         fontFamily: 'mulish-regular',

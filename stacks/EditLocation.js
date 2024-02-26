@@ -46,7 +46,7 @@ const EditLocation = ({navigation, route}) => {
 
     useEffect(() => {
         const groupedByWarehouse = stateLocations?.locations.reduce((acc, location) => {
-            const {id, warehouse_id, warehouse_name, location: town, charge } = location;
+            const {id, warehouse_id, warehouse_name, location: town, delivery_charge } = location;
         
             // Check if the warehouse_id exists in the accumulator array
             const warehouseIndex = acc.findIndex(item => item.warehouse_id === warehouse_id);
@@ -56,7 +56,7 @@ const EditLocation = ({navigation, route}) => {
                 acc[warehouseIndex].towns.push({
                     id,
                     town,
-                    charge,
+                    delivery_charge,
                     editing: false,
                     disabled: false,
                 });
@@ -68,7 +68,7 @@ const EditLocation = ({navigation, route}) => {
                     towns: [{
                         id,
                         town,
-                        charge,
+                        delivery_charge,
                         editing: false,
                         disabled: false,
                     }],
@@ -91,7 +91,7 @@ const EditLocation = ({navigation, route}) => {
     const maximumCharge = sublocations.reduce((maxCharge, location) => {
         // Extract charges from all towns in each location and find the maximum charge
         const maxLocationCharge = location.towns.reduce((max, town) => {
-            return Math.max(max, town.charge);
+            return Math.max(max, town.delivery_charge);
         }, Number.NEGATIVE_INFINITY); // Initialize with the smallest possible value
         return Math.max(maxCharge, maxLocationCharge);
     }, Number.NEGATIVE_INFINITY); // Initialize with the smallest possible value
@@ -100,7 +100,7 @@ const EditLocation = ({navigation, route}) => {
     const minimumCharge = sublocations.reduce((minCharge, location) => {
         // Extract charges from all towns in each location and find the minimum charge
         const minLocationCharge = location.towns.reduce((min, town) => {
-            return Math.min(min, town.charge);
+            return Math.min(min, town.delivery_charge);
         }, Number.POSITIVE_INFINITY); // Initialize with the largest possible value
         return Math.min(minCharge, minLocationCharge);
     }, Number.POSITIVE_INFINITY); // Initialize with the largest possible value

@@ -34,7 +34,6 @@ import { useAuth } from "../context/AuthContext";
 
 // firebase
 import {
-    auth,
     database,
 } from "../Firebase";
 
@@ -83,6 +82,8 @@ const AddLocation = ({navigation}) => {
         //     ]
         // },
     ]);
+
+    // console.log('Sublocations', sublocations[0]);
 
     // id of selected town
     const [selectedTownId, setSelectedTownId] = useState(null);
@@ -294,36 +295,41 @@ const AddLocation = ({navigation}) => {
             // ref to warehouses collection
             const locationsRef = collection(database, "locations");
 
+            // check if region, state and country combination  exist
             await Promise.all(sublocations.map(async (sublocation) => {
-                await Promise.all(sublocation.towns.map(async (town) => {
+                await Promise.all(sublocation.locations.map(async (location) => {
                     const q = query(
                         locationsRef,
                         where("business_id", "==", authData?.business_id),
                         where("country", "==", country),
                         where("state", "==", stateInput),
-                        where("region", "==", town.town.toLowerCase())
+                        where("region", "==", location.region.toLowerCase())
                     );
               
+                    // get docs
                     const querySnapshot = await getDocs(q);
                     
                     // if any result exist
                     if (querySnapshot.size > 0) {
+                        // end loading state
                         setIsLoading(false);
-                        throw new Error(`${town.town} already exist amongst your locations in ${stateInput}, ${country}`);
+                        // throw error
+                        throw new Error(`${location.region} already exist amongst your locations in ${stateInput}, ${country}`);
                     }
                 }));
             }));
 
+            // add sublocations
             await Promise.all(sublocations.map(async (sublocation) => {
-                await Promise.all(sublocation.towns.map(async (town) => {
+                await Promise.all(sublocation.locations.map(async (location) => {
 
                     // save data in database
                     await addDoc(locationsRef, {
                         business_id: authData?.business_id, // business id
                         country: country, // country
                         state: stateInput, // state
-                        region: town.town.toLowerCase(), // region
-                        delivery_charge: town.charge, // delivery charge 
+                        region: location.region.toLowerCase(), // region
+                        delivery_charge: location.delivery_charge, // delivery charge 
                         created_at: serverTimestamp(), // timestamp
                         created_by: authData?.uid, // uid
                         edited_at: serverTimestamp(), // timestamp
@@ -489,7 +495,7 @@ const AddLocation = ({navigation}) => {
     const defaultChargeInput = useMemo(() => {
         // get the charge value where the selected warehouse and selected town id match
         return sublocations.find((item) => item.warehouse_id === selectedWarehouseId)
-        ?.towns.find((item) => item.id === selectedTownId).charge;
+        ?.locations.find((item) => item.id === selectedTownId).delivery_charge;
     }, [selectedTownId, selectedWarehouseId]);
 
     // default values of warehouse input when a sublocation is about to be edited
@@ -509,8 +515,8 @@ const AddLocation = ({navigation}) => {
 
         // function to check if town exist in sublocations array
         const checkTownExist = sublocations.some(sublocation => {
-            return sublocation.towns.some(town => {
-                return town.town.toLowerCase() === townInput.toLowerCase() && sublocation.warehouse_name.toLowerCase() === warehouseInput?.warehouse_name.toLowerCase();
+            return sublocation.locations.some(location => {
+                return location.region.toLowerCase() === townInput.toLowerCase() && sublocation.warehouse_name.toLowerCase() === warehouseInput?.warehouse_name.toLowerCase();
             });
         });
 
@@ -546,23 +552,23 @@ const AddLocation = ({navigation}) => {
                     if (sublocation.warehouse_id === warehouseInput.id) {
                         return {
                             ...sublocation,
-                            towns: [
+                            locations: [
                                 {
                                     id: generatedTownId,
-                                    town: townInput,
-                                    charge: chargeInput,
+                                    region: townInput,
+                                    delivery_charge: chargeInput,
                                     editing: false,
                                     disabled: false,
                                 },
-                                ...sublocation.towns,
+                                ...sublocation.locations,
                             ],
                         }
                     }
                     return {
                         ...sublocation,
-                        towns: sublocation.towns.map(town => {
+                        locations: sublocation.locations.map(location => {
                             return {
-                                ...town,
+                                ...location,
                                 disabled: false,
                                 editing: false,
                             }
@@ -576,11 +582,11 @@ const AddLocation = ({navigation}) => {
                 {
                     warehouse_id: warehouseInput.id,
                     warehouse_name: warehouseInput.warehouse_name,
-                    towns: [
+                    locations: [
                         {
                             id: generatedTownId,
-                            town: townInput,
-                            charge: chargeInput,
+                            region: townInput,
+                            delivery_charge: chargeInput,
                             editing: false,
                             disabled: false,
                         }
@@ -607,11 +613,11 @@ const AddLocation = ({navigation}) => {
 
             // get warehouse group from sublocations
             const subLocationWarehouseGroup = prevSubLocations.find((item) => item.warehouse_id === selectedWarehouseId);
-            // check if multiple towns exist
-            const oneTownsExist = subLocationWarehouseGroup.towns.length === 1;
+            // check if multiple locations exist
+            const oneTownsExist = subLocationWarehouseGroup.locations.length === 1;
             // parameter to detect if a warehouse was changed when a sublocation was edited
             const warehouseChanged = selectedWarehouseId !== warehouseInput.id;
-            // if only one town exist in warehouse and warehouse was changed filter that warehouse out otherwise keep it
+            // if only one location exist in warehouse and warehouse was changed filter that warehouse out otherwise keep it
             const modSubLocations = oneTownsExist && warehouseChanged ? prevSubLocations.filter(sublocation => sublocation.warehouse_id !== selectedWarehouseId) : prevSubLocations;
 
             // remove offset of warehouse if it doesnt exist anymore
@@ -631,17 +637,17 @@ const AddLocation = ({navigation}) => {
                         if (!warehouseChanged) {
                             return {
                                 ...sublocation,
-                                towns: sublocation?.towns.map(town => {
-                                    if (town.id === selectedTownId) {
+                                locations: sublocation?.locations.map(location => {
+                                    if (location.id === selectedTownId) {
                                         return {
-                                            ...town,
-                                            charge: chargeInput,
+                                            ...location,
+                                            delivery_charge: chargeInput,
                                             editing: false,
                                             disabled: false,
                                         }
                                     } else {
                                         return {
-                                            ...town,
+                                            ...location,
                                             disabled: false,
                                         }
                                     }
@@ -651,18 +657,18 @@ const AddLocation = ({navigation}) => {
                         // if the warehouse was changed 
                         return {
                             ...sublocation,
-                            towns: [
-                                ...sublocation?.towns.map(town => {
+                            locations: [
+                                ...sublocation?.locations.map(location => {
                                     return {
-                                        ...town,
+                                        ...location,
                                         disabled: false,
                                     }
                                 }),
                                 {
                                     id: selectedTownId,
-                                    town: sublocations.find((item) => item.warehouse_id === selectedWarehouseId)
-                                    .towns.find((item) => item.id === selectedTownId).town,
-                                    charge: chargeInput,
+                                    region: sublocations.find((item) => item.warehouse_id === selectedWarehouseId)
+                                    .locations.find(location => location.id === selectedTownId).region,
+                                    delivery_charge: chargeInput,
                                     editing: false,
                                     disabled: false,
                                 }
@@ -674,9 +680,9 @@ const AddLocation = ({navigation}) => {
                     return {
                         ...sublocation,
                         // remove that town if it exist in another warehouse
-                        towns: sublocation?.towns.filter(town => town.id !== selectedTownId).map(town => {
+                        locations: sublocation?.locations.filter(location => location.id !== selectedTownId).map(location => {
                             return {
-                                ...town,
+                                ...location,
                                 disabled: false,
                             }
                         }),
@@ -689,9 +695,9 @@ const AddLocation = ({navigation}) => {
                     return {
                         ...sublocation,
                         // remove that town if it exist in another warehouse
-                        towns: sublocation.towns.filter(town => town.id !== selectedTownId).map(town => {
+                        locations: sublocation.locations.filter(location => location.id !== selectedTownId).map(location => {
                             return {
-                                ...town,
+                                ...location,
                                 disabled: false,
                             }
                         }),
@@ -700,12 +706,12 @@ const AddLocation = ({navigation}) => {
                 {
                     warehouse_id: warehouseInput.id,
                     warehouse_name: warehouseInput.warehouse_name,
-                    towns: [
+                    locations: [
                         {
                             id: selectedTownId,
-                            town: sublocations.find((item) => item.warehouse_id === selectedWarehouseId)
-                            .towns.find((item) => item.id === selectedTownId).town,
-                            charge: chargeInput,
+                            region: sublocations.find((sublocation) => sublocation.warehouse_id === selectedWarehouseId)
+                            .locations.find((location) => location.id === selectedTownId).region,
+                            delivery_charge: chargeInput,
                             editing: false,
                             disabled: false,
                         }
@@ -728,11 +734,11 @@ const AddLocation = ({navigation}) => {
     const handleEditTown = () => {
 
         // set ware house input
-        setWarehouseInput(warehouses.find((item) => item.id === selectedWarehouseId));
+        setWarehouseInput(warehouses.find(warehouse => warehouse.id === selectedWarehouseId));
 
         // set charge input
-        setChargeInput(sublocations.find((item) => item.warehouse_id === selectedWarehouseId)
-        .towns.find((item) => item.id === selectedTownId).charge);
+        setChargeInput(sublocations.find(sublocation => sublocation.warehouse_id === selectedWarehouseId)
+        .locations.find(location => location.id === selectedTownId).delivery_charge);
 
         // swicth chosen town to edit state an other towns to diabled
         setSublocations(prevSubLocations => {
@@ -740,15 +746,15 @@ const AddLocation = ({navigation}) => {
                 return {
                     warehouse_id: sublocation.warehouse_id,
                     warehouse_name: sublocation.warehouse_name,
-                    towns: sublocation.towns.map(town => {
-                        if (town.id === selectedTownId) {
+                    locations: sublocation.locations.map(location => {
+                        if (location.id === selectedTownId) {
                             return {
-                                ...town,
+                                ...location,
                                 editing: true
                             }
                         } else {
                             return {
-                                ...town,
+                                ...location,
                                 disabled: true,
                             }
                         }
@@ -769,9 +775,9 @@ const AddLocation = ({navigation}) => {
                 return {
                     warehouse_id: sublocation.warehouse_id,
                     warehouse_name: sublocation.warehouse_name,
-                    towns: sublocation.towns.map(town => {
+                    locations: sublocation.locations.map(location => {
                         return {
-                            ...town,
+                            ...location,
                             editing: false,
                             disabled: false,
                         }
@@ -791,7 +797,7 @@ const AddLocation = ({navigation}) => {
             // get warehouse group from sublocations
             const subLocationWarehouseGroup = prevSubLocations.find((item) => item.warehouse_id === selectedWarehouseId);
             // check if multiple towns exist
-            const multipleTownsExist = subLocationWarehouseGroup.towns.length > 1;
+            const multipleTownsExist = subLocationWarehouseGroup.locations.length > 1;
             // if only one town exist in warehouse group
             if (!multipleTownsExist) {
                 // if warehouse no longer exist, delete warehouse ref from components refs
@@ -811,7 +817,7 @@ const AddLocation = ({navigation}) => {
                 return {
                     warehouse_id: sublocation.warehouse_id,
                     warehouse_name: sublocation.warehouse_name,
-                    towns: sublocation.towns.filter(town => town.id !== selectedTownId),
+                    locations: sublocation.locations.filter(location => location.id !== selectedTownId),
                 }
             });
 
@@ -843,8 +849,8 @@ const AddLocation = ({navigation}) => {
     ];
 
     // function to return true is any editing field in town is true
-    const editingLocation = sublocations?.some(location => {
-        return location?.towns?.some(town => town?.editing)
+    const editingLocation = sublocations?.some(sublocation => {
+        return sublocation?.locations?.some(location => location?.editing)
     });
 
 
@@ -884,9 +890,10 @@ const AddLocation = ({navigation}) => {
                     )}
                     {sublocations.length === 0 ? (<>
                         {/* only display text if a state has been selected */}
-                        {stateInput !== "" && <Text style={styles.paragraph}>
-                            Locations you've added an their respective delivery charges would appear here
-                        </Text>}
+                        <Text style={styles.paragraph}>
+                            {stateInput === "" ? "Select a state for your delivery locations" : "Locations you've added an their respective delivery charges would appear here"}
+                            
+                        </Text>
                     </>) : (
                         <View style={styles.sublocationsWrapper}>
                             {/* location list items */}
@@ -895,7 +902,7 @@ const AddLocation = ({navigation}) => {
                                     key={sublocation.warehouse_id}
                                     warehouseId={sublocation.warehouse_id}
                                     warehouseName={sublocation.warehouse_name}
-                                    towns={sublocation.towns}
+                                    locations={sublocation.locations}
                                     warehouseInput={warehouseInput}
                                     warehouseInputActive={warehouseInputActive}
                                     chargeInput={chargeInput}
@@ -958,7 +965,7 @@ const AddLocation = ({navigation}) => {
                     <View style={styles.modalWrapper}>
                         <View style={styles.modalContent}>
                             <Text style={styles.modalParagraph}>
-                                Add sub-loction an it's corresponding delivery charge
+                                Add sub-location an it's corresponding delivery charge
                             </Text>
                             <View style={styles.modalInputWrapper}>
                                 {/*Delivery Town/City input */}
