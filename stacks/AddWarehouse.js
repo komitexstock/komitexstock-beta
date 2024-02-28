@@ -5,7 +5,8 @@ import {
     Text,
     View,
     Keyboard,
-    TouchableOpacity
+    TouchableOpacity,
+    Platform,
 } from 'react-native';
 
 // react hooks

@@ -11,7 +11,6 @@ import ClearSearch from "../assets/icons/ClearSearch";
 import { background, black, bodyText, subText, white } from '../style/colors'
 
 const LocationListItem = ({warehouseId, warehouseName, locations, warehouseInput, warehouseInputActive, chargeInput, updateChargeInput, chargeInputError, setChargeInputError, inactiveSaveButton, openMenu, openStackedModal, handleSaveEditTown, handleWarehouseLayout, handleTownLayout, handleCancelEditTown}) => {
-    // console.log(locations);
     return (
         <View 
             style={styles.warehouseWrapper}
@@ -24,9 +23,9 @@ const LocationListItem = ({warehouseId, warehouseName, locations, warehouseInput
                     {locations.length > 1 ? " locations" : " location"} 
                 </Text>
             </View>
-            {locations.map((locations) => {
-                if (locations?.editing) return (
-                    <View key={locations.region} style={styles.editTownContainer}>
+            {locations.map((location) => {
+                if (location?.editing) return (
+                    <View key={location.region} style={styles.editTownContainer}>
                         <View 
                             style={
                                 [styles.townWrapper, 
@@ -37,7 +36,7 @@ const LocationListItem = ({warehouseId, warehouseName, locations, warehouseInput
                             ]}
                         >
                             <View style={styles.townDetailsWrapper}>
-                                <Text style={styles.townNameBold}>{locations.region}</Text>
+                                <Text style={styles.townNameBold}>{location.region}</Text>
                                 <Text style={styles.townEditInstructions}>
                                     Edit your sub location details
                                 </Text>
@@ -81,17 +80,17 @@ const LocationListItem = ({warehouseId, warehouseName, locations, warehouseInput
                 )
                 return (
                     <View 
-                        key={locations.region} 
+                        key={location.id} 
                         style={[
                             styles.townWrapper,
-                            locations?.disabled && {opacity: 0.5}
+                            location?.disabled && {opacity: 0.5}
                         ]}
-                        onLayout={(e) => handleTownLayout(locations.id, e)}
+                        onLayout={(e) => handleTownLayout(location.id, e)}
                     >
                         <View style={styles.townDetailsWrapper}>
-                            <Text style={styles.townName}>{locations.region}</Text>
+                            <Text style={styles.townName}>{location.region}</Text>
                             <Text style={styles.townCharge}>
-                                ₦ {locations.delivery_charge.toLocaleString()}.
+                                ₦ {location.delivery_charge.toLocaleString()}.
                                 <Text style={styles.decimal}>
                                     00
                                 </Text>
@@ -99,7 +98,7 @@ const LocationListItem = ({warehouseId, warehouseName, locations, warehouseInput
                         </View>
                         <TouchableOpacity
                             style={styles.optionButton}
-                            onPress={locations?.disabled ? () => {} : () => openMenu(warehouseId, locations.id)}
+                            onPress={location?.disabled ? () => {} : () => openMenu(warehouseId, location.id)}
                         >
                             <MenuIcon />
                         </TouchableOpacity>
@@ -110,7 +109,7 @@ const LocationListItem = ({warehouseId, warehouseName, locations, warehouseInput
     )
 }
 
-export default LocationListItem
+export default LocationListItem;
 
 const styles = StyleSheet.create({
     
@@ -173,12 +172,14 @@ const styles = StyleSheet.create({
         fontFamily: 'mulish-medium',
         color: bodyText,
         marginBottom: 4,
+        textTransform: 'capitalize',
     },
     townNameBold: {
         fontSize: 12,
         fontFamily: 'mulish-bold',
         color: black,
         marginBottom: 4,
+        textTransform: 'capitalize',
     },
     townEditInstructions: {
         fontSize: 12,

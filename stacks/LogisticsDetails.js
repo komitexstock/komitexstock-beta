@@ -5,7 +5,7 @@ import {
     ScrollView,
     StyleSheet,
     TouchableOpacity,
-    Image,
+    Platform,
     Dimensions,
     LayoutAnimation,
     UIManager,

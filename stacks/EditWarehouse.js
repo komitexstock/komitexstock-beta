@@ -6,6 +6,7 @@ import {
     Keyboard,
     TouchableOpacity,
     Linking,
+    Platform
 } from 'react-native';
 
 // react hooks

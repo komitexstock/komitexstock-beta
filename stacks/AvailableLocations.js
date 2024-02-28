@@ -7,20 +7,28 @@ import {
     Keyboard,
     ScrollView,
 } from "react-native";
+
 // react hooks
 import { useState, useEffect } from "react";
+
 // components
 import Header from "../components/Header";
 import SearchBar from "../components/SearchBar";
 import Accordion from "../components/Accordion";
 import Mark from "../components/Mark";
 import CustomButton from "../components/CustomButton";
+
 // colors
 import { bodyText, black, white, background } from "../style/colors";
+
 // globals
 import { useGlobals } from '../context/AppContext';
+
 // auth
 import { useAuth } from "../context/AuthContext";
+
+// skeleton screen
+import AvailableLocationsSkeleton from "../skeletons/AvailableLocationsSkeleton";
 
 // firebase
 import {
@@ -57,10 +65,10 @@ const AvailableLocations = ({navigation, route}) => {
     // globals
     const { setToast } = useGlobals();
 
-    // states and delivery locations 43456709--UIJKNM TY6T VFT5RXC W3W` 
+    // states and delivery locations 
     const [states, setStates] = useState([])
 
-    // get managers
+    // get states
     useEffect(() => {
         // fetch warehouse name
         const fetchWarehouseName = async (id) => {
@@ -113,6 +121,7 @@ const AvailableLocations = ({navigation, route}) => {
                             locationList.push(location);
                         });
 
+                        // group locations by state
                         const groupByState = (locations) => {
                             const groupedByState = locations?.reduce((acc, obj) => {
                                 const { state, ...rest } = obj;
@@ -129,7 +138,63 @@ const AvailableLocations = ({navigation, route}) => {
                             return Object.values(groupedByState);
                         }
 
-                        setStates(groupByState(locationList));
+                        // sort locations by regions
+                        const sortLocationsByRegion = (locations) => {
+                            return locations.sort((a, b) => {
+                                const regionA = a.region.toUpperCase();
+                                const regionB = b.region.toUpperCase();
+                                
+                                if (regionA < regionB) {
+                                    return -1;
+                                }
+                                if (regionA > regionB) {
+                                    return 1;
+                                }
+                                return 0;
+                            });
+                        }
+
+                        // sort locations by regions
+                        const sortLocationsByState = (states) => {
+                            return states.sort((a, b) => {
+                                const stateA = a.name.toUpperCase();
+                                const stateB = b.name.toUpperCase();
+                                
+                                if (stateA < stateB) {
+                                    return -1;
+                                }
+                                if (stateA > stateB) {
+                                    return 1;
+                                }
+                                return 0;
+                            });
+                        }
+
+                        // group locations by state
+                        const states_ = groupByState(locationList);
+
+                        const sortedStates = sortLocationsByState(states_);
+
+                        // sort regions function
+                        const sortRegions = sortedStates.map(state => {
+                            // console.log(state);
+                            return {
+                                ...state,
+                                locations: sortLocationsByRegion(state.locations),
+                            }
+                        })
+
+                        // set states
+                        setStates(sortRegions);
+
+                        setPageLoading(false);
+                    }).catch(error => {
+                        console.log("Error: ", error.message);
+                        setToast({
+                            text: error.message,
+                            visible: true,
+                            type: "error",
+                        })
                     });
 
                 });
@@ -319,60 +384,63 @@ const AvailableLocations = ({navigation, route}) => {
     // render AddLogistics page
     return (
         <>
-            <TouchableWithoutFeedback 
-                style={{
-                    flex: 1, 
-                }}
-                // onclick dismiss keyboard
-                onPress={() => Keyboard.dismiss()}
-            >   
-                <ScrollView 
-                    style={style.container}
-                    showsVerticalScrollIndicator={false}
-                >
-                    <View style={style.main}>
-                        {/* header component */}
-                        <Header
-                            navigation={navigation} 
-                            stackName={"Available Locations"} 
-                            unpadded={true}
-                        />
-                        <View style={style.paragraphWrapper}>
-                            <Text style={style.headingText}>
-                            {writable ? <>
-                                Merchants will be able to see all your listed locations
-                            </> : <>
-                                Find all available locations and the associated fees {business_name} offers 
-                            </>}
-                        </Text>
-                            {/* location search bar */}
-                            <SearchBar
-                                placeholder={"Search for a location"}
-                                searchQuery={searchQuery}
-                                setSearchQuery={setSearchQuery}
-                                backgroundColor={white}
-                                disableFilter={true}
+            {!pageLoading ? (
+                <TouchableWithoutFeedback 
+                    style={{
+                        flex: 1, 
+                    }}
+                    // onclick dismiss keyboard
+                    onPress={() => Keyboard.dismiss()}
+                >   
+                    <ScrollView 
+                        style={style.container}
+                        contentContainerStyle={style.contentContainer}
+                        showsVerticalScrollIndicator={false}
+                    >
+                        <View style={style.main}>
+                            {/* header component */}
+                            <Header
+                                navigation={navigation} 
+                                stackName={"Available Locations"} 
+                                unpadded={true}
                             />
-                        </View>
-                        {/* locations accordion, grouped by states */}
-                        <View style={style.locationsWrapper}>
-                            { states.map(state => (
-                                <Accordion
-                                    key={state.name}
-                                    states={states}
-                                    state={state.name}
-                                    locations={state.locations}
-                                    opened={state.opened}
-                                    showEditButton={true}
-                                    navigation={navigation}
+                            <View style={style.paragraphWrapper}>
+                                <Text style={style.headingText}>
+                                {writable ? <>
+                                    Merchants will be able to see all your listed locations
+                                </> : <>
+                                    Find all available locations and the associated fees {business_name} offers 
+                                </>}
+                            </Text>
+                                {/* location search bar */}
+                                <SearchBar
+                                    placeholder={"Search for a location"}
+                                    searchQuery={searchQuery}
+                                    setSearchQuery={setSearchQuery}
+                                    backgroundColor={white}
+                                    disableFilter={true}
                                 />
-                            ))}
+                            </View>
+                            {/* locations accordion, grouped by states */}
+                            <View style={style.locationsWrapper}>
+                                { states.map(state => (
+                                    <Accordion
+                                        key={state.name}
+                                        states={states}
+                                        state={state.name}
+                                        locations={state.locations}
+                                        opened={state.opened}
+                                        showEditButton={true}
+                                        navigation={navigation}
+                                    />
+                                ))}
+                            </View>
                         </View>
-                    </View>
-                </ScrollView>
-            </TouchableWithoutFeedback>
+                    </ScrollView>
+                </TouchableWithoutFeedback>
+            ) : <AvailableLocationsSkeleton />}
             {/* show add location button if its a logistics account and a manager */}
-            {writable && (
+            {!pageLoading && writable && (
                 <CustomButton 
                     fixed={true}
                     backgroundColor={white}
@@ -393,6 +461,9 @@ const style = StyleSheet.create({
         paddingTop: 0,
         backgroundColor: background,
     },
+    contentContainer: {
+        paddingBottom: 100,
+    },
     main: {
         display: "flex",
         flexDirection: "column",
@@ -404,7 +475,7 @@ const style = StyleSheet.create({
         fontFamily: "mulish-medium",
         fontSize: 12,
         color: bodyText,
-        marginBottom: 24,
+        marginBottom: 42,
         marginTop: 8,
     },
     popUpContent: {

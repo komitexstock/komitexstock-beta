@@ -161,7 +161,7 @@ const AddLocation = ({navigation}) => {
     // warehouses
     const [warehouses, setWarehouses] = useState([]);
 
-    // get managers
+    // get warehouses
     useEffect(() => {
         // fetch warehouses
         const fetchWarehouses = async (business_id) => {

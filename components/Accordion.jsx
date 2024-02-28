@@ -6,6 +6,7 @@ import {
   StyleSheet,
   LayoutAnimation,
   UIManager,
+  Platform,
 } from 'react-native';
 // icons
 import ArrowDownSmall from '../assets/icons/ArrowDownSmall';

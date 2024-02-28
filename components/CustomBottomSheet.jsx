@@ -22,7 +22,7 @@ const CustomBottomSheet = ({bottomSheetModalRef, closeModal, snapPointsArray, au
                 disappearsOnIndex={-1}
                 appearsOnIndex={0}
                 opacity={0.3}
-                onPress={closeModal}
+                onPress={closeModal !== undefined ? closeModal : () => {}}
             />
         ),
         []
