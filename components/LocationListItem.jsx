@@ -10,7 +10,7 @@ import ClearSearch from "../assets/icons/ClearSearch";
 // colors
 import { background, black, bodyText, subText, white } from '../style/colors'
 
-const LocationListItem = ({warehouseId, warehouseName, locations, warehouseInput, warehouseInputActive, chargeInput, updateChargeInput, chargeInputError, setChargeInputError, inactiveSaveButton, openMenu, openStackedModal, handleSaveEditTown, handleWarehouseLayout, handleTownLayout, handleCancelEditTown}) => {
+const LocationListItem = ({warehouseId, warehouseName, locations, warehouseInput, warehouseInputActive, chargeInput, updateChargeInput, chargeInputError, setChargeInputError, inactiveSaveButton, isLoading, openMenu, openStackedModal, handleSaveEditTown, handleWarehouseLayout, handleTownLayout, handleCancelEditTown}) => {
     return (
         <View 
             style={styles.warehouseWrapper}
@@ -24,6 +24,7 @@ const LocationListItem = ({warehouseId, warehouseName, locations, warehouseInput
                 </Text>
             </View>
             {locations.map((location) => {
+                // console.log(location.id);
                 if (location?.editing) return (
                     <View key={location.region} style={styles.editTownContainer}>
                         <View 
@@ -73,8 +74,9 @@ const LocationListItem = ({warehouseId, warehouseName, locations, warehouseInput
                                 justifyContent: "flex-end",
                                 padding: 0,
                             }}
+                            isLoading={isLoading}
                             inactive={inactiveSaveButton || chargeInput === ""}
-                            onPress={handleSaveEditTown}
+                            onPress={() => handleSaveEditTown(location.id)}
                         />
                     </View>
                 )

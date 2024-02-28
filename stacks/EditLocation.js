@@ -50,6 +50,8 @@ import {
     orderBy,
     serverTimestamp,
     addDoc,
+    updateDoc,
+    doc,
 } from "firebase/firestore";
 
 const EditLocation = ({navigation, route}) => {
@@ -59,6 +61,9 @@ const EditLocation = ({navigation, route}) => {
 
     // page loading
     const [pageLoading, setPageLoading] = useState(true);
+
+    // button loading state
+    const [isLoading, setIsLoading] = useState(false);
     
     // state locations
     const {stateLocations} = route?.params || {};
@@ -66,12 +71,16 @@ const EditLocation = ({navigation, route}) => {
     // state
     const state = stateLocations?.name;
 
+    // country
+    const country = "Nigeria";
+
     // globals
     const { bottomSheetRef, stackedSheetRef, setToast } = useGlobals();
 
     // location state, to store list of locations
     const [sublocations, setSublocations] = useState([]);
 
+    // group state locations by warehouses
     useEffect(() => {
         const groupedByWarehouse = stateLocations?.locations.reduce((acc, stateLocation) => {
             const {id, warehouse_id, warehouse_name, region, delivery_charge } = stateLocation;
@@ -375,6 +384,7 @@ const EditLocation = ({navigation, route}) => {
     }
 
     const defaultChargeInput = useMemo(() => {
+        if (selectedTownId === null || selectedWarehouseId === null) return 0;
         return sublocations.find((item) => item.warehouse_id === selectedWarehouseId)
         ?.locations.find((item) => item.id === selectedTownId).delivery_charge;
     }, [selectedTownId, selectedWarehouseId]);
@@ -387,225 +397,342 @@ const EditLocation = ({navigation, route}) => {
     const inactiveSaveButton = warehouseInput?.id === defaultWarehouseInput?.id && chargeInput === defaultChargeInput;
 
     // handle add locations function
-    const handleAddLocations = () => {
+    const handleAddLocations = async () => {
+        try {
 
-        // dismiss keyboard
-        Keyboard.dismiss();
+            // dismiss keyboard
+            Keyboard.dismiss();
 
-        // function to check if town exist in sublocations array
-        const checkTownExist = sublocations.some(sublocation => {
-            return sublocation.locations.some(location => {
-                return location.region.toLowerCase() === townInput.toLowerCase() && sublocation.warehouse_name.toLowerCase() === warehouseInput?.warehouse_name.toLowerCase();
+            // enable button loading state
+            setIsLoading(true);
+
+            // ref to warehouses collection
+            const locationsRef = collection(database, "locations");
+
+            // function to remove all occurence of the character space at the end of string
+            const removeTrailingSpace = (str) => {
+                return str.replace(/\s+$/, '');
+            }
+
+            // remove trailing space
+            const region = removeTrailingSpace(townInput.toLowerCase());
+
+            // query
+            const q = query(
+                locationsRef,
+                where("business_id", "==", authData?.business_id),
+                where("country", "==", country),
+                where("state", "==", state),
+                where("region", "==", region)
+            );
+      
+            // get docs
+            const querySnapshot = await getDocs(q);
+            
+            // if any result exist
+            if (querySnapshot.size > 0) {
+                // end loading state
+                setIsLoading(false);
+                // throw error
+                throw new Error(`${townInput} already exist amongst your locations in ${state}, ${country}`);
+            }
+
+            // save data in database
+            await addDoc(locationsRef, {
+                business_id: authData?.business_id, // business id
+                country: country, // country
+                state: state, // state
+                region: region, // region
+                delivery_charge: chargeInput, // delivery charge 
+                created_at: serverTimestamp(), // timestamp
+                created_by: authData?.uid, // uid
+                edited_at: serverTimestamp(), // timestamp
+                edited_by: authData?.uid, // uid
+                warehouse_id: warehouseInput?.id, // warehouse id
             });
-        });
-
-        // if town exist, return early with an error message
-        if (checkTownExist) {
-            // show error toast
-            setToast({
-                visible: true,
-                type: "Error",
-                text: "Town already exist",
+            
+    
+            // function to check if town exist in sublocations array
+            const checkTownExist = sublocations.some(sublocation => {
+                return sublocation.locations.some(location => {
+                    return location.region.toLowerCase() === townInput.toLowerCase() && sublocation.warehouse_name.toLowerCase() === warehouseInput?.warehouse_name.toLowerCase();
+                });
             });
-
-            // set town input error
-            setTownInputError(true);
-            // return from function
-            return;
-        }
-
-        // close add sub location bottom sheet
-        closeModal();
-
-        // generate a random id for that newly added town
-        const generatedTownId = Math.random();
-
-        // check if warehouse in sub locations
-        const warehouseExistInSublocations = sublocations.some(sublocation => sublocation.warehouse_id === warehouseInput.id);
-
-        // set sublocation
-        setSublocations(prevSubLocations => {
-            // if warehouse exist in sublocation, push into town array
-            if (warehouseExistInSublocations) {
-                return prevSubLocations.map(sublocation => {
-                    if (sublocation.warehouse_id === warehouseInput.id) {
+    
+            // if town exist, return early with an error message
+            if (checkTownExist) {
+                // show error toast
+                setToast({
+                    visible: true,
+                    type: "Error",
+                    text: "Town already exist",
+                });
+    
+                // set town input error
+                setTownInputError(true);
+                // return from function
+                return;
+            }
+    
+            // close add sub location bottom sheet
+            closeModal();
+    
+            // generate a random id for that newly added town
+            const generatedTownId = Math.random();
+    
+            // check if warehouse in sub locations
+            const warehouseExistInSublocations = sublocations.some(sublocation => sublocation.warehouse_id === warehouseInput.id);
+    
+            // set sublocation
+            setSublocations(prevSubLocations => {
+                // if warehouse exist in sublocation, push into town array
+                if (warehouseExistInSublocations) {
+                    return prevSubLocations.map(sublocation => {
+                        if (sublocation.warehouse_id === warehouseInput.id) {
+                            return {
+                                ...sublocation,
+                                locations: [
+                                    {
+                                        id: generatedTownId,
+                                        region: townInput,
+                                        delivery_charge: chargeInput,
+                                        editing: false,
+                                        disabled: false,
+                                    },
+                                    ...sublocation.locations,
+                                ],
+                            }
+                        }
                         return {
                             ...sublocation,
-                            locations: [
-                                {
-                                    id: generatedTownId,
-                                    region: townInput,
-                                    delivery_charge: chargeInput,
-                                    editing: false,
+                            locations: sublocation.locations.map(location => {
+                                return {
+                                    ...location,
                                     disabled: false,
-                                },
-                                ...sublocation.locations,
-                            ],
+                                    editing: false,
+                                }
+                            }),
                         }
-                    }
-                    return {
-                        ...sublocation,
-                        locations: sublocation.locations.map(location => {
-                            return {
-                                ...location,
-                                disabled: false,
+                    });
+                }
+                // if warehouse doesn't exist create new warehouse group
+                // spread prev warehouses and add the selected town
+                return [
+                    {
+                        warehouse_id: warehouseInput.id,
+                        warehouse_name: warehouseInput.warehouse_name,
+                        locations: [
+                            {
+                                id: generatedTownId,
+                                region: townInput,
+                                delivery_charge: chargeInput,
                                 editing: false,
+                                disabled: false,
                             }
-                        }),
-                    }
-                });
-            }
-            // if warehouse doesn't exist create new warehouse group
-            // spread prev warehouses and add the selected town
-            return [
-                {
-                    warehouse_id: warehouseInput.id,
-                    warehouse_name: warehouseInput.warehouse_name,
-                    locations: [
-                        {
-                            id: generatedTownId,
-                            region: townInput,
-                            delivery_charge: chargeInput,
-                            editing: false,
-                            disabled: false,
-                        }
-                    ],
-                },
-                ...prevSubLocations,
-            ]
-        });
+                        ],
+                    },
+                    ...prevSubLocations,
+                ]
+            });
+    
+            // reset input states
+            setChargeInput("");
+            setTownInput("");
+            setWarehouseInput(null);
 
-        // reset input states
-        setChargeInput("");
-        setTownInput("");
-        setWarehouseInput(null);
+            // show success toast
+            setToast({
+                text: "New location added successfully",
+                visible: true,
+                type: "success",
+            });
+
+            // disable button loading state
+            setIsLoading(false);
+
+        } catch (error) {
+            console.log("Caught Error: ", error.message);
+            setToast({
+                text: error.message,
+                visible: true,
+                type: "error",
+            });
+
+            // disable button loading state
+            setIsLoading(false);
+        }
     }
 
     // handle save location edits
-    const handleSaveEditTown = () => {
-        // check if warehouse in sub locations
-        const warehouseExistInSublocations = sublocations.some(sublocation => sublocation.warehouse_id === warehouseInput.id);
+    const handleSaveEditTown = async (id) => {
+        try {
+            // initiate button loading state
+            setIsLoading(true);
 
-        // set sublocation
-        setSublocations(prevSubLocations => {
-            // if warehouse exist in sublocation, push into town array
-
-            // get warehouse group from sublocations
-            const subLocationWarehouseGroup = prevSubLocations.find((item) => item.warehouse_id === selectedWarehouseId);
-            // check if multiple locations exist
-            const oneTownsExist = subLocationWarehouseGroup.locations.length === 1;
-            // parameter to detect if a warehouse was changed when a sublocation was edited
-            const warehouseChanged = selectedWarehouseId !== warehouseInput.id;
-            // if only one location exist in warehouse and warehouse was changed filter that warehouse out otherwise keep it
-            const modSubLocations = oneTownsExist && warehouseChanged ? prevSubLocations.filter(sublocation => sublocation.warehouse_id !== selectedWarehouseId) : prevSubLocations;
-
-            // remove offset of warehouse if it doesnt exist anymore
-            if (oneTownsExist && warehouseChanged) {
-                setWarehouseOffsets(prevOffsets => {
-                    return prevOffsets.filter(offset => offset.id !== selectedWarehouseId);
-                });
+            // check for empty fields
+            if (warehouseInput.id === undefined || chargeInput === "") {
+                throw new Error("Please fill all required fields");
             }
 
-            // if edited warehouse of sublocation exist in the current sublocation array
-            if (warehouseExistInSublocations) {
-                // map through sublocations
-                return modSubLocations.map(sublocation => {
-                    // when warehouse id matches warehouse input id
-                    if (sublocation.warehouse_id === warehouseInput.id) {
-                        // if the original warehouse wasnt changed during edit
-                        if (!warehouseChanged) {
+            // check if charge is a number or not
+            if (isNaN(chargeInput)) {
+                throw new Error("Delivery charge must be a number");
+            }
+
+            // update warehouse
+            // update warehouses collection where id === id from route params
+            await updateDoc(doc(database, "locations", id), {
+                warehouse_id: warehouseInput?.id,
+                delivery_charge: chargeInput,
+                edited_at: serverTimestamp(), // timestamp
+                edited_by: authData?.uid, // uid
+            });
+
+            // check if warehouse in sub locations
+            const warehouseExistInSublocations = sublocations.some(sublocation => sublocation.warehouse_id === warehouseInput.id);
+    
+            // set sublocation
+            setSublocations(prevSubLocations => {
+                // if warehouse exist in sublocation, push into town array
+    
+                // get warehouse group from sublocations
+                const subLocationWarehouseGroup = prevSubLocations.find((item) => item.warehouse_id === selectedWarehouseId);
+                // check if multiple locations exist
+                const oneTownsExist = subLocationWarehouseGroup.locations.length === 1;
+                // parameter to detect if a warehouse was changed when a sublocation was edited
+                const warehouseChanged = selectedWarehouseId !== warehouseInput.id;
+                // if only one location exist in warehouse and warehouse was changed filter that warehouse out otherwise keep it
+                const modSubLocations = oneTownsExist && warehouseChanged ? prevSubLocations.filter(sublocation => sublocation.warehouse_id !== selectedWarehouseId) : prevSubLocations;
+    
+                // remove offset of warehouse if it doesnt exist anymore
+                if (oneTownsExist && warehouseChanged) {
+                    setWarehouseOffsets(prevOffsets => {
+                        return prevOffsets.filter(offset => offset.id !== selectedWarehouseId);
+                    });
+                }
+    
+                // if edited warehouse of sublocation exist in the current sublocation array
+                if (warehouseExistInSublocations) {
+                    // map through sublocations
+                    return modSubLocations.map(sublocation => {
+                        // when warehouse id matches warehouse input id
+                        if (sublocation.warehouse_id === warehouseInput.id) {
+                            // if the original warehouse wasnt changed during edit
+                            if (!warehouseChanged) {
+                                return {
+                                    ...sublocation,
+                                    locations: sublocation?.locations.map(location => {
+                                        if (location.id === selectedTownId) {
+                                            return {
+                                                ...location,
+                                                delivery_charge: chargeInput,
+                                                editing: false,
+                                                disabled: false,
+                                            }
+                                        } else {
+                                            return {
+                                                ...location,
+                                                disabled: false,
+                                            }
+                                        }
+                                    }),
+                                }
+                            }
+                            // if the warehouse was changed 
                             return {
                                 ...sublocation,
-                                locations: sublocation?.locations.map(location => {
-                                    if (location.id === selectedTownId) {
-                                        return {
-                                            ...location,
-                                            delivery_charge: chargeInput,
-                                            editing: false,
-                                            disabled: false,
-                                        }
-                                    } else {
+                                locations: [
+                                    ...sublocation?.locations.map(location => {
                                         return {
                                             ...location,
                                             disabled: false,
                                         }
-                                    }
-                                }),
-                            }
-                        }
-                        // if the warehouse was changed 
-                        return {
-                            ...sublocation,
-                            locations: [
-                                ...sublocation?.locations.map(location => {
-                                    return {
-                                        ...location,
+                                    }),
+                                    {
+                                        id: selectedTownId,
+                                        region: sublocations.find((item) => item.warehouse_id === selectedWarehouseId)
+                                        .locations.find(location => location.id === selectedTownId).region,
+                                        delivery_charge: chargeInput,
+                                        editing: false,
                                         disabled: false,
                                     }
-                                }),
-                                {
-                                    id: selectedTownId,
-                                    region: sublocations.find((item) => item.warehouse_id === selectedWarehouseId)
-                                    .locations.find(location => location.id === selectedTownId).region,
-                                    delivery_charge: chargeInput,
-                                    editing: false,
+                                ]
+                            }
+                        }
+    
+                        // spread other warehouse
+                        return {
+                            ...sublocation,
+                            // remove that town if it exist in another warehouse
+                            locations: sublocation?.locations.filter(location => location.id !== selectedTownId).map(location => {
+                                return {
+                                    ...location,
                                     disabled: false,
                                 }
-                            ]
+                            }),
                         }
-                    }
-
-                    // spread other warehouse
-                    return {
-                        ...sublocation,
-                        // remove that town if it exist in another warehouse
-                        locations: sublocation?.locations.filter(location => location.id !== selectedTownId).map(location => {
-                            return {
-                                ...location,
-                                disabled: false,
-                            }
-                        }),
-                    }
-                });
-            }
-            // spread prev warehouses and add the selected town
-            return [
-                ...modSubLocations.map(sublocation => {
-                    return {
-                        ...sublocation,
-                        // remove that town if it exist in another warehouse
-                        locations: sublocation.locations.filter(location => location.id !== selectedTownId).map(location => {
-                            return {
-                                ...location,
-                                disabled: false,
-                            }
-                        }),
-                    }
-                }),
-                {
-                    warehouse_id: warehouseInput.id,
-                    warehouse_name: warehouseInput.warehouse_name,
-                    locations: [
-                        {
-                            id: selectedTownId,
-                            region: sublocations.find((sublocation) => sublocation.warehouse_id === selectedWarehouseId)
-                            .locations.find((location) => location.id === selectedTownId).region,
-                            delivery_charge: chargeInput,
-                            editing: false,
-                            disabled: false,
-                        }
-                    ],
+                    });
                 }
-            ]
-        });
+                // spread prev warehouses and add the selected town
+                return [
+                    ...modSubLocations.map(sublocation => {
+                        return {
+                            ...sublocation,
+                            // remove that town if it exist in another warehouse
+                            locations: sublocation.locations.filter(location => location.id !== selectedTownId).map(location => {
+                                return {
+                                    ...location,
+                                    disabled: false,
+                                }
+                            }),
+                        }
+                    }),
+                    {
+                        warehouse_id: warehouseInput.id,
+                        warehouse_name: warehouseInput.warehouse_name,
+                        locations: [
+                            {
+                                id: selectedTownId,
+                                region: sublocations.find((sublocation) => sublocation.warehouse_id === selectedWarehouseId)
+                                .locations.find((location) => location.id === selectedTownId).region,
+                                delivery_charge: chargeInput,
+                                editing: false,
+                                disabled: false,
+                            }
+                        ],
+                    }
+                ]
+            });
+    
+            // reset input states
+            setWarehouseInput(null);
+            setChargeInput("");
+    
+            // // reset selected ids
+            setSelectedTownId(null);
+            setSelectedWarehouseId(null);
 
-        // reset input states
-        setWarehouseInput(null);
-        setChargeInput("");
+            // disable button loading state
+            setIsLoading(false);
 
-        // reset selected ids
-        setSelectedTownId(null);
-        setSelectedWarehouseId(null);
+            // show success toast
+            setToast({
+                text: "Location edited successfully",
+                visible: true,
+                type: "success",
+            });
+
+        } catch (error) {
+            console.log("Caught Error: ", error.message);
+            setToast({
+                text: error.message,
+                visible: true,
+                type: "error",
+            });
+
+            // disable button loading state
+            setIsLoading(false);
+        }
     }
 
     // function to swicth location list item from readonly state to edit state
@@ -669,46 +796,6 @@ const EditLocation = ({navigation, route}) => {
         setWarehouseInput(null);
         setChargeInput("");
     }
-
-    // handle delete town
-    const handleDeleteTown = () => {
-        setSublocations(prevSubLocations => {
-            // get warehouse group from sublocations
-            const subLocationWarehouseGroup = prevSubLocations.find((item) => item.warehouse_id === selectedWarehouseId);
-            // check if multiple towns exist
-            const multipleTownsExist = subLocationWarehouseGroup.locations.length > 1;
-            // if only one town exist in warehouse group
-            if (!multipleTownsExist) {
-                // if warehouse no longer exist, delete warehouse ref from components refs
-                setWarehouseOffsets(prevOffsets => {
-                    return prevOffsets.filter(offset => offset.id !== selectedWarehouseId);
-                });
-
-                return prevSubLocations.filter(sublocation => sublocation.warehouse_id !== selectedWarehouseId);
-            }
-            // if multiple towns exist
-            return prevSubLocations.map(sublocation => {
-                // delete town from component refs
-                setTownOffsets(prevOffsets => {
-                    return prevOffsets.filter(offset => offset.id !== selectedTownId);
-                });
-
-                return {
-                    warehouse_id: sublocation.warehouse_id,
-                    warehouse_name: sublocation.warehouse_name,
-                    locations: sublocation.locations.filter(location => location.id !== selectedTownId),
-                }
-            });
-
-        });
-        // reset selected ids
-        setSelectedTownId(null);
-        setSelectedWarehouseId(null);
-
-        // close menu
-        closeMenu();
-    }
-
 
     // menu buttons
     const menuButtons = [
@@ -781,6 +868,7 @@ const EditLocation = ({navigation, route}) => {
                                     chargeInputError={chargeInputError}
                                     setChargeInputError={setChargeInputError}
                                     inactiveSaveButton={inactiveSaveButton}
+                                    isLoading={isLoading}
                                     openMenu={openMenu}
                                     openStackedModal={openStackedModal}
                                     handleSaveEditTown={handleSaveEditTown}
@@ -804,7 +892,7 @@ const EditLocation = ({navigation, route}) => {
             </ScrollView>
         ) : <EditLocationsSkeleton />}
         {/* bottomsheet */}
-        {/* <CustomBottomSheet
+        <CustomBottomSheet
             bottomSheetModalRef={bottomSheetRef}
             snapPointsArray={["100%"]}
             autoSnapAt={0}
@@ -819,8 +907,9 @@ const EditLocation = ({navigation, route}) => {
                         </Text>
                         <View style={styles.modalInputWrapper}>
                             <Input 
-                                label={"City/Town"}
-                                placeholder={"City/Town"}
+                                label={"Region"}
+                                placeholder={"City or Town"}
+                                helperText={"Refers to a region grouped under one delivery charge"}
                                 value={townInput}
                                 onChange={setTownInput}
                                 error={townInputError}
@@ -849,12 +938,13 @@ const EditLocation = ({navigation, route}) => {
                         shrinkWrapper={true}
                         name={"Save"}
                         unpadded={true}
+                        isLoading={isLoading}
                         inactive={warehouseInput === null || chargeInput === "" || townInput === ""}
                         onPress={handleAddLocations}
                     />
                 </View>
             </TouchableWithoutFeedback>
-        </CustomBottomSheet> */}
+        </CustomBottomSheet>
         {/* stacked bottomsheet */}
         <CustomBottomSheet
             bottomSheetModalRef={stackedSheetRef}

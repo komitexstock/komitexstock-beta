@@ -295,15 +295,24 @@ const AddLocation = ({navigation}) => {
             // ref to warehouses collection
             const locationsRef = collection(database, "locations");
 
+            // function to remove all occurence of the character space at the end of string
+            const removeTrailingSpace = (str) => {
+                return str.replace(/\s+$/, '');
+            }
+
             // check if region, state and country combination  exist
             await Promise.all(sublocations.map(async (sublocation) => {
                 await Promise.all(sublocation.locations.map(async (location) => {
+
+                    // remove trailing space
+                    const region = removeTrailingSpace(location.region.toLowerCase());
+
                     const q = query(
                         locationsRef,
                         where("business_id", "==", authData?.business_id),
                         where("country", "==", country),
                         where("state", "==", stateInput),
-                        where("region", "==", location.region.toLowerCase())
+                        where("region", "==", region)
                     );
               
                     // get docs
@@ -322,13 +331,16 @@ const AddLocation = ({navigation}) => {
             // add sublocations
             await Promise.all(sublocations.map(async (sublocation) => {
                 await Promise.all(sublocation.locations.map(async (location) => {
+                    
+                    // remove trailing space
+                    const region = removeTrailingSpace(location.region.toLowerCase());
 
                     // save data in database
                     await addDoc(locationsRef, {
                         business_id: authData?.business_id, // business id
                         country: country, // country
                         state: stateInput, // state
-                        region: location.region.toLowerCase(), // region
+                        region: region, // region
                         delivery_charge: location.delivery_charge, // delivery charge 
                         created_at: serverTimestamp(), // timestamp
                         created_by: authData?.uid, // uid
