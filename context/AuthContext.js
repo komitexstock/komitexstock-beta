@@ -99,7 +99,7 @@ const AuthProvider = ({children}) => {
 
 			const claims = await user.getIdTokenResult();
 
-			// console.log(claims.claims);
+			console.log(claims.claims);
 			// console.log("Stored Data", storedData);
 			// if there is a stored data
 			if (storedData) {
@@ -187,7 +187,7 @@ const AuthProvider = ({children}) => {
 				}
 			}
 		}, (error) => {
-			console.log(error.message);
+			console.log("Getting User data error:", error.message);
 		});
 		return unsubscribe;
 		// }

@@ -103,6 +103,11 @@ const EditWarehouse = ({navigation, route}) => {
     // reacieve waybill state
     const [waybillReceivable, setWaybillReceivable] = useState(waybill_receivable);
 
+    // console.log("default manager", warehouse_manager);
+    // console.log("new manager", warehouseManager);
+    // console.log("");
+
+
     // get managers
     useEffect(() => {
         // fetch team members data
@@ -209,7 +214,7 @@ const EditWarehouse = ({navigation, route}) => {
             // update warehouses collection where id === id from route params
             await updateDoc(doc(database, "warehouses", id), {
                 warehouse_address: warehouseAddress,
-                warehouse_manager: warehouseManager?.id,
+                warehouse_manager: warehouseManager.id,
                 waybill_receivable: waybillReceivable,
                 edited_at: serverTimestamp(), // timestamp
                 edited_by: authData?.uid, // uid
@@ -220,6 +225,8 @@ const EditWarehouse = ({navigation, route}) => {
             openSuccessModal();
 
         } catch (error) {
+
+            console.log("Update Error: ", error.message);
 
             // indicate error
             setToast({

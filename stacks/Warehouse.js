@@ -269,7 +269,7 @@ const Warehouse = ({navigation, route}) => {
     // selected warehouse
     const selectedWarehouse = useMemo(() => {
         return warehouses.find(warehouse => warehouse.id === editWarehouseId)
-    }, [editWarehouseId])
+    }, [editWarehouseId, warehouses])
 
     // sticky header offset
     const [stickyHeaderOffset, setStickyHeaderOffset] = useState(0);

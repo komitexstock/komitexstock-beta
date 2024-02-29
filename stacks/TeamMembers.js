@@ -51,8 +51,6 @@ import {
     orderBy,
     serverTimestamp,
 } from "firebase/firestore";
-// firebase authentication
-import { createUserWithEmailAndPassword } from "firebase/auth";
 // firebase functions
 import { httpsCallable } from "firebase/functions";
 
@@ -527,11 +525,19 @@ const TeamMembers = ({ navigation }) => {
         Keyboard.dismiss()
         setIsLoading(true);
         try {
-            // sign up user
-            const authResponse = await createUserWithEmailAndPassword(auth, workEmail, defaultPassword);
+            // get createUser cloud functions
+            const createUser = httpsCallable(functions, "createUser");
             
+            // sign up user
+            const authResponse = await createUser({
+                email: workEmail,
+                password: defaultPassword,
+            });
+
+            console.log(authResponse);
+
             // ref to users collection
-            const usersRef = doc(database, "users", authResponse.user.uid);
+            const usersRef = doc(database, "users", authResponse?.data?.uid);
             
             // save data in database
             await setDoc(usersRef, {
@@ -560,7 +566,7 @@ const TeamMembers = ({ navigation }) => {
                 business_id: authData?.business_id,
             });
 
-            console.log(response);
+            // console.log(response);
 
             setIsLoading(false);
             openSuccessModal("AddSuccess");

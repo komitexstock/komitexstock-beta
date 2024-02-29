@@ -64,3 +64,15 @@ exports.setRole = functions.https.onCall(async (data, context) => {
   }
 });
 
+// create user
+exports.createUser = functions.https.onCall(async (data, context) => {
+  const {email, password} = data;
+  try {
+    const userRecord = await admin.auth().createUser({email, password});
+    // return user id
+    return {uid: userRecord.uid};
+  } catch (error) {
+    // Handle error
+    return error;
+  }
+});
