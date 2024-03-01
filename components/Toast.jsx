@@ -73,7 +73,7 @@ const Toast = () => {
                 duration: 50,
                 easing: Easing.linear,
                 useNativeDriver: true,
-                delay: 3000,
+                delay: 5000,
             }),
           ]).start(() => {
             closeToast();

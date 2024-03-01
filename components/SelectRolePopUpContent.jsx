@@ -15,7 +15,7 @@ const SelectRolePopUpContent = ({hanldeRoleSelect}) => {
                 <Text style={style.roleDescriptionHeading}>
                     Manager: &nbsp; {/*non breaking space */}
                     <Text style={style.roleDescriptionText}>
-                        Full access to Komitex Stock
+                        Full access to Komitex
                     </Text>
                 </Text>
                 <Text style={style.roleDescriptionHeading}>

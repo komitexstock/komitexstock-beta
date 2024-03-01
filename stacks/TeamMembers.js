@@ -48,6 +48,7 @@ import {
     collection,
     where,
     query,
+    getDocs,
     orderBy,
     serverTimestamp,
 } from "firebase/firestore";
@@ -70,80 +71,9 @@ const TeamMembers = ({ navigation }) => {
 
     // state to store members array
     const [members, setMembers] = useState([]);
-    
-    // selected member id
-    const [selectedId, setSelectedId] = useState(null);
-
-    // selected member
-    const selectedMember = useMemo(() => {
-        return members.find((member) => member?.id === selectedId);
-    }, [selectedId]);
-
-
-    // console.log(members);
-
-    // state to control modal type
-    const [modal, setModal] = useState("");
-
-    // state to control popUp type
-    const [popUp, setPopUp] = useState({
-        type: "",
-        title: "",
-        snapPoints: ["45%"],
-        centered: false,
-        closeModal: closePopUpModal,
-        popUpVisible: false,
-    });
-
-    // state to prompt user to confirm deactivation
-    const [roleInputActive, setRoleInputActive] = useState(false);
-
-    // bottomsheet snap points
-    const [bottomSheetSnapPoints, setBottomSheetSnapPoints] = useState(["60%"]);
-
-    // function to close modal
-    const closeModal = () => {
-        bottomSheetRef.current?.close();
-
-        setSelectedId(null);
-    };
-
-    // function to open bottom sheet modal
-    const openModal = (type, id) => {
-        bottomSheetRef.current?.present();
-        setModal(type);
-
-        // console.log("ID: ", id);
-        // console.log("Type: ", type);
-        
-        if (type === "Edit") {
-            // console.log(type);
-            setBottomSheetSnapPoints(["60%"])
-            // const chosenMember = ;
-            setSelectedId(id);
-        } else {
-            setBottomSheetSnapPoints([0.7 * windowHeight])
-        }
-    }
-
-    // function to know if member can be deactivated
-    const handleCantDeactivate = useMemo(() => {
-        // if no account is selected return true
-        if (selectedId === null) return true;
-        const member = members?.find((member) => member?.id === selectedId);
-        // admins can't be deactivated
-        if (member.admin) return true;
-        // if users are not managers
-        if (member.deactivated) return true;
-        if (authData?.role !== "Manager") return true;
-        // else return false
-        return false;
-    }, [selectedId])
-
-    let membersList = [];
 
     // get team members
-    useLayoutEffect(() => {
+    useEffect(() => {
         // fetch team members data
         const fetchTeamMembers = async (business_id) => {
             try {
@@ -153,7 +83,7 @@ const TeamMembers = ({ navigation }) => {
                     where("business_id", "==", business_id),
                     orderBy("created_at"),
                 );
-            
+
                 const unsubscribe = onSnapshot(q, (querySnapshot) => {
                     let members = [];
                     querySnapshot.forEach((doc) => {
@@ -225,6 +155,75 @@ const TeamMembers = ({ navigation }) => {
         };
 
     }, []);
+    
+    // selected member id
+    const [selectedId, setSelectedId] = useState(null);
+
+    // selected member
+    const selectedMember = useMemo(() => {
+        return members.find((member) => member?.id === selectedId);
+    }, [selectedId, members]);
+
+
+    // console.log(members);
+
+    // state to control modal type
+    const [modal, setModal] = useState("");
+
+    // state to control popUp type
+    const [popUp, setPopUp] = useState({
+        type: "",
+        title: "",
+        snapPoints: ["45%"],
+        centered: false,
+        closeModal: closePopUpModal,
+        popUpVisible: false,
+    });
+
+    // state to prompt user to confirm deactivation
+    const [roleInputActive, setRoleInputActive] = useState(false);
+
+    // bottomsheet snap points
+    const [bottomSheetSnapPoints, setBottomSheetSnapPoints] = useState(["60%"]);
+
+    // function to close modal
+    const closeModal = () => {
+        bottomSheetRef.current?.close();
+
+        setSelectedId(null);
+    };
+
+    // function to open bottom sheet modal
+    const openModal = (type, id) => {
+        bottomSheetRef.current?.present();
+        setModal(type);
+
+        // console.log("ID: ", id);
+        // console.log("Type: ", type);
+        
+        if (type === "Edit") {
+            // console.log(type);
+            setBottomSheetSnapPoints(["60%"])
+            // const chosenMember = ;
+            setSelectedId(id);
+        } else {
+            setBottomSheetSnapPoints([0.7 * windowHeight])
+        }
+    }
+
+    // function to know if member can be deactivated
+    const handleCantDeactivate = useMemo(() => {
+        // if no account is selected return true
+        if (selectedId === null) return true;
+        const member = members?.find((member) => member?.id === selectedId);
+        // admins can't be deactivated
+        if (member.admin) return true;
+        // if users are not managers
+        if (member.deactivated) return true;
+        if (authData?.role !== "Manager") return true;
+        // else return false
+        return false;
+    }, [selectedId])
 
     // function to close Popup modal
     const closePopUpModal = () => {
@@ -446,75 +445,180 @@ const TeamMembers = ({ navigation }) => {
 
     // function to update role
     const handleUpdateRole = async () => {
-        // indicate loadind state
-        setIsLoading(true);
-        // console.log(selectedMember);
 
-        // ref to users collection
-        const usersRef = doc(database, "users", selectedMember.id);
+        try {
+            // indicate loadind state
+            setIsLoading(true);
+    
+            // if selected member is a manager
+            if (selectedMember?.role === "Manager") {
+                //  check if this user manages any warehouse
+                
+                const collectionRef = collection(database, "warehouses");
+                
+                // query
+                let q = query(
+                    collectionRef,
+                    where("business_id", "==", authData?.business_id),
+                    where("warehouse_manager", "==", selectedMember?.id),
+                    orderBy("created_at")
+                );
+          
+                // get docs
+                const querySnapshot = await getDocs(q);
+                
+                // if any result exist
+                if (querySnapshot.size > 0) {
+                    let warehouseList = [];
+                    querySnapshot.forEach((doc) => {
+                        const id = doc.id;
+                        warehouseList.push(id);
+                    });
+                    // team admin
+                    const adminUser = members.find(member => member.admin);
 
-        // get setRole cloud functions
-        const setRole = httpsCallable(functions, "setRole");
+                    // foor all warehouses that target user manages
+                    await Promise.all(warehouseList.map(async (id) => {
+                        // update warehouse
+                        // update warehouses collection where id === id of target warehouse
+                        // set all warehouse manager as the admin user
+                        await updateDoc(doc(database, "warehouses", id), {
+                            warehouse_manager: adminUser.id,
+                            edited_at: serverTimestamp(), // timestamp
+                            edited_by: authData?.uid, // uid
+                        })
+                    }))
+                }
+            }
+    
+            // ref to users collection
+            const usersRef = doc(database, "users", selectedMember.id);
+    
+            // get setRole cloud functions
+            const setRole = httpsCallable(functions, "setRole");
+                
+            // setRole and token
+            const response = await setRole({ 
+                email: selectedMember.email, 
+                role: editRole, 
+                account_type: authData?.account_type,
+                business_id: authData?.business_id,
+            });
+    
+            // save data in database
+            await updateDoc(usersRef, {
+                role: editRole,
+            });
+    
+            // reset edited role
+            setEditRole("");
+    
+            // end loadind state
+            setIsLoading(false);
+    
+            // open success modal
+            openSuccessModal("UpdateSuccess");
             
-        // setRole and token
-        const response = await setRole({ 
-            email: selectedMember.email, 
-            role: editRole, 
-            account_type: authData?.account_type,
-            business_id: authData?.business_id,
-        });
+        } catch (error) {
+            console.log("Caught Error: ", error);
+            setToast({
+                text: error.message,
+                visible: true,
+                type: "error",
+            });
 
-        console.log(response);
-
-        // save data in database
-        await updateDoc(usersRef, {
-            role: editRole,
-        });
-
-        // reset edited role
-        setEditRole("");
-
-        // end loadind state
-        setIsLoading(false);
-
-        // open success modal
-        openSuccessModal("UpdateSuccess");
+            // end loadind state
+            setIsLoading(false);
+    
+        }
     }
 
     // function to confirm deactivation
     const handleDeactivateUser = async () => {
-        // indicate loadind state
-        setIsLoading(true);
-        // console.log(selectedMember);
+        try {
+            // indicate loading state
+            setIsLoading(true);
+            // console.log(selectedMember);
 
-        // ref to users collection
-        const usersRef = doc(database, "users", selectedMember.id);
+            // if selected member is a manager and is being deactivated
+            if (selectedMember?.role === "Manager" && !selectedMember.deactivated) {
+                //  check if this user manages any warehouse
+                const collectionRef = collection(database, "warehouses");
+                
+                // query
+                let q = query(
+                    collectionRef,
+                    where("business_id", "==", authData?.business_id),
+                    where("warehouse_manager", "==", selectedMember?.id),
+                    orderBy("created_at")
+                );
+          
+                // get docs
+                const querySnapshot = await getDocs(q);
+                
+                // if any result exist
+                if (querySnapshot.size > 0) {
+                    let warehouseList = [];
+                    querySnapshot.forEach((doc) => {
+                        const id = doc.id;
+                        warehouseList.push(id);
+                    });
 
-        // get setRole cloud functions
-        const setRole = httpsCallable(functions, "setRole");
+                    // team admin
+                    const adminUser = members.find(member => member.admin);
 
-        // setRole and token
-        const response = await setRole({ 
-            email: selectedMember.email, 
-            role: selectedMember.role, 
-            account_type: authData?.account_type,
-            business_id: authData?.business_id,
-            deactivated: !selectedMember.deactivated,
-        });
+                    // foor all warehouses that target user manages
+                    await Promise.all(warehouseList.map(async (id) => {
+                        // update warehouse
+                        // update warehouses collection where id === id of target warehouse
+                        // set all warehouse manager as the admin user
+                        await updateDoc(doc(database, "warehouses", id), {
+                            warehouse_manager: adminUser.id,
+                            edited_at: serverTimestamp(), // timestamp
+                            edited_by: authData?.uid, // uid
+                        })
+                    }))
+                }
+            }
+    
+            // ref to users collection
+            const usersRef = doc(database, "users", selectedMember.id);
+    
+            // get setRole cloud functions
+            const setRole = httpsCallable(functions, "setRole");
+    
+            // setRole and token
+            const response = await setRole({ 
+                email: selectedMember.email, 
+                role: selectedMember.role, 
+                account_type: authData?.account_type,
+                business_id: authData?.business_id,
+                deactivated: !selectedMember.deactivated,
+            });
+    
+            console.log(response);
+    
+            // save data in database
+            await updateDoc(usersRef, {
+                deactivated: !selectedMember.deactivated,
+            });
+    
+    
+            // end loadind state
+            setIsLoading(false);
+    
+            // open success pop up modal
+            openSuccessModal(selectedMember.deactivated ? "Confirmed Activation" : "Confirmed Deactivation")
 
-        console.log(response);
-
-        // save data in database
-        await updateDoc(usersRef, {
-            deactivated: !selectedMember.deactivated,
-        });
-
-
-        // end loadind state
-        setIsLoading(false);
-
-        // open success pop up modal
-        openSuccessModal(selectedMember.deactivated ? "Confirmed Activation" : "Confirmed Deactivation")
+        } catch (error) {
+            console.log("Error: ", error.message);
+            setToast({
+                visible: true,
+                type: "error",
+                text: error.message,
+            });
+            setIsLoading(false);
+        }
     }
 
     const defaultPassword = "komitex1234";
@@ -560,7 +664,7 @@ const TeamMembers = ({ navigation }) => {
             
             // setRole and token
             const response = await setRole({ 
-                email: workEmail, 
+                email: workEmail,
                 role: role, 
                 account_type: authData?.account_type,
                 business_id: authData?.business_id,
@@ -701,7 +805,7 @@ const TeamMembers = ({ navigation }) => {
                                 shrinkWrapper={true}
                                 onPress={handleUpdateRole}
                                 unpadded={true}
-                                inactive={editRole === "" || handleCantDeactivate}
+                                inactive={editRole === "" || editRole === selectedMember?.role || handleCantDeactivate}
                                 isLoading={isLoading}
                             />
                             <CustomButton
