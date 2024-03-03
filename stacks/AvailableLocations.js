@@ -3,6 +3,7 @@ import {
     View, 
     Text, 
     TouchableWithoutFeedback,
+    TouchableOpacity,
     StyleSheet,
     Keyboard,
     ScrollView,
@@ -20,6 +21,9 @@ import CustomButton from "../components/CustomButton";
 
 // colors
 import { bodyText, black, white, background } from "../style/colors";
+
+// icons
+import AddLocationIcon from "../assets/icons/AddLocationIcon";
 
 // globals
 import { useGlobals } from '../context/AppContext';
@@ -406,35 +410,54 @@ const AvailableLocations = ({navigation, route}) => {
                             />
                             <View style={style.paragraphWrapper}>
                                 <Text style={style.headingText}>
-                                {writable ? <>
-                                    Merchants will be able to see all your listed locations
-                                </> : <>
-                                    Find all available locations and the associated fees {business_name} offers 
-                                </>}
-                            </Text>
-                                {/* location search bar */}
-                                <SearchBar
-                                    placeholder={"Search for a location"}
-                                    searchQuery={searchQuery}
-                                    setSearchQuery={setSearchQuery}
-                                    backgroundColor={white}
-                                    disableFilter={true}
-                                />
-                            </View>
-                            {/* locations accordion, grouped by states */}
-                            <View style={style.locationsWrapper}>
-                                { states.map(state => (
-                                    <Accordion
-                                        key={state.name}
-                                        states={states}
-                                        state={state.name}
-                                        locations={state.locations}
-                                        opened={state.opened}
-                                        showEditButton={true}
-                                        navigation={navigation}
+                                    {writable ? <>
+                                        Merchants will be able to see all your listed locations
+                                    </> : <>
+                                        Find all available locations and the associated fees {business_name} offers 
+                                    </>}
+                                </Text>
+                                {/* check if any location has been added to data base */}
+                                {states.length !== 0 && <>
+                                    {/* location search bar */}
+                                    <SearchBar
+                                        placeholder={"Search for a location"}
+                                        searchQuery={searchQuery}
+                                        setSearchQuery={setSearchQuery}
+                                        backgroundColor={white}
+                                        disableFilter={true}
                                     />
-                                ))}
+                                </>}
                             </View>
+                            {states.length !== 0 ? <>
+                                {/* locations accordion, grouped by states */}
+                                <View style={style.locationsWrapper}>
+                                    { states.map(state => (
+                                        <Accordion
+                                            key={state.name}
+                                            states={states}
+                                            state={state.name}
+                                            locations={state.locations}
+                                            opened={state.opened}
+                                            showEditButton={true}
+                                            navigation={navigation}
+                                        />
+                                    ))}
+                                </View>
+                            </> : <>
+                                <View style={style.noLocationWrapper}>
+                                    <TouchableOpacity
+                                        onPress={() => navigation.navigate("AddLocation")}
+                                    >
+                                        <AddLocationIcon />
+                                    </TouchableOpacity>
+                                    <Text style={style.noLocationHeading}>
+                                        You haven’t added any location yet
+                                    </Text>
+                                    <Text style={style.noLocationParagraph}>
+                                        Add locations and their associated charge 
+                                    </Text>
+                                </View>
+                            </>}
                         </View>
                     </ScrollView>
                 </TouchableWithoutFeedback>
@@ -463,13 +486,21 @@ const style = StyleSheet.create({
     },
     contentContainer: {
         paddingBottom: 100,
+        minHeight: "100%",
     },
     main: {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        justifyContent: "space-between",
+        justifyContent: "flex-start",
         marginBottom: 20,
+    },
+    paragraphWrapper: {
+        width: "100%",
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        justifyContent: 'space-between',
     },
     headingText: {
         fontFamily: "mulish-medium",
@@ -477,28 +508,6 @@ const style = StyleSheet.create({
         color: bodyText,
         marginBottom: 42,
         marginTop: 8,
-    },
-    popUpContent: {
-        flex: 1,
-        height: "100%",
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: 20,
-        paddingBottom: 20,
-    },
-    popUpHeading: {
-        fontSize: 16,
-        fontFamily: 'mulish-bold',
-        textAlign: 'center',
-        color: black,
-    },
-    popUpParagraph: {
-        fontSize: 12,
-        fontFamily: 'mulish-regular',
-        textAlign: 'center',
-        color: bodyText,
     },
     locationsWrapper: {
         display: "flex",
@@ -510,6 +519,30 @@ const style = StyleSheet.create({
         backgroundColor: white,
         borderRadius: 12,
         padding: 20
+    },
+    noLocationWrapper: {
+        width: "100%",
+        height: "70%",
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    noLocationHeading: {
+        fontFamily: 'mulish-semibold',
+        fontSize: 14,
+        color: black,
+        lineHeight: 18,
+        marginBottom: 8,
+        marginTop: 12,
+    },
+    noLocationParagraph: {
+        fontFamily: 'mulish-regular',
+        fontSize: 12,
+        color: bodyText,
+        lineHeight: 15,
+        maxWidth: 150,
+        textAlign: 'center',
     },
 })
  

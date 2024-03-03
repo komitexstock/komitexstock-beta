@@ -77,7 +77,16 @@ const AvailableLocationsSkeleton = () => {
                         shimmerColors={shimmerColorArray}
                     />
                 </View>
-                </View>
+            </View>
+
+            <View style={skeleton.buttonWrapper}>
+                <Skeleton 
+                    height={44}
+                    width={windowWidth - 40}
+                    shimmerColors={shimmerColorArray}
+                    style={{borderRadius: 12}}
+                />
+            </View>
         </View>
     );
 }
@@ -120,6 +129,20 @@ const skeleton = StyleSheet.create({
         padding: 20,
         borderRadius: 12,
     },
+    buttonWrapper: {
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        width: windowWidth,
+        display: "flex",
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'flex-end',
+        height: 100,
+        padding: 20,
+        paddingBottom: 30,
+        backgroundColor: white,
+    }
 })
  
 export default AvailableLocationsSkeleton;
