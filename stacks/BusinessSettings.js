@@ -28,13 +28,17 @@ const BusinessSettings = ({navigation}) => {
             id: 2,
             title: "Business Policy",
             mainInfoText: "Let your merchants know how you operate",
-            onPress: () => navigation.navigate("BusinessPolicy"),
+            onPress: () => navigation.navigate("BusinessPolicy", {
+                business_id: authData.business_id,
+            }),
         },
         {
             id: 3,
             title: "Reviews",
             mainInfoText: "See how well you are performing",
-            onPress: () => navigation.navigate("Reviews"),
+            onPress: () => navigation.navigate("Reviews", {
+                business_id: authData.business_id,
+            }),
         },
     ];
 

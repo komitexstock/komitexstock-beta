@@ -6,15 +6,19 @@ import {
     StyleSheet,
     TouchableOpacity,
     Keyboard,
+    Platform,
     TouchableWithoutFeedback,
 } from "react-native";
+
 // components
 import Header from "../components/Header";
 import Input from '../components/Input';
 import CustomButton from '../components/CustomButton';
 import CustomBottomSheet from '../components/CustomBottomSheet';
+
 // colors
 import { background, black, bodyText, listSeparator2, primaryColor, subText, white } from "../style/colors";
+
 // icons
 import RemittanceIcon from "../assets/icons/RemittanceIcon";
 import FailedDeliveryIcon from "../assets/icons/FailedDeliveryIcon";
@@ -23,23 +27,47 @@ import RemittanceLargeIcon from "../assets/icons/RemittanceLargeIcon";
 import FailedDeliveryLargeIcon from "../assets/icons/FailedDeliveryLargeIcon";
 import InactiveInventoryLargeIcon from "../assets/icons/InactiveInventoryLargeIcon";
 import RightArrowIcon from "../assets/icons/RightArrowIcon";
+
 //  useAuth
 import { useAuth } from "../context/AuthContext";
+
 // globals
 import { useGlobals } from "../context/AppContext";
+
 // react hoooks
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+// utilities
 import { windowHeight } from "../utils/helpers";
 
-const BusinessPolicy = ({navigation}) => {
+// firebase
+import {
+    database,
+} from "../Firebase";
+
+// firestore functions
+import {
+    getDoc,
+    updateDoc,
+    setDoc,
+    doc,
+    serverTimestamp,
+} from "firebase/firestore";
+
+
+const BusinessPolicy = ({navigation, route}) => {
 
     // useAuth
     const { authData } = useAuth();
 
-    // console.log(authData);
+    // page loading state
+    const [pageLoading, setPageLoading] = useState(true);
+
+    // business id retreived from route parameters
+    const { business_id } = route.params || {};
 
     // bottomsheet varaibels
-    const { bottomSheetRef } = useGlobals();
+    const { bottomSheetRef, bottomSheetOpen, setToast } = useGlobals();
 
     // const indicate lodaing state for buttons
     const [isLoading, setIsLoading] = useState(false);
@@ -62,6 +90,39 @@ const BusinessPolicy = ({navigation}) => {
     // error state for remit period input
     const [errorRemittanceInput, setErrorRemittanceInput] = useState("");
 
+    // bottom sheet height
+    const [bottomSheetHeight, setBottomSheetHeight] = useState(386);
+
+    // listen for keyboard opening or closing
+    useEffect(() => {
+        // if keyboard is open
+        const keyboardDidShowListener = Keyboard.addListener(
+            Platform.OS === 'android' ? 'keyboardDidShow' : 'keyboardWillShow', () => {
+                if (!bottomSheetOpen) return;
+                setBottomSheetHeight(windowHeight)
+            }
+        );
+        
+        // keyboard is closed
+        const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+            // run any desired function here
+            // if wareehouse address is empty
+            setBottomSheetHeight(386)
+
+        });
+
+        // this is useful if the bottomsheet is closed 
+        // without performing an action
+        if (!bottomSheetOpen) {
+            // rese bottom sheet height
+            setBottomSheetHeight(386)
+        }
+
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        };
+    }, [bottomSheetOpen]);
 
     // update remittance input function, triggered onnchange in Input component
     const updateRemittanceInput = (text) => {
@@ -69,20 +130,55 @@ const BusinessPolicy = ({navigation}) => {
     }
 
     // update remittance policy
-    const handleUpdateRemittancePolicy = () => {
-        // indicate loading state i button
-        setIsLoading(true);
+    const handleUpdateRemittancePolicy =  async () => {
+        try {
+            // dismiss keyborad
+            Keyboard.dismiss();
 
-        // dismiss keyborad
-        Keyboard.dismiss()
+            // indicate loading state in button
+            setIsLoading(true);
+    
+            // business ref
+            const businessPoliciesRef = doc(database, "business_policies", business_id);
+            
+            if (policiesExist) {
+                // save data in business_policies collection
+                await updateDoc(businessPoliciesRef, {
+                    max_remittance_duration: remittanceInput,
+                    editedAt: serverTimestamp(),
+                });
+            } else {
+                // save data in business_policies collection
+                await setDoc(businessPoliciesRef, {
+                    max_remittance_duration: remittanceInput,
+                    createdAt: serverTimestamp(),
+                });
 
-        setTimeout(() => {
+                // acknowledge policy exist
+                setPoliciesExist(true);
+            }
+
+            // update policy state
             setRemittancePolicy(remittanceInput);
-
-            setRemittanceInput("");
+    
+            // close bottomsheet
             closeModal();
+
+            // disable loading state
             setIsLoading(false)
-        }, 2000);
+            
+        } catch (error) {
+            // disable loading state
+            setIsLoading(false);
+
+            // console.log(error.message);
+            console.log("Caught Error: ", error.message);
+            setToast({
+                text: error.message,
+                visible: true,
+                type: "error",
+            });
+        }
     }
 
     // failedDelivery input
@@ -97,20 +193,55 @@ const BusinessPolicy = ({navigation}) => {
     }
 
     // update failedDelivery policy
-    const handleUpdateFailedDeliveryPolicy = () => {
-        // indicate loading state i button
-        setIsLoading(true);
+    const handleUpdateFailedDeliveryPolicy = async () => {
+        try {
+            // dismiss keyborad
+            Keyboard.dismiss();
 
-        // dismiss keyborad
-        Keyboard.dismiss();
+            // indicate loading state in button
+            setIsLoading(true);
+    
+            // business ref
+            const businessPoliciesRef = doc(database, "business_policies", business_id);
+            
+            if (policiesExist) {
+                // save data in business_policies collection
+                await updateDoc(businessPoliciesRef, {
+                    failed_delivery_percentage: failedDeliveryInput,
+                    editedAt: serverTimestamp(),
+                });
+            } else {
+                // save data in business_policies collection
+                await setDoc(businessPoliciesRef, {
+                    failed_delivery_percentage: failedDeliveryInput,
+                    createdAt: serverTimestamp(),
+                });
 
-        setTimeout(() => {
+                // acknowledge policy exist
+                setPoliciesExist(true);
+            }
+
+
             setFailedDeliveryPolicy(failedDeliveryInput);
 
-            setFailedDeliveryInput("");
+            // close bottomsheet
             closeModal();
-            setIsLoading(false)
-        }, 2000);
+
+            // disable loading state
+            setIsLoading(false);
+            
+        } catch (error) {
+            // disable loading state
+            setIsLoading(false);;
+
+            // console.log(error.message);
+            console.log("Caught Error: ", error.message);
+            setToast({
+                text: error.message,
+                visible: true,
+                type: "error",
+            });
+        }
     }
 
     // inactiveInventory input
@@ -125,20 +256,55 @@ const BusinessPolicy = ({navigation}) => {
     }
 
     // update inactiveInventory policy
-    const handleUpdateInactiveInventoryPolicy = () => {
-        // indicate loading state i button
-        setIsLoading(true);
+    const handleUpdateInactiveInventoryPolicy = async () => {
+        try {
+            // dismiss keyborad
+            Keyboard.dismiss();
 
-        // dismiss keyborad
-        Keyboard.dismiss();
+            // indicate loading state in button
+            setIsLoading(true);
+    
+            // business ref
+            const businessPoliciesRef = doc(database, "business_policies", business_id);
+            
+            if (policiesExist) {
+                // save data in business_policies collection
+                await updateDoc(businessPoliciesRef, {
+                    max_inactive_inventory: inactiveInventoryInput,
+                    editedAt: serverTimestamp(),
+                });
+            } else {
+                // save data in business_policies collection
+                await setDoc(businessPoliciesRef, {
+                    max_inactive_inventory: inactiveInventoryInput,
+                    createdAt: serverTimestamp(),
+                });
 
-        setTimeout(() => {
+                // acknowledge policy exist
+                setPoliciesExist(true);
+            }
+
+
             setInactiveInventoryPolicy(inactiveInventoryInput);
 
-            setInactiveInventoryInput("");
+            // close bottomsheet
             closeModal();
-            setIsLoading(false)
-        }, 2000);
+
+            // disable loading state
+            setIsLoading(false);
+            
+        } catch (error) {
+            // disable loading state
+            setIsLoading(false);;
+
+            // console.log(error.message);
+            console.log("Caught Error: ", error.message);
+            setToast({
+                text: error.message,
+                visible: true,
+                type: "error",
+            });
+        }
     }
 
     // additional input
@@ -153,21 +319,149 @@ const BusinessPolicy = ({navigation}) => {
     }
 
     // update additional policy
-    const handleUpdateAdditionalPolicy = () => {
-        // indicate loading state i button
-        setIsLoading(true);
+    const handleUpdateAdditionalPolicy = async () => {
+        try {
+            // dismiss keyborad
+            Keyboard.dismiss();
 
-        // dismiss keyborad
-        Keyboard.dismiss();
+            // indicate loading state in button
+            setIsLoading(true);
+    
+            // business ref
+            const businessPoliciesRef = doc(database, "business_policies", business_id);
+            
+            if (policiesExist) {
+                // save data in business_policies collection
+                await updateDoc(businessPoliciesRef, {
+                    additional_policy: additionalInput,
+                    editedAt: serverTimestamp(),
+                });
+            } else {
+                // save data in business_policies collection
+                await setDoc(businessPoliciesRef, {
+                    additional_policy: additionalInput,
+                    createdAt: serverTimestamp(),
+                });
 
-        setTimeout(() => {
+                // acknowledge policy exist
+                setPoliciesExist(true);
+            }
+
+
             setAdditionalPolicy(additionalInput);
 
-            setAdditionalInput("");
+            // close bottomsheet
             closeModal();
-            setIsLoading(false)
-        }, 2000);
+
+            // disable loading state
+            setIsLoading(false);
+            
+        } catch (error) {
+            // disable loading state
+            setIsLoading(false);;
+
+            // console.log(error.message);
+            console.log("Caught Error: ", error.message);
+            setToast({
+                text: error.message,
+                visible: true,
+                type: "error",
+            });
+        }
     }
+
+    const [policiesExist, setPoliciesExist] = useState(false);
+
+    // fetch business policies
+    useEffect(() => {
+        
+        const fetchBusinessPolicies = async (id) => {
+            try {
+                const docRef = doc(database, 'business_policies', id);
+                const policies = await getDoc(docRef);
+
+                console.log(policies.data())
+
+                // handle failed deliveries policy
+                const failedDeliveryData = handleFailedDeliveryData(
+                    policies?.data()?.failed_delivery_percentage
+                );
+
+                // handle additional policy
+                const additionalPolicyData = handleAdditionalPolicyData(
+                    policies?.data()?.additional_policy
+                );
+                
+                // handle additional policy
+                const inactiveInventoryData = handleInactiveInventoryData(
+                    policies?.data()?.max_inactive_inventory
+                );
+                
+                // handle remittance policy
+                const remittanceData = handleRemittanceData(
+                    policies?.data()?.max_remittance_duration
+                );
+
+                setPoliciesExist(() => {
+                    return failedDeliveryData || additionalPolicyData || inactiveInventoryData || remittanceData; 
+                });
+
+                setPageLoading(false);
+                
+            } catch (error) {
+                // console.log(error.message);
+                console.log("Caught Error: ", error.message);
+                setToast({
+                    text: error.message,
+                    visible: true,
+                    type: "error",
+                });
+            }
+        }
+
+        // function to set states related to failed delivery
+        const handleFailedDeliveryData = (fetchedData) => {
+            const data = fetchedData ? fetchedData : "";
+            // set states
+            setFailedDeliveryInput(data);
+            setFailedDeliveryPolicy(data);
+            // return data
+            return fetchedData;
+        }
+
+        // function to set states related to additional policies
+        const handleAdditionalPolicyData = (fetchedData) => {
+            const data = fetchedData ? fetchedData : "";
+            // set states
+            setAdditionalInput(data);
+            setAdditionalPolicy(data);
+            // return data
+            return fetchedData;
+        }
+
+        // function to set states related to inactive inventory policy
+        const handleInactiveInventoryData = (fetchedData) => {
+            const data = fetchedData ? fetchedData : "";
+            // set states
+            setInactiveInventoryInput(data);
+            setInactiveInventoryPolicy(data);
+            // return data
+            return fetchedData;
+        }
+
+        // function to set states related to Remittance policy
+        const handleRemittanceData = (fetchedData) => {
+            const data = fetchedData ? fetchedData : "";
+            // set states
+            setRemittanceInput(data);
+            setRemittancePolicy(data);
+            // return data
+            return fetchedData;
+        }
+
+
+        fetchBusinessPolicies(business_id);
+    }, [])
 
     // policies
     const policies = [
@@ -383,7 +677,7 @@ const BusinessPolicy = ({navigation}) => {
             bottomSheetModalRef={bottomSheetRef}
             sheetTitle={modalType}
             autoSnapAt={0}
-            snapPointsArray={[windowHeight * 0.6]}
+            snapPointsArray={[bottomSheetHeight]}
         >
             
             {/* modal content for Remittance policy */}
@@ -413,6 +707,7 @@ const BusinessPolicy = ({navigation}) => {
                             shrinkWrapper={true}
                             onPress={handleUpdateRemittancePolicy}
                             unpadded={true}
+                            inactive={remittanceInput === remittancePolicy}
                         />
                     </View>
                 </TouchableWithoutFeedback>
@@ -444,6 +739,7 @@ const BusinessPolicy = ({navigation}) => {
                             shrinkWrapper={true}
                             onPress={handleUpdateFailedDeliveryPolicy}
                             unpadded={true}
+                            inactive={failedDeliveryInput === failedDeliveryPolicy}
                         />
                     </View>
                 </TouchableWithoutFeedback>
@@ -475,6 +771,7 @@ const BusinessPolicy = ({navigation}) => {
                             shrinkWrapper={true}
                             onPress={handleUpdateInactiveInventoryPolicy}
                             unpadded={true}
+                            inactive={inactiveInventoryInput === inactiveInventoryPolicy}
                         />
                     </View>
                 </TouchableWithoutFeedback>
@@ -505,6 +802,7 @@ const BusinessPolicy = ({navigation}) => {
                             shrinkWrapper={true}
                             onPress={handleUpdateAdditionalPolicy}
                             unpadded={true}
+                            inactive={additionalInput === additionalPolicy}
                         />
                     </View>
                 </TouchableWithoutFeedback>
