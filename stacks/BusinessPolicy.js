@@ -28,6 +28,9 @@ import FailedDeliveryLargeIcon from "../assets/icons/FailedDeliveryLargeIcon";
 import InactiveInventoryLargeIcon from "../assets/icons/InactiveInventoryLargeIcon";
 import RightArrowIcon from "../assets/icons/RightArrowIcon";
 
+// skeleton screen
+import BusinessPolicySkeleton from "../skeletons/BusinessPolicySkeleton";
+
 //  useAuth
 import { useAuth } from "../context/AuthContext";
 
@@ -406,6 +409,7 @@ const BusinessPolicy = ({navigation, route}) => {
                     return failedDeliveryData || additionalPolicyData || inactiveInventoryData || remittanceData; 
                 });
 
+                // update page loading state
                 setPageLoading(false);
                 
             } catch (error) {
@@ -416,6 +420,9 @@ const BusinessPolicy = ({navigation, route}) => {
                     visible: true,
                     type: "error",
                 });
+
+                // update page loading state
+                setPageLoading(false);
             }
         }
 
@@ -522,157 +529,159 @@ const BusinessPolicy = ({navigation, route}) => {
 
     // render business policy screen
     return (<>
-        <ScrollView style={style.container} showsHorizontalScrollIndicator={false}>
-            <View style={style.main}>
-                <Header 
-                    stackName={'Business Policy'}
-                    navigation={navigation}
-                    unpadded={true}
-                />
-                {/* if account is a Merchant render a readonly business policy */}
-                {authData.account_type === "Merchant" && (<>
-                    <Text style={style.paragraph}>
-                        Get to understand how we operate in order to serve you better
-                    </Text>
-                    <View style={style.policyContainer}>
-                        {/* show list of logistics policies */}
-                        { policies.map((policy) => (
-                            <View key={policy.name} style={style.policyWrapper}>
-                                <Text style={style.policyTitle}>
-                                    {policy.name}
-                                </Text>
-                                {policy.policyList.map((policyItem) => (
-                                    <View key={policyItem.id} style={style.policyContent}>
-                                        {policyItem.icon && policyItem.icon}
-                                        <Text style={style.policyText}>{policyItem.policyText}</Text>
-                                    </View>
-                                ))}
-                            </View>
-                        ))}
-                    </View>
-                </>)}
-                {/* if account is a logistics render a reable business policy screen */}
-                {authData.account_type === "Logistics" && (<>
-                    <View style={style.mainWrapper}>
-                        <Text style={style.paragraph}>Let your clients know how you operate</Text>
-                        <View style={style.policyGroup}>
-                            <Text style={style.groupHeading}>Delivery</Text>
-                            <View style={style.policyButtonGroup}>
+        {!pageLoading ? <>
+            <ScrollView style={style.container} showsHorizontalScrollIndicator={false}>
+                <View style={style.main}>
+                    <Header 
+                        stackName={'Business Policy'}
+                        navigation={navigation}
+                        unpadded={true}
+                    />
+                    {/* if account is a Merchant render a readonly business policy */}
+                    {authData.account_type === "Merchant" && (<>
+                        <Text style={style.paragraph}>
+                            Get to understand how we operate in order to serve you better
+                        </Text>
+                        <View style={style.policyContainer}>
+                            {/* show list of logistics policies */}
+                            { policies.map((policy) => (
+                                <View key={policy.name} style={style.policyWrapper}>
+                                    <Text style={style.policyTitle}>
+                                        {policy.name}
+                                    </Text>
+                                    {policy.policyList.map((policyItem) => (
+                                        <View key={policyItem.id} style={style.policyContent}>
+                                            {policyItem.icon && policyItem.icon}
+                                            <Text style={style.policyText}>{policyItem.policyText}</Text>
+                                        </View>
+                                    ))}
+                                </View>
+                            ))}
+                        </View>
+                    </>)}
+                    {/* if account is a logistics render a reable business policy screen */}
+                    {authData.account_type === "Logistics" && (<>
+                        <View style={style.mainWrapper}>
+                            <Text style={style.paragraph}>Let your clients know how you operate</Text>
+                            <View style={style.policyGroup}>
+                                <Text style={style.groupHeading}>Delivery</Text>
+                                <View style={style.policyButtonGroup}>
 
-                                {/* button to open remittance policy bottom sheet */}
-                                <TouchableOpacity 
-                                    style={style.policyButton}
-                                    disabled={!authData?.admin}
-                                    onPress={() => openModal("Remittance")}
-                                >
-                                    <View style={style.policyButtonContent}>
-                                        <RemittanceLargeIcon />
-                                        <View style={style.policyButtonTextWrapper}>
-                                            <Text style={style.policyButtonHeading}>Remittance</Text>
-                                            <Text style={style.policyButtonParagraph}>
-                                                { remittancePolicy && <>
-                                                    {remittancePolicy}hrs after delivery
+                                    {/* button to open remittance policy bottom sheet */}
+                                    <TouchableOpacity 
+                                        style={style.policyButton}
+                                        disabled={!authData?.admin}
+                                        onPress={() => openModal("Remittance")}
+                                    >
+                                        <View style={style.policyButtonContent}>
+                                            <RemittanceLargeIcon />
+                                            <View style={style.policyButtonTextWrapper}>
+                                                <Text style={style.policyButtonHeading}>Remittance</Text>
+                                                <Text style={style.policyButtonParagraph}>
+                                                    { remittancePolicy && <>
+                                                        {remittancePolicy}hrs after delivery
+                                                    </>}
+                                                    { !remittancePolicy && <>
+                                                        How long will it take before your send funds to the merchant
+                                                    </>}
+                                                </Text>
+                                            </View>
+                                        </View>
+                                        <RightArrowIcon />
+                                    </TouchableOpacity>
+
+                                    {/* button to failed delivery policy bottom sheet */}
+                                    <TouchableOpacity 
+                                        style={style.policyButton}
+                                        disabled={!authData?.admin}
+                                        onPress={() => openModal("Cost for failed delivery")}
+                                    >
+                                        <View style={style.policyButtonContent}>
+                                            <FailedDeliveryLargeIcon />
+                                            <View style={style.policyButtonTextWrapper}>
+                                                <Text style={style.policyButtonHeading}>Cost for failed delivery</Text>
+                                                <Text style={style.policyButtonParagraph}>
+                                                    { failedDeliveryPolicy && <>
+                                                        {failedDeliveryPolicy}% of delivery charges
+                                                    </>}
+                                                    { !failedDeliveryPolicy && <>
+                                                        How will the percentage of a failed delivery be shared
+                                                    </>}
+                                                </Text>
+                                            </View>
+                                        </View>
+                                        <RightArrowIcon />
+                                    </TouchableOpacity>
+                                
+                                </View>
+                            </View>
+                            <View style={style.policyGroup}>
+                                <Text style={style.groupHeading}>Inventory</Text>
+                                <View style={style.policyButtonGroup}>
+
+                                    {/* button to open inactive inventory policy bottom sheet */}
+                                    <TouchableOpacity 
+                                        style={style.policyButton}
+                                        disabled={!authData?.admin}
+                                        onPress={() => openModal("Inactive Inventory")}
+                                    >
+                                        <View style={style.policyButtonContent}>
+                                            <InactiveInventoryLargeIcon />
+                                            <View style={style.policyButtonTextWrapper}>
+                                                <Text style={style.policyButtonHeading}>Inactive Inventory</Text>
+                                                <Text style={style.policyButtonParagraph}>
+                                                {inactiveInventoryPolicy && <>
+                                                    {inactiveInventoryPolicy}months of warehousing inactive products
                                                 </>}
-                                                { !remittancePolicy && <>
+                                                {!inactiveInventoryPolicy && <>
                                                     How long will it take before your send funds to the merchant
                                                 </>}
                                             </Text>
+                                            </View>
                                         </View>
-                                    </View>
-                                    <RightArrowIcon />
-                                </TouchableOpacity>
+                                        <RightArrowIcon />
+                                    </TouchableOpacity>
 
-                                {/* button to failed delivery policy bottom sheet */}
-                                <TouchableOpacity 
-                                    style={style.policyButton}
-                                    disabled={!authData?.admin}
-                                    onPress={() => openModal("Cost for failed delivery")}
-                                >
-                                    <View style={style.policyButtonContent}>
-                                        <FailedDeliveryLargeIcon />
-                                        <View style={style.policyButtonTextWrapper}>
-                                            <Text style={style.policyButtonHeading}>Cost for failed delivery</Text>
-                                            <Text style={style.policyButtonParagraph}>
-                                                { failedDeliveryPolicy && <>
-                                                    {failedDeliveryPolicy}% of delivery charges
-                                                </>}
-                                                { !failedDeliveryPolicy && <>
-                                                    How will the percentage of a failed delivery bes shared
-                                                </>}
-                                            </Text>
-                                        </View>
-                                    </View>
-                                    <RightArrowIcon />
-                                </TouchableOpacity>
-                            
+                                </View>
                             </View>
-                        </View>
-                        <View style={style.policyGroup}>
-                            <Text style={style.groupHeading}>Inventory</Text>
-                            <View style={style.policyButtonGroup}>
-
-                                {/* button to open inactive inventory policy bottom sheet */}
-                                <TouchableOpacity 
-                                    style={style.policyButton}
-                                    disabled={!authData?.admin}
-                                    onPress={() => openModal("Inactive Inventory")}
-                                >
-                                    <View style={style.policyButtonContent}>
-                                        <InactiveInventoryLargeIcon />
-                                        <View style={style.policyButtonTextWrapper}>
-                                            <Text style={style.policyButtonHeading}>Inactive Inventory</Text>
-                                            <Text style={style.policyButtonParagraph}>
-                                            {inactiveInventoryPolicy && <>
-                                                {inactiveInventoryPolicy}months of warehousing inactive products
-                                            </>}
-                                            {!inactiveInventoryPolicy && <>
-                                                How long will it take before your send funds to the merchant
-                                            </>}
-                                        </Text>
-                                        </View>
-                                    </View>
-                                    <RightArrowIcon />
-                                </TouchableOpacity>
-
-                            </View>
-                        </View>
-                        <View style={style.policyGroup}>
-                            <View style={style.policyGroupHeader}>
-                                <Text style={style.groupHeading}>Additional policy</Text>
-                                {/* edit aditional policy button, only visible if there's a policy present to be edited */}
-                                {additionalPolicy && (
+                            <View style={style.policyGroup}>
+                                <View style={style.policyGroupHeader}>
+                                    <Text style={style.groupHeading}>Additional policy</Text>
+                                    {/* edit aditional policy button, only visible if there's a policy present to be edited */}
+                                    {additionalPolicy && (
+                                        <TouchableOpacity 
+                                            style={style.buttonLink}
+                                            disabled={!authData?.admin}
+                                            onPress={() => {
+                                                const enableEdit = true;
+                                                openModal("Additional Policy", enableEdit)
+                                            }}
+                                        >
+                                            <Text style={style.linkText}>Edit</Text>
+                                        </TouchableOpacity>
+                                    )}
+                                </View>
+                                {/* additional policy button, only visible if no additional policy has been added */}
+                                {!additionalPolicy && (
                                     <TouchableOpacity 
                                         style={style.buttonLink}
                                         disabled={!authData?.admin}
-                                        onPress={() => {
-                                            const enableEdit = true;
-                                            openModal("Additional Policy", enableEdit)
-                                        }}
+                                        onPress={() => openModal("Additional Policy")}
                                     >
-                                        <Text style={style.linkText}>Edit</Text>
+                                        <Text style={style.linkText}>+ Add Policy</Text>
                                     </TouchableOpacity>
                                 )}
+                                {additionalPolicy && (
+                                    <Text style={style.additionalPolicyText}>
+                                        {additionalPolicy}
+                                    </Text>
+                                )}
                             </View>
-                            {/* additional policy button, only visible if no additional policy has been added */}
-                            {!additionalPolicy && (
-                                <TouchableOpacity 
-                                    style={style.buttonLink}
-                                    disabled={!authData?.admin}
-                                    onPress={() => openModal("Additional Policy")}
-                                >
-                                    <Text style={style.linkText}>+ Add Policy</Text>
-                                </TouchableOpacity>
-                            )}
-                            {additionalPolicy && (
-                                <Text style={style.additionalPolicyText}>
-                                    {additionalPolicy}
-                                </Text>
-                            )}
                         </View>
-                    </View>
-                </>)}
-            </View>
-        </ScrollView>
+                    </>)}
+                </View>
+            </ScrollView>
+        </> : <BusinessPolicySkeleton />}
         <CustomBottomSheet
             bottomSheetModalRef={bottomSheetRef}
             sheetTitle={modalType}
