@@ -235,7 +235,7 @@ const CreateAccount = ({navigation}) => {
     // console.log("Password", password);
 
     // user account type
-    const accountType = "Logistics";
+    const accountType = "Merchant";
 
     // user role
     const role = "Manager";

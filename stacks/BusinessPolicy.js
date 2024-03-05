@@ -174,7 +174,6 @@ const BusinessPolicy = ({navigation, route}) => {
             // disable loading state
             setIsLoading(false);
 
-            // console.log(error.message);
             console.log("Caught Error: ", error.message);
             setToast({
                 text: error.message,
@@ -237,7 +236,6 @@ const BusinessPolicy = ({navigation, route}) => {
             // disable loading state
             setIsLoading(false);;
 
-            // console.log(error.message);
             console.log("Caught Error: ", error.message);
             setToast({
                 text: error.message,
@@ -300,7 +298,6 @@ const BusinessPolicy = ({navigation, route}) => {
             // disable loading state
             setIsLoading(false);;
 
-            // console.log(error.message);
             console.log("Caught Error: ", error.message);
             setToast({
                 text: error.message,
@@ -363,7 +360,6 @@ const BusinessPolicy = ({navigation, route}) => {
             // disable loading state
             setIsLoading(false);;
 
-            // console.log(error.message);
             console.log("Caught Error: ", error.message);
             setToast({
                 text: error.message,
@@ -383,7 +379,6 @@ const BusinessPolicy = ({navigation, route}) => {
                 const docRef = doc(database, 'business_policies', id);
                 const policies = await getDoc(docRef);
 
-                console.log(policies.data())
 
                 // handle failed deliveries policy
                 const failedDeliveryData = handleFailedDeliveryData(
@@ -413,7 +408,7 @@ const BusinessPolicy = ({navigation, route}) => {
                 setPageLoading(false);
                 
             } catch (error) {
-                // console.log(error.message);
+
                 console.log("Caught Error: ", error.message);
                 setToast({
                     text: error.message,
