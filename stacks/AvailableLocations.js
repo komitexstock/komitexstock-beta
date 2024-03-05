@@ -10,7 +10,7 @@ import {
 } from "react-native";
 
 // react hooks
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 // components
 import Header from "../components/Header";
@@ -132,7 +132,8 @@ const AvailableLocations = ({navigation, route}) => {
                                 // Check if state is defined and not null
                                 if (state !== undefined && state !== null) {
                                     if (!acc[state]) {
-                                        acc[state] = { name: state, opened: false, locations: [] };
+                                        acc[state] = { id: Math.random(), name: state, opened: false, locations: [] };
+                                        // acc[state] = { name: state, opened: false, locations: [] };
                                     }
                                     acc[state].locations.push(rest);
                                 }
@@ -231,37 +232,44 @@ const AvailableLocations = ({navigation, route}) => {
     }, []);
 
 
-    // console.log(states);
+    // state to store searched results
+    const [searchedStates, setSearchedStates] = useState([])
 
-    // state to store search results
-    const [searchResults, setSearchResults] = useState(states);
+    useEffect(() => {
+        // funcion to filter states and locations
+        const filterStatesAndLocations = () => {
+            // if (searchQuery === '') return states;
 
-    const filterStatesAndLocations = (inputString) => {
-        const filteredStates = states.filter((state) => {
-          const isMatch = state.name.toLowerCase().includes(inputString.toLowerCase()) ||
-            state.locations.some((location) => {      
-                return location.region.toLowerCase().includes(inputString.toLowerCase())
+            const filteredStates = states.filter((state) => {
+
+                const isMatch = state?.name?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
+                state.locations.some((location) => {      
+                    return location?.region?.toLowerCase()?.includes(searchQuery?.toLowerCase())
+                });
+                return isMatch;
             });
-      
-            if (isMatch) {
-                state.opened = true;
-                state.name = (() => { // self invoking function
-                    const searchIndex = state.name.toLowerCase().indexOf(inputString.toLowerCase());
 
-                    if (searchIndex !== -1) {
-                        let textArray = state.name.toLowerCase().split(inputString.toLowerCase());
-                        const fullString = textArray.join(`%!#${inputString}%!#`)
-    
+            return filteredStates.map(state => {
+                return {
+                    ...state,
+                    opened: true,
+                    name: (() => { // self invoking function
+                        // if state doesn't match search keyword, return state name
+                        if (!state.name.toLowerCase().includes(searchQuery.toLowerCase())) return state.name;
+                        // split text according to position of search keyword
+                        let textArray = state.name.toLowerCase().split(searchQuery.toLowerCase());
+                        const fullString = textArray.join(`%!#${searchQuery}%!#`)
+
                         textArray = fullString.split('%!#');
                         // console.log(textArray);
-    
+
                         return textArray.map((text, index) => {
                             if (index % 2 === 0) {
                                 return (
                                     <Text 
                                         key={index} 
                                         style={index === 0 && {textTransform: 'capitalize'}}
-                                        >
+                                    >
                                         {text}
                                     </Text>
                                 ) 
@@ -271,106 +279,63 @@ const AvailableLocations = ({navigation, route}) => {
                                         key={index}
                                         style={textArray[0] === "" && index === 1 && {textTransform: 'capitalize'}}
                                     >
-                                        <Mark key={index}>{text.toLowerCase()}</Mark>
+                                        <Mark key={index}>{text?.toLowerCase()}</Mark>
                                     </Text>
                                 )
                             }
                         })
-                    } else {
-                        return state.name
-                    }
-
-                })(); 
-                state.locations = state.locations.map((location) => {
-                    const searchIndex = location.region.toLowerCase().indexOf(inputString.toLowerCase());
-                    if (searchIndex !== -1) {
-
-                        let textArray = location.region.toLowerCase().split(inputString.toLowerCase());
-                        const fullString = textArray.join(`%!#${inputString}%!#`)
-    
+                    })(), 
+                    locations: state.locations.map((location) => {
+                        // search for keyword in location region
+                        const searchIndex = location.region?.toLowerCase()?.indexOf(searchQuery?.toLowerCase());
+                        // if keyword doesn't exist return location object
+                        if (searchIndex === -1)  return location;
+                        // split text according to index of search keyword
+                        let textArray = location.region?.toLowerCase()?.split(searchQuery?.toLowerCase());
+                        // joion text unique string
+                        const fullString = textArray.join(`%!#${searchQuery}%!#`)
+                        
+                        // split text again
                         textArray = fullString.split('%!#');
                         return {
                             ...location,
-                            location: textArray.map((text, index) => {
+                            region: textArray.map((text, index) => {
                                 if (index % 2 === 0) {
                                     return (
                                         <Text 
                                             key={index} 
-                                            style={index === 0 && {textTransform: 'capitalize'}}
-                                            >
-                                            {text}
+                                            style={{
+                                                textTransform: textArray[0] !== "" && index === 0 ? 'capitalize' : 'lowercase',
+                                            }}
+                                        >
+                                            {text.toLowerCase()}
                                         </Text>
                                     ) 
                                 } else {
                                     return (
                                         <Text
                                             key={index}
-                                            style={textArray[0] === "" && index === 1 && {textTransform: 'capitalize'}}
+                                            style={{
+                                                textTransform: textArray[0] === "" && index === 1 ? 'capitalize' : 'lowercase',
+                                            }}
                                         >
-                                            <Mark key={index}>{text.toLowerCase()}</Mark>
+                                            <Mark key={index}>{text?.toLowerCase()}</Mark>
                                         </Text>
                                     )
                                 }
                             }) 
                         }
+                    }),
+                }
+            });
+        }
 
-                    } else {
-                        return location;
-                    }
-                })
-            }
-      
-          return isMatch;
+        setSearchedStates(() => {
+            if (!searchQuery) return [];
+            return filterStatesAndLocations()
         });
-      
-        return filteredStates;
-    }
 
-    useEffect(() => {
-        // console.log(searchQuery);
-        if (searchQuery === "") return setSearchResults(states);
-        else return setSearchResults(filterStatesAndLocations(searchQuery));
     }, [searchQuery]);
-
-    // function to highlight string
-    const highlightString = (originalString, stringToAppend, index) => {
-
-        // capitalize first character
-        const capitalizeFirstCharacter = (str) => {
-            return str.charAt(0).toUpperCase() + str.slice(1);
-        }
-        
-        const prefix = index !== 0 ? originalString.slice(0, index) : "";
-        const suffix = index !== originalString.length ? originalString.slice(index + stringToAppend.length, originalString.length) : "";
-        // return prefix;
-        return <>
-            {prefix}
-                <Mark>
-                    {index === 0 ? capitalizeFirstCharacter(stringToAppend) : stringToAppend.toLowerCase()} 
-                </Mark> 
-            {suffix}
-        </>
-    }
-
-
-    // function to split parent string at indices provided
-    const splitAtIndices = (referenceString, indices) => {
-        const substrings = [];
-        
-        let startIndex = 0;
-        for (let i = 0; i < indices.length; i++) {
-            const endIndex = indices[i];
-            const substring = referenceString.substring(startIndex, endIndex);
-            substrings.push(substring);
-            startIndex = endIndex;
-        }
-        
-        // Add the remaining part of the string after the last index
-        const lastSubstring = referenceString.substring(startIndex);
-        substrings.push(lastSubstring);
-        
-        return substrings;
-    }
 
     // check of route params
     useEffect(() => {
@@ -428,12 +393,25 @@ const AvailableLocations = ({navigation, route}) => {
                                     />
                                 </>}
                             </View>
+                            {/* if there exist already uploaded locations, that are grupoed by states */}
                             {states.length !== 0 ? <>
-                                {/* locations accordion, grouped by states */}
                                 <View style={style.locationsWrapper}>
-                                    { states.map(state => (
+                                    {/* locations accordion, grouped by states, when search keyword is empty */}
+                                    {searchQuery === "" && states.map(state => (
                                         <Accordion
-                                            key={state.name}
+                                            key={state.id}
+                                            states={states}
+                                            state={state.name}
+                                            locations={state.locations}
+                                            opened={state.opened}
+                                            showEditButton={true}
+                                            navigation={navigation}
+                                        />
+                                    ))}
+                                    {/* searched locations accordion, grouped by states*/}
+                                    {searchQuery !== "" && searchedStates.map(state => (
+                                        <Accordion
+                                            key={state.id}
                                             states={states}
                                             state={state.name}
                                             locations={state.locations}
