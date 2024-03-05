@@ -69,7 +69,7 @@ const BusinessPolicySkeleton = () => {
                                 style={{borderRadius: 2}}
                             />
                             <Skeleton
-                                height={30}
+                                height={15}
                                 width={168}
                                 shimmerColors={shimmerColorArray}
                                 style={{borderRadius: 2}}
@@ -97,7 +97,7 @@ const BusinessPolicySkeleton = () => {
                                 style={{borderRadius: 2}}
                             />
                             <Skeleton
-                                height={30}
+                                height={15}
                                 width={168}
                                 shimmerColors={shimmerColorArray}
                                 style={{borderRadius: 2}}
@@ -118,7 +118,7 @@ const BusinessPolicySkeleton = () => {
                     <View style={skeleton.warehouseHeader}>
                         <Skeleton
                             height={15}
-                            width={54}
+                            width={62}
                             shimmerColors={shimmerColorArray}
                             style={{borderRadius: 2}}
                         />
@@ -138,7 +138,7 @@ const BusinessPolicySkeleton = () => {
                                 style={{borderRadius: 2}}
                             />
                             <Skeleton
-                                height={30}
+                                height={15}
                                 width={168}
                                 shimmerColors={shimmerColorArray}
                                 style={{borderRadius: 2}}
@@ -159,7 +159,7 @@ const BusinessPolicySkeleton = () => {
                     <View style={skeleton.warehouseHeader}>
                         <Skeleton
                             height={15}
-                            width={54}
+                            width={110}
                             shimmerColors={shimmerColorArray}
                             style={{borderRadius: 2}}
                         />
@@ -237,7 +237,7 @@ const skeleton = StyleSheet.create({
     },
     policyWrapper: {
         width: '100%',
-        height: 64,
+        height: 50,
         display: `flex`,
         justifyContent: `space-between`,
         flexDirection: `row`,
@@ -254,7 +254,7 @@ const skeleton = StyleSheet.create({
         alignSelf: 'stretch',
         flexGrow: 1,
         gap: 4,
-        justifyContent: 'space-between',
+        justifyContent: 'flex-start',
         alignItems: 'flex-start',
     },
     additionalPolicyWrapper: {
