@@ -45,12 +45,32 @@ import moment from "moment";
 import HomeSkeleton from "../skeletons/HomeSkeleton";
 // globals
 import { useGlobals } from "../context/AppContext";
-// auth data
-import { useAuth } from "../context/AuthContext";
 // data
 import { homeOrders } from "../data/homeOrders";
 import { orderList } from "../data/orderList";
 import { windowHeight, windowWidth } from "../utils/helpers";
+
+// auth data
+import { useAuth } from "../context/AuthContext";
+
+// firebase
+import {
+    database,
+} from "../Firebase";
+
+// firestore functions
+import {
+    addDoc,
+    collection,
+    getDocs,
+    where,
+    query,
+    orderBy,
+    serverTimestamp,
+} from "firebase/firestore";
+
+// async storage
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Home = ({navigation}) => {
 
@@ -59,10 +79,10 @@ const Home = ({navigation}) => {
     // console.log("Auth Data:", authData);
       
     // sheef refs
-    const { bottomSheetRef, filterSheetRef, calendarSheetRef, calendarSheetOpen } = useGlobals();
+    const { bottomSheetRef, filterSheetRef, calendarSheetRef, calendarSheetOpen, setToast } = useGlobals();
 
     // page loading state
-    const [pageLoading, setPageLoading] = useState(false);
+    const [pageLoading, setPageLoading] = useState(true);
 
     // searched orders
     const [searchedOrders, setSearchedOrders] = useState([]);
@@ -76,28 +96,142 @@ const Home = ({navigation}) => {
     };
 
     // setup guide array
-    const [setupGuide, setSetupGuide] = useState([
-        {
-            title: "Set up your store",
-            subtitle: "Add products to your stores inventory",
-            icon: <QuickInventoryIcon />,
-            onPress: () => navigation.navigate("AddProduct"),
-        },
-        {
-            title: "Invite your staffs",
-            subtitle: "Send invites to your staffs (manager, sales representative)",
-            icon: <TeamLargeIcon />,
-            onPress: () => navigation.navigate("TeamMembers"),
-        },
-        {
-            title: "Start earning with Komitex",
-            subtitle: "Make sales by sending orders to your logistics partners for delivery",
-            icon: <QuickOrderIcon />,
-            onPress: () => navigation.navigate("SendOrder"),
-        },
-    ]);
+    const [setupGuide, setSetupGuide] = useState([]);
 
-    const handleDisableSetupGuides = () => {
+    useEffect(() => {
+        // check for setup guide
+        const fetchSetupGuide = async () => {
+            try {
+                
+                // if auth loadinf return early
+                if (authLoading) return;
+
+                // get seup guide value
+                const showSetupGuideValue = await AsyncStorage.getItem("@showSetupGuide");
+        
+                const showSetupGuide = JSON.parse(showSetupGuideValue);    
+                if (!showSetupGuide) return setSetupGuide([]);
+
+                // products guide
+                const products = {
+                    title: "Set up your store",
+                    subtitle: "Add products to your stores inventory",
+                    icon: <QuickInventoryIcon />,
+                    onPress: () => navigation.navigate("AddProduct"),
+                };
+    
+                // team members guide
+                const teamMembers = {
+                    title: "Invite your staffs",
+                    subtitle: "Send invites to your staffs (manager, sales representative)",
+                    icon: <TeamLargeIcon />,
+                    onPress: () => navigation.navigate("TeamMembers"),
+                };
+    
+                // waybill guide
+                const waybills = {
+                    title: "Warehouse your products with Komitex",
+                    subtitle: "Send waybill to your logistics partners for warehousing",
+                    icon: <QuickWaybillIcon />,
+                    onPress: () => navigation.navigate("SendOrder"),
+                };
+    
+                // orders guide
+                const orders = {
+                    title: "Start earning with Komitex",
+                    subtitle: "Make sales by sending orders to your logistics partners for delivery",
+                    icon: <QuickOrderIcon />,
+                    onPress: () => navigation.navigate("SendOrder"),
+                }
+    
+                // array to store temporary values
+                let setupArray = [];
+                let q; // query
+                let querySnapshot; // query result
+    
+                // ref to merchant_prodducts collection
+                const merchantProductsRef = collection(database, "merchant_products");
+                // check if they exist a product in merchant_products
+                q = query(
+                    merchantProductsRef, 
+                    where("business_id", "==", authData?.business_id), 
+                );
+                // get docs
+                querySnapshot = await getDocs(q);
+                // if data does not exist push products setup guide
+                if (querySnapshot.size === 0) {
+                    // push products
+                    setupArray.push(products);
+                }
+
+                // ref to users collection
+                const usersRef = collection(database, "users");
+                // check if they exist a product in merchant_products
+                q = query(
+                    usersRef, 
+                    where("business_id", "==", authData?.business_id), 
+                );
+                // get docs
+                querySnapshot = await getDocs(q);
+                // if data does not exist push products setup guide
+                if (querySnapshot.size === 1) {
+                    // push team members
+                    setupArray.push(teamMembers);
+                }
+
+                // ref to waybills collection
+                const waybillsRef = collection(database, "waybills");
+                // check if they exist a product in waybill
+                q = query(
+                    waybillsRef, 
+                    where("merchant_id", "==", authData?.business_id), 
+                );
+                // get docs
+                querySnapshot = await getDocs(q);
+                // if data does not exist push products setup guide
+                if (querySnapshot.size === 0) {
+                    // push waybills
+                    setupArray.push(waybills);
+                }
+
+                // ref to orders collection
+                const ordersRef = collection(database, "orders");
+                // check if they exist a product in order
+                q = query(
+                    ordersRef, 
+                    where("merchant_id", "==", authData?.business_id), 
+                );
+                // get docs
+                querySnapshot = await getDocs(q);
+                // if data does not exist push products setup guide
+                if (querySnapshot.size === 0) {
+                    // push orders
+                    setupArray.push(orders);
+                }
+    
+                setSetupGuide(setupArray);
+
+                // disable loading state
+                setPageLoading(false);
+            } catch (error) {
+                // disable loading state
+                setPageLoading(false);
+                // log errors
+                console.log(error.message);
+                // show error toast
+                setToast({
+                    visible: true,
+                    type: "error",
+                    text: error.message,
+                });
+            }
+        }
+
+        fetchSetupGuide();
+    }, [authLoading])
+
+    const handleDisableSetupGuides = async () => {
+        await AsyncStorage.setItem("@showSetupGuide", JSON.stringify(false));
         setSetupGuide([]);
     }
     
@@ -620,7 +754,7 @@ const Home = ({navigation}) => {
                                 iconFunction={() => {navigation.navigate("Notifications")}}
                             />
                             {/* button search bar to open search modal bottomsheet */}
-                            {setupGuide.length === 0 ? (
+                            {setupGuide.length === 0 || authData?.account_type !== "Merchant" ? (
                                 <SearchBar 
                                     placeholder={"Search Komitex"}
                                     backgroundColor={white}

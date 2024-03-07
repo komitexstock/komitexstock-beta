@@ -305,7 +305,7 @@ const AddLocation = ({navigation}) => {
                 await Promise.all(sublocation.locations.map(async (location) => {
 
                     // remove trailing space
-                    const region = removeTrailingSpace(location.region.toLowerCase());
+                    const region = location.region.trim().toLowerCase();
 
                     const q = query(
                         locationsRef,
@@ -333,7 +333,7 @@ const AddLocation = ({navigation}) => {
                 await Promise.all(sublocation.locations.map(async (location) => {
                     
                     // remove trailing space
-                    const region = removeTrailingSpace(location.region.toLowerCase());
+                    const region = location.region.trim().toLowerCase();
 
                     // save data in database
                     await addDoc(locationsRef, {

@@ -40,7 +40,7 @@ import WarehouseSkeleton from '../skeletons/WarehouseSkeleton';
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 
 // colors
-import { background, black, neutral, primaryColor, white } from '../style/colors';
+import { background, black, blackOut, neutral, primaryColor, white } from '../style/colors';
 
 // utils
 import { windowHeight, windowWidth } from '../utils/helpers';
@@ -1113,6 +1113,12 @@ const styles = StyleSheet.create({
         justifyContent: "flex-start",
         gap: 10,
         paddingVertical: 16,
+    },
+    sheetButtonText: {
+        fontSize: 14,
+        fontFamily: 'mulish-medium',
+        lineHeight: 17.5,
+        color: blackOut,
     },
     searchOrderPillWrapper: {
         width: '100%',

@@ -225,7 +225,7 @@ const AddWarehouse = ({navigation}) => {
             // save data in database
             await addDoc(warehousesRef, {
                 business_id: authData?.business_id, // business id
-                warehouse_name: warehouseName.toLowerCase(), // convert to lowercase
+                warehouse_name: warehouseName.trim().toLowerCase(), // convert to lowercase
                 warehouse_manager: warehouseManager?.id, // save just manager id
                 warehouse_address: warehouseAddress, // save address in nomral input format 
                 waybill_receivable: waybillReceivable, 

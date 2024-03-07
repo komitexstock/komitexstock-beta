@@ -9,22 +9,28 @@ import {
     ScrollView,
     BackHandler
 } from "react-native";
+
 // colors
 import { background, black, bodyText, inactiveStep, primaryColor, stepLabelFont } from "../style/colors";
+
 // components
 import CustomButton from "../components/CustomButton";
 import Input from "../components/Input";
+
 // react hooks
 import React, { useState, useEffect, useRef } from "react";
+
 // icons
 import ArrowLeft from "../assets/icons/ArrowLeft";
 import SignupCompleteIcon from "../assets/icons/SignupCompleteIcon";
+
 // window height
 import { windowHeight } from "../utils/helpers"; 
-// context
+
 // import { useAuth } from "../context/AuthContext";
 import { auth, database } from "../Firebase";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+
 // fire store functions
 import {
     collection,
@@ -34,13 +40,19 @@ import {
     getDocs,
     serverTimestamp,
 } from "firebase/firestore";
+
 // globals
 import { useGlobals } from "../context/AppContext";
+
 // firebase functions
 import { functions } from "../Firebase";
 import { httpsCallable } from "firebase/functions";
+
 // import use AUth
 import { useAuth } from "../context/AuthContext";
+
+// async storage
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const CreateAccount = ({navigation}) => {
 
@@ -259,7 +271,7 @@ const CreateAccount = ({navigation}) => {
             const businessData = businessDoc?.docs?.map(doc => doc.data());
             
             // check if business name exist
-            const checkBusinessNameExist = businessData.find(business => business.business_name ===  businessName);
+            const checkBusinessNameExist = businessData.find(business => business.business_name.toLowerCase() ===  businessName.trim().toLowerCase());
 
             // if business name exist, throw error
             if (checkBusinessNameExist !== undefined) {
@@ -278,7 +290,7 @@ const CreateAccount = ({navigation}) => {
             const businessResponse = await addDoc(businessesRef, {
                 account_type: accountType,
                 banner_image: null,
-                business_name: businessName,
+                business_name: businessName.trim(),
                 verified: false,
             });
 
@@ -291,12 +303,12 @@ const CreateAccount = ({navigation}) => {
             // save data in database
             await setDoc(usersRef, {
                 business_id: businessResponse.id,
-                email: emailAddress,
+                email: emailAddress.trim(),
                 created_at: serverTimestamp(),
                 deactivated: false,
                 face_id: false,
                 fingerprint: false,
-                full_name: fullName,
+                full_name: fullName.trim(),
                 notification: false,
                 profile_image: null,
                 phone: phoneNumber,
@@ -309,7 +321,7 @@ const CreateAccount = ({navigation}) => {
 
             // setRole token
             const roleResponse = await setRole({ 
-                email: emailAddress, 
+                email: emailAddress.trim(), 
                 role: role,
                 account_type: accountType,
                 business_id: businessId,
@@ -339,6 +351,12 @@ const CreateAccount = ({navigation}) => {
     const handleCompleteSignup = async () => {
         // enable loading state
         setIsLoading(true);
+
+        // if user is a merchant initiate setup guide
+		if (accountType === "Merchant") {
+            // store data in async storage
+            await AsyncStorage.setItem("@showSetupGuide", JSON.stringify(true));
+        }
 
         // signin user
         await signInWithEmailAndPassword(

@@ -21,7 +21,7 @@ const getPath = (type) => {
 const getRef = (type, id) => {
     if (type === "Profile") return doc(database, "users", id);
     if (type === "Banner") return doc(database, "businesses", id);
-    if (type === "Product") return doc(database, "products", id);
+    if (type === "Product") return doc(database, "merchant_products", id);
     if (type === "Message") return doc(database, "messages", id);
 }
 
@@ -90,16 +90,18 @@ export const uploadFile = async (image, type, id, authData, storeData) => {
                                 banner_image: type === "Banner" ? downloadURL : authData.banner_image,
                             });
                         }
-
+                        
                         return true;
 
                     } catch (error) {
                         console.log(error.message);
+                        return error;
                     }
                 });
             }
         );
     } catch (error) {
         console.log(error.message);                
+        return error;
     }
 }

@@ -140,7 +140,7 @@ const Profile = ({navigation}) => {
 
             // update document
             await updateDoc(userRef, {
-                full_name: fullName,
+                full_name: fullName.trim(),
             });
             // show success toast
             setToast({
@@ -155,7 +155,7 @@ const Profile = ({navigation}) => {
             // update user data in async storage
             await setStoredData({
                 ...authData,
-                full_name: fullName,
+                full_name: fullName.trim(),
             })
         } catch (error) {
             setToast({

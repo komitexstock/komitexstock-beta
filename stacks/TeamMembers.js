@@ -498,7 +498,7 @@ const TeamMembers = ({ navigation }) => {
             const setRole = httpsCallable(functions, "setRole");
                 
             // setRole and token
-            const response = await setRole({ 
+            await setRole({ 
                 email: selectedMember.email, 
                 role: editRole, 
                 account_type: authData?.account_type,
@@ -646,12 +646,12 @@ const TeamMembers = ({ navigation }) => {
             // save data in database
             await setDoc(usersRef, {
                 business_id: authData?.business_id,
-                email: workEmail,
+                email: workEmail.trim(),
                 created_at: serverTimestamp(),
                 deactivated: false,
                 face_id: false,
                 fingerprint: false,
-                full_name: fullName,
+                full_name: fullName.trim(),
                 notification: false,
                 profile_image: null,
                 phone: null,

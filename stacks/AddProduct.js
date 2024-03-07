@@ -8,27 +8,68 @@ import {
     TouchableOpacity,
     Image
 } from "react-native";
+
 // components
 import Input from "../components/Input";
 import Header from "../components/Header";
 import CustomButton from "../components/CustomButton";
 // react hooks
 import { useState } from "react";
-// icon
+
+// icons
 import CameraPrimaryIcon from '../assets/icons/CameraPrimaryIcon';
+
 // globals variables
 import { useGlobals } from '../context/AppContext';
+
 // expo image picker method
 import * as ImagePicker from "expo-image-picker";
-import { background, bodyText, inputBorder, inputLabel, secondaryColor, white } from "../style/colors";
 
-const AddProduct = ({navigation, route}) => {
+// colors
+import {
+    background,
+    bodyText,
+    inputBorder,
+    inputLabel,
+    secondaryColor,
+    white
+} from "../style/colors";
+
+// useAuth
+import { useAuth } from "../context/AuthContext";
+
+// firebase
+import {
+    database,
+} from "../Firebase";
+
+// firestore functions
+import {
+    addDoc,
+    collection,
+    getDocs,
+    where,
+    query,
+    orderBy,
+    serverTimestamp,
+} from "firebase/firestore";
+
+// upload file function
+import { uploadFile } from "../database/common/storage";
+
+const AddProduct = ({navigation}) => {
+
+    // auth data
+    const { authData } = useAuth();
 
     // toast function
     const { setToast } = useGlobals();
     
     // state to store product name
     const [productName, setProductName] = useState("");
+
+    // button loading state
+    const [isLoading, setIsLoading] = useState(false);
     
     // state to store price value
     const [price, setPrice] = useState("");
@@ -41,8 +82,6 @@ const AddProduct = ({navigation, route}) => {
 
     // state to hold selected image
     const [selectedImage, setSelectedImage] = useState(null);
-
-    const origin = route.params ? route.params.origin : "Products"
 
     // variable to check for empty fields
     const emptyFields = [
@@ -70,18 +109,24 @@ const AddProduct = ({navigation, route}) => {
             let result = await ImagePicker.launchImageLibraryAsync({
                 allowsEditing: true,
                 quality: 1,
+                allowsMultipleSelection: false, // allow user to select just one image
             });
 
-            console.log(result);
-        
+            // if no image is selected return early
+            if (result.assets === null) return;
+         
             if (!result.assets[0].canceled) {
-                return setSelectedImage(result.assets[0].uri);
+                // set image state
+                return setSelectedImage(result.assets[0]);
             }
 
+            // else throw error
             throw new Error("Image not found");
 
 
         } catch (error) {
+            console.log("Error:", error.message);
+            // show error toast
             setToast({
                 visible: true,
                 type: "error",
@@ -91,13 +136,117 @@ const AddProduct = ({navigation, route}) => {
     };
 
     // function to handle adding a new products
-    const handleAddProduct = () => {
-        // navigate to Inventory Products tab with success toast parammeter
-        navigation.navigate("Inventory", {
-            tab: "Products",
-            toastType: "Success",
-            toastText: "Product successfully created and saved!"
-        });
+    const handleAddProduct = async () => {
+        try {
+            // initiate loadimg state
+            setIsLoading(true);
+            
+            // check for empty fields
+            if (productName === '' || price === '' || selectedImage === null) {
+                // throw error
+                throw new Error("Empty fields!");
+            }
+
+            // function variables
+            let productId; // productId
+            let products = []; // products array
+            let q; // query
+            let querySnapshot; // query snapshot
+
+            // ref to products collection
+            const productsRef = collection(database, "products");
+
+            // check if product_name exist in products collection
+            q = query(
+                productsRef, 
+                where("product_name", "==", productName.trim().toLowerCase()), 
+            );
+
+            // get docs
+            querySnapshot = await getDocs(q);
+            // if results exist
+            if (querySnapshot.size > 0) {
+                setIsLoading(false);
+                // throw error, if warehouse already exist
+                console.log(querySnapshot);
+                querySnapshot.forEach((doc) => {
+                    // product id
+                    productId = doc.id;
+                    const product = {
+                        id: doc.id,
+                        product_name: doc.data().product_name,
+                    };
+                    products.push(product);
+                });
+            } else {
+                // save data in database
+                const docRef = await addDoc(productsRef, {
+                    product_name: productName.trim().toLowerCase(),
+                    createdAt: serverTimestamp(), 
+                });
+
+                // product id
+                productId = docRef.id;
+            }
+
+            // merchant_products collection
+            const merchantProductsRef = collection(database, "merchant_products");
+
+            // check if product_id exist in merchant_products collection
+            q = query(
+                merchantProductsRef,
+                where("product_id", "==", productId),
+            )
+
+            // get docs
+            querySnapshot = await getDocs(q);
+
+            // check for results
+            if (querySnapshot.size > 0) {
+                // throw error, if warehouse already exist
+                throw new Error("Product already exist");
+            }
+
+            // save data in database, merchant_products collection
+            const docRef = await addDoc(collection(database, "merchant_products"), {
+                product_id: productId,
+                price: price,
+                product_image: null, // product image would be updated after image is uploaded to firestore storage
+                createdAt: serverTimestamp(),
+                business_id: authData?.business_id,
+            });
+
+            // upload image type
+            const imageType = "Product";
+
+            // upload image
+            await uploadFile(
+                selectedImage,
+                imageType,
+                docRef.id,
+            );
+
+            // disable loading state
+            setIsLoading(false);
+
+            // navigate to Inventory Products tab with success toast parammeter
+            // navigation.navigate("Inventory", {
+            //     tab: "Products",
+            //     toastType: "Success",
+            //     toastText: "Product successfully created and saved!"
+            // });
+
+        } catch (error) {
+            // disable loading state
+            setIsLoading(false);
+            // log errors
+            console.log("Error:", error.message);
+            setToast({
+                visible: true,
+                type: "error",
+                text: error.message,
+            });  
+        }
     }
 
     // render AddProduct page
@@ -118,8 +267,7 @@ const AddProduct = ({navigation, route}) => {
                             unpadded={true}
                         />
                         <Text style={style.headingText}>
-                            Create a new product that will 
-                            be added to your inventory with Komitex.
+                            Create a new product that will be added to your store’s inventory. 
                         </Text>
                         <View style={style.inputContainer}>
                             {/* product name input */}
@@ -159,7 +307,7 @@ const AddProduct = ({navigation, route}) => {
                                         { !selectedImage ? 
                                             <CameraPrimaryIcon /> : 
                                             <Image 
-                                                source={{uri: selectedImage}}
+                                                source={{uri: selectedImage.uri}}
                                                 style={style.productImage}
                                             /> 
                                         }
@@ -181,6 +329,7 @@ const AddProduct = ({navigation, route}) => {
                 backgroundColor={background}
                 fixed={false}
                 inactive={emptyFields}
+                isLoading={isLoading}
             />
         </>
     );
@@ -255,7 +404,7 @@ const style = StyleSheet.create({
         width: 40,
         height: 40,
         backgroundColor: secondaryColor,
-        borderRadius: 20,
+        borderRadius: 8,
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -263,7 +412,7 @@ const style = StyleSheet.create({
     productImage: {
         width: 40,
         height: 40,
-        borderRadius: 20,
+        borderRadius: 8,
     },
     camera: {
         width: "100%",
