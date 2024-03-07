@@ -110,7 +110,11 @@ const Home = ({navigation}) => {
                 const showSetupGuideValue = await AsyncStorage.getItem("@showSetupGuide");
         
                 const showSetupGuide = JSON.parse(showSetupGuideValue);    
-                if (!showSetupGuide) return setSetupGuide([]);
+                if (!showSetupGuide) {
+                    // disable loading state
+                    setPageLoading(false);
+                    return setSetupGuide([]);
+                };
 
                 // products guide
                 const products = {

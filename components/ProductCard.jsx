@@ -108,6 +108,7 @@ const style = StyleSheet.create({
         fontSize: 12,
         flexWrap: "wrap",   
         width: "100%",
+        textTransform: 'capitalize',
     },
     quantity: {
         fontFamily: "mulish-regular",

@@ -212,7 +212,10 @@ const AddProduct = ({navigation}) => {
                 product_id: productId,
                 price: price,
                 product_image: null, // product image would be updated after image is uploaded to firestore storage
-                createdAt: serverTimestamp(),
+                created_at: serverTimestamp(),
+                edited_at: serverTimestamp(),
+                created_by: authData?.uid,
+                edited_by: authData?.uid,
                 business_id: authData?.business_id,
             });
 
@@ -220,21 +223,22 @@ const AddProduct = ({navigation}) => {
             const imageType = "Product";
 
             // upload image
-            await uploadFile(
+            const upload = await uploadFile(
                 selectedImage,
                 imageType,
                 docRef.id,
             );
 
-            // disable loading state
-            setIsLoading(false);
-
+            console.log("Upload:", upload);
+            
             // navigate to Inventory Products tab with success toast parammeter
-            // navigation.navigate("Inventory", {
-            //     tab: "Products",
-            //     toastType: "Success",
-            //     toastText: "Product successfully created and saved!"
-            // });
+            navigation.navigate("Inventory", {
+                tab: "Products",
+                toastType: "Success",
+                toastText: "Product successfully created and saved!"
+            });
+            
+            setIsLoading(false);
 
         } catch (error) {
             // disable loading state

@@ -97,9 +97,9 @@ exports.createBusinessPartner = functions.firestore
       const partnerData = {
         merchant_business_id: businessId,
         logistics_business_id: logisticsBusinessId,
-        createdAt: admin.firestore.FieldValue.serverTimestamp(),
-        editedAt: admin.firestore.FieldValue.serverTimestamp(),
-        decativated: false,
+        created_at: admin.firestore.FieldValue.serverTimestamp(),
+        edited_at: admin.firestore.FieldValue.serverTimestamp(),
+        deactivated: false,
       };
 
       try {

@@ -7,10 +7,22 @@ import {
     Text,
     TouchableOpacity,
 } from "react-native";
+
 // colors
-import { white, background, black, subText, verticalRule, primaryColor, neutral, bodyText } from "../style/colors";
+import {
+    white,
+    background,
+    black,
+    subText,
+    verticalRule,
+    primaryColor,
+    neutral,
+    bodyText
+} from "../style/colors";
+
 // react hooks
 import { useEffect, useState, useRef } from "react";
+
 // components
 import BusinessCard from "../components/BusinessCard";
 import ProductCard from "../components/ProductCard";
@@ -20,15 +32,38 @@ import CustomButton from "../components/CustomButton";
 import StatCard from "../components/StatCard";
 import Avatar from "../components/Avatar";
 import StatWrapper from "../components/StatWrapper";
+
 // icons
 import SendOrderIcon from "../assets/icons/SendOrderIcon";
+
 // skeleton screen
 import InventorySkeleton from "../skeletons/InventorySkeleton";
-// auth
-import { useAuth } from "../context/AuthContext"
+
+// utils
 import { windowWidth } from "../utils/helpers";
+
 // globals
 import { useGlobals } from "../context/AppContext";
+
+// auth
+import { useAuth } from "../context/AuthContext"
+
+// firebase
+import {
+    database,
+} from "../Firebase";
+
+// firestore functions
+import {
+    collection,
+    getDoc,
+    getDocs,
+    onSnapshot,
+    where,
+    query,
+    orderBy,
+    doc,
+} from "firebase/firestore";
 
 const Products = ({navigation, route}) => {
 
@@ -76,171 +111,11 @@ const Products = ({navigation, route}) => {
         },
     ];
 
-    // merchant stats, stats that would be viewed by a merchnat account
-    const merchantStats = [
-        {
-            id: 1,
-            title: "Total Logistics",
-            presentValue: 8,
-            oldValue: null,
-            decimal: false,
-        },
-        {
-            id: 2,
-            title: "Total Products",
-            presentValue: 9,
-            oldValue: null,
-            decimal: false,
-        },
-    ];
-
     // state to store search query
     const [searchQuery, setSearchQuery] = useState("");
 
+    // page loading state
     const [pageLoading, setPageLoading] = useState(true);
-
-    useEffect(() => {
-        setTimeout(() => {
-            setPageLoading(false);
-        }, 500);   
-    })
-
-    // logistics list array
-    const logisticsList = [
-        {
-            id: 1,
-            business_name: "Komitex Logistics",
-            banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fkomitex.png?alt=media&token=a8039272-66b6-4e24-8ab1-a4dfd40503f8',
-            totalLocations: 17,
-            totalStock: 25,
-            lowStock: true,
-            verified: true,
-            onPress: () => {
-                navigation.navigate("Products", {
-                    business_id: 1,
-                    business_name: "Komitex Logistics",
-                    verified: true,
-                });
-            }
-        },
-        {
-            id: 2,
-            business_name: "DHL",
-            banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fdhl.png?alt=media&token=e113f106-0eaf-420e-9fe4-488cb8e6c26d',
-            totalLocations: 15,
-            totalStock: 17,
-            lowStock: false,
-            verified: true,
-            onPress: () => {
-                navigation.navigate("Products", {
-                    business_id: 2,
-                    business_name: "DHL",
-                    verified: true,
-                });
-            }
-        },
-        {
-            id: 3,
-            business_name: "Fedex",
-            banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Ffedex.png?alt=media&token=d943aea6-37ec-4f61-a589-01ad7bdd1299',
-            totalLocations: 11,
-            totalStock: 9,
-            lowStock: false,
-            verified: true,
-            onPress: () => {
-                navigation.navigate("Products", {
-                    business_id: 1,
-                    business_name: "Fedex",
-                    verified: true,
-                });
-            }
-        },
-        {
-            id: 4,
-            business_name: "UPS",
-            banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fups.png?alt=media&token=37224ee1-4460-4fec-a39b-3af040b65fe0',
-            totalLocations: 5,
-            totalStock: 7,
-            lowStock: false,
-            verified: false,
-            onPress: () => {
-                navigation.navigate("Products", {
-                    business_id: 1,
-                    business_name: "UPS",
-                    verified: false,
-                });
-            }
-        },
-        {
-            id: 5,
-            business_name: "Amazon Logistics",
-            banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Famazon.png?alt=media&token=7941fa73-daa6-4840-9ed8-96371d4b67a6',
-            totalLocations: 20,
-            totalStock: 68,
-            lowStock: false,
-            verified: true,
-            onPress: () => {
-                navigation.navigate("Products", {
-                    business_id: 1,
-                    business_name: "Amazon Logistics",
-                    verified: true,
-                });
-            }
-        },
-        {
-            id: 6,
-            business_name: "On Trac",
-            banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Fontrac.png?alt=media&token=67e52ec4-51e3-4032-a6b7-8f9533e1a7b6',
-            totalLocations: 17,
-            totalStock: 43,
-            lowStock: false,
-            verified: true,
-            onPress: () => {
-                navigation.navigate("Products", {
-                    business_id: 1,
-                    business_name: "On Trac",
-                    verified: true,
-                });
-            }
-        },
-        {
-            id: 7,
-            business_name: "Laser Ship",
-            banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Flasership.png?alt=media&token=803e763b-63e7-4c57-ab6e-beb2a9c35e54',
-            totalLocations: 18,
-            totalStock: 425,
-            lowStock: false,
-            verified: true,
-            onPress: () => {
-                navigation.navigate("Products", {
-                    business_id: 1,
-                    business_name: "Laser Ship",
-                    verified: true,
-                });
-            }
-        },
-        {
-            id: 8,
-            business_name: "Tranex",
-            banner_image: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/banners%2Ftranex.png?alt=media&token=b7d75e7b-26f2-4d71-83b8-48a24a3167e2',
-            totalLocations: 30,
-            totalStock: 72,
-            lowStock: false,
-            verified: false,
-            onPress: () => {
-                navigation.navigate("Products", {
-                    business_id: 1,
-                    business_name: "Tranex",
-                    verified: false,
-                });
-            }
-        },
-        {
-            id: 9,
-            onPress: () => navigation.navigate("AddLogistics"),
-            addNew: true,
-        }
-    ];
 
     // logistics list array
     const merchantList = [
@@ -310,106 +185,328 @@ const Products = ({navigation, route}) => {
         },
     ];
 
-    // list of products
-    const productsList = [
+    // products
+    const [products, setProducts] = useState([]);
+
+    // logistics
+    const [logistics, setLogistics] = useState([]);
+
+    console.log(logistics)
+
+    // get products, logistics and merchants
+    useEffect(() => {
+
+        // fetch total product stock
+        const fetchTotalProductStock = async (businessId, productId) => {
+            try {
+                // const docRef = doc(database, "users", id);
+                // const docSnap = await getDoc(docRef);
+                // return object of {id: id, manager_name: full_name}
+                // return docSnap.data().full_name;
+                return 0;
+
+            } catch (error) {
+                console.log("Error: ", error.message);
+                setToast({
+                    text: error.message,
+                    visible: true,
+                    type: "error",
+                });
+            }
+        }
+
+        // fetch low stock and total stock
+        const fetchStock = async (merchantBusinessId, logisticsBusinessId) => {
+            try {
+                // const docRef = doc(database, "users", id);
+                // const docSnap = await getDoc(docRef);
+                // return object of {id: id, manager_name: full_name}
+                // return docSnap.data().full_name;
+                return {
+                    low_stock: true,
+                    total_stock: 0
+                };
+
+            } catch (error) {
+                console.log("Error: ", error.message);
+                setToast({
+                    text: error.message,
+                    visible: true,
+                    type: "error",
+                });
+            }
+        }
+
+        // fetch logistics/merchant business details
+        const fetchBusiness = async (businessId) => {
+            try {
+                const docRef = doc(database, "businesses", businessId);
+                const docSnap = await getDoc(docRef);
+                return {
+                    banner_image: docSnap.data().banner_image,
+                    business_name: docSnap.data().business_name,
+                    verified: docSnap.data().verified,
+                };
+            } catch (error) {
+                console.log("fetchBusiness Error: ", error.message);
+                setToast({
+                    text: error.message,
+                    visible: true,
+                    type: "error",
+                });
+            }
+        }
+
+        // fetch total logistics locations
+        const fetchTotalLocations = async (businessId) => {
+            try {
+                const collectionRef = collection(database, "locations");
+                const q = query(
+                    collectionRef,
+                    where("business_id", "==", businessId),
+                );
+
+                // get docs
+                const querySnapshot = await getDocs(q);
+
+                // return total locations
+                return querySnapshot.size;
+
+            } catch (error) {
+                console.log("fetchTotalLocations: ", error.message);
+                setToast({
+                    text: error.message,
+                    visible: true,
+                    type: "error",
+                });
+            }
+        }
+
+        // fetch product name
+        const fetchProductName = async (productId) => {
+            try {
+                const docRef = doc(database, "products", productId);
+                const docSnap = await getDoc(docRef);
+                return docSnap.data().product_name;
+            } catch (error) {
+                console.log("Error: ", error.message);
+                setToast({
+                    text: error.message,
+                    visible: true,
+                    type: "error",
+                });
+            }
+        }
+
+
+        // fetch products
+        const fetchProducts = async (businessId) => {
+            try {
+                const collectionRef = collection(database, "merchant_products");
+                let q = query(
+                    collectionRef,
+                    where("business_id", "==", businessId),
+                    orderBy("created_at")
+                );
+                // variable to stroe raw warehouse array
+                
+                const unsubscribe = onSnapshot(q, async (querySnapshot) => {
+                    let productsArray = [];
+
+                    for (const doc of querySnapshot.docs) {
+                        // product data
+                        const productData = doc.data();
+
+                        // Fetch total stock for the product across all merchants
+                        const totalStock = await fetchTotalProductStock(businessId, productData?.product_id);
+
+                        // Fetch product name
+                        const productName = await fetchProductName(productData?.product_id);
+                        
+                        const product = {
+                            id: doc?.id,
+                            product_name: productName,
+                            price: productData.price,
+                            quantity: totalStock,
+                            product_image: productData.product_image, // produc
+                            onPress: () => handleEditProduct(doc?.id),
+                        };
+                        productsArray.push(product);
+                    }
+
+                    // set products
+                    setProducts(productsArray);
+
+                    // disable page loading state
+                    setPageLoading(false);
+
+                    // reste warehouse list
+                    // warehouseList = [];
+                    
+                }, (error) => { //handle errors
+                    console.log("Error: ", error.message);
+                    setToast({
+                        text: error.message,
+                        visible: true,
+                        type: "error",
+                    });
+                    setPageLoading(false);
+                });
+    
+                return unsubscribe;
+            } catch (error) {
+                console.log("Caught Error: ", error.message);
+                setToast({
+                    text: error.message,
+                    visible: true,
+                    type: "error",
+                });
+
+                // disable page loading state
+                setPageLoading(false);
+            }
+        };
+
+        // fetch logistics
+        const fetchLogistics = async (businessId) => {
+            try {
+            const collectionRef = collection(database, "business_partners");
+            let q = query(
+                collectionRef,
+                where("merchant_business_id", "==", businessId),
+                orderBy("created_at")
+            );
+        
+            const querySnapshot = await getDocs(q);
+            const logisticsArray = [];
+        
+            const logisticsPromises = querySnapshot.docs.map(async (doc) => {
+                const data = doc.data();
+                console.log(data.deactivated)
+                if (!data.deactivated) {
+                    const logisticsId = doc.data().logistics_business_id;
+            
+                    // Fetch all business information, stock, and total locations in parallel
+                    const [business, stock, totalLocations] = await Promise.all([
+                        fetchBusiness(logisticsId),
+                        fetchStock(businessId, logisticsId),
+                        fetchTotalLocations(logisticsId)
+                    ]);
+            
+                    const logisticsItem = {
+                        id: doc?.id,
+                        business_name: business?.business_name,
+                        banner_image: business.banner_image,
+                        verified: business?.verified,
+                        totalLocations: totalLocations,
+                        totalStock: stock?.total_stock,
+                        lowStock: stock.low_stock,
+                        onPress: () => {
+                            navigation.navigate("Products", {
+                                business_id: logisticsId,
+                                business_name: business?.business_name,
+                                verified: business?.verified,
+                            });
+                        }
+                    };
+            
+                    logisticsArray.push(logisticsItem);
+                }
+            });
+        
+            await Promise.all(logisticsPromises);
+        
+            // Add new logistics card
+            const addNew = {
+                id: Math.random(),
+                onPress: () => navigation.navigate("AddLogistics"),
+                addNew: true,
+            };
+            logisticsArray.push(addNew);
+        
+            // Set logistics
+            setLogistics(logisticsArray);
+            } catch (error) {
+            console.log("Fetch Logitics Caught Error: ", error.message);
+            setToast({
+                text: error.message,
+                visible: true,
+                type: "error",
+            });
+        
+            // Disable page loading state
+            setPageLoading(false);
+            }
+        };
+
+        // fecth products
+        const unsubscribeProducts = fetchProducts(authData?.business_id);
+
+        // fetch logistics
+        const unsubscribeLogistics = fetchLogistics(authData?.business_id);
+
+        // Cleanup function to unsubscribe from snapshot listener
+        return () => {
+            // Unsubscribe from snapshot listener once unsubscribeLogistics is resolved
+            unsubscribeLogistics.then(unsubscribe => {
+                if (unsubscribe) {
+                    unsubscribe();
+                }
+            });
+            // Unsubscribe from snapshot listener once unsubscribeProducts is resolved
+            unsubscribeProducts.then(unsubscribe => {
+                if (unsubscribe) {
+                    unsubscribe();
+                }
+            });
+
+        };
+
+    }, []);
+
+    // merchant stats, stats that would be viewed by a merchnat account
+    const merchantStats = [
         {
             id: 1,
-            product_name: "Maybach Sunglasses",
-            quantity: 7,
-            price: 20000,
-            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/products%2Fmaybach-sunglasses.jpg?alt=media&token=95200745-ada8-4787-9779-9d00c56a18a5',
-            onPress: () => handleEditProduct(1),
+            title: "Total Logistics",
+            presentValue: logistics.length - 1,
+            oldValue: null,
+            decimal: false,
         },
         {
             id: 2,
-            product_name: "Accurate Watch",
-            quantity: 3,
-            price: 33000,
-            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/products%2Faccurate-watch.png?alt=media&token=4330bcd1-e843-434c-97cb-bf84c49b82b0',
-            onPress: () => handleEditProduct(2),
-        },
-        {
-            id: 3,
-            product_name: "Black Sketchers",
-            quantity: 0,
-            price: 35000,
-            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/products%2Fblack-sketchers.png?alt=media&token=a07e02ac-610d-4da0-9527-2b6e9e85d56d',
-            onPress: () => handleEditProduct(3),
-        },
-        {
-            id: 4,
-            product_name: "Brown Clarks",
-            quantity: 11,
-            price: 40000,
-            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/products%2FClarks.jpg?alt=media&token=70431e2c-fbcd-4e1c-9cf3-3d35861f98d3',
-            onPress: () => handleEditProduct(4),
-        },
-        {
-            id: 5,
-            product_name: "Pheonix Sneakers",
-            quantity: 2,
-            price: 25000,
-            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/products%2Fsneakers.png?alt=media&token=fbb14f47-c2b7-4d2a-b54a-8485ccf7a648',
-            onPress: () => handleEditProduct(5),
-        },
-        {
-            id: 6,
-            product_name: "Perfectly Useless Morning Watch",
-            quantity: 9,
-            price: 32000,
-            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/products%2Fperfectly-useless-mornig-watch.png?alt=media&token=edb35f3a-deb6-498b-9c94-d9392745442c',
-            onPress: () => handleEditProduct(6),
-        },
-        {
-            id: 7,
-            product_name: "Ricochet Watch",
-            quantity: 15,
-            price: 30000,
-            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/products%2Fricochet-watch.png?alt=media&token=fbf05657-e511-4d1f-a0db-3b9419d4ba5a',
-            onPress: () => handleEditProduct(7),
-        },
-        {
-            id: 9,
-            product_name: "Timberland",
-            quantity: 10,
-            price: 35000,
-            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/products%2FTimberland.jpg?alt=media&token=29480738-8990-45c9-9b74-b2d24c0fa722',
-            onPress: () => handleEditProduct(9),
-        },
-        {
-            id: 10,
-            product_name: "Useless Afternoon Watch",
-            quantity: 19,
-            price: 32000,
-            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/komitex-e7659.appspot.com/o/products%2Fuseless-afternoon-watch.png?alt=media&token=42f68679-4627-4846-a37e-87a1ff4a2a66',
-            onPress: () => handleEditProduct(10),
+            title: "Total Products",
+            presentValue: products.length,
+            oldValue: null,
+            decimal: false,
         },
     ];
 
+    // handle edit product
     const handleEditProduct = (id) => {
-        // console.log("right here");
-        // console.log(inventories);
 
-        const selectedProduct = productsList.find(product => product.id === id);
-
+        // selected products
+        const selectedProduct = products.find(product => product.id === id);
 
         // product Scope, variable to control whether a product is being viewed
         // accross multiple logistics or across a single logistics with multiple warehouses
         const productScope = "Logistics";
 
         navigation.navigate("EditProduct", {
-            id: selectedProduct.id,
-            product_name: selectedProduct.product_name,
-            initial_price: selectedProduct.price,
-            quantity: selectedProduct.quantity,
-            image_uri: selectedProduct.imageUrl,
+            id: selectedProduct?.id,
+            product_name: selectedProduct?.product_name,
+            initial_price: selectedProduct?.price,
+            quantity: selectedProduct?.quantity,
+            image_uri: selectedProduct?.product_image,
             product_scope: productScope,
         });
 
-    }
+    };
 
+    // inventories
     const [inventories, setInventories] = useState([]);
 
+    // fetch inventories
     useEffect(() => {
 
         setInventories(() => {
@@ -417,7 +514,7 @@ const Products = ({navigation, route}) => {
                 return [
                     {id: "stickyLeft"},
                     {id: "stickyRight"},
-                    ...productsList
+                    ...products
                 ];
             }
 
@@ -433,12 +530,12 @@ const Products = ({navigation, route}) => {
                 return [
                     {id: "stickyLeft"},
                     {id: "stickyRight"},
-                    ...logisticsList
+                    ...logistics
                 ];
             }
         });
         
-    }, [tab])
+    }, [tab, products, logistics])
 
     // sticky header offset
     const stickyHeaderOffset = useRef(0);
@@ -451,197 +548,197 @@ const Products = ({navigation, route}) => {
     }
 
     // render Inventory page
-    return (
-        <>
-            {!pageLoading ? (<>
-                <Header
-                    navigation={navigation}
-                    stackName={authData?.account_type === "Merchant" ? "Inventory" : ""}
-                    removeBackArrow={true}
-                    inlineArrow={authData?.account_type !== "Merchant"}
-                    backgroundColor={background}
-                />
-                {authData?.account_type === "Logistics" && (
-                    <View style={style.warehouseBannerWrapper}>
-                        <View style={style.warehouseBanner}>
-                            <View style={style.warehoseInfo}>
-                                <Text style={style.warehouseName}>Warri</Text>
-                                <Text style={style.warehouseAddress}>
-                                    16 Ekpan junction, delta state, Nigeria
+    return (<>
+        {!pageLoading ? (<>
+            <Header
+                navigation={navigation}
+                stackName={authData?.account_type === "Merchant" ? "Inventory" : ""}
+                removeBackArrow={true}
+                inlineArrow={authData?.account_type !== "Merchant"}
+                backgroundColor={background}
+            />
+            {authData?.account_type === "Logistics" && (
+                <View style={style.warehouseBannerWrapper}>
+                    <View style={style.warehouseBanner}>
+                        <View style={style.warehoseInfo}>
+                            <Text style={style.warehouseName}>Warri</Text>
+                            <Text style={style.warehouseAddress}>
+                                16 Ekpan junction, delta state, Nigeria
+                            </Text>
+                        </View>
+                        <View style={style.verticalRule} />
+                        <View style={style.warehoseManagerInfo}>
+                            <Avatar 
+                                fullname={"Abiodun Johnson"}
+                            />
+                            <View style={style.managerText}>
+                                <Text style={style.managerTitle}>
+                                    Warehouse Manager
                                 </Text>
-                            </View>
-                            <View style={style.verticalRule} />
-                            <View style={style.warehoseManagerInfo}>
-                                <Avatar 
-                                    fullname={"Abiodun Johnson"}
-                                />
-                                <View style={style.managerText}>
-                                    <Text style={style.managerTitle}>
-                                        Warehouse Manager
-                                    </Text>
-                                    <Text style={style.managerName}>
-                                        Abiodun Johnson
-                                    </Text>
-                                </View>
+                                <Text style={style.managerName}>
+                                    Abiodun Johnson
+                                </Text>
                             </View>
                         </View>
                     </View>
-                )}
-                <TouchableWithoutFeedback 
-                    style={{
-                        flex: 1, 
-                    }}
-                >
-                    <FlatList 
-                        showsVerticalScrollIndicator={false}
-                        onScroll={animateHeaderOnScroll}
-                        stickyHeaderIndices={[1]}
-                        ListHeaderComponent={
-                            <View 
-                                style={style.headerWrapper}
-                                onLayout={e => {
-                                    stickyHeaderOffset.current = e.nativeEvent.layout.height;
-                                }}
-                            >
-                                { authData?.account_type === "Merchant" ? (<>
-                                    {/* stats */}
-                                    <StatWrapper containerStyle={{marginBottom: 30}}>
-                                        {merchantStats.map(stat => (
-                                            <StatCard
-                                                key={stat.id}
-                                                title={stat.title}
-                                                presentValue={stat.presentValue}
-                                                oldValue={stat.oldValue}
-                                                decimal={stat.decimal}
-                                            />
-                                        ))}
-                                    </StatWrapper>
-                                    {/* navigate to AddLogistics page/stack */}
-                                    <CustomButton
-                                        secondaryButton={true}
-                                        name={"Add Products"}
-                                        shrinkWrapper={true}
-                                        onPress={() => navigation.navigate("AddProduct")}
-                                        unpadded={true}
-                                        wrapperStyle={{marginBottom: 22}}
+                </View>
+            )}
+            <TouchableWithoutFeedback 
+                style={{
+                    flex: 1, 
+                }}
+            >
+                <FlatList 
+                    showsVerticalScrollIndicator={false}
+                    onScroll={animateHeaderOnScroll}
+                    stickyHeaderIndices={[1]}
+                    ListHeaderComponent={
+                        <View 
+                            style={style.headerWrapper}
+                            onLayout={e => {
+                                stickyHeaderOffset.current = e.nativeEvent.layout.height;
+                            }}
+                        >
+                            { authData?.account_type === "Merchant" ? (<>
+                                {/* stats */}
+                                <StatWrapper containerStyle={{marginBottom: 30}}>
+                                    {merchantStats.map(stat => (
+                                        <StatCard
+                                            key={stat.id}
+                                            title={stat.title}
+                                            presentValue={stat.presentValue}
+                                            oldValue={stat.oldValue}
+                                            decimal={stat.decimal}
+                                        />
+                                    ))}
+                                </StatWrapper>
+                                {/* navigate to AddLogistics page/stack */}
+                                <CustomButton
+                                    secondaryButton={true}
+                                    name={"Add Products"}
+                                    shrinkWrapper={true}
+                                    onPress={() => navigation.navigate("AddProduct")}
+                                    unpadded={true}
+                                    wrapperStyle={{marginBottom: 22}}
+                                />
+                            </>) : (<>
+                                {/* stats */}
+                                <StatWrapper containerStyle={{marginBottom: 30}}>
+                                    {logisticsStats.map(stat => (
+                                        <StatCard
+                                            key={stat.id}
+                                            title={stat.title}
+                                            presentValue={stat.presentValue}
+                                            oldValue={stat.oldValue}
+                                            decimal={stat.decimal}
+                                        />
+                                    ))}
+                                </StatWrapper>
+                            </>)}
+                        </View>
+                    }
+                    columnWrapperStyle={tab === "Logistics" ? style.logisticsContainer : style.productContainer}
+                    style={style.listWrapper}
+                    key={tab}
+                    keyExtractor={item => item.id}
+                    data={inventories}
+                    // allows flatlist to render list in two columns
+                    numColumns={2}
+                    // render logistics card
+                    renderItem={({ item, index }) => {
+                        if (item.id === "stickyLeft") {
+                            return (
+                                <View 
+                                    style={[
+                                        style.stickyHeader,
+                                        // if account is logistics and scroll height is greater than offset activate shadow
+                                        scrollOffset > stickyHeaderOffset.current && {elevation: 3},
+                                        // if account is logistics remove some margin at the bottom
+                                        // this margin is introduced because of the columnWrapperStyle
+                                        authData?.account_type === "Logistics" && {marginBottom: -16}
+                                    ]}
+                                >
+                                    {/* search bar */}
+                                    <SearchBar
+                                        placeholder={"Search " + tab}
+                                        searchQuery={searchQuery}
+                                        setSearchQuery={setSearchQuery}
+                                        backgroundColor={white}
+                                        disableFilter={true}
                                     />
-                                </>) : (<>
-                                    {/* stats */}
-                                    <StatWrapper containerStyle={{marginBottom: 30}}>
-                                        {logisticsStats.map(stat => (
-                                            <StatCard
-                                                key={stat.id}
-                                                title={stat.title}
-                                                presentValue={stat.presentValue}
-                                                oldValue={stat.oldValue}
-                                                decimal={stat.decimal}
-                                            />
-                                        ))}
-                                    </StatWrapper>
-                                </>)}
-                            </View>
-                        }
-                        columnWrapperStyle={tab === "Logistics" ? style.logisticsContainer : style.productContainer}
-                        style={style.listWrapper}
-                        key={tab}
-                        keyExtractor={item => item.id}
-                        data={inventories}
-                        // allows flatlist to render list in two columns
-                        numColumns={2}
-                        // render logistics card
-                        renderItem={({ item, index }) => {
-                            if (item.id === "stickyLeft") {
-                                return (
-                                    <View 
-                                        style={[
-                                            style.stickyHeader,
-                                            // if account is logistics and scroll height is greater than offset activate shadow
-                                            scrollOffset > stickyHeaderOffset.current && {elevation: 3},
-                                            // if account is logistics remove some margin at the bottom
-                                            // this margin is introduced because of the columnWrapperStyle
-                                            authData?.account_type === "Logistics" && {marginBottom: -16}
-                                        ]}
-                                    >
-                                        {/* search bar */}
-                                        <SearchBar
-                                            placeholder={"Search " + tab}
-                                            searchQuery={searchQuery}
-                                            setSearchQuery={setSearchQuery}
-                                            backgroundColor={white}
-                                            disableFilter={true}
-                                        />
-                                        {/* show tabs for merchnat account */}
-                                        {/* page tabs */}
-                                        {authData?.account_type === "Merchant" && (
-                                            <View style={style.tabContainer}>
-                                                <TouchableOpacity 
-                                                    style={tab === "Logistics" ? style.tabButtonSelected : style.tabButton}
-                                                    onPress={() => setTab("Logistics")}
-                                                >
-                                                    <Text style={tab === "Logistics" ? style.tabButtonTextSelected : style.tabButtonText}>Logistics</Text>
-                                                </TouchableOpacity>
-                                                <TouchableOpacity 
-                                                    style={tab === "Products" ? style.tabButtonSelected : style.tabButton}
-                                                    onPress={() => setTab("Products")}
-                                                >
-                                                    <Text style={tab === "Products" ? style.tabButtonTextSelected : style.tabButtonText}>Products</Text>
-                                                </TouchableOpacity>
-                                            </View>
-                                        )}
-                                        {tab === "Products" &&inventories.length === 2 && (
-                                            <View style={style.emptyOrderWrapper}>
-                                                <SendOrderIcon />
-                                                <Text style={style.emptyOrderHeading}>Add your first product</Text>
-                                                <Text style={style.emptyOrderParagraph}>
-                                                    Add your products to your stores inventory 
-                                                </Text>
-                                            </View>
-                                        )}
-                                    </View>
-                                )
-                            } else if (item.id === "stickyRight") {
-                                return <></>
-                            } else {
-                                if (tab === "Logistics") {
-                                    return (
-                                        <View style={index % 2 === 0 ? style.leftCard : style.rightCard}>
-                                            <BusinessCard
-                                                businessName={item.business_name}
-                                                bannerImage={item.banner_image}
-                                                totalLocations={item?.totalLocations}
-                                                totalProducts={item?.totalProducts}
-                                                totalStock={item.totalStock}
-                                                lowStock={item.lowStock}
-                                                verified={item.verified}
-                                                onPress={item.onPress}
-                                                addNew={item?.addNew}
-                                            />
+                                    {/* show tabs for merchnat account */}
+                                    {/* page tabs */}
+                                    {authData?.account_type === "Merchant" && (
+                                        <View style={style.tabContainer}>
+                                            <TouchableOpacity 
+                                                style={tab === "Logistics" ? style.tabButtonSelected : style.tabButton}
+                                                onPress={() => setTab("Logistics")}
+                                            >
+                                                <Text style={tab === "Logistics" ? style.tabButtonTextSelected : style.tabButtonText}>Logistics</Text>
+                                            </TouchableOpacity>
+                                            <TouchableOpacity 
+                                                style={tab === "Products" ? style.tabButtonSelected : style.tabButton}
+                                                onPress={() => setTab("Products")}
+                                            >
+                                                <Text style={tab === "Products" ? style.tabButtonTextSelected : style.tabButtonText}>Products</Text>
+                                            </TouchableOpacity>
                                         </View>
-                                    )   
-                                }
+                                    )}
+                                </View>
+                            )
+                        } else if (item.id === "stickyRight") {
+                            return <></>
+                        } else {
+                            if (tab === "Logistics") {
                                 return (
-                                    <View 
-                                        style={[
-                                            index % 2 === 0 && style.productCardWrapperLeft,
-                                            index % 2 === 1 && style.productCardWrapperRight,
-                                        ]}
-                                    >
-                                        <ProductCard
-                                            product_name={item?.product_name}
-                                            quantity={item?.quantity}
-                                            price={item?.price}
-                                            imageUrl={item?.imageUrl}
-                                            onPress={item?.onPress}
+                                    <View style={index % 2 === 0 ? style.leftCard : style.rightCard}>
+                                        <BusinessCard
+                                            businessName={item.business_name}
+                                            bannerImage={item.banner_image}
+                                            totalLocations={item?.totalLocations}
+                                            totalProducts={item?.totalProducts}
+                                            totalStock={item.totalStock}
+                                            lowStock={item.lowStock}
+                                            verified={item.verified}
+                                            onPress={item.onPress}
+                                            addNew={item?.addNew}
                                         />
                                     </View>
-                                )
+                                )   
                             }
-                        }}
-                    />
-                </TouchableWithoutFeedback>
-            </>) : <InventorySkeleton />}
-        </>
-    );
+                            return (
+                                <View 
+                                    style={[
+                                        index % 2 === 0 && style.productCardWrapperLeft,
+                                        index % 2 === 1 && style.productCardWrapperRight,
+                                    ]}
+                                >
+                                    <ProductCard
+                                        product_name={item?.product_name}
+                                        quantity={item?.quantity}
+                                        price={item?.price}
+                                        imageUrl={item?.product_image}
+                                        onPress={item?.onPress}
+                                    />
+                                </View>
+                            )
+                        }
+                    }}
+                    ListFooterComponent={<>
+                        {tab === "Products" && products.length === 0 && (
+                            <View style={style.emptyOrderWrapper}>
+                                <SendOrderIcon />
+                                <Text style={style.emptyOrderHeading}>Add your first product</Text>
+                                <Text style={style.emptyOrderParagraph}>
+                                    Add your products to your stores inventory 
+                                </Text>
+                            </View>
+                        )}
+                    </>}
+                />
+            </TouchableWithoutFeedback>
+        </>) : <InventorySkeleton />}
+    </>);
 }
 
 // stylesheet
