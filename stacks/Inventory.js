@@ -191,7 +191,7 @@ const Products = ({navigation, route}) => {
     // logistics
     const [logistics, setLogistics] = useState([]);
 
-    console.log(logistics)
+    // console.log(logistics)
 
     // get products, logistics and merchants
     useEffect(() => {
@@ -382,7 +382,6 @@ const Products = ({navigation, route}) => {
         
             const logisticsPromises = querySnapshot.docs.map(async (doc) => {
                 const data = doc.data();
-                console.log(data.deactivated)
                 if (!data.deactivated) {
                     const logisticsId = doc.data().logistics_business_id;
             
