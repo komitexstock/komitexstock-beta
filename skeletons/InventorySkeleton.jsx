@@ -12,7 +12,7 @@ const shimmerColorArray = ["#ebebeb", "#d9d9d9", "#ebebeb",];
 
 const Skeleton = createShimmerPlaceholder(LinearGradient);
 
-const InventorySkeleton = () => {
+const InventorySkeleton = ({accountType}) => {
     return (
         <View 
             style={skeleton.container}
@@ -32,12 +32,18 @@ const InventorySkeleton = () => {
                 />
             </View>
 
-            <View style={skeleton.searchBarWrapper}>
+            <View style={skeleton.statsWrapper}>
                 <Skeleton 
-                    height={40}
-                    width={windowWidth - 40}
+                    height={62}
+                    width={(windowWidth - 56) / 2}
                     shimmerColors={shimmerColorArray}
-                    style={{borderRadius: 10}}
+                    style={{borderRadius: 12}}
+                />
+                <Skeleton 
+                    height={62}
+                    width={(windowWidth - 56) / 2}
+                    shimmerColors={shimmerColorArray}
+                    style={{borderRadius: 12}}
                 />
             </View>
 
@@ -47,6 +53,31 @@ const InventorySkeleton = () => {
                     width={windowWidth - 40}
                     shimmerColors={shimmerColorArray}
                     style={{borderRadius: 12}}
+                />
+            </View>
+
+            <View style={skeleton.searchBarWrapper}>
+                <Skeleton 
+                    height={40}
+                    width={windowWidth - 40}
+                    shimmerColors={shimmerColorArray}
+                    style={{borderRadius: 10}}
+                />
+            </View>
+
+            <View style={skeleton.tabsWrapper}>
+                <Skeleton 
+                    height={22}
+                    width={62}
+                    shimmerColors={shimmerColorArray}
+                    style={{borderRadius: 2}}
+                />
+
+                <Skeleton 
+                    height={22}
+                    width={62}
+                    shimmerColors={shimmerColorArray}
+                    style={{borderRadius: 2}}
                 />
             </View>
 
@@ -89,8 +120,6 @@ const InventorySkeleton = () => {
                     style={{borderRadius: 12}}
                 />
             </View>
-
-            
         </View>
     );
 }
@@ -113,6 +142,23 @@ const skeleton = StyleSheet.create({
     },
     searchBarWrapper: {
         marginBottom: 20,
+        marginTop: 30,
+    },
+    statsWrapper: {
+        marginBottom: 30,
+        width: "100%",
+        display: "flex",
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
+        flexWrap: 'wrap',
+        gap: 16,
+    },
+    tabsWrapper: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
     },
     cardsWrapper: {
         marginTop: 30,

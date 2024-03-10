@@ -11,6 +11,7 @@ from "react-native";
 // component
 import Indicator from './Indicator';
 import Avatar from "./Avatar";
+import HighlightSearchedText from "./HighlightSearchedText";
 // icons
 import AddIcon from '../assets/icons/AddIcon';
 import VerifiedIcon from "../assets/icons/VerifiedIcon";
@@ -19,7 +20,7 @@ import { black, secondaryColor, subText, white } from "../style/colors";
 import { windowWidth } from "../utils/helpers";
 
 const maxCardWidth = windowWidth/2 - 28;
-const BusinessCard = ({businessName, bannerImage, totalLocations, totalProducts, totalStock, lowStock, onPress, addNew, verified, deactivated}) => {
+const BusinessCard = ({businessName, bannerImage, totalLocations, totalProducts, totalStock, lowStock, onPress, addNew, verified, deactivated, searchQuery}) => {
     return (
         <>   
             { !addNew ? (
@@ -43,7 +44,7 @@ const BusinessCard = ({businessName, bannerImage, totalLocations, totalProducts,
                         </View>
                         {/* business name */}
                         <View style={style.logisticsWrapper}>
-                            <Text style={style.logistics}>{businessName}</Text>
+                            {!searchQuery ? <Text style={style.logistics}>{businessName}</Text> : <HighlightSearchedText searchQuery={searchQuery} targetText={businessName}/>}
                             { verified && <VerifiedIcon />}
                         </View>
                         {/* display total locations or total products */}

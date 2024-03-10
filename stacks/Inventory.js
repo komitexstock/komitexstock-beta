@@ -6,6 +6,8 @@ import {
     StyleSheet,
     Text,
     TouchableOpacity,
+    Platform,
+    Keyboard,
 } from "react-native";
 
 // colors
@@ -40,7 +42,7 @@ import SendOrderIcon from "../assets/icons/SendOrderIcon";
 import InventorySkeleton from "../skeletons/InventorySkeleton";
 
 // utils
-import { windowWidth } from "../utils/helpers";
+import { windowHeight, windowWidth } from "../utils/helpers";
 
 // globals
 import { useGlobals } from "../context/AppContext";
@@ -509,6 +511,7 @@ const Products = ({navigation, route}) => {
     useEffect(() => {
 
         setInventories(() => {
+            // products tab
             if (tab === "Products") {
                 return [
                     {id: "stickyLeft"},
@@ -517,6 +520,7 @@ const Products = ({navigation, route}) => {
                 ];
             }
 
+            // merchants tab for logistics accounts
             if (authData?.account_type === "Logistics") {
                 return [
                     {id: "stickyLeft"},
@@ -525,6 +529,7 @@ const Products = ({navigation, route}) => {
                 ];
             } 
             
+            // logistics tab for merchants accounts
             if (authData?.account_type === "Merchant") {
                 return [
                     {id: "stickyLeft"},
@@ -536,15 +541,56 @@ const Products = ({navigation, route}) => {
         
     }, [tab, products, logistics])
 
+    // reset searchQuery if tab is changed
+    useEffect(() => {
+        setSearchQuery("");
+    }, [tab]);
+
     // sticky header offset
     const stickyHeaderOffset = useRef(0);
     const [scrollOffset, setScrollOffset] = useState(0);
 
     // animated shadow when scroll height reaches sticky header
-    const animateHeaderOnScroll = (e) => {
+    const handleScroll = (e) => {
         const yOffset = e.nativeEvent.contentOffset.y;
         setScrollOffset(yOffset);
     }
+
+    // flat list ref
+    const flatListRef = useRef();
+
+    // function to scrool to target offset
+    const handleScrollToTarget = (offset) => {
+        console.log("Offset: ", offset);
+        // scroll to target offset
+        flatListRef.current.scrollToOffset({ offset, animated: true });
+    };
+
+
+    // listen for keyboard opening or closing
+    useEffect(() => {
+        // if keyboard is open
+        const keyboardDidShowListener = Keyboard.addListener(
+            Platform.OS === 'android' ? 'keyboardDidShow' : 'keyboardWillShow', () => {
+                // just scroll to the point of the sticky header
+                handleScrollToTarget(stickyHeaderOffset.current);
+                setScrollOffset(stickyHeaderOffset.current);
+
+                console.log("Keyboard Open");
+            }
+        );
+        
+        // keyboard is closed
+        const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+            // run any desired function here
+            console.log("Keyboard Closed");
+        });
+    
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        };
+    }, [scrollOffset]);
 
     // render Inventory page
     return (<>
@@ -587,11 +633,56 @@ const Products = ({navigation, route}) => {
                     flex: 1, 
                 }}
             >
-                <FlatList 
+                <FlatList
+                    ref={flatListRef}
                     showsVerticalScrollIndicator={false}
-                    onScroll={animateHeaderOnScroll}
+                    onScroll={handleScroll}
                     stickyHeaderIndices={[1]}
-                    ListHeaderComponent={
+                    
+                    columnWrapperStyle={tab === "Logistics" ? style.logisticsContainer : style.productContainer}
+                    style={style.listWrapper}
+                    contentContainerStyle={style.contentContainer}
+                    key={tab}
+                    keyExtractor={item => item.id}
+                    data={(() => {
+                        // if there is no search key word, return inventories
+                        if (!searchQuery) return inventories;
+                        
+                        // filtered inventory variable
+                        let filteredInventories;
+
+                        if (tab === "Logistics") {
+                            // filter logistics by business name in search bar
+                            filteredInventories = logistics.filter(inventory => {
+                                return inventory?.business_name?.toLowerCase().includes(searchQuery.toLowerCase());
+                            });
+
+                            // Add new logistics card
+                            const addNew = {
+                                id: Math.random(),
+                                onPress: () => navigation.navigate("AddLogistics"),
+                                addNew: true,
+                            };
+
+                            // push add new logistics card
+                            filteredInventories.push(addNew);
+                        } else if (tab === "Products") {
+                            // filter products by product name in search bar
+                            filteredInventories = products.filter(inventory => {
+                                return inventory?.product_name?.toLowerCase().includes(searchQuery.toLowerCase());
+                            })
+                        }
+
+                        // return filtered inventories
+                        return [
+                            {id: "stickyLeft"},
+                            {id: "stickyRight"},
+                            ...filteredInventories,
+                        ];
+                    })()} // auto call function
+                    // allows flatlist to render list in two columns
+                    numColumns={2}
+                    ListHeaderComponent={<>
                         <View 
                             style={style.headerWrapper}
                             onLayout={e => {
@@ -618,7 +709,7 @@ const Products = ({navigation, route}) => {
                                     shrinkWrapper={true}
                                     onPress={() => navigation.navigate("AddProduct")}
                                     unpadded={true}
-                                    wrapperStyle={{marginBottom: 22}}
+                                    wrapperStyle={{marginBottom: 30}}
                                 />
                             </>) : (<>
                                 {/* stats */}
@@ -635,15 +726,8 @@ const Products = ({navigation, route}) => {
                                 </StatWrapper>
                             </>)}
                         </View>
-                    }
-                    columnWrapperStyle={tab === "Logistics" ? style.logisticsContainer : style.productContainer}
-                    style={style.listWrapper}
-                    key={tab}
-                    keyExtractor={item => item.id}
-                    data={inventories}
-                    // allows flatlist to render list in two columns
-                    numColumns={2}
-                    // render logistics card
+                    </>}
+                    // render business card and product card
                     renderItem={({ item, index }) => {
                         if (item.id === "stickyLeft") {
                             return (
@@ -701,6 +785,7 @@ const Products = ({navigation, route}) => {
                                             verified={item.verified}
                                             onPress={item.onPress}
                                             addNew={item?.addNew}
+                                            searchQuery={searchQuery}
                                         />
                                     </View>
                                 )   
@@ -718,6 +803,7 @@ const Products = ({navigation, route}) => {
                                         price={item?.price}
                                         imageUrl={item?.product_image}
                                         onPress={item?.onPress}
+                                        searchQuery={searchQuery}
                                     />
                                 </View>
                             )
@@ -736,12 +822,15 @@ const Products = ({navigation, route}) => {
                     </>}
                 />
             </TouchableWithoutFeedback>
-        </>) : <InventorySkeleton />}
+        </>) : <InventorySkeleton accountType={authData?.account_type} />}
     </>);
 }
 
 // stylesheet
 const style = StyleSheet.create({
+    contentContainer: {
+        minHeight: windowHeight + 42,
+    },
     listWrapper: {
         width: "100%",
         height: "100%",

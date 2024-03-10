@@ -281,13 +281,12 @@ const Warehouse = ({navigation, route}) => {
         setScrollOffset(yOffset);
     }
 
+    // function to scrool to target offset
     const handleScrollToTarget = (offset) => {
         // scroll to target offset
         flatListRef.current.scrollToOffset({ offset, animated: true });
     };
 
-     // const top = useRef(new Animated.Value(50)).current;
-    //  const translateY = useRef(new Animated.Value(0)).current;
 
     // listen for keyboard opening or closing
     useEffect(() => {

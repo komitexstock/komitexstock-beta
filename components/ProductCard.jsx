@@ -10,18 +10,20 @@ import {
 import { black, bodyText, primaryColor, secondaryColor, white } from "../style/colors";
 // components
 import Indicator from '../components/Indicator';
+import Mark from "./Mark";
+import HighlightSearchedText from "./HighlightSearchedText";
+// utilities
 import { windowWidth } from "../utils/helpers";
 
-const maxCardWidth = windowWidth/2 - 28;
+// const maxCardWidth = windowWidth/2 - 28;
 
-const ProductCard = ({product_name, quantity, price, imageUrl, onPress}) => {
+const ProductCard = ({product_name, quantity, price, imageUrl, onPress, searchQuery}) => {
     // imageUrl => string | imagePath
     // quantity => int
     // price => float
     // lowStock => boolean
     // onPress => function
     // product_name => string
-
 
     // render ProductCard component
     return (
@@ -45,7 +47,7 @@ const ProductCard = ({product_name, quantity, price, imageUrl, onPress}) => {
             {/* product details */}
             <View style={style.textWrapper}>
                 <View style={style.productMainDetailsWrapper}>
-                    <Text style={style.productName}>{product_name}</Text>
+                    {!searchQuery ? <Text style={style.productName}>{product_name}</Text> : <HighlightSearchedText targetText={product_name} searchQuery={searchQuery} />}
                     <Text style={style.quantity}>{quantity} <Text style={style.stock}>in stock</Text></Text>
                 </View>
                 {/* display price as a string with comma seperations */}
@@ -103,12 +105,24 @@ const style = StyleSheet.create({
         flexWrap: "wrap",
     },  
     productName: {
-        fontFamily: "mulish-semibold",
         color: black,
+        fontFamily: "mulish-semibold",
         fontSize: 12,
         flexWrap: "wrap",   
         width: "100%",
         textTransform: 'capitalize',
+    },
+    searchedText: {
+        color: black,
+        fontFamily: "mulish-semibold",
+        fontSize: 12,
+        flexWrap: "wrap",   
+    },
+    searchTextWrapper: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'baseline',
     },
     quantity: {
         fontFamily: "mulish-regular",
