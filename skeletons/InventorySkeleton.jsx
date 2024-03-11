@@ -23,12 +23,6 @@ const InventorySkeleton = ({accountType}) => {
                     width={90}
                     shimmerColors={shimmerColorArray}
                     style={{borderRadius: 2}}
-                    />
-                <Skeleton 
-                    height={24}
-                    width={24}
-                    shimmerColors={shimmerColorArray}
-                    style={{borderRadius: 2}}
                 />
             </View>
 

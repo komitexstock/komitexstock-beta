@@ -704,7 +704,9 @@ const Home = ({navigation}) => {
             background: yellowLight,
             mainText: "Send Waybill",
             subText: "Restock your inventory with your preferred partner",
-            onPress: () => navigation.navigate("SendWaybill"),
+            onPress: () => navigation.navigate("SendWaybill", {
+                default_logistics: 'hKayAtQjkdIaCK2MpSEi',
+            }),
         },
         {
             id: 4,

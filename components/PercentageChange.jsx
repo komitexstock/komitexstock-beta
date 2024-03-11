@@ -98,6 +98,7 @@ const style = StyleSheet.create({
     },
     neutralPercentage: {
         backgroundColor: background,
+        opacity: 0,
     },
     percentagetext: {
         fontFamily: "mulish-regular",

@@ -28,10 +28,39 @@ import { accentLight, background, black, primaryColor } from "../style/colors";
 // globals
 import { useGlobals } from "../context/AppContext";
 
+// skeleton screen
+import SendWaybillSkeleton from "../skeletons/SendWaybillSkeleton";
+
+// auth
+import { useAuth } from "../context/AuthContext"
+
+// firebase
+import {
+    database,
+} from "../Firebase";
+
+// firestore functions
+import {
+    collection,
+    getDoc,
+    getDocs,
+    onSnapshot,
+    where,
+    query,
+    orderBy,
+    doc,
+} from "firebase/firestore";
+
 const SendWaybill = ({navigation}) => {
 
+    // auth data
+    const { authData } = useAuth();
+    
+    // page loding state
+    const [pageLoading, setPageLoading] = useState(true);
+
     // bottom sheet ref
-    const { bottomSheetRef, bottomSheetOpen } = useGlobals();
+    const { bottomSheetRef, bottomSheetOpen, setToast } = useGlobals();
 
     // state to store selected logistics
     const [logistics, setLogistics] = useState(null);
@@ -178,107 +207,117 @@ const SendWaybill = ({navigation}) => {
     
     return (
         <>
-            <TouchableWithoutFeedback
-                onPress={() => {
-                    Keyboard.dismiss();
-                    // dismiss keyboard onPress anywhere on the screen
-                }}
-            >
-                <ScrollView
-                    showsVerticalScrollIndicator={false}
-                    style={{
-                        minHeight: "100%",
-                        width: "100%",
-                        backgroundColor: background,
+            {!pageLoading ? <>
+                <TouchableWithoutFeedback
+                    onPress={() => {
+                        Keyboard.dismiss();
+                        // dismiss keyboard onPress anywhere on the screen
                     }}
                 >
-                    <View style={style.main}>
-                        <View style={style.mainContent}>
-                            {/* header component */}
-                            <Header 
-                                navigation={navigation} 
-                                stackName={"Send Waybill"} 
-                                iconFunction={null} 
-                                icon={null}
-                                unpadded={true}
-                            />
-                            <View style={style.container}>
-                                <View style={style.inputWrapper}>
-                                    {/* select logistics input */}
-                                    <SelectInput 
-                                        label={"Select Logistics"} 
-                                        placeholder={"Choose a logistics"} 
-                                        value={logistics}
-                                        onPress={() => openModal("Logistics", "Select Logistics", null, 0)}
-                                        icon={<ArrowDown />}
-                                        active={selectLogisticsActive}
-                                        inputFor={"Logistics"}
-                                    />
-                                    {/* select warehouse input */}
-                                    <SelectInput 
-                                        label={"Select Warehouse"} 
-                                        placeholder={"Choose a destination warehouse"} 
-                                        value={warehouse}
-                                        onPress={() => {}}
-                                        icon={<ArrowDown />}
-                                        active={selectWarehouseActive}
-                                        inputFor={"String"}
-                                    />
-                                    {/* waybill details */}
-                                    <Input 
-                                        label={"Waybill Details"} 
-                                        placeholder={"Driver's number or Waybill number"} 
-                                        onChange={updateWaybillDetails}
-                                        value={waybillDetails}
-                                        multiline={true}
-                                        maxRows={5}
-                                        textAlign={"top"}
-                                        height={100}
-                                        keyboardType={"default"}
-                                        error={errorWaybillDetails}
-                                        setError={setErrorWaybillDetails}
-                                    />
-                                    { logistics && // if logistics has been selected, allow selection of products
-                                        <View style={style.productsWrapper}>
-                                            <View style={style.productsHeading}>
-                                                <Text style={style.producPlaceholder}>Products Selected</Text>
-                                                <TouchableOpacity
-                                                    onPress={() => openModal("Products", "Select Products", null, 0)}
-                                                >
-                                                    <Text style={style.addProduct}>+Select Product</Text>
-                                                </TouchableOpacity>
-                                                <TouchableOpacity
-                                                    onPress={() => navigation.navigate("AddProduct")}
-                                                >
-                                                    <Text style={style.addProduct}>+New Product</Text>
-                                                </TouchableOpacity>
-                                            </View>
-                                            { products.length !== 0 ? products.map((product) => (
-                                                // map through selected products
-                                                <Product 
-                                                    key={product.id} 
-                                                    product={product} 
-                                                    removeProduct={removeProduct}
-                                                    increaseQuantity={increaseQuantity}
-                                                    decreaseQuantity={decreaseQuantity}
-                                                />
-                                                )) : (
-                                                // indicate no products selected
-                                                <View style={style.noProductWrapper}>
-                                                    <Text style={style.noProductText}>
-                                                        No product selected. Kindly add a new 
-                                                        product or select one from your inventory
-                                                    </Text>
+                    <ScrollView
+                        showsVerticalScrollIndicator={false}
+                        style={{
+                            minHeight: "100%",
+                            width: "100%",
+                            backgroundColor: background,
+                        }}
+                    >
+                        <View style={style.main}>
+                            <View style={style.mainContent}>
+                                {/* header component */}
+                                <Header 
+                                    navigation={navigation} 
+                                    stackName={"Send Waybill"} 
+                                    iconFunction={null} 
+                                    icon={null}
+                                    unpadded={true}
+                                />
+                                <View style={style.container}>
+                                    <View style={style.inputWrapper}>
+                                        {/* select logistics input */}
+                                        <SelectInput 
+                                            label={"Select Logistics"} 
+                                            placeholder={"Choose a logistics"} 
+                                            value={logistics}
+                                            onPress={() => openModal("Logistics", "Select Logistics", null, 0)}
+                                            icon={<ArrowDown />}
+                                            active={selectLogisticsActive}
+                                            inputFor={"Logistics"}
+                                        />
+                                        {/* select warehouse input */}
+                                        <SelectInput 
+                                            label={"Select Warehouse"} 
+                                            placeholder={"Choose a destination warehouse"} 
+                                            value={warehouse}
+                                            onPress={() => {}}
+                                            icon={<ArrowDown />}
+                                            active={selectWarehouseActive}
+                                            inputFor={"String"}
+                                        />
+                                        {/* waybill details */}
+                                        <Input 
+                                            label={"Waybill Details"} 
+                                            placeholder={"Driver's number or Waybill number"} 
+                                            onChange={updateWaybillDetails}
+                                            value={waybillDetails}
+                                            multiline={true}
+                                            maxRows={5}
+                                            textAlign={"top"}
+                                            height={100}
+                                            keyboardType={"default"}
+                                            error={errorWaybillDetails}
+                                            setError={setErrorWaybillDetails}
+                                        />
+                                        { logistics && // if logistics has been selected, allow selection of products
+                                            <View style={style.productsWrapper}>
+                                                <View style={style.productsHeading}>
+                                                    <Text style={style.producPlaceholder}>Products Selected</Text>
+                                                    <TouchableOpacity
+                                                        onPress={() => openModal("Products", "Select Products", null, 0)}
+                                                    >
+                                                        <Text style={style.addProduct}>+Select Product</Text>
+                                                    </TouchableOpacity>
+                                                    <TouchableOpacity
+                                                        onPress={() => navigation.navigate("AddProduct")}
+                                                    >
+                                                        <Text style={style.addProduct}>+New Product</Text>
+                                                    </TouchableOpacity>
                                                 </View>
-                                            )}
-                                        </View>
-                                    }
+                                                { products.length !== 0 ? products.map((product) => (
+                                                    // map through selected products
+                                                    <Product 
+                                                        key={product.id} 
+                                                        product={product} 
+                                                        removeProduct={removeProduct}
+                                                        increaseQuantity={increaseQuantity}
+                                                        decreaseQuantity={decreaseQuantity}
+                                                    />
+                                                    )) : (
+                                                    // indicate no products selected
+                                                    <View style={style.noProductWrapper}>
+                                                        <Text style={style.noProductText}>
+                                                            No product selected. Kindly add a new 
+                                                            product or select one from your inventory
+                                                        </Text>
+                                                    </View>
+                                                )}
+                                            </View>
+                                        }
+                                    </View>
                                 </View>
                             </View>
                         </View>
-                    </View>
-                </ScrollView>
-            </TouchableWithoutFeedback>
+                    </ScrollView>
+                </TouchableWithoutFeedback>
+                {/* show waybill summary */}
+                <CustomButton 
+                    name="Continue" 
+                    onPress={showWaybillSummary}
+                    backgroundColor={background}
+                    inactive={isAnyFieldEmpty}
+                    fixed={true}
+                />
+            </> : <SendWaybillSkeleton />}
             {/* bottom sheet */}
             <CustomBottomSheet
                 bottomSheetModalRef={bottomSheetRef}
@@ -311,14 +350,7 @@ const SendWaybill = ({navigation}) => {
                     />
                 )}
             </CustomBottomSheet>
-            {/* show waybill summary */}
-            <CustomButton 
-                name="Continue" 
-                onPress={showWaybillSummary}
-                backgroundColor={background}
-                inactive={isAnyFieldEmpty}
-                fixed={true}
-            />
+            
         </>
     );
 }

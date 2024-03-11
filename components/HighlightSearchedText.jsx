@@ -28,8 +28,8 @@ const HighlightSearchedText = ({targetText, searchQuery, fontFamily, fontSize, c
         return false;
     }
 
-    // function to capitalize words after space
-    capitalizeWordsAfterSpace = (str) => {
+    // function to capitalize words after space in text tring
+    const capitalizeWordsAfterSpace = (str) => {
         // Split the string into an array of words
         const words = str.split(" ");
     
@@ -42,6 +42,7 @@ const HighlightSearchedText = ({targetText, searchQuery, fontFamily, fontSize, c
         return words.join(" ");
     }
 
+    // return text
     return (
         <View style={style.searchTextWrapper}>
             { textArray.map((text, index) => {

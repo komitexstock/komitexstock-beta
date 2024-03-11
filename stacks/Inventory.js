@@ -561,7 +561,6 @@ const Products = ({navigation, route}) => {
 
     // function to scrool to target offset
     const handleScrollToTarget = (offset) => {
-        console.log("Offset: ", offset);
         // scroll to target offset
         flatListRef.current.scrollToOffset({ offset, animated: true });
     };
@@ -575,15 +574,12 @@ const Products = ({navigation, route}) => {
                 // just scroll to the point of the sticky header
                 handleScrollToTarget(stickyHeaderOffset.current);
                 setScrollOffset(stickyHeaderOffset.current);
-
-                console.log("Keyboard Open");
             }
         );
         
         // keyboard is closed
         const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
             // run any desired function here
-            console.log("Keyboard Closed");
         });
     
         return () => {
