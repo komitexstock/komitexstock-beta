@@ -16,15 +16,20 @@ import SelectInput from "../components/SelectInput";
 import CustomBottomSheet from "../components/CustomBottomSheet";
 import AddProductsModalContent from "../components/AddProductsModalContent";
 import AddSummaryModalContent from "../components/AddSummaryModalContent";
-import AddLogisticsModalContent from "../components/AddLogisticsModalContent";
 import CustomButton from "../components/CustomButton";
 import Product from "../components/Product";
+import SelectLogisticsModal from "../components/SelectLogisticsModal";
+import SelectWarehouseModal from "../components/SelectWarehouseModal";
+
 // icon
 import ArrowDown from "../assets/icons/ArrowDown";
+
 // react hooks
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
+
 // colors
 import { accentLight, background, black, primaryColor } from "../style/colors";
+
 // globals
 import { useGlobals } from "../context/AppContext";
 
@@ -51,33 +56,309 @@ import {
     doc,
 } from "firebase/firestore";
 
-const SendWaybill = ({navigation}) => {
+const SendWaybill = ({navigation, route}) => {
 
     // auth data
     const { authData } = useAuth();
+
+    // route parameters
+    const { default_logistics_id } = route.params || {};
     
     // page loding state
     const [pageLoading, setPageLoading] = useState(true);
+
+    // state to store search queries
+    const [searchQuery, setSearchQuery] = useState(null);
 
     // bottom sheet ref
     const { bottomSheetRef, bottomSheetOpen, setToast } = useGlobals();
 
     // state to store selected logistics
-    const [logistics, setLogistics] = useState(null);
+    const [logistics, setLogistics] = useState([]);
+
+    // selected logistics
+    const [ selectedLogistics, setSelectedLogistics ] = useState(null);
     
     // state to store chosen warehouse
-    const [warehouse, setWarehouse] = useState(null);
+    const [warehouses, setWarehouses] = useState(null);
+
+    // const selected warehouse
+    const [ selectedWarehouse, setSelectedWarehouse ] = useState(null);
 
     // state to store order details
     const [ waybillDetails, setWaybilldetails] = useState(null);
 
+    // products array
     const [products, setProducts] = useState([]);
+
+    // selected products array
+    const [selectedProducts, setSelectedProducts] = useState([]);
 
     // state to indicate if select logistics input is active
     const [selectLogisticsActive, setSelectLogisticsActive] = useState(false);
     
     // state to indicate if select warehouse input is active
     const [selectWarehouseActive, setSelectWarehouseActive] = useState(false);
+
+    // function to select logistics
+    const handleSelectedLogistics = (id) => {
+        // update logistics
+        setSelectedLogistics(() => {
+            return logistics.find(item => item.business_id === id);
+        })
+        // close bottomsheet
+        closeModal();
+    }
+
+    // get products, logistics and merchants
+    useEffect(() => {
+
+        // fetch logistics/merchant business details
+        const fetchBusiness = async (businessId) => {
+            try {
+                const docRef = doc(database, "businesses", businessId);
+                const docSnap = await getDoc(docRef);
+                return {
+                    banner_image: docSnap.data().banner_image,
+                    business_name: docSnap.data().business_name,
+                    verified: docSnap.data().verified,
+                };
+            } catch (error) {
+                console.log("fetchBusiness Error: ", error.message);
+                setToast({
+                    text: error.message,
+                    visible: true,
+                    type: "error",
+                });
+            }
+        }
+
+        // fetch product name
+        const fetchProductName = async (productId) => {
+            try {
+                const docRef = doc(database, "products", productId);
+                const docSnap = await getDoc(docRef);
+                return docSnap.data().product_name;
+            } catch (error) {
+                console.log("Error: ", error.message);
+                setToast({
+                    text: error.message,
+                    visible: true,
+                    type: "error",
+                });
+            }
+        }
+
+        // fetch products
+        const fetchProducts = async (businessId) => {
+            try {
+                const collectionRef = collection(database, "merchant_products");
+                let q = query(
+                    collectionRef,
+                    where("business_id", "==", businessId),
+                    orderBy("created_at")
+                );
+                
+                const unsubscribe = onSnapshot(q, async (querySnapshot) => {
+                    let productsArray = [];
+
+                    for (const doc of querySnapshot.docs) {
+                        // product data
+                        const productData = doc.data();
+
+                        // Fetch product name
+                        const productName = await fetchProductName(productData?.product_id);
+                        
+                        const product = {
+                            id: doc?.id,
+                            product_name: productName,
+                            product_image: productData.product_image, // produc
+                        };
+                        productsArray.push(product);
+                    }
+
+                    // set products
+                    setProducts(productsArray);
+
+                    // disable page loading state
+                    // setPageLoading(false);
+
+                }, (error) => { //handle errors
+                    console.log("Error: ", error.message);
+                    setToast({
+                        text: error.message,
+                        visible: true,
+                        type: "error",
+                    });
+                    // setPageLoading(false);
+                });
+    
+                return unsubscribe;
+            } catch (error) {
+                console.log("Caught Error: ", error.message);
+                setToast({
+                    text: error.message,
+                    visible: true,
+                    type: "error",
+                });
+
+                // disable page loading state
+                // setPageLoading(false);
+            }
+        };
+
+        // fetch logistics
+        const fetchLogistics = (businessId) => {
+            return new Promise((resolve, reject) => {
+                try {
+                    const collectionRef = collection(database, "business_partners");
+                    let q = query(
+                        collectionRef,
+                        where("merchant_business_id", "==", businessId),
+                        orderBy("created_at")
+                    );
+                    
+                    // Subscribe to real-time updates
+                    const unsubscribe = onSnapshot(q, async (querySnapshot) => {
+                        const logisticsArray = [];
+                        const promises = querySnapshot.docs.map(async (doc) => {
+                            const data = doc.data();
+                            if (!data.deactivated) {
+                                const logistics_business_id = data.logistics_business_id;
+                                
+                                // Fetch all business information, stock, and total locations in parallel
+                                const business = await fetchBusiness(logistics_business_id);
+                                
+                                const logisticsItem = {
+                                    business_id: logistics_business_id,
+                                    business_name: business?.business_name,
+                                    banner_image: business.banner_image,
+                                    verified: business?.verified,
+                                };
+                                
+                                logisticsArray.push(logisticsItem);
+                            }
+                        });
+                        
+                        // Wait for all promises to resolve
+                        await Promise.all(promises);
+                        
+                        // Set logistics
+                        setLogistics(logisticsArray);
+                        
+                        // check length of logistics array
+                        if (logisticsArray.length === 1) {
+                            setSelectedLogistics(logisticsArray[0]);
+                        } else {
+                            setSelectedLogistics(() => {
+                                return logisticsArray.find(item => item.business_id === default_logistics_id)
+                            });
+                        }
+                        
+                        // disable page loading state
+                        // setPageLoading(false);
+
+                        resolve(unsubscribe); // Resolve with unsubscribe function
+                    }, (error) => { //handle errors
+                        console.log("Error: ", error.message);
+                        setToast({
+                            text: error.message,
+                            visible: true,
+                            type: "error",
+                        });
+                        // setPageLoading(false);
+                        reject(error); // Reject with error
+                    });
+                } catch (error) {
+                    console.log("Fetch Logistics Caught Error: ", error.message);
+                    setToast({
+                        text: error.message,
+                        visible: true,
+                        type: "error",
+                    });
+                    reject(error); // Reject with error
+                }
+            });
+        };
+
+        // fecth products
+        fetchProducts(authData?.business_id);
+
+        // fetch logistics
+        fetchLogistics(authData?.business_id);
+
+    }, []);
+
+
+    // function to select warehouse
+    const handleSelectedWarehouse = (id) => {
+        // update warehouse
+        setSelectedWarehouse(() => {
+            return warehouses.find(item => item.id === id);
+        })
+        // close bottomsheet
+        closeModal();
+    }
+
+    // get warehouse
+    useEffect(() => {
+        
+        // fetch warehouses
+        const fetchWarehouses = async (business_id) => {
+            try {
+                // if no business id is received return from function
+                if (!business_id) return;
+                
+                const collectionRef = collection(database, "warehouses");
+                const q = query(
+                    collectionRef,
+                    where("business_id", "==", business_id),
+                    orderBy("created_at")
+                );
+
+                const querySnapshot = await getDocs(q);
+                
+                let warehouseList = [];
+
+                querySnapshot.forEach((doc) => {
+                    const warehouseData = doc.data();
+                    // only add warehouses that have a waybill receivable
+                    if (warehouseData.waybill_receivable) {
+                        const warehouse = {
+                            id: doc.id,
+                            warehouse_name: warehouseData.warehouse_name,
+                        };
+                        warehouseList.push(warehouse);
+                    }
+                });
+
+                // if search query is empty
+                setWarehouses(warehouseList);
+
+                if (warehouseList.length === 1) {
+                    setSelectedWarehouse(warehouseList[0]);
+                }
+
+                // disable page loading state
+                setPageLoading(false);
+            } catch (error) {
+                console.log("Caught Error: ", error.message);
+                setToast({
+                    text: error.message,
+                    visible: true,
+                    type: "error",
+                });
+
+                // disable page loading state
+                setPageLoading(false);
+            }
+        };
+
+        // fetch warehouses
+        fetchWarehouses(selectedLogistics?.business_id);
+
+    }, [selectedLogistics]);
+
 
     // state to control the type of modal to show in the bottom sheet
     const [modal, setModal] = useState({
@@ -89,9 +370,9 @@ const SendWaybill = ({navigation}) => {
     
     // close modal function
     const closeModal = () => {
-      bottomSheetRef.current?.close();
-      if (type === "Logistics") return setSelectLogisticsActive(false);
-      if (type === "Warehouse") return setSelectLogisticsActive(false);
+        bottomSheetRef.current?.close();
+        setSelectLogisticsActive(false);
+        setSelectWarehouseActive(false);
     };
 
     // function to open bottom sheet modal
@@ -105,17 +386,8 @@ const SendWaybill = ({navigation}) => {
             openAtIndex: openAtIndex
         });
         if (type === "Logistics") return setSelectLogisticsActive(true);
-        if (type === "Warehouse") return setSelectLogisticsActive(true);
-
+        if (type === "Warehouse") return setSelectWarehouseActive(true);
     }
-
-    // remove active states of select input
-    useEffect(() => {
-        if (!bottomSheetOpen) {
-            if (modal.type === "Logistics") return setSelectLogisticsActive(false);
-            if (modal.type === "Warehouse") return setSelectLogisticsActive(false);
-        }
-    }, [bottomSheetOpen])
 
     // check if any field is empty
     const isAnyFieldEmpty = [
@@ -185,12 +457,6 @@ const SendWaybill = ({navigation}) => {
         setWaybilldetails(text)
     }
     
-    // function to handle selected logistics
-    const handleSelectedLogistics = (data) => {
-        closeModal();
-        setLogistics(data);
-    }
-
     // state to indicate error in waybill details
     const [errorWaybillDetails, setErrorWaybillDetails] = useState(false);
 
@@ -238,18 +504,18 @@ const SendWaybill = ({navigation}) => {
                                         <SelectInput 
                                             label={"Select Logistics"} 
                                             placeholder={"Choose a logistics"} 
-                                            value={logistics}
+                                            value={selectedLogistics?.business_name}
                                             onPress={() => openModal("Logistics", "Select Logistics", null, 0)}
                                             icon={<ArrowDown />}
                                             active={selectLogisticsActive}
-                                            inputFor={"Logistics"}
+                                            inputFor={"String"}
                                         />
                                         {/* select warehouse input */}
                                         <SelectInput 
                                             label={"Select Warehouse"} 
                                             placeholder={"Choose a destination warehouse"} 
-                                            value={warehouse}
-                                            onPress={() => {}}
+                                            value={selectedWarehouse?.warehouse_name}
+                                            onPress={() => openModal("Warehouse", "Select Warehouse")}
                                             icon={<ArrowDown />}
                                             active={selectWarehouseActive}
                                             inputFor={"String"}
@@ -263,7 +529,7 @@ const SendWaybill = ({navigation}) => {
                                             multiline={true}
                                             maxRows={5}
                                             textAlign={"top"}
-                                            height={100}
+                                            height={64}
                                             keyboardType={"default"}
                                             error={errorWaybillDetails}
                                             setError={setErrorWaybillDetails}
@@ -283,7 +549,7 @@ const SendWaybill = ({navigation}) => {
                                                         <Text style={style.addProduct}>+New Product</Text>
                                                     </TouchableOpacity>
                                                 </View>
-                                                { products.length !== 0 ? products.map((product) => (
+                                                { selectedProducts.length !== 0 ? selectedProducts.map((product) => (
                                                     // map through selected products
                                                     <Product 
                                                         key={product.id} 
@@ -328,19 +594,29 @@ const SendWaybill = ({navigation}) => {
                 sheetSubtitle={modal.subtitle}
             >
                 {/* logistics modal content */}
-                {modal.type === "Logistics" && (
-                    <AddLogisticsModalContent 
-                        handleSelectedLogistics={handleSelectedLogistics}
+                {modal?.type === "Logistics" && (
+                    <SelectLogisticsModal
+                        logistics={logistics}
+                        searchQuery={searchQuery}
+                        setSearchQuery={setSearchQuery}
+                        onPress={handleSelectedLogistics}
+                    />
+                )}
+                {/* warehouse modal content */}
+                {modal?.type === "Warehouse" && (
+                    <SelectWarehouseModal
+                        warehouses={warehouses}
+                        onPress={handleSelectedWarehouse}
                     />
                 )}
                 {/* products modal content */}
-                {modal.type === "Products" && (
+                {modal?.type === "Products" && (
                     <AddProductsModalContent 
                         addProducts={addProducts} selectedProducts={products}
                     />
                 )}
                 {/* waybill summary modal content */}
-                {modal.type === "Summary" && (
+                {modal?.type === "Summary" && (
                     <AddSummaryModalContent 
                         logistics={logistics}
                         products={products}

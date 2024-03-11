@@ -75,6 +75,36 @@ const SendWaybillSkeleton = () => {
                         style={{borderRadius: 12}}
                     />
                 </View>
+                <View style={skeleton.inputContainer}>
+                    <View style={skeleton.productHeaderWrapper}>
+                        <Skeleton 
+                            height={15}
+                            width={97}
+                            shimmerColors={shimmerColorArray}
+                            style={{borderRadius: 2}}
+                        />
+                        <View style={skeleton.productButonWrapper}>
+                            <Skeleton 
+                                height={15}
+                                width={81}
+                                shimmerColors={shimmerColorArray}
+                                style={{borderRadius: 2}}
+                            />
+                            <Skeleton 
+                                height={15}
+                                width={81}
+                                shimmerColors={shimmerColorArray}
+                                style={{borderRadius: 2}}
+                            />
+                        </View>
+                    </View>
+                    <Skeleton 
+                        height={50}
+                        width={windowWidth - 40}
+                        shimmerColors={shimmerColorArray}
+                        style={{borderRadius: 12}}
+                    />
+                </View>
             </View>
             <View style={skeleton.buttonWrapper}>
                 <Skeleton 
@@ -119,6 +149,20 @@ const skeleton = StyleSheet.create({
         justifyContent: 'flex-start',
         alignItems: 'flex-start',
         gap: 4,
+    },
+    productHeaderWrapper: {
+        width: "100%",
+        display: "flex",
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+    },
+    productButonWrapper: {
+        display: "flex",
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+        gap: 10,
     },
     buttonWrapper: {
         position: "absolute",

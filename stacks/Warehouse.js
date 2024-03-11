@@ -159,7 +159,6 @@ const Warehouse = ({navigation, route}) => {
                     where("business_id", "==", business_id),
                     orderBy("created_at")
                 );
-                // variable to stroe raw warehouse array
                 
                 const unsubscribe = onSnapshot(q, async (querySnapshot) => {
                     let warehouseList = [];
