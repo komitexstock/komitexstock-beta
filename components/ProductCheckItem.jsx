@@ -1,36 +1,31 @@
 // react native components
-import { View, TouchableOpacity, Image, Text, StyleSheet } from "react-native";
+import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 //  components
 import CheckBox from "./CheckBox";
 import Avatar from "./Avatar";
 // colors
-import { primaryColor, listSeparator, checkBoxBorder, black } from "../style/colors";
+import { listSeparator, checkBoxBorder, black } from "../style/colors";
 
-const ProductCheckItem = ({data, onPress, unpadded}) => {
+const ProductCheckItem = ({productImage, productName, onPress, checked, unpadded}) => {
     return (
         <View style={[style.listItemWrapper, unpadded && {paddingRight: 0}]}>
             {/* product */}
             <TouchableOpacity
                 style={style.list}
-                onPress={() => onPress(data.id)}
+                onPress={onPress}
             >   
-                {/* product image */}
-                {/* <Image
-                    style={style.logisticsImage}
-                    source={data.imageUrl}
-                /> */}
                 <Avatar 
-                    fullname={data.product_name}
-                    imageUrl={data.imageUrl}
+                    fullname={productName}
+                    imageUrl={productImage}
                     squared={true}
                     diameter={30}
                 />
-                <Text style={style.listText}>{data.product_name}</Text>
+                <Text style={style.listText}>{productName}</Text>
             </TouchableOpacity>
             {/* checkbox */}
             <CheckBox      
-                value={data.checked}
-                onPress={() => onPress(data.id)}
+                value={checked}
+                onPress={onPress}
             />
         </View>
     );
@@ -67,6 +62,7 @@ const style = StyleSheet.create({
         fontSize: 12,
         flex: 1,
         color: black,
+        textTransform: 'capitalize',
     },
     checkBox: {
         width: 16,

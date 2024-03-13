@@ -53,7 +53,7 @@ const MerchantProduct = ({id, productName, merchant, availableQuantity, imageUrl
             >
                 <Avatar
                     imageUrl={imageUrl}
-                    diameter={summary ? 30 : 40}
+                    diameter={40}
                     squared={true}
                 />
                 <View style={style.textWrapper}>
@@ -167,6 +167,7 @@ const style = StyleSheet.create({
         flexWrap: "wrap",
         fontSize: 12,
         lineHeight: 14.4,
+        textTransform: "capitalize",
     },
     merchantName: {
         fontFamily: "mulish-regular",
@@ -211,7 +212,7 @@ const style = StyleSheet.create({
     summaryText: {
         fontSize: 12,
         color: black,
-        fontFamily: "mulish-medium",
+        fontFamily: "mulish-semibold",
     }
 })
  

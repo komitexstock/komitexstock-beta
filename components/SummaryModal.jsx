@@ -1,17 +1,19 @@
 // react native components
-import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 // colors
-import { accent, background, black, bodyText, primaryColor, white } from "../style/colors";
+import { accent, background, black, bodyText, white } from "../style/colors";
 // icons
 import InfoIconWhite from "../assets/icons/InfoIconWhite";
 // components
 import MerchantProduct from "./MerchantProduct";
 import CustomButton from "./CustomButton";
+// bottomsheet components
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 
 
-const AddSummaryModalContent = ({logistics, products, customerName, location, phoneNumber, price, address, waybillDetails, shipperLocation, receiverLocation, type, onPress, isLoading}) => {
+const SummaryModal = ({selectedLogistics, selectedProducts, customerName, location, phoneNumber, price, address, waybillDetails, selectedWarehouse, type, onPress, isLoading}) => {
     // logisitcs => object | business_name(string), company_id(string), verified(boolean), imageUrl
-    // products => array of object | product_name, quantity
+    // selectedProducts => array of object | product_name, quantity
     // customerName, location, address, waybillDetails, shipperLocation, receiverLocation => string
     // phoneNumber => array 
     // price => float
@@ -21,10 +23,14 @@ const AddSummaryModalContent = ({logistics, products, customerName, location, ph
     const receivable = price ? price - location.charge : null;
 
     // total quantity
-    const totalQuantity = products.reduce((accumulator, product) => accumulator + product.quantity, 0);
+    const totalQuantity = selectedProducts.reduce((accumulator, product) => accumulator + product.quantity, 0);
 
-    return (
-        <View style={style.mainContainer}>
+    return (<>
+        <BottomSheetScrollView 
+            showsVerticalScrollIndicator={false} 
+            style={style.container}
+            contentContainerStyle={style.mainContainer}
+        >
             <View style={style.listContainer}>
                 <View style={style.detailsWrapper}>
                     {/* order summary */}
@@ -35,7 +41,7 @@ const AddSummaryModalContent = ({logistics, products, customerName, location, ph
                             <Text style={style.detailDescription}>Delivery Address</Text>
                             <Text style={style.detail}>{address}</Text>
                             <Text style={style.detailDescription}>Logistics</Text>
-                            <Text style={style.detail}>{logistics.business_name}</Text>
+                            <Text style={style.detail}>{selectedLogistics}</Text>
                         </View>
                         <View style={style.rightAlignedText}>
                             <Text style={style.detailDescription}>Date</Text>
@@ -51,16 +57,14 @@ const AddSummaryModalContent = ({logistics, products, customerName, location, ph
                         <View style={style.leftAlignedText}>
                             <Text style={style.detailDescription}>Waybill Details</Text>
                             <Text style={style.detail}>{waybillDetails}</Text>
-                            <Text style={style.detailDescription}>Shipper's Location</Text>
-                            <Text style={style.detail}>{shipperLocation}</Text>
+                            <Text style={style.detailDescription}>Warehouse</Text>
+                            <Text style={[style.detail, {textTransform: "capitalize"}]}>{selectedWarehouse}</Text>
                         </View>
                         <View style={style.rightAlignedText}>
                             <Text style={style.detailDescription}>Date</Text>
                             <Text style={style.detail}>{"20 Dec, 2023 10.04am"}</Text>
                             <Text style={style.detailDescription}>Logistics</Text>
-                            <Text style={style.detail}>{logistics.business_name}</Text>
-                            <Text style={style.detailDescription}>Receiver's Location</Text>
-                            <Text style={style.detail}>{receiverLocation}</Text>
+                            <Text style={[style.detail, {textTransform: "capitalize"}]}>{selectedLogistics}</Text>
                         </View>
                     </>}
                 </View>
@@ -70,14 +74,19 @@ const AddSummaryModalContent = ({logistics, products, customerName, location, ph
                 <View 
                     style={style.listWrapper}  
                 >   
-                    {/* list of products */}
-                    {products.map(data => (
+                    {/* list of selectedProducts */}
+                    {selectedProducts.map(data => (
                         <MerchantProduct
                             key={data.id}
                             productName={data.product_name}
                             quantity={data.quantity}
-                            imageUrl={data.imageUrl}
+                            imageUrl={data?.product_image}
                             summary={true}
+                            containerStyle={{
+                                backgroundColor: background, 
+                                height: 63,
+                                gap: 0, 
+                            }}
                         />
                     ))}
                 </View>
@@ -111,19 +120,22 @@ const AddSummaryModalContent = ({logistics, products, customerName, location, ph
                     </>}
                 </View>
             </View>
-            <CustomButton
-                name={type === "order" ? "Confirm Order" : "Confirm Waybill"}
-                shrinkWrapper={true}
-                onPress={onPress}
-                unpadded={true}
-                isLoading={isLoading}
-            />
-        </View>
-    );
+        </BottomSheetScrollView>
+        <CustomButton
+            name={type === "order" ? "Confirm Order" : "Confirm Waybill"}
+            shrinkWrapper={true}
+            onPress={onPress}
+            unpadded={true}
+            isLoading={isLoading}
+        />
+    </>);
 }
 
 // stylesheet
 const style = StyleSheet.create({
+    container: {
+        width: '100%',
+    },
     mainContainer: {
         height: '100%',
         display: 'flex',
@@ -180,7 +192,6 @@ const style = StyleSheet.create({
         backgroundColor: background,
         borderTopRightRadius: 12,
         borderTopLeftRadius: 12,
-        gap: 10,
         padding: 10,
     },
     priceContainer: {
@@ -215,15 +226,15 @@ const style = StyleSheet.create({
         flexDirection:  'column',
         justifyContent: 'flex-start',
         height: '100%',
-        width: '50%',
+        flexGrow: 1,
         alignItems: 'flex-start',
     },
     rightAlignedText: {
-        width: '50%',
         display: 'flex',
         flexDirection:  'column',
         justifyContent: 'flex-start',
         height: '100%',
+        flexGrow: 1,
         alignItems: 'flex-end',
     },
     priceDescriptionText: {
@@ -251,4 +262,4 @@ const style = StyleSheet.create({
     }
 })
  
-export default AddSummaryModalContent;
+export default SummaryModal;

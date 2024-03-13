@@ -53,7 +53,7 @@ export const uploadFile = async (image, type, id, authData, storeData) => {
                 // Observe state change events such as progress, pause, and resume
                 // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
                 const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                console.log('Upload is ' + progress + '% done');
+                // console.log('Upload is ' + progress + '% done');
                 switch (snapshot.state) {
                     case 'paused':
                     // console.log('Upload is paused');
@@ -67,7 +67,7 @@ export const uploadFile = async (image, type, id, authData, storeData) => {
             }, 
             (error) => {
                 // Handle unsuccessful uploads
-                console.log(error.message);
+                console.log("Upload Task Error:", error.message);
             }, 
             () => {
                 // Handle successful uploads on complete
@@ -94,14 +94,14 @@ export const uploadFile = async (image, type, id, authData, storeData) => {
                         return true;
 
                     } catch (error) {
-                        console.log(error.message);
+                        console.log("Update Doc Error:", error.message);
                         return error;
                     }
                 });
             }
         );
     } catch (error) {
-        console.log(error.message);                
+        console.log("Upload File error:", error.message);                
         return error;
     }
 }

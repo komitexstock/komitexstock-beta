@@ -24,8 +24,8 @@ const Product = ({product, removeProduct, increaseQuantity, decreaseQuantity, in
             <View style={style.productDetailsWrapper}>
                 {/* product main detail */}
                 <Avatar
-                    fullname={product.product_name}
-                    imageUrl={product.imageUrl}
+                    fullname={product?.product_name}
+                    imageUrl={product?.product_image}
                     squared={true}
                 />
                 <Text style={style.productName}>
@@ -108,6 +108,7 @@ const style = StyleSheet.create({
         color: black,
         flexWrap: "wrap",
         fontSize: 12,
+        textTransform: "capitalize",
     },
     productQuantityWrapper: {
         display: "flex",

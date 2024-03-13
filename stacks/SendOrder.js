@@ -17,7 +17,7 @@ import CustomBottomSheet from "../components/CustomBottomSheet";
 import AddLogisticsModalContent from "../components/AddLogisticsModalContent";
 import AddLocationModalContent from "../components/AddLocationModalContent";
 import AddProductsModalContent from "../components/AddProductsModalContent";
-import AddSummaryModalContent from "../components/AddSummaryModalContent";
+import SummaryModal from "../components/SummaryModal";
 import CustomButton from "../components/CustomButton";
 import Product from "../components/Product";
 import AlertNotice from "../components/AlertNotice";
@@ -532,7 +532,7 @@ const SendOrder = ({navigation, route}) => {
                 )}
                 {/* if modal type is summary, render summary modal content */}
                 {modal.type === "Summary" && (
-                    <AddSummaryModalContent 
+                    <SummaryModal 
                         logistics={logistics}
                         customerName={customerName}
                         products={products}

@@ -14,7 +14,7 @@ import Input from "../components/Input";
 import Header from "../components/Header";
 import CustomButton from "../components/CustomButton";
 // react hooks
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 // icons
 import CameraPrimaryIcon from '../assets/icons/CameraPrimaryIcon';
@@ -57,10 +57,15 @@ import {
 // upload file function
 import { uploadFile } from "../database/common/storage";
 
-const AddProduct = ({navigation}) => {
+const AddProduct = ({navigation, route}) => {
 
     // auth data
     const { authData } = useAuth();
+
+    // route parameters
+    const { originPath } = useMemo(() => {
+        return route.params || "Inventory"
+    }, [route]);
 
     // toast function
     const { setToast } = useGlobals();
@@ -168,7 +173,6 @@ const AddProduct = ({navigation}) => {
             if (querySnapshot.size > 0) {
                 setIsLoading(false);
                 // throw error, if warehouse already exist
-                console.log(querySnapshot);
                 querySnapshot.forEach((doc) => {
                     // product id
                     productId = doc.id;
@@ -229,13 +233,16 @@ const AddProduct = ({navigation}) => {
                 docRef.id,
             );
 
-            console.log("Upload:", upload);
+            // console.log("Upload:", upload);
             
             // navigate to Inventory Products tab with success toast parammeter
-            navigation.navigate("Inventory", {
-                tab: "Products",
-                toastType: "Success",
-                toastText: "Product successfully created and saved!"
+            navigation.navigate({
+                name: originPath, 
+                params: {
+                    tab: "Products",
+                    toastType: "Success",
+                    toastText: "Product successfully created and saved!"
+                }
             });
             
             setIsLoading(false);

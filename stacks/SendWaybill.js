@@ -7,28 +7,27 @@ import {
     Keyboard,
     Text,
     TouchableOpacity,
-    BackHandler
 } from "react-native";
 // components
 import Header from "../components/Header";
 import Input from "../components/Input";
 import SelectInput from "../components/SelectInput";
 import CustomBottomSheet from "../components/CustomBottomSheet";
-import AddProductsModalContent from "../components/AddProductsModalContent";
-import AddSummaryModalContent from "../components/AddSummaryModalContent";
+import SummaryModal from "../components/SummaryModal";
 import CustomButton from "../components/CustomButton";
 import Product from "../components/Product";
 import SelectLogisticsModal from "../components/SelectLogisticsModal";
 import SelectWarehouseModal from "../components/SelectWarehouseModal";
+import SelectProductsModal from "../components/SelectProductsModal";
 
 // icon
 import ArrowDown from "../assets/icons/ArrowDown";
 
 // react hooks
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 // colors
-import { accentLight, background, black, primaryColor } from "../style/colors";
+import { accentLight, background, black, primaryColor, white } from "../style/colors";
 
 // globals
 import { useGlobals } from "../context/AppContext";
@@ -77,22 +76,19 @@ const SendWaybill = ({navigation, route}) => {
     const [logistics, setLogistics] = useState([]);
 
     // selected logistics
-    const [ selectedLogistics, setSelectedLogistics ] = useState(null);
+    const [selectedLogistics, setSelectedLogistics ] = useState(null);
     
     // state to store chosen warehouse
     const [warehouses, setWarehouses] = useState(null);
 
     // const selected warehouse
-    const [ selectedWarehouse, setSelectedWarehouse ] = useState(null);
+    const [selectedWarehouse, setSelectedWarehouse ] = useState(null);
 
     // state to store order details
-    const [ waybillDetails, setWaybilldetails] = useState(null);
+    const [waybillDetails, setWaybilldetails] = useState(null);
 
     // products array
-    const [products, setProducts] = useState([]);
-
-    // selected products array
-    const [selectedProducts, setSelectedProducts] = useState([]);
+    const [products, setProducts] = useState([]);;
 
     // state to indicate if select logistics input is active
     const [selectLogisticsActive, setSelectLogisticsActive] = useState(false);
@@ -109,6 +105,23 @@ const SendWaybill = ({navigation, route}) => {
         // close bottomsheet
         closeModal();
     }
+
+    // fetching warehouse
+    const [fetchingWarehouse, setFetchingWarehouse] = useState(true);
+
+    // fetching products
+    const [fetchingProducts, setFetchingProducts] = useState(true);
+
+    // selected products array
+    const selectedProducts = useMemo(() => {
+        if (products.length !== 0) setFetchingProducts(false); 
+        return products.filter(item => item.checked === true);
+    }, [products])
+
+    // disable page loading state, when all data is fetched
+    useEffect(() => {
+        if (!fetchingProducts && !fetchingWarehouse) setPageLoading(false);
+    }, [fetchingProducts, fetchingWarehouse])
 
     // get products, logistics and merchants
     useEffect(() => {
@@ -172,13 +185,45 @@ const SendWaybill = ({navigation, route}) => {
                         const product = {
                             id: doc?.id,
                             product_name: productName,
-                            product_image: productData.product_image, // produc
+                            product_image: productData.product_image, // product image
+                            checked: false,
+                            quantity: 1,
                         };
                         productsArray.push(product);
                     }
 
                     // set products
-                    setProducts(productsArray);
+                    setProducts((prevProducts) => {
+
+                        console.log("Existing Data:", prevProducts)
+
+                        // check for entry in productsArray thats not in prevProducts
+                        const newProducts = productsArray.filter(product => !prevProducts.some(prevProduct => prevProduct.id === product.id));
+
+                        console.log("New Data:", newProducts)
+
+                        // if there was a lis of products existing before new products were added
+                        if (prevProducts.length !== 0) return [
+                            ...prevProducts, 
+                            ...newProducts.map(product => {
+                                return {
+                                    ...product,
+                                    checked: true,
+                                }
+                            })
+                        ];
+
+                        // if multiple products exist
+                        if (productsArray.length !== 1) return productsArray;
+                        
+                        // if only one product exist auto select it
+                        return productsArray.map(product => {
+                            return {
+                                ...product,
+                                checked: true,
+                            }
+                        })
+                    });
 
                     // disable page loading state
                     // setPageLoading(false);
@@ -339,8 +384,9 @@ const SendWaybill = ({navigation, route}) => {
                     setSelectedWarehouse(warehouseList[0]);
                 }
 
-                // disable page loading state
-                setPageLoading(false);
+                // disable fetching warehouse state
+                setFetchingWarehouse(false);
+
             } catch (error) {
                 console.log("Caught Error: ", error.message);
                 setToast({
@@ -349,8 +395,8 @@ const SendWaybill = ({navigation, route}) => {
                     type: "error",
                 });
 
-                // disable page loading state
-                setPageLoading(false);
+                // disable fetching warehouse state
+                setFetchingWarehouse(false);
             }
         };
 
@@ -391,9 +437,9 @@ const SendWaybill = ({navigation, route}) => {
 
     // check if any field is empty
     const isAnyFieldEmpty = [
-            logistics, 
+            selectedLogistics, 
             waybillDetails,
-            products, 
+            selectedProducts, 
         ].some((item) => {
             return item === null || item === '' || item === undefined || item === 0 || item === NaN || (Array.isArray(item) && item.length === 0);
         }
@@ -401,7 +447,7 @@ const SendWaybill = ({navigation, route}) => {
 
     // function to show waybill summary bottomsheet modal
     const showWaybillSummary = () => {
-        openModal("Summary", "Waybill Summary", "Review your waybill details", 1);    
+        openModal("Summary", "Waybill Summary", "Review your waybill details", 2);    
     }
 
     // function to decrease quantity of a selected products
@@ -441,8 +487,19 @@ const SendWaybill = ({navigation, route}) => {
 
     // function to remove products
     const removeProduct = (id) => {
-        const newProduct = products.filter((product) => product.id !== id);
-        setProducts(newProduct);
+        // const newProduct = products.filter((product) => product.id !== id);
+        setProducts(prevProducts => {
+            return prevProducts.map(product => {
+                if (product.id === id) {
+                    return {
+                        ...product,
+                        quantity: 1,
+                        checked: false,
+                    }
+                }
+                return product;
+            })
+        });
     }
 
     // function to add products
@@ -470,7 +527,7 @@ const SendWaybill = ({navigation, route}) => {
             newChat: true,
         })
     }
-    
+
     return (
         <>
             {!pageLoading ? <>
@@ -539,12 +596,12 @@ const SendWaybill = ({navigation, route}) => {
                                                 <View style={style.productsHeading}>
                                                     <Text style={style.producPlaceholder}>Products Selected</Text>
                                                     <TouchableOpacity
-                                                        onPress={() => openModal("Products", "Select Products", null, 0)}
+                                                        onPress={() => openModal("Products", "Select Products", null, 2)}
                                                     >
                                                         <Text style={style.addProduct}>+Select Product</Text>
                                                     </TouchableOpacity>
                                                     <TouchableOpacity
-                                                        onPress={() => navigation.navigate("AddProduct")}
+                                                        onPress={() => navigation.navigate("AddProduct", {originPath: "SendWaybill"})}
                                                     >
                                                         <Text style={style.addProduct}>+New Product</Text>
                                                     </TouchableOpacity>
@@ -579,7 +636,7 @@ const SendWaybill = ({navigation, route}) => {
                 <CustomButton 
                     name="Continue" 
                     onPress={showWaybillSummary}
-                    backgroundColor={background}
+                    backgroundColor={white}
                     inactive={isAnyFieldEmpty}
                     fixed={true}
                 />
@@ -588,7 +645,7 @@ const SendWaybill = ({navigation, route}) => {
             <CustomBottomSheet
                 bottomSheetModalRef={bottomSheetRef}
                 closeModal={closeModal}
-                snapPointsArray={["40%", "80%"]}
+                snapPointsArray={["50%", "75%", "100%"]}
                 autoSnapAt={modal.openAtIndex}
                 sheetTitle={modal.title}
                 sheetSubtitle={modal.subtitle}
@@ -611,17 +668,22 @@ const SendWaybill = ({navigation, route}) => {
                 )}
                 {/* products modal content */}
                 {modal?.type === "Products" && (
-                    <AddProductsModalContent 
-                        addProducts={addProducts} selectedProducts={products}
+                    <SelectProductsModal 
+                        products={products}
+                        setProducts={setProducts}
+                        closeModal={closeModal}
+                        searchQuery={searchQuery}
+                        setSearchQuery={setSearchQuery}
                     />
                 )}
                 {/* waybill summary modal content */}
                 {modal?.type === "Summary" && (
-                    <AddSummaryModalContent 
-                        logistics={logistics}
-                        products={products}
-                        waybillDetails={waybillDetails}
+                    <SummaryModal
                         type={"waybill"}
+                        selectedLogistics={selectedLogistics?.business_name}
+                        waybillDetails={waybillDetails}
+                        selectedWarehouse={selectedWarehouse?.warehouse_name}
+                        selectedProducts={selectedProducts}
                         onPress={handleConfirmWaybill}
                     />
                 )}
