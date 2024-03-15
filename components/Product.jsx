@@ -13,7 +13,7 @@ import Avatar from "./Avatar";
 import ClearSearch from "../assets/icons/ClearSearch";
 import { background, black, white } from "../style/colors";
 
-const Product = ({product, removeProduct, increaseQuantity, decreaseQuantity, invertColor, disableQuanity}) => {
+const Product = ({product, handleQuantityChange, removeProduct, increaseQuantity, decreaseQuantity, invertColor, disableQuanity}) => {
     // product => object
     // removeProduct, increaseQuantity, decreaseQuantity => function
 
@@ -53,7 +53,8 @@ const Product = ({product, removeProduct, increaseQuantity, decreaseQuantity, in
                         {/* input quantity */}
                         <TextInput 
                             keyboardType="numeric"
-                            defaultValue={String(product.quantity)}
+                            value={String(product.quantity)}
+                            onChangeText={(text) => handleQuantityChange(text, product?.id)}
                             style={style.quantityInput}
                         />
                         {/* increase quantity button */}

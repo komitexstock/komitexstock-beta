@@ -9,6 +9,8 @@ import MerchantProduct from "./MerchantProduct";
 import CustomButton from "./CustomButton";
 // bottomsheet components
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+// import moment to handle time
+import moment from "moment";
 
 
 const SummaryModal = ({selectedLogistics, selectedProducts, customerName, location, phoneNumber, price, address, waybillDetails, selectedWarehouse, type, onPress, isLoading}) => {
@@ -21,6 +23,11 @@ const SummaryModal = ({selectedLogistics, selectedProducts, customerName, locati
 
     // amount receivable for merchants
     const receivable = price ? price - location.charge : null;
+
+    // today
+    const today = new Date(); // Replace this with your date
+
+    const formattedDate = moment(today).format("DD MMM, YYYY h:mm a")
 
     // total quantity
     const totalQuantity = selectedProducts.reduce((accumulator, product) => accumulator + product.quantity, 0);
@@ -45,7 +52,7 @@ const SummaryModal = ({selectedLogistics, selectedProducts, customerName, locati
                         </View>
                         <View style={style.rightAlignedText}>
                             <Text style={style.detailDescription}>Date</Text>
-                            <Text style={style.detail}>{"20 Dec, 2023 10.04am"}</Text>
+                            <Text style={style.detail}>{formattedDate}</Text>
                             <Text style={style.detailDescription}>Phone Number</Text>
                             <Text style={style.detail}>{phoneNumber.join(", ")}</Text>
                             <Text style={style.detailDescription}>Merchant</Text>
@@ -62,7 +69,7 @@ const SummaryModal = ({selectedLogistics, selectedProducts, customerName, locati
                         </View>
                         <View style={style.rightAlignedText}>
                             <Text style={style.detailDescription}>Date</Text>
-                            <Text style={style.detail}>{"20 Dec, 2023 10.04am"}</Text>
+                            <Text style={style.detail}>{formattedDate}</Text>
                             <Text style={style.detailDescription}>Logistics</Text>
                             <Text style={[style.detail, {textTransform: "capitalize"}]}>{selectedLogistics}</Text>
                         </View>
@@ -261,5 +268,5 @@ const style = StyleSheet.create({
         fontSize: 12,
     }
 })
- 
+
 export default SummaryModal;

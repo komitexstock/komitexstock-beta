@@ -112,3 +112,34 @@ exports.createBusinessPartner = functions.firestore
         console.log("Error: ", error.message);
       }
     });
+
+// create waybill activity
+exports.createWaybillActivty = functions.firestore
+    .document("waybills/{waybillId}")
+    .onCreate(async (snap) => {
+      const waybillDoc = snap.data();
+      const waybillId = snap.id;
+
+      console.log("Waybill Doc:", waybillDoc);
+
+      // recent activity fields
+      const recentActivity = {
+        merchant_business_id: waybillDoc.merchant_business_id,
+        logistics_business_id: waybillDoc.logistics_business_id,
+        is_increment: waybillDoc.is_increment,
+        created_at: admin.firestore.FieldValue.serverTimestamp(),
+        edited_at: admin.firestore.FieldValue.serverTimestamp(),
+        activity_type: "Waybill",
+        waybill_id: waybillId,
+      };
+
+      try {
+        // create document in recent_activities
+        await admin
+            .firestore().collection("recent_activities").add(recentActivity);
+        console.log("recent activity added successfully");
+      } catch (error) {
+        // Handle error
+        console.log("Error: ", error.message);
+      }
+    });

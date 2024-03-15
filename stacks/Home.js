@@ -38,7 +38,18 @@ import { useState, useEffect } from "react";
 // bottomsheet component
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 // colors
-import { accentLight, background, black, bodyText, greenLight, inputBorder, listSeperator4, primaryColor, secondaryColor, subText, white, yellowLight } from "../style/colors";
+import {
+    accentLight,
+    background,
+    black,
+    bodyText,
+    greenLight,
+    listSeperator4,
+    primaryColor,
+    secondaryColor,
+    white,
+    yellowLight,
+} from "../style/colors";
 // moment
 import moment from "moment";
 // home skeleton

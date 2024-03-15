@@ -7,6 +7,7 @@ import {
     Keyboard,
     Text,
     TouchableOpacity,
+    Platform,
 } from "react-native";
 // components
 import Header from "../components/Header";
@@ -24,7 +25,7 @@ import SelectProductsModal from "../components/SelectProductsModal";
 import ArrowDown from "../assets/icons/ArrowDown";
 
 // react hooks
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 
 // colors
 import { accentLight, background, black, primaryColor, white } from "../style/colors";
@@ -53,18 +54,27 @@ import {
     query,
     orderBy,
     doc,
+    serverTimestamp,
+    addDoc,
+    updateDoc,
 } from "firebase/firestore";
+import { windowHeight } from "../utils/helpers";
 
 const SendWaybill = ({navigation, route}) => {
 
     // auth data
     const { authData } = useAuth();
 
+    // console.log(authData)
+
     // route parameters
     const { default_logistics_id } = route.params || {};
     
     // page loding state
     const [pageLoading, setPageLoading] = useState(true);
+
+    // button loading state
+    const [isLoading, setIsLoading] = useState(false);
 
     // state to store search queries
     const [searchQuery, setSearchQuery] = useState(null);
@@ -86,6 +96,8 @@ const SendWaybill = ({navigation, route}) => {
 
     // state to store order details
     const [waybillDetails, setWaybilldetails] = useState(null);
+
+    const inputRef = useRef(null);
 
     // products array
     const [products, setProducts] = useState([]);;
@@ -195,12 +207,8 @@ const SendWaybill = ({navigation, route}) => {
                     // set products
                     setProducts((prevProducts) => {
 
-                        console.log("Existing Data:", prevProducts)
-
                         // check for entry in productsArray thats not in prevProducts
                         const newProducts = productsArray.filter(product => !prevProducts.some(prevProduct => prevProduct.id === product.id));
-
-                        console.log("New Data:", newProducts)
 
                         // if there was a lis of products existing before new products were added
                         if (prevProducts.length !== 0) return [
@@ -437,13 +445,20 @@ const SendWaybill = ({navigation, route}) => {
 
     // check if any field is empty
     const isAnyFieldEmpty = [
-            selectedLogistics, 
-            waybillDetails,
-            selectedProducts, 
-        ].some((item) => {
-            return item === null || item === '' || item === undefined || item === 0 || item === NaN || (Array.isArray(item) && item.length === 0);
-        }
-    );
+        selectedLogistics, 
+        waybillDetails,
+        selectedProducts, 
+    ].some(item => {
+        return item === null || 
+        item === '' || 
+        item === undefined || 
+        item === 0 || 
+        item === NaN || 
+        // item?.quantity === 0 || 
+        // item?.quantity === '' || 
+        (Array.isArray(item) && item?.length === 0 ) ||
+        (Array.isArray(item) && item.some(i => !i?.quantity));
+    });
 
     // function to show waybill summary bottomsheet modal
     const showWaybillSummary = () => {
@@ -485,6 +500,26 @@ const SendWaybill = ({navigation, route}) => {
         })
     }
 
+    // function to set quantity if its typed by the user
+    const handleQuantityChange = (text, id) => {
+        setProducts(prevProducts => {
+            return prevProducts.map(product => {
+                if (product.id === id) {
+                    let decrement;
+                    if (product.quantity === 1) decrement = 0;
+                    else decrement = 1
+                    return {
+                        ...product,
+                        quantity: !text ? '' : parseInt(text),
+                    }
+                } else {
+                    return product
+                }
+            })
+        })
+
+    }
+
     // function to remove products
     const removeProduct = (id) => {
         // const newProduct = products.filter((product) => product.id !== id);
@@ -502,13 +537,6 @@ const SendWaybill = ({navigation, route}) => {
         });
     }
 
-    // function to add products
-    const addProducts = (productsList) => {
-        setProducts(productsList);
-        closeModal();
-        // console.log(productsList)
-    }
-
     // function to update waybilldetails
     const updateWaybillDetails = (text) => {
         setWaybilldetails(text)
@@ -517,15 +545,210 @@ const SendWaybill = ({navigation, route}) => {
     // state to indicate error in waybill details
     const [errorWaybillDetails, setErrorWaybillDetails] = useState(false);
 
-    const handleConfirmWaybill = () => {
-        closeModal();
-        navigation.navigate("Chat", {
-            id: "abc123",
-            type: "Waybill",
-            name: "Komitex",
-            imageUrl: '../assets/images/komitex.png',
-            newChat: true,
-        })
+    // refer of the ScrollView component
+    const scrollRef = useRef(null);
+
+    // scroll offfset
+    const [scrollOffset, setScrollOffset] = useState(0);
+
+    // animated shadow when scroll height reaches sticky header
+    const handleScroll = (e) => {
+        const yOffset = e.nativeEvent.contentOffset.y;
+        setScrollOffset(yOffset);
+    }
+
+    // function to scrool to target offset
+    const handleScrollToTarget = (offset) => {
+        // scroll to target offset
+        scrollRef.current.scrollTo({ y: offset, animated: true });
+    };
+
+    // listen for keyboard opening or closing
+    useEffect(() => {
+        // if keyboard is open
+        const keyboardDidShowListener = Keyboard.addListener(
+            Platform.OS === 'android' ? 'keyboardDidShow' : 'keyboardWillShow', () => {
+                // if bottom sheet is open just return early
+                if (bottomSheetOpen) return;
+                // if keyboard was opened to edit waybill details, retun
+                if (inputRef.current.isFocused()) return;
+
+                // just scroll to the show product inputs properly
+                handleScrollToTarget(windowHeight);
+            }
+        );
+        
+        // keyboard is closed
+        const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+            // run any desired function here
+        });
+    
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        };
+    }, [scrollOffset]);
+
+    // reset inputs function
+    const handleResetInputs = () => {
+        // reset products
+        setProducts(prevProducts => {
+            return prevProducts.map(product => {
+                return {
+                    ...product,
+                    checked: false,
+                    quantity: 1,
+                }
+            })
+        });
+
+        // reset waybilldetails
+        setWaybilldetails('');
+
+        // reset warehouse
+        setSelectedWarehouse(null);
+    }
+
+    const handleConfirmWaybill = async () => {
+        try {
+            // initiate loading state
+            setIsLoading(true);
+
+            // waybill doc response
+            let waybillDocResponse;
+
+            // chat doc response
+            let chatDocResponse;
+
+            // messsage doc response
+            let messageDocResponse;
+
+            // chat participants array
+            let chatMembers = [];
+
+            // chat type
+            const chatType = "Waybill";
+
+            // products listed
+            let productsList = selectedProducts.map((product, index) => {
+                // seperate list of products by commas ','
+                return `${product.product_name} x ${product.quantity}`;
+            });
+
+            // get array of all quantities
+            const quantityArray = selectedProducts.map(product => {
+                return product.quantity;
+            });
+
+            // get array of all selectedProducts id
+            const productArray = selectedProducts.map(product => {
+                return product.id;
+            })
+
+            // if user is merchant
+            if (authData?.account_type === "Merchant") {
+                // add waybill doc
+                waybillDocResponse = await addDoc(collection(database, "waybills"), {
+                    merchant_business_id: authData?.business_id,
+                    logistics_business_id: selectedLogistics?.business_id,
+                    warehouse_id: selectedWarehouse.id,
+                    is_increment: true,
+                    status: "Pending",
+                    created_at: serverTimestamp(),
+                    edited_at: serverTimestamp(),
+                    status_updated_at: serverTimestamp(),
+                    rescheduled_date: null,
+                    created_by: authData?.uid,
+                    merchant_products_id: productArray,
+                    quantity: quantityArray,
+                    chat_id: null,
+                });
+
+                // get all users where business_id is merchant id or logistics id
+                const members = [authData?.business_id, selectedLogistics?.business_id];
+                const collectionRef = collection(database, "users");
+                let q = query(
+                    collectionRef, 
+                    where("business_id", "in", members),
+                    orderBy("created_at"),
+                );
+
+                // documents snapshot
+                const querySnapshot = await getDocs(q);
+
+                querySnapshot.forEach((doc) => {
+                    const docId = doc.id;
+                    // Push the document ID to the membersArray
+                    chatMembers.push(docId);
+                });
+
+                // add chat doc
+                chatDocResponse = await addDoc(collection(database, "chats"), {
+                    merchant_business_id: authData?.business_id,
+                    logistics_business_id: selectedLogistics?.business_id,
+                    waybill_id: waybillDocResponse.id,
+                    chat_type: chatType,
+                    chat_members: chatMembers,
+                });
+
+                // update waybill doc with chat id
+                await updateDoc(waybillDocResponse, {
+                    chat_id: chatDocResponse.id,
+                });
+
+                // add messages doc
+                messageDocResponse = await addDoc(collection(database, "messages"), {
+                    chat_id: chatDocResponse.id,
+                    user_id: authData?.uid,
+                    message_type: "text",
+                    file_uri: null,
+                    file_type: null,
+                    reply_id: null,
+                    rescheduled_date: null,
+                    created_at: serverTimestamp(),
+                    business_id: authData?.business_id,
+                    business_name: authData?.business_name,
+                    text: `Merchant: *${authData?.business_name}*\nLogistics: *${selectedLogistics?.business_name}*\nWarehouse Name: *${selectedWarehouse?.warehouse_name}*\nProduct: *${productsList}*\nWaybill Details: ${waybillDetails}`,
+                });
+
+                // add read_receipts doc
+                await addDoc(collection(database, "read_receipts"), {
+                    chat_id: chatDocResponse.id,
+                    message_id: messageDocResponse.id,
+                    user_id: authData?.uid,
+                    created_at: serverTimestamp(),
+                })
+            }
+
+            // reset inputs
+            handleResetInputs();
+
+            // disable loading state
+            setIsLoading(false);
+
+            // close bottomsheet modal
+            closeModal();
+
+            navigation.navigate("Chat", {
+                chat_id: chatDocResponse?.id || 'aaaa',
+                chat_type: chatType,
+                business_name: selectedLogistics?.business_name,
+                banner_image: selectedLogistics?.banner_image,
+                newChat: true,
+
+            });
+            
+        } catch (error) {
+            // disable loading state
+            setIsLoading(false);
+
+            console.log("Caught Error: ", error.message);
+            setToast({
+                text: error.message,
+                visible: true,
+                type: "error",
+            });
+        }
     }
 
     return (
@@ -544,6 +767,8 @@ const SendWaybill = ({navigation, route}) => {
                             width: "100%",
                             backgroundColor: background,
                         }}
+                        onScroll={handleScroll}
+                        ref={scrollRef}
                     >
                         <View style={style.main}>
                             <View style={style.mainContent}>
@@ -579,6 +804,7 @@ const SendWaybill = ({navigation, route}) => {
                                         />
                                         {/* waybill details */}
                                         <Input 
+                                            inputRef={inputRef}
                                             label={"Waybill Details"} 
                                             placeholder={"Driver's number or Waybill number"} 
                                             onChange={updateWaybillDetails}
@@ -609,8 +835,9 @@ const SendWaybill = ({navigation, route}) => {
                                                 { selectedProducts.length !== 0 ? selectedProducts.map((product) => (
                                                     // map through selected products
                                                     <Product 
-                                                        key={product.id} 
-                                                        product={product} 
+                                                        key={product.id}
+                                                        product={product}
+                                                        handleQuantityChange={handleQuantityChange}
                                                         removeProduct={removeProduct}
                                                         increaseQuantity={increaseQuantity}
                                                         decreaseQuantity={decreaseQuantity}
@@ -637,7 +864,7 @@ const SendWaybill = ({navigation, route}) => {
                     name="Continue" 
                     onPress={showWaybillSummary}
                     backgroundColor={white}
-                    inactive={isAnyFieldEmpty}
+                    // inactive={isAnyFieldEmpty}
                     fixed={true}
                 />
             </> : <SendWaybillSkeleton />}
@@ -685,6 +912,7 @@ const SendWaybill = ({navigation, route}) => {
                         selectedWarehouse={selectedWarehouse?.warehouse_name}
                         selectedProducts={selectedProducts}
                         onPress={handleConfirmWaybill}
+                        isLoading={isLoading}
                     />
                 )}
             </CustomBottomSheet>
