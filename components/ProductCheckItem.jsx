@@ -8,7 +8,12 @@ import { listSeparator, checkBoxBorder, black } from "../style/colors";
 
 const ProductCheckItem = ({productImage, productName, onPress, checked, unpadded}) => {
     return (
-        <View style={[style.listItemWrapper, unpadded && {paddingRight: 0}]}>
+        <View 
+            style={[
+                style.listItemWrapper, 
+                unpadded && {paddingRight: 0}
+            ]}
+        >
             {/* product */}
             <TouchableOpacity
                 style={style.list}

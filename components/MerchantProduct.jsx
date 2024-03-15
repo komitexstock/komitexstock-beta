@@ -63,7 +63,7 @@ const MerchantProduct = ({id, productName, merchant, availableQuantity, imageUrl
                     {/* merchant name */}
                     {merchant && (
                         <Text style={style.merchantName}>
-                            {merchant} {!summary && '\u2022' + availableQuantity + "available"}
+                            {merchant} {!summary && '\u2022 ' + availableQuantity + " available"}
                         </Text>
                     )}
                 </View>

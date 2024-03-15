@@ -17,7 +17,7 @@ import CustomBottomSheet from "../components/CustomBottomSheet";
 import SummaryModal from "../components/SummaryModal";
 import CustomButton from "../components/CustomButton";
 import Product from "../components/Product";
-import SelectLogisticsModal from "../components/SelectLogisticsModal";
+import SelectBusinessModal from "../components/SelectBusinessModal";
 import SelectWarehouseModal from "../components/SelectWarehouseModal";
 import SelectProductsModal from "../components/SelectProductsModal";
 
@@ -65,13 +65,22 @@ const SendWaybill = ({navigation, route}) => {
     // auth data
     const { authData } = useAuth();
 
-    // console.log(authData)
-
     // route parameters
     const { default_logistics_id } = route.params || {};
     
     // page loding state
     const [pageLoading, setPageLoading] = useState(true);
+
+    // fetching warehouse
+    const [fetchingWarehouse, setFetchingWarehouse] = useState(true);
+
+    // fetching products
+    const [fetchingProducts, setFetchingProducts] = useState(true);
+
+    // disable page loading state, when all data is fetched
+    useEffect(() => {
+        if (!fetchingProducts && !fetchingWarehouse) setPageLoading(false);
+    }, [fetchingProducts, fetchingWarehouse]);
 
     // button loading state
     const [isLoading, setIsLoading] = useState(false);
@@ -87,6 +96,12 @@ const SendWaybill = ({navigation, route}) => {
 
     // selected logistics
     const [selectedLogistics, setSelectedLogistics ] = useState(null);
+    
+    // state to store selected merchants
+    const [merchants, setMerchants] = useState([]);
+
+    // selected merchants
+    const [selectedMerchant, setSelectedMerchant ] = useState(null);
     
     // state to store chosen warehouse
     const [warehouses, setWarehouses] = useState(null);
@@ -105,6 +120,9 @@ const SendWaybill = ({navigation, route}) => {
     // state to indicate if select logistics input is active
     const [selectLogisticsActive, setSelectLogisticsActive] = useState(false);
     
+    // state to indicate if select logistics input is active
+    const [selectMerchantActive, setSelectMerchantActive] = useState(false);
+    
     // state to indicate if select warehouse input is active
     const [selectWarehouseActive, setSelectWarehouseActive] = useState(false);
 
@@ -118,24 +136,23 @@ const SendWaybill = ({navigation, route}) => {
         closeModal();
     }
 
-    // fetching warehouse
-    const [fetchingWarehouse, setFetchingWarehouse] = useState(true);
-
-    // fetching products
-    const [fetchingProducts, setFetchingProducts] = useState(true);
+    // function to select merchant
+    const handleSelectedMerchant = (id) => {
+        // update merchant
+        setSelectedMerchant(() => {
+            return merchants.find(item => item.business_id === id);
+        })
+        // close bottomsheet
+        closeModal();
+    }
 
     // selected products array
     const selectedProducts = useMemo(() => {
-        if (products.length !== 0) setFetchingProducts(false); 
         return products.filter(item => item.checked === true);
     }, [products])
 
-    // disable page loading state, when all data is fetched
-    useEffect(() => {
-        if (!fetchingProducts && !fetchingWarehouse) setPageLoading(false);
-    }, [fetchingProducts, fetchingWarehouse])
 
-    // get products, logistics and merchants
+    // get logistics and merchants
     useEffect(() => {
 
         // fetch logistics/merchant business details
@@ -158,6 +175,155 @@ const SendWaybill = ({navigation, route}) => {
             }
         }
 
+        // fetch logistics
+        const fetchLogistics = (businessId) => {
+            return new Promise((resolve, reject) => {
+                try {
+                    const collectionRef = collection(database, "business_partners");
+                    let q = query(
+                        collectionRef,
+                        where("merchant_business_id", "==", businessId),
+                        orderBy("created_at")
+                    );
+                    
+                    // Subscribe to real-time updates
+                    const unsubscribe = onSnapshot(q, async (querySnapshot) => {
+                        const logisticsArray = [];
+                        const promises = querySnapshot.docs.map(async (doc) => {
+                            const data = doc.data();
+                            if (!data.deactivated) {
+                                const logistics_business_id = data.logistics_business_id;
+                                
+                                // Fetch all business information
+                                const business = await fetchBusiness(logistics_business_id);
+                                
+                                const logisticsItem = {
+                                    business_id: logistics_business_id,
+                                    business_name: business?.business_name,
+                                    banner_image: business.banner_image,
+                                    verified: business?.verified,
+                                };
+                                
+                                logisticsArray.push(logisticsItem);
+                            }
+                        });
+                        
+                        // Wait for all promises to resolve
+                        await Promise.all(promises);
+                        
+                        // Set logistics
+                        setLogistics(logisticsArray);
+                        
+                        // check length of logistics array
+                        if (logisticsArray.length === 1) {
+                            setSelectedLogistics(logisticsArray[0]);
+                        } else {
+                            setSelectedLogistics(() => {
+                                return logisticsArray.find(item => item.business_id === default_logistics_id)
+                            });
+                        }
+                        
+                        // disable page loading state
+                        // setPageLoading(false);
+
+                        resolve(unsubscribe); // Resolve with unsubscribe function
+                    }, (error) => { //handle errors
+                        console.log("Error: ", error.message);
+                        setToast({
+                            text: error.message,
+                            visible: true,
+                            type: "error",
+                        });
+                        // setPageLoading(false);
+                        reject(error); // Reject with error
+                    });
+                } catch (error) {
+                    console.log("Fetch Logistics Caught Error: ", error.message);
+                    setToast({
+                        text: error.message,
+                        visible: true,
+                        type: "error",
+                    });
+                    reject(error); // Reject with error
+                }
+            });
+        };
+
+        // fetch merchants
+        const fetchMerchants = (businessId) => {
+            return new Promise((resolve, reject) => {
+                try {
+                    const collectionRef = collection(database, "business_partners");
+                    let q = query(
+                        collectionRef,
+                        where("logistics_business_id", "==", businessId),
+                        orderBy("created_at")
+                    );
+                    
+                    // Subscribe to real-time updates
+                    const unsubscribe = onSnapshot(q, async (querySnapshot) => {
+                        const merchantsArray = [];
+                        const promises = querySnapshot.docs.map(async (doc) => {
+                            const data = doc.data();
+                            if (!data.deactivated) {
+                                const merchant_business_id = data.merchant_business_id;
+                                
+                                // Fetch all business information
+                                const business = await fetchBusiness(merchant_business_id);
+                                
+                                const merchantItem = {
+                                    business_id: merchant_business_id,
+                                    business_name: business?.business_name,
+                                    banner_image: business.banner_image,
+                                    verified: business?.verified,
+                                };
+                                
+                                merchantsArray.push(merchantItem);
+                            }
+                        });
+                        
+                        // Wait for all promises to resolve
+                        await Promise.all(promises);
+                        
+                        // Set merchant
+                        setMerchants(merchantsArray);
+                        
+                        // check length of merchant array
+                        if (merchantsArray.length === 1) {
+                            setSelectedMerchant(merchantsArray[0]);
+                        }
+                        
+                        resolve(unsubscribe); // Resolve with unsubscribe function
+                    }, (error) => { //handle errors
+                        console.log("Error: ", error.message);
+                        setToast({
+                            text: error.message,
+                            visible: true,
+                            type: "error",
+                        });
+                        // setPageLoading(false);
+                        reject(error); // Reject with error
+                    });
+                } catch (error) {
+                    console.log("Fetch Merchant Caught Error: ", error.message);
+                    setToast({
+                        text: error.message,
+                        visible: true,
+                        type: "error",
+                    });
+                    reject(error); // Reject with error
+                }
+            });
+        };
+
+        // fetch logistics
+        authData?.account_type === "Merchant" ? fetchLogistics(authData?.business_id) : fetchMerchants(authData?.business_id);
+
+    }, []);
+
+    // fetch products
+    useEffect(() => {
+
         // fetch product name
         const fetchProductName = async (productId) => {
             try {
@@ -177,6 +343,13 @@ const SendWaybill = ({navigation, route}) => {
         // fetch products
         const fetchProducts = async (businessId) => {
             try {
+
+                // if business id is undefined return
+                if (!businessId) {
+                    // disable page loading state
+                    return setFetchingProducts(false);
+                }
+
                 const collectionRef = collection(database, "merchant_products");
                 let q = query(
                     collectionRef,
@@ -234,16 +407,18 @@ const SendWaybill = ({navigation, route}) => {
                     });
 
                     // disable page loading state
-                    // setPageLoading(false);
+                    setFetchingProducts(false);
 
                 }, (error) => { //handle errors
+                    // disable page loading state
+                    setFetchingProducts(false);
+
                     console.log("Error: ", error.message);
                     setToast({
                         text: error.message,
                         visible: true,
                         type: "error",
                     });
-                    // setPageLoading(false);
                 });
     
                 return unsubscribe;
@@ -256,95 +431,143 @@ const SendWaybill = ({navigation, route}) => {
                 });
 
                 // disable page loading state
-                // setPageLoading(false);
+                setFetchingProducts(false);
             }
         };
 
-        // fetch logistics
-        const fetchLogistics = (businessId) => {
-            return new Promise((resolve, reject) => {
-                try {
-                    const collectionRef = collection(database, "business_partners");
-                    let q = query(
-                        collectionRef,
-                        where("merchant_business_id", "==", businessId),
-                        orderBy("created_at")
-                    );
-                    
-                    // Subscribe to real-time updates
-                    const unsubscribe = onSnapshot(q, async (querySnapshot) => {
-                        const logisticsArray = [];
-                        const promises = querySnapshot.docs.map(async (doc) => {
-                            const data = doc.data();
-                            if (!data.deactivated) {
-                                const logistics_business_id = data.logistics_business_id;
-                                
-                                // Fetch all business information, stock, and total locations in parallel
-                                const business = await fetchBusiness(logistics_business_id);
-                                
-                                const logisticsItem = {
-                                    business_id: logistics_business_id,
-                                    business_name: business?.business_name,
-                                    banner_image: business.banner_image,
-                                    verified: business?.verified,
-                                };
-                                
-                                logisticsArray.push(logisticsItem);
-                            }
-                        });
-                        
-                        // Wait for all promises to resolve
-                        await Promise.all(promises);
-                        
-                        // Set logistics
-                        setLogistics(logisticsArray);
-                        
-                        // check length of logistics array
-                        if (logisticsArray.length === 1) {
-                            setSelectedLogistics(logisticsArray[0]);
-                        } else {
-                            setSelectedLogistics(() => {
-                                return logisticsArray.find(item => item.business_id === default_logistics_id)
-                            });
-                        }
-                        
-                        // disable page loading state
-                        // setPageLoading(false);
+        const fetchMerchantProduct = async (merchantId) => {
+            try {
+                const docRef = doc(database, "merchant_products", merchantId);
+                const docSnap = await getDoc(docRef);
+                const productId = docSnap.data().product_id;
+                const productImage = docSnap.data().product_image;
+                // Fetch product name
+                const productName = await fetchProductName(productId);
 
-                        resolve(unsubscribe); // Resolve with unsubscribe function
-                    }, (error) => { //handle errors
-                        console.log("Error: ", error.message);
-                        setToast({
-                            text: error.message,
-                            visible: true,
-                            type: "error",
-                        });
-                        // setPageLoading(false);
-                        reject(error); // Reject with error
+                // return product information object
+                return { productId, productImage, productName }
+
+            } catch (error) {
+                console.log("Error: ", error.message);
+                setToast({
+                    text: error.message,
+                    visible: true,
+                    type: "error",
+                });
+            }
+        }
+
+        // fetch products
+        const fetchInventoryProducts = async (businessId, warehouseId) => {
+            try {
+
+                // if business id is undefined return
+                if (!businessId || !warehouseId) {
+                    // disable page loading state
+                    return setFetchingProducts(false);
+                }
+
+                const collectionRef = collection(database, "inventories");
+                let q = query(
+                    collectionRef,
+                    where("merchant_business_id", "==", businessId),
+                    where("warehouse_id", "==", warehouseId),
+                );
+                
+                const unsubscribe = onSnapshot(q, async (querySnapshot) => {
+                    let productsArray = [];
+
+                    for (const doc of querySnapshot.docs) {
+                        // product data
+                        const productData = doc.data();
+
+                        // Fetch merchant product
+                        const merchantProduct = await fetchMerchantProduct(productData?.merchant_business_id);
+                        
+                        const product = {
+                            id: merchantProduct?.productId,
+                            product_name: merchantProduct?.productName,
+                            product_image: merchantProduct?.productImage, // product image
+                            checked: false,
+                            quantity: 1,
+                            available_quantity: productData?.quantity
+                        };
+                        productsArray.push(product);
+                    }
+
+                    // set products
+                    setProducts((prevProducts) => {
+
+                        // check for entry in productsArray thats not in prevProducts
+                        const newProducts = productsArray.filter(product => !prevProducts.some(prevProduct => prevProduct.id === product.id));
+
+                        // if there was a lis of products existing before new products were added
+                        if (prevProducts.length !== 0) return [
+                            ...prevProducts, 
+                            ...newProducts.map(product => {
+                                return {
+                                    ...product,
+                                    checked: true,
+                                }
+                            })
+                        ];
+
+                        // if multiple products exist
+                        if (productsArray.length !== 1) return productsArray;
+                        
+                        // if only one product exist auto select it
+                        return productsArray.map(product => {
+                            return {
+                                ...product,
+                                checked: true,
+                            }
+                        })
                     });
-                } catch (error) {
-                    console.log("Fetch Logistics Caught Error: ", error.message);
+
+                    // disable loading state
+                    setFetchingProducts(false);
+
+                }, (error) => { //handle errors
+                    console.log("Error: ", error.message);
                     setToast({
                         text: error.message,
                         visible: true,
                         type: "error",
                     });
-                    reject(error); // Reject with error
-                }
-            });
+
+                    // disable loading state
+                    setFetchingProducts(false);
+                });
+    
+                return unsubscribe;
+            } catch (error) {
+                console.log("Caught Error: ", error.message);
+                setToast({
+                    text: error.message,
+                    visible: true,
+                    type: "error",
+                });
+
+                // disable loading state
+                setFetchingProducts(false);
+            }
         };
 
-        // fecth products
-        fetchProducts(authData?.business_id);
+        // fecth products   
+        authData?.account_type === "Merchant" ? 
+        fetchProducts(authData?.business_id) : 
+        fetchInventoryProducts(selectedMerchant?.business_id, selectedWarehouse?.id);
 
-        // fetch logistics
-        fetchLogistics(authData?.business_id);
 
-    }, []);
+    }, [selectedMerchant, selectedWarehouse])
 
 
     // function to select warehouse
     const handleSelectedWarehouse = (id) => {
+
+        // if account is a logistics, changing warehouses imply fetching products
+        if (authData?.account_type !== "Merchant") setFetchingProducts(true);
+        
         // update warehouse
         setSelectedWarehouse(() => {
             return warehouses.find(item => item.id === id);
@@ -360,7 +583,10 @@ const SendWaybill = ({navigation, route}) => {
         const fetchWarehouses = async (business_id) => {
             try {
                 // if no business id is received return from function
-                if (!business_id) return;
+                if (!business_id) {
+                    // disable fetching warehouse state
+                    return setFetchingWarehouse(false);
+                }
                 
                 const collectionRef = collection(database, "warehouses");
                 const q = query(
@@ -376,7 +602,13 @@ const SendWaybill = ({navigation, route}) => {
                 querySnapshot.forEach((doc) => {
                     const warehouseData = doc.data();
                     // only add warehouses that have a waybill receivable
-                    if (warehouseData.waybill_receivable) {
+                    if (warehouseData.waybill_receivable && authData?.account_type === "Merchant") {
+                        const warehouse = {
+                            id: doc.id,
+                            warehouse_name: warehouseData.warehouse_name,
+                        };
+                        warehouseList.push(warehouse);
+                    } else{
                         const warehouse = {
                             id: doc.id,
                             warehouse_name: warehouseData.warehouse_name,
@@ -386,7 +618,10 @@ const SendWaybill = ({navigation, route}) => {
                 });
 
                 // if search query is empty
-                setWarehouses(warehouseList);
+                setWarehouses(() => {
+                    // sort warehouse list alphabetically
+                    return warehouseList.sort((a, b) => a.warehouse_name.localeCompare(b.warehouse_name));
+                });
 
                 if (warehouseList.length === 1) {
                     setSelectedWarehouse(warehouseList[0]);
@@ -409,7 +644,11 @@ const SendWaybill = ({navigation, route}) => {
         };
 
         // fetch warehouses
-        fetchWarehouses(selectedLogistics?.business_id);
+        fetchWarehouses(
+            authData?.account_type === "Merchant" ?
+            selectedLogistics?.business_id :
+            authData?.business_id
+        );
 
     }, [selectedLogistics]);
 
@@ -505,9 +744,6 @@ const SendWaybill = ({navigation, route}) => {
         setProducts(prevProducts => {
             return prevProducts.map(product => {
                 if (product.id === id) {
-                    let decrement;
-                    if (product.quantity === 1) decrement = 0;
-                    else decrement = 1
                     return {
                         ...product,
                         quantity: !text ? '' : parseInt(text),
@@ -569,7 +805,14 @@ const SendWaybill = ({navigation, route}) => {
         const keyboardDidShowListener = Keyboard.addListener(
             Platform.OS === 'android' ? 'keyboardDidShow' : 'keyboardWillShow', () => {
                 // if bottom sheet is open just return early
-                if (bottomSheetOpen) return;
+                if (bottomSheetOpen) {
+                    return setModal(prevModal => {
+                        return {
+                            ...prevModal,
+                            openAtIndex: 2
+                        }
+                    })
+                };
                 // if keyboard was opened to edit waybill details, retun
                 if (inputRef.current.isFocused()) return;
 
@@ -783,7 +1026,8 @@ const SendWaybill = ({navigation, route}) => {
                                 <View style={style.container}>
                                     <View style={style.inputWrapper}>
                                         {/* select logistics input */}
-                                        <SelectInput 
+                                        {/* show merchants select logistics input */}
+                                        { authData?.account_type !== "Logistics" && <SelectInput 
                                             label={"Select Logistics"} 
                                             placeholder={"Choose a logistics"} 
                                             value={selectedLogistics?.business_name}
@@ -791,7 +1035,7 @@ const SendWaybill = ({navigation, route}) => {
                                             icon={<ArrowDown />}
                                             active={selectLogisticsActive}
                                             inputFor={"String"}
-                                        />
+                                        />}
                                         {/* select warehouse input */}
                                         <SelectInput 
                                             label={"Select Warehouse"} 
@@ -802,6 +1046,17 @@ const SendWaybill = ({navigation, route}) => {
                                             active={selectWarehouseActive}
                                             inputFor={"String"}
                                         />
+                                        {/* select merchant input */}
+                                        {/* show logistics select merchant input */}
+                                        { authData?.account_type !== "Merchant" && <SelectInput 
+                                            label={"Select Merchant"} 
+                                            placeholder={"Choose a Merchant"} 
+                                            value={selectedMerchant?.business_name}
+                                            onPress={() => openModal("Merchant", "Select Merchant", null, 0)}
+                                            icon={<ArrowDown />}
+                                            active={selectMerchantActive}
+                                            inputFor={"String"}
+                                        />}
                                         {/* waybill details */}
                                         <Input 
                                             inputRef={inputRef}
@@ -836,11 +1091,14 @@ const SendWaybill = ({navigation, route}) => {
                                                     // map through selected products
                                                     <Product 
                                                         key={product.id}
-                                                        product={product}
-                                                        handleQuantityChange={handleQuantityChange}
+                                                        id={product?.id}
+                                                        productName={product?.product_name}
+                                                        productImage={product?.product_image}
+                                                        quantity={product?.quantity}
                                                         removeProduct={removeProduct}
                                                         increaseQuantity={increaseQuantity}
                                                         decreaseQuantity={decreaseQuantity}
+                                                        handleQuantityChange={handleQuantityChange}
                                                     />
                                                     )) : (
                                                     // indicate no products selected
@@ -864,7 +1122,7 @@ const SendWaybill = ({navigation, route}) => {
                     name="Continue" 
                     onPress={showWaybillSummary}
                     backgroundColor={white}
-                    // inactive={isAnyFieldEmpty}
+                    inactive={isAnyFieldEmpty}
                     fixed={true}
                 />
             </> : <SendWaybillSkeleton />}
@@ -878,12 +1136,13 @@ const SendWaybill = ({navigation, route}) => {
                 sheetSubtitle={modal.subtitle}
             >
                 {/* logistics modal content */}
-                {modal?.type === "Logistics" && (
-                    <SelectLogisticsModal
-                        logistics={logistics}
+                {["Logistics", "Merchant"].includes(modal?.type)  && (
+                    <SelectBusinessModal
+                        business={authData?.account_type === "Merchant" ? logistics : merchants}
                         searchQuery={searchQuery}
                         setSearchQuery={setSearchQuery}
                         onPress={handleSelectedLogistics}
+                        modalType={modal?.type}
                     />
                 )}
                 {/* warehouse modal content */}
@@ -901,6 +1160,7 @@ const SendWaybill = ({navigation, route}) => {
                         closeModal={closeModal}
                         searchQuery={searchQuery}
                         setSearchQuery={setSearchQuery}
+                        fetchingProducts={fetchingProducts}
                     />
                 )}
                 {/* waybill summary modal content */}

@@ -4,6 +4,7 @@ import { View, Text, StyleSheet } from "react-native";
 import SearchBar from "./SearchBar";
 import ProductCheckItem from "./ProductCheckItem";
 import CustomButton from "./CustomButton";
+import ProductCheckItemSkeleton from "../skeletons/ProductCheckItemSkeleton";
 // react hook
 import { useState } from "react";
 // bottomsheet components
@@ -14,7 +15,7 @@ import { background, black, primaryColor, white } from "../style/colors";
 import { useEffect } from "react";
 
 
-const SelectProductsModal = ({products, setProducts, closeModal, alternateFunction, searchQuery, setSearchQuery}) => {
+const SelectProductsModal = ({products, setProducts, closeModal, alternateFunction, searchQuery, setSearchQuery, fetchingProducts}) => {
     // addProducts, selectedProducts => function
 
     const [productsSelection, setProductsSelection] = useState([]);
@@ -65,7 +66,7 @@ const SelectProductsModal = ({products, setProducts, closeModal, alternateFuncti
                     contentContainerStyle={style.listContainer}
                 >
                     {/* list of product with selected logistics */}
-                    {productsSelection?.map((product) => (
+                    {!fetchingProducts && productsSelection?.map((product) => (
                         <ProductCheckItem 
                             key={product.id}
                             productImage={product?.product_image}
@@ -74,6 +75,11 @@ const SelectProductsModal = ({products, setProducts, closeModal, alternateFuncti
                             onPress={() => handleSelectedProducts(product?.id)}
                         />
                     ))}
+
+                    {/* show fetching products skeleton */}
+                    {fetchingProducts && (
+                        <ProductCheckItemSkeleton />    
+                    )}
                 </BottomSheetScrollView>
                 <CustomButton
                     name={"Done"}

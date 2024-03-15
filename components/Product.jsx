@@ -13,7 +13,7 @@ import Avatar from "./Avatar";
 import ClearSearch from "../assets/icons/ClearSearch";
 import { background, black, white } from "../style/colors";
 
-const Product = ({product, handleQuantityChange, removeProduct, increaseQuantity, decreaseQuantity, invertColor, disableQuanity}) => {
+const Product = ({id, productName, productImage, quantity, handleQuantityChange, removeProduct, increaseQuantity, decreaseQuantity, invertColor, disableQuanity}) => {
     // product => object
     // removeProduct, increaseQuantity, decreaseQuantity => function
 
@@ -24,12 +24,12 @@ const Product = ({product, handleQuantityChange, removeProduct, increaseQuantity
             <View style={style.productDetailsWrapper}>
                 {/* product main detail */}
                 <Avatar
-                    fullname={product?.product_name}
-                    imageUrl={product?.product_image}
+                    fullname={productName}
+                    imageUrl={productImage}
                     squared={true}
                 />
                 <Text style={style.productName}>
-                    {product.product_name}
+                    {productName}
                 </Text>
             </View>
 
@@ -45,7 +45,7 @@ const Product = ({product, handleQuantityChange, removeProduct, increaseQuantity
                         <TouchableOpacity 
                             style={style.quantityButton}
                             onPress={() => {
-                                decreaseQuantity(product.id);
+                                decreaseQuantity(id);
                             }}
                         >
                             <Text style={style.quantityButtonText}>-</Text>
@@ -53,15 +53,15 @@ const Product = ({product, handleQuantityChange, removeProduct, increaseQuantity
                         {/* input quantity */}
                         <TextInput 
                             keyboardType="numeric"
-                            value={String(product.quantity)}
-                            onChangeText={(text) => handleQuantityChange(text, product?.id)}
+                            value={String(quantity)}
+                            onChangeText={(text) => handleQuantityChange(text, id)}
                             style={style.quantityInput}
                         />
                         {/* increase quantity button */}
                         <TouchableOpacity 
                             style={style.quantityButton}
                             onPress={() => {
-                                increaseQuantity(product.id);
+                                increaseQuantity(id);
                             }}
                         >
                             <Text style={style.quantityButtonText}>+</Text>
@@ -70,7 +70,7 @@ const Product = ({product, handleQuantityChange, removeProduct, increaseQuantity
                 )}
                 {/* remove product */}
                 <TouchableOpacity
-                    onPress={() => removeProduct(product.id)}
+                    onPress={() => removeProduct(id)}
                 >
                     <ClearSearch />
                 </TouchableOpacity>

@@ -5,8 +5,9 @@ import VerifiedIcon from '../assets/icons/VerifiedIcon';
 // components
 import Avatar from './Avatar';
 import { black, bodyText, listSeparator } from '../style/colors';
+import HighlightSearchedText from './HighlightSearchedText';
 
-const BusinessListItem = ({onPress, business_name, verified, banner_image, disableClick, stock}) => {
+const BusinessListItem = ({onPress, business_name, verified, banner_image, searchQuery, disableClick, stock}) => {
     return (
         <TouchableOpacity
             style={style.listItem}
@@ -20,7 +21,11 @@ const BusinessListItem = ({onPress, business_name, verified, banner_image, disab
                     diameter={30}
                     squared={true}
                 />
-                <Text style={style.businessName}>{business_name}</Text>
+                {!searchQuery ? (
+                    <Text style={style.businessName}>{business_name}</Text>
+                    ) : (
+                    <HighlightSearchedText targetText={business_name} searchQuery={searchQuery} containerStyle={{marginLeft: 8}} />
+                )}
                 {verified && <VerifiedIcon />}
             </View>
             {stock && (

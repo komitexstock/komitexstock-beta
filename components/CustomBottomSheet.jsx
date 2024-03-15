@@ -31,6 +31,8 @@ const CustomBottomSheet = ({bottomSheetModalRef, closeModal, snapPointsArray, au
     const handleOpenSheetStates = (index) => {
         // if sheet is closed
         if (index === -1) {
+            // close modal
+            closeModal();
             // if its a stacked sheet
             if (stacked) return setStackedSheetOpen(false);
             // if it's a regular bottomsheet

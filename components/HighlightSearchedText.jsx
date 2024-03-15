@@ -5,7 +5,7 @@ import { Text, StyleSheet, View } from "react-native";
 import Mark from "./Mark";
 import { black } from "../style/colors";
 
-const HighlightSearchedText = ({targetText, searchQuery, fontFamily, fontSize, color}) => {
+const HighlightSearchedText = ({targetText, searchQuery, fontFamily, fontSize, color, containerStyle}) => {
     if (!searchQuery) return <></>;
     // split text according to position of search keyword
     let textArray = targetText.toLowerCase().split(searchQuery.toLowerCase());
@@ -44,7 +44,7 @@ const HighlightSearchedText = ({targetText, searchQuery, fontFamily, fontSize, c
 
     // return text
     return (
-        <View style={style.searchTextWrapper}>
+        <View style={[style.searchTextWrapper, containerStyle && containerStyle]}>
             { textArray.map((text, index) => {
                 if (index % 2 === 0) {
                     return (

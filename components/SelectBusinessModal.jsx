@@ -13,32 +13,50 @@ import { background, black, listSeparator, bodyText } from "../style/colors";
 import BusinessListItem from "./BusinessListItem";
 
 
-const SelectLogisticsModal = ({logistics, searchQuery, setSearchQuery, onPress}) => {
+const SelectBusinessModal = ({business, searchQuery, setSearchQuery, onPress, modalType}) => {
     // onPress => function
 
-    // render AddLogisticsModalContent component
+    const searchedBusiness = business.filter(item => {
+        return item?.business_name?.toLowerCase().includes(searchQuery?.toLowerCase())
+    });
+
+    // render component
     return (
         <>
             <SearchBar 
-                placeholder={"Search for a logistics"} 
+                placeholder={"Search for a " + modalType} 
                 searchQuery={searchQuery} 
                 setSearchQuery={setSearchQuery} 
                 backgroundColor={background}
                 disableFilter={true}
             />
             <View>
-                <Text style={style.modalHeading}>Available Logistics</Text>
+                <Text style={style.modalHeading}>Available {modalType}</Text>
             </View>
             <BottomSheetScrollView showsVerticalScrollIndicator={false}>
-                {/* list of available logistics */}
+                {/* list of available business */}
                 <View style={style.listWrapper}>
-                    {logistics.map((data) => (
+                    {/* full business list */}
+                    {!searchQuery && business.map((data) => (
                         <BusinessListItem
                             key={data?.business_id}
                             banner_image={data?.banner_image}
                             verified={data?.verified}
                             business_name={data?.business_name}
                             onPress={() => onPress(data?.business_id)}
+                            searchQuery={searchQuery}
+                        />
+                    ))}
+
+                    {/* searched business list */}
+                    {searchQuery && searchedBusiness.map((data) => (
+                        <BusinessListItem
+                            key={data?.business_id}
+                            banner_image={data?.banner_image}
+                            verified={data?.verified}
+                            business_name={data?.business_name}
+                            onPress={() => onPress(data?.business_id)}
+                            searchQuery={searchQuery}
                         />
                     ))}
                 </View>
@@ -99,4 +117,4 @@ const style = StyleSheet.create({
     },
 })
  
-export default SelectLogisticsModal;
+export default SelectBusinessModal;
