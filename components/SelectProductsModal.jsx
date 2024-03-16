@@ -68,7 +68,7 @@ const SelectProductsModal = ({products, setProducts, closeModal, alternateFuncti
                     {/* list of product with selected logistics */}
                     {!fetchingProducts && productsSelection?.map((product) => (
                         <ProductCheckItem 
-                            key={product.id}
+                            key={product?.id}
                             productImage={product?.product_image}
                             productName={product?.product_name}
                             checked={product?.checked}

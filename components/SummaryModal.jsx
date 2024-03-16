@@ -13,7 +13,7 @@ import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import moment from "moment";
 
 
-const SummaryModal = ({selectedLogistics, selectedProducts, customerName, location, phoneNumber, price, address, waybillDetails, selectedWarehouse, type, onPress, isLoading}) => {
+const SummaryModal = ({selectedLogistics, selectedMerchant, selectedProducts, customerName, location, phoneNumber, price, address, waybillDetails, selectedWarehouse, type, onPress, isLoading}) => {
     // logisitcs => object | business_name(string), company_id(string), verified(boolean), imageUrl
     // selectedProducts => array of object | product_name, quantity
     // customerName, location, address, waybillDetails, shipperLocation, receiverLocation => string
@@ -70,8 +70,14 @@ const SummaryModal = ({selectedLogistics, selectedProducts, customerName, locati
                         <View style={style.rightAlignedText}>
                             <Text style={style.detailDescription}>Date</Text>
                             <Text style={style.detail}>{formattedDate}</Text>
-                            <Text style={style.detailDescription}>Logistics</Text>
-                            <Text style={[style.detail, {textTransform: "capitalize"}]}>{selectedLogistics}</Text>
+                            {selectedLogistics && <>
+                                <Text style={style.detailDescription}>Logistics</Text>
+                                <Text style={[style.detail, {textTransform: "capitalize"}]}>{selectedLogistics}</Text>
+                            </>}
+                            {selectedMerchant && <>
+                                <Text style={style.detailDescription}>Merchant</Text>
+                                <Text style={[style.detail, {textTransform: "capitalize"}]}>{selectedMerchant}</Text>
+                            </>}
                         </View>
                     </>}
                 </View>

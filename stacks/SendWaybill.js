@@ -435,9 +435,10 @@ const SendWaybill = ({navigation, route}) => {
             }
         };
 
-        const fetchMerchantProduct = async (merchantId) => {
+        // fetch merchant products
+        const fetchMerchantProduct = async (merchantProductId) => {
             try {
-                const docRef = doc(database, "merchant_products", merchantId);
+                const docRef = doc(database, "merchant_products", merchantProductId);
                 const docSnap = await getDoc(docRef);
                 const productId = docSnap.data().product_id;
                 const productImage = docSnap.data().product_image;
@@ -448,7 +449,7 @@ const SendWaybill = ({navigation, route}) => {
                 return { productId, productImage, productName }
 
             } catch (error) {
-                console.log("Error: ", error.message);
+                console.log("Merchant Product Error: ", error.message);
                 setToast({
                     text: error.message,
                     visible: true,
@@ -482,7 +483,7 @@ const SendWaybill = ({navigation, route}) => {
                         const productData = doc.data();
 
                         // Fetch merchant product
-                        const merchantProduct = await fetchMerchantProduct(productData?.merchant_business_id);
+                        const merchantProduct = await fetchMerchantProduct(productData?.merchant_product_id);
                         
                         const product = {
                             id: merchantProduct?.productId,
@@ -496,22 +497,7 @@ const SendWaybill = ({navigation, route}) => {
                     }
 
                     // set products
-                    setProducts((prevProducts) => {
-
-                        // check for entry in productsArray thats not in prevProducts
-                        const newProducts = productsArray.filter(product => !prevProducts.some(prevProduct => prevProduct.id === product.id));
-
-                        // if there was a lis of products existing before new products were added
-                        if (prevProducts.length !== 0) return [
-                            ...prevProducts, 
-                            ...newProducts.map(product => {
-                                return {
-                                    ...product,
-                                    checked: true,
-                                }
-                            })
-                        ];
-
+                    setProducts(() => {
                         // if multiple products exist
                         if (productsArray.length !== 1) return productsArray;
                         
@@ -659,6 +645,7 @@ const SendWaybill = ({navigation, route}) => {
         title: "Select Logistcs",
         subtitle: null,
         openAtIndex: 0,
+        snapPoints: ["50%", "75%", "100%"],
     });
     
     // close modal function
@@ -676,7 +663,8 @@ const SendWaybill = ({navigation, route}) => {
             type: type,
             title: title,
             subtitle: subtitle,
-            openAtIndex: openAtIndex
+            openAtIndex: openAtIndex,
+            snapPoints: ["50%", "75%", "100%"],
         });
         if (type === "Logistics") return setSelectLogisticsActive(true);
         if (type === "Warehouse") return setSelectWarehouseActive(true);
@@ -684,7 +672,7 @@ const SendWaybill = ({navigation, route}) => {
 
     // check if any field is empty
     const isAnyFieldEmpty = [
-        selectedLogistics, 
+        authData?.account_type === "Merchant" ? selectedLogistics : selectedMerchant, 
         waybillDetails,
         selectedProducts, 
     ].some(item => {
@@ -709,9 +697,8 @@ const SendWaybill = ({navigation, route}) => {
         setProducts(prevProducts => {
             return prevProducts.map(product => {
                 if (product.id === id) {
-                    let decrement;
+                    let decrement = 1;
                     if (product.quantity === 1) decrement = 0;
-                    else decrement = 1
                     return {
                         ...product,
                         quantity: product.quantity -= decrement,
@@ -727,10 +714,12 @@ const SendWaybill = ({navigation, route}) => {
     const increaseQuantity = (id) => {
         setProducts(prevProducts => {
             return prevProducts.map(product => {
+                let increment = 1;
+                if (product.quantity === product?.available_quantity) increment = 0;
                 if (product.id === id) {
                     return {
                         ...product,
-                        quantity: product.quantity += 1,
+                        quantity: product.quantity += increment,
                     }
                 } else {
                     return product
@@ -743,10 +732,18 @@ const SendWaybill = ({navigation, route}) => {
     const handleQuantityChange = (text, id) => {
         setProducts(prevProducts => {
             return prevProducts.map(product => {
+                let newQuantity = text;
+                if (newQuantity !== '') {
+                    newQuantity = parseInt(text);
+                    // if new quantity is greater than available quantity, set max value
+                    if (product?.available_quantity && newQuantity > product?.available_quantity) {
+                        newQuantity = product?.available_quantity;
+                    }
+                }
                 if (product.id === id) {
                     return {
                         ...product,
-                        quantity: !text ? '' : parseInt(text),
+                        quantity: newQuantity,
                     }
                 } else {
                     return product
@@ -809,7 +806,8 @@ const SendWaybill = ({navigation, route}) => {
                     return setModal(prevModal => {
                         return {
                             ...prevModal,
-                            openAtIndex: 2
+                            openAtIndex: 0,
+                            snapPoints: ["100%"], //fullscreen
                         }
                     })
                 };
@@ -830,7 +828,7 @@ const SendWaybill = ({navigation, route}) => {
             keyboardDidShowListener.remove();
             keyboardDidHideListener.remove();
         };
-    }, [scrollOffset]);
+    }, [bottomSheetOpen ]);
 
     // reset inputs function
     const handleResetInputs = () => {
@@ -886,82 +884,99 @@ const SendWaybill = ({navigation, route}) => {
             // get array of all selectedProducts id
             const productArray = selectedProducts.map(product => {
                 return product.id;
-            })
+            });
 
-            // if user is merchant
-            if (authData?.account_type === "Merchant") {
-                // add waybill doc
-                waybillDocResponse = await addDoc(collection(database, "waybills"), {
-                    merchant_business_id: authData?.business_id,
-                    logistics_business_id: selectedLogistics?.business_id,
-                    warehouse_id: selectedWarehouse.id,
-                    is_increment: true,
-                    status: "Pending",
-                    created_at: serverTimestamp(),
-                    edited_at: serverTimestamp(),
-                    status_updated_at: serverTimestamp(),
-                    rescheduled_date: null,
-                    created_by: authData?.uid,
-                    merchant_products_id: productArray,
-                    quantity: quantityArray,
-                    chat_id: null,
-                });
+            // merchnat business id
+            const merchantBusinessId = authData?.account_type === "Merchant" ? 
+            authData?.business_id : 
+            selectedMerchant?.business_id;
 
-                // get all users where business_id is merchant id or logistics id
-                const members = [authData?.business_id, selectedLogistics?.business_id];
-                const collectionRef = collection(database, "users");
-                let q = query(
-                    collectionRef, 
-                    where("business_id", "in", members),
-                    orderBy("created_at"),
-                );
+            // merchnat business id
+            const logisticsBusinessId = authData?.account_type === "Logistics" ? 
+            authData?.business_id : 
+            selectedLogistics?.business_id;
 
-                // documents snapshot
-                const querySnapshot = await getDocs(q);
+            // merchnat business id
+            const merchantBusinessName = authData?.account_type === "Merchant" ? 
+            authData?.business_name : 
+            selectedMerchant?.business_name;
 
-                querySnapshot.forEach((doc) => {
-                    const docId = doc.id;
-                    // Push the document ID to the membersArray
-                    chatMembers.push(docId);
-                });
+            // merchnat business name
+            const logisticsBusinessName = authData?.account_type === "Logistics" ? 
+            authData?.business_name : 
+            selectedLogistics?.business_name;
 
-                // add chat doc
-                chatDocResponse = await addDoc(collection(database, "chats"), {
-                    merchant_business_id: authData?.business_id,
-                    logistics_business_id: selectedLogistics?.business_id,
-                    waybill_id: waybillDocResponse.id,
-                    chat_type: chatType,
-                    chat_members: chatMembers,
-                });
+            // add waybill doc
+            waybillDocResponse = await addDoc(collection(database, "waybills"), {
+                merchant_business_id: merchantBusinessId,
+                logistics_business_id: logisticsBusinessId,
+                warehouse_id: selectedWarehouse.id,
+                is_increment: authData?.account_type === "Merchant",
+                status: "Pending",
+                created_at: serverTimestamp(),
+                edited_at: serverTimestamp(),
+                status_updated_at: serverTimestamp(),
+                rescheduled_date: null,
+                created_by: authData?.uid,
+                merchant_products_id: productArray,
+                quantity: quantityArray,
+                chat_id: null,
+            });
 
-                // update waybill doc with chat id
-                await updateDoc(waybillDocResponse, {
-                    chat_id: chatDocResponse.id,
-                });
+            // get all users where business_id is merchant id or logistics id
+            const members = [authData?.business_id, selectedLogistics?.business_id || selectedMerchant?.business_id];
+            const collectionRef = collection(database, "users");
+            let q = query(
+                collectionRef, 
+                where("business_id", "in", members),
+                orderBy("created_at"),
+            );
 
-                // add messages doc
-                messageDocResponse = await addDoc(collection(database, "messages"), {
-                    chat_id: chatDocResponse.id,
-                    user_id: authData?.uid,
-                    message_type: "text",
-                    file_uri: null,
-                    file_type: null,
-                    reply_id: null,
-                    rescheduled_date: null,
-                    created_at: serverTimestamp(),
-                    business_id: authData?.business_id,
-                    business_name: authData?.business_name,
-                    text: `Merchant: *${authData?.business_name}*\nLogistics: *${selectedLogistics?.business_name}*\nWarehouse Name: *${selectedWarehouse?.warehouse_name}*\nProduct: *${productsList}*\nWaybill Details: ${waybillDetails}`,
-                });
+            // documents snapshot
+            const querySnapshot = await getDocs(q);
 
-                // add read_receipts doc
-                await addDoc(collection(database, "read_receipts"), {
-                    chat_id: chatDocResponse.id,
-                    message_id: messageDocResponse.id,
-                    user_id: authData?.uid,
-                    created_at: serverTimestamp(),
-                })
-            }
+            querySnapshot.forEach((doc) => {
+                const docId = doc.id;
+                // Push the document ID to the membersArray
+                chatMembers.push(docId);
+            });
+
+            // add chat doc
+            chatDocResponse = await addDoc(collection(database, "chats"), {
+                merchant_business_id: merchantBusinessId,
+                logistics_business_id: logisticsBusinessId,
+                waybill_id: waybillDocResponse.id,
+                chat_type: chatType,
+                chat_members: chatMembers,
+            });
+
+            // update waybill doc with chat id
+            await updateDoc(waybillDocResponse, {
+                chat_id: chatDocResponse.id,
+            });
+
+            // add messages doc
+            messageDocResponse = await addDoc(collection(database, "messages"), {
+                chat_id: chatDocResponse.id,
+                user_id: authData?.uid,
+                message_type: "text",
+                file_uri: null,
+                file_type: null,
+                reply_id: null,
+                rescheduled_date: null,
+                created_at: serverTimestamp(),
+                business_id: authData?.business_id,
+                business_name: authData?.business_name,
+                text: `Merchant: *${merchantBusinessName}*\nLogistics: *${logisticsBusinessName}*\nWarehouse Name: *${selectedWarehouse?.warehouse_name}*\nProduct: *${productsList}*\nWaybill Details: ${waybillDetails}`,
+            });
+
+            // add read_receipts doc
+            await addDoc(collection(database, "read_receipts"), {
+                chat_id: chatDocResponse.id,
+                message_id: messageDocResponse.id,
+                user_id: authData?.uid,
+                created_at: serverTimestamp(),
+            });
 
             // reset inputs
             handleResetInputs();
@@ -972,14 +987,14 @@ const SendWaybill = ({navigation, route}) => {
             // close bottomsheet modal
             closeModal();
 
-            navigation.navigate("Chat", {
-                chat_id: chatDocResponse?.id || 'aaaa',
-                chat_type: chatType,
-                business_name: selectedLogistics?.business_name,
-                banner_image: selectedLogistics?.banner_image,
-                newChat: true,
+            // navigation.navigate("Chat", {
+            //     chat_id: chatDocResponse?.id,
+            //     chat_type: chatType,
+            //     business_name: selectedLogistics?.business_name,
+            //     banner_image: selectedLogistics?.banner_image,
+            //     newChat: true,
 
-            });
+            // });
             
         } catch (error) {
             // disable loading state
@@ -1095,6 +1110,7 @@ const SendWaybill = ({navigation, route}) => {
                                                         productName={product?.product_name}
                                                         productImage={product?.product_image}
                                                         quantity={product?.quantity}
+                                                        availableQuantity={product?.available_quantity}
                                                         removeProduct={removeProduct}
                                                         increaseQuantity={increaseQuantity}
                                                         decreaseQuantity={decreaseQuantity}
@@ -1130,7 +1146,7 @@ const SendWaybill = ({navigation, route}) => {
             <CustomBottomSheet
                 bottomSheetModalRef={bottomSheetRef}
                 closeModal={closeModal}
-                snapPointsArray={["50%", "75%", "100%"]}
+                snapPointsArray={modal.snapPoints}
                 autoSnapAt={modal.openAtIndex}
                 sheetTitle={modal.title}
                 sheetSubtitle={modal.subtitle}
@@ -1141,7 +1157,7 @@ const SendWaybill = ({navigation, route}) => {
                         business={authData?.account_type === "Merchant" ? logistics : merchants}
                         searchQuery={searchQuery}
                         setSearchQuery={setSearchQuery}
-                        onPress={handleSelectedLogistics}
+                        onPress={authData?.account_type === "Merchant" ? handleSelectedLogistics : handleSelectedMerchant}
                         modalType={modal?.type}
                     />
                 )}
@@ -1168,6 +1184,7 @@ const SendWaybill = ({navigation, route}) => {
                     <SummaryModal
                         type={"waybill"}
                         selectedLogistics={selectedLogistics?.business_name}
+                        selectedMerchant={selectedMerchant?.business_name}
                         waybillDetails={waybillDetails}
                         selectedWarehouse={selectedWarehouse?.warehouse_name}
                         selectedProducts={selectedProducts}

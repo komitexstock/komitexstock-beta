@@ -11,9 +11,9 @@ import {
 import Avatar from "./Avatar";
 // icon
 import ClearSearch from "../assets/icons/ClearSearch";
-import { background, black, white } from "../style/colors";
+import { background, black, white, subText } from "../style/colors";
 
-const Product = ({id, productName, productImage, quantity, handleQuantityChange, removeProduct, increaseQuantity, decreaseQuantity, invertColor, disableQuanity}) => {
+const Product = ({id, productName, productImage, quantity, availableQuantity, handleQuantityChange, removeProduct, increaseQuantity, decreaseQuantity, invertColor, disableQuanity}) => {
     // product => object
     // removeProduct, increaseQuantity, decreaseQuantity => function
 
@@ -28,9 +28,17 @@ const Product = ({id, productName, productImage, quantity, handleQuantityChange,
                     imageUrl={productImage}
                     squared={true}
                 />
-                <Text style={style.productName}>
-                    {productName}
-                </Text>
+                <View style={style.textWrapper}>
+                    <Text style={style.productName}>
+                        {productName}
+                    </Text>
+                    {/* available quantity */}
+                    {availableQuantity && (
+                        <Text style={style.availableQuantity}>
+                            {availableQuantity} available
+                        </Text>
+                    )}
+                </View> 
             </View>
 
             <View style={style.productQuantityWrapper}>
@@ -99,10 +107,13 @@ const style = StyleSheet.create({
         alignItems: "center",
         gap: 10,
     },
-    productImage: {
-        width: 40,
-        height: 40,
-        borderRadius: 8,
+    textWrapper: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+        maxWidth: 230,
+        gap: 4,
     },
     productName: {
         fontFamily: "mulish-medium",
@@ -110,6 +121,11 @@ const style = StyleSheet.create({
         flexWrap: "wrap",
         fontSize: 12,
         textTransform: "capitalize",
+    },
+    availableQuantity: {
+        fontFamily: "mulish-regular",
+        color: subText,
+        fontSize: 10,
     },
     productQuantityWrapper: {
         display: "flex",
