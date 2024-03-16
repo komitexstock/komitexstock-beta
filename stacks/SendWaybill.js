@@ -9,6 +9,7 @@ import {
     TouchableOpacity,
     Platform,
 } from "react-native";
+
 // components
 import Header from "../components/Header";
 import Input from "../components/Input";
@@ -63,68 +64,110 @@ import { windowHeight } from "../utils/helpers";
 const SendWaybill = ({navigation, route}) => {
 
     // auth data
-    const { authData } = useAuth();
+    const { authData } = useAuth(); // authentication data stored
 
     // route parameters
-    const { default_logistics_id } = route.params || {};
+    const { default_logistics_id } = route.params || {}; // string from route params
     
     // page loding state
-    const [pageLoading, setPageLoading] = useState(true);
+    const [pageLoading, setPageLoading] = useState(true); // boolaen
 
     // fetching warehouse
-    const [fetchingWarehouse, setFetchingWarehouse] = useState(true);
+    const [fetchingWarehouse, setFetchingWarehouse] = useState(true); // boolaen
 
     // fetching products
-    const [fetchingProducts, setFetchingProducts] = useState(true);
+    const [fetchingProducts, setFetchingProducts] = useState(true); // boolean
 
     // disable page loading state, when all data is fetched
     useEffect(() => {
-        if (!fetchingProducts && !fetchingWarehouse) setPageLoading(false);
+        // if all data has loaded
+        if (!fetchingProducts && !fetchingWarehouse) setPageLoading(false); 
     }, [fetchingProducts, fetchingWarehouse]);
 
     // button loading state
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false); // boolean
 
     // state to store search queries
-    const [searchQuery, setSearchQuery] = useState(null);
+    const [searchQuery, setSearchQuery] = useState(null); // string
 
     // bottom sheet ref
-    const { bottomSheetRef, bottomSheetOpen, setToast } = useGlobals();
+    const { bottomSheetRef, bottomSheetOpen, setToast } = useGlobals(); // global variables
 
     // state to store selected logistics
-    const [logistics, setLogistics] = useState([]);
+    const [logistics, setLogistics] = useState([]); // array of objects
+    /* {
+        business_id, //string
+        business_name, // string
+        banner_image, // string
+        verified, // boolean
+    }*/
 
     // selected logistics
-    const [selectedLogistics, setSelectedLogistics ] = useState(null);
+    const [selectedLogistics, setSelectedLogistics ] = useState(null); // object
+    /* {
+        business_id, //string
+        business_name, // string
+        banner_image, // string
+        verified, // boolean
+    }*/
     
     // state to store selected merchants
-    const [merchants, setMerchants] = useState([]);
+    const [merchants, setMerchants] = useState([]); // array of objects
+    /* {
+        business_id, //string
+        business_name, // string
+        banner_image, // string
+        verified, // boolean
+    }*/
 
     // selected merchants
-    const [selectedMerchant, setSelectedMerchant ] = useState(null);
+    const [selectedMerchant, setSelectedMerchant ] = useState(null); // object
+    /* {
+        business_id, //string
+        business_name, // string
+        banner_image, // string
+        verified, // boolean
+    }*/
     
     // state to store chosen warehouse
-    const [warehouses, setWarehouses] = useState(null);
+    const [warehouses, setWarehouses] = useState([]); //array of objects
+    /* {
+        id, // string
+        warehouse_name, // string
+    }*/
 
     // const selected warehouse
-    const [selectedWarehouse, setSelectedWarehouse ] = useState(null);
+    const [selectedWarehouse, setSelectedWarehouse ] = useState(null); // object
+    /* {
+        id, // string
+        warehouse_name, // string
+    }*/
 
     // state to store order details
-    const [waybillDetails, setWaybilldetails] = useState(null);
+    const [waybillDetails, setWaybilldetails] = useState(null); // string
 
+    // ref for waybill detaisl input
     const inputRef = useRef(null);
 
     // products array
-    const [products, setProducts] = useState([]);;
+    const [products, setProducts] = useState([]); // array of obejcts
+    /* {
+        id, // string
+        product_name, // string
+        product_image, // string
+        checked, // boolean
+        quantity, // int
+        available_quantity, // int
+    }*/
 
     // state to indicate if select logistics input is active
-    const [selectLogisticsActive, setSelectLogisticsActive] = useState(false);
+    const [selectLogisticsActive, setSelectLogisticsActive] = useState(false); // boolean
     
     // state to indicate if select logistics input is active
-    const [selectMerchantActive, setSelectMerchantActive] = useState(false);
+    const [selectMerchantActive, setSelectMerchantActive] = useState(false); // boolean
     
     // state to indicate if select warehouse input is active
-    const [selectWarehouseActive, setSelectWarehouseActive] = useState(false);
+    const [selectWarehouseActive, setSelectWarehouseActive] = useState(false);  // boolean
 
     // function to select logistics
     const handleSelectedLogistics = (id) => {
@@ -150,22 +193,31 @@ const SendWaybill = ({navigation, route}) => {
     const selectedProducts = useMemo(() => {
         return products.filter(item => item.checked === true);
     }, [products])
-
+    /* {
+        id, // string
+        product_name, // string
+        product_image, // string
+        checked: true, // boolean
+        quantity, // int
+        available_quantity, // int
+    }*/
 
     // get logistics and merchants
     useEffect(() => {
-
         // fetch logistics/merchant business details
         const fetchBusiness = async (businessId) => {
             try {
+                // businessses collection
                 const docRef = doc(database, "businesses", businessId);
                 const docSnap = await getDoc(docRef);
+                // return businesses object
                 return {
                     banner_image: docSnap.data().banner_image,
                     business_name: docSnap.data().business_name,
                     verified: docSnap.data().verified,
                 };
             } catch (error) {
+                // indicate error
                 console.log("fetchBusiness Error: ", error.message);
                 setToast({
                     text: error.message,
@@ -179,6 +231,7 @@ const SendWaybill = ({navigation, route}) => {
         const fetchLogistics = (businessId) => {
             return new Promise((resolve, reject) => {
                 try {
+                    // get data from businesses_partners collection
                     const collectionRef = collection(database, "business_partners");
                     let q = query(
                         collectionRef,
@@ -237,7 +290,9 @@ const SendWaybill = ({navigation, route}) => {
                         // setPageLoading(false);
                         reject(error); // Reject with error
                     });
+
                 } catch (error) {
+                    // indicate error
                     console.log("Fetch Logistics Caught Error: ", error.message);
                     setToast({
                         text: error.message,
@@ -253,6 +308,7 @@ const SendWaybill = ({navigation, route}) => {
         const fetchMerchants = (businessId) => {
             return new Promise((resolve, reject) => {
                 try {
+                    // get data from businesses_partners collection
                     const collectionRef = collection(database, "business_partners");
                     let q = query(
                         collectionRef,
@@ -304,7 +360,9 @@ const SendWaybill = ({navigation, route}) => {
                         // setPageLoading(false);
                         reject(error); // Reject with error
                     });
+
                 } catch (error) {
+                    // indicate error
                     console.log("Fetch Merchant Caught Error: ", error.message);
                     setToast({
                         text: error.message,
@@ -316,7 +374,8 @@ const SendWaybill = ({navigation, route}) => {
             });
         };
 
-        // fetch logistics
+        // fetch logistics if account type is merchant
+        // or fetch merchant is account type is logistics
         authData?.account_type === "Merchant" ? fetchLogistics(authData?.business_id) : fetchMerchants(authData?.business_id);
 
     }, []);
@@ -327,10 +386,12 @@ const SendWaybill = ({navigation, route}) => {
         // fetch product name
         const fetchProductName = async (productId) => {
             try {
+                // products colection to get product name
                 const docRef = doc(database, "products", productId);
                 const docSnap = await getDoc(docRef);
                 return docSnap.data().product_name;
             } catch (error) {
+                // indicate errror
                 console.log("Error: ", error.message);
                 setToast({
                     text: error.message,
@@ -346,10 +407,10 @@ const SendWaybill = ({navigation, route}) => {
 
                 // if business id is undefined return
                 if (!businessId) {
-                    // disable page loading state
-                    return setFetchingProducts(false);
+                    return;
                 }
 
+                // merchant products collection
                 const collectionRef = collection(database, "merchant_products");
                 let q = query(
                     collectionRef,
@@ -570,8 +631,7 @@ const SendWaybill = ({navigation, route}) => {
             try {
                 // if no business id is received return from function
                 if (!business_id) {
-                    // disable fetching warehouse state
-                    return setFetchingWarehouse(false);
+                    return;
                 }
                 
                 const collectionRef = collection(database, "warehouses");
@@ -650,15 +710,20 @@ const SendWaybill = ({navigation, route}) => {
     
     // close modal function
     const closeModal = () => {
+        // close bottom sheet modal
         bottomSheetRef.current?.close();
+        // deactive active states for inputs
         setSelectLogisticsActive(false);
         setSelectWarehouseActive(false);
+        setSelectMerchantActive(false);
     };
 
     // function to open bottom sheet modal
     const openModal = (type, title, subtitle, openAtIndex) => {
+        // open bottom sheet
         bottomSheetRef.current?.present();
         Keyboard.dismiss();
+        // set modal parameters
         setModal({
             type: type,
             title: title,
@@ -666,12 +731,15 @@ const SendWaybill = ({navigation, route}) => {
             openAtIndex: openAtIndex,
             snapPoints: ["50%", "75%", "100%"],
         });
+        // set active state of dedicated input
         if (type === "Logistics") return setSelectLogisticsActive(true);
+        if (type === "Merchant") return setSelectMerchantActive(true);
         if (type === "Warehouse") return setSelectWarehouseActive(true);
     }
 
     // check if any field is empty
     const isAnyFieldEmpty = [
+        // choose variable o check for empty state based on account type
         authData?.account_type === "Merchant" ? selectedLogistics : selectedMerchant, 
         waybillDetails,
         selectedProducts, 
@@ -689,6 +757,7 @@ const SendWaybill = ({navigation, route}) => {
 
     // function to show waybill summary bottomsheet modal
     const showWaybillSummary = () => {
+        // show waybill summary modal
         openModal("Summary", "Waybill Summary", "Review your waybill details", 2);    
     }
 
@@ -850,6 +919,7 @@ const SendWaybill = ({navigation, route}) => {
         setSelectedWarehouse(null);
     }
 
+    // function to send new waybill
     const handleConfirmWaybill = async () => {
         try {
             // initiate loading state
@@ -993,13 +1063,12 @@ const SendWaybill = ({navigation, route}) => {
             //     business_name: selectedLogistics?.business_name,
             //     banner_image: selectedLogistics?.banner_image,
             //     newChat: true,
-
             // });
             
         } catch (error) {
             // disable loading state
             setIsLoading(false);
-
+            // indicte error
             console.log("Caught Error: ", error.message);
             setToast({
                 text: error.message,

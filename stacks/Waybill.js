@@ -169,13 +169,13 @@ const Waybill = ({navigation}) => {
     // filter state
     const [filterType, setFilterType] = useState("outgoing")
 
-
     // open filter function
     const openFilter = () => {
         Keyboard.dismiss();
         filterSheetRef.current?.present()
     }
     
+    // close filter
     const closeFilter = () => {
         // close filter bottomsheet
         filterSheetRef.current?.close()

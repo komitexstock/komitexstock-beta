@@ -25,27 +25,31 @@ const Login = ({navigation}) => {
 
     const { setToast } = useGlobals();
 
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false); // boolean
 
     // state to store password
-    const [password, setPassword] = useState("komitex1234");
+    const [password, setPassword] = useState("komitex1234"); // string
+
     // email address
-    const [emailAddress, setEmailAddress] = useState("tonystark@gmail.com");
+    const [emailAddress, setEmailAddress] = useState("tonystark@gmail.com"); // string
 
     // state to store password error
-    const [errorPassword, setErrorPassword] = useState("");
+    const [errorPassword, setErrorPassword] = useState(""); // string
+
     // state to email address error
-    const [errorEmailAddress, setErrorEmailAddress] = useState("");
+    const [errorEmailAddress, setErrorEmailAddress] = useState(""); // boolaen
 
     // function to update current password
     const updatePassword = (text) => {
         setPassword(text);
     }
 
+    // update email function
     const updateEmailAddress = (text) => {
         setEmailAddress(text);
     }
 
+    // handle user login function 
     const handleUserLogin = async () => {
         setIsLoading(true);
         Keyboard.dismiss();
@@ -70,6 +74,7 @@ const Login = ({navigation}) => {
         // }
     }
 
+    // empty fields
     const emptyFields = [emailAddress, password].some(
         (item) => item === null || item === ''
     );
