@@ -47,7 +47,7 @@ const TeamMemberCard = ({ imageUrl, admin, fullname, role, onPress, addNew, deac
                                 text={"Admin"}
                             />
                         )}
-                        { fullname && <Text style={style.fullname}>{fullname}</Text>}
+                        { fullname && <Text numberOfLines={1} ellipsizeMode="tail" style={style.fullname}>{fullname}</Text>}
                         { role && <Text style={style.role}>{role}</Text>}
                     </View>
                 </TouchableOpacity>

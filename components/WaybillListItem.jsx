@@ -10,79 +10,28 @@ import { black, bodyText, neutral, white } from '../style/colors';
 import { windowWidth } from '../utils/helpers';
 // use auth
 import { useAuth } from '../context/AuthContext';
+// moment
+import moment from 'moment';
+// utils
+import { serverTImestampToMilliseconds } from '../utils/serverTImestampToMilliseconds';
 
-const WaybillListItem = ({navigation, item, index, firstWaybill, lastWaybill, sideFunctions, searchQuery, waybillType}) => {
+const WaybillListItem = ({firstWaybill, lastWaybill, searchQuery, bannerImage, businessName, isIncrement, status, products, onPress, newMessage, createdAt}) => {
     // item => object
     // index, length => int
 
     // auth data
     const { authData } = useAuth();
 
-    // get the desired business name
-    const handleChatHeaderBusinessName = () => {
-        if (authData?.account_type !== "Merchant") return item?.merchant?.business_name;
-        if (authData?.account_type !== "Logistics") return item?.logistics?.business_name;
-        return null;
-    }
-    
-    // get the desired banner image
-    const handleChatHeaderBanner = () => {
-        if (authData?.account_type !== "Merchant") return item?.merchant?.banner_image;
-        if (authData?.account_type !== "Logistics") return item?.logistics?.banner_image;
-        return null;
-    }
+    // Assuming createdAt is the timestamp from Firebase
+    const formattedTimestamp = moment(serverTImestampToMilliseconds(createdAt)).format('YYYY-MM-DD HH:m');
+    // const formattedTimestamp = moment(serverTImestampToMilliseconds(createdAt)).format('ddd h:mma, DD/MM/YYYY');
 
-    const handleOnPress = () => {
-        if (sideFunctions) sideFunctions();
-
-        setTimeout(() => {
-            navigation.navigate("Chat", {
-                chat_id: item.id, 
-                chat_type: "Waybill",
-                inventory_action: item?.inventory_action,
-                business_name: handleChatHeaderBusinessName(),
-                banner_image: handleChatHeaderBanner(),
-            });
-            // if sidefunctions exist, slightly delay before navigating
-        }, sideFunctions ? 750 : 10);
-    }
-
-    const highlightSearchtext = (text) => {
-        if (!searchQuery) return text;
-
-        const searchIndex = text.toLowerCase().indexOf(searchQuery.toLowerCase());
-
-        if (searchIndex !== -1) {
-            let textArray = text.toLowerCase().split(searchQuery.toLowerCase());
-            const fullString = textArray.join(`%!#${searchQuery}%!#`)
-
-            textArray = fullString.split('%!#');
-            // console.log(textArray);
-
-            return textArray.map((text, index) => {
-                if (index % 2 === 0) {
-                    return (
-                        <Text 
-                            key={index} 
-                            style={index === 0 && {textTransform: 'capitalize'}}
-                            >
-                            {text}
-                        </Text>
-                    ) 
-                } else {
-                    return (
-                        <Text
-                            key={index}
-                            style={textArray[0] === "" && index === 1 && {textTransform: 'capitalize'}}
-                        >
-                            <Mark key={index}>{text.toLowerCase()}</Mark>
-                        </Text>
-                    )
-                }
-            })
-        } else {
-            return text
+    // waybill type text
+    const waybillTypeText = () => {
+        if (isIncrement) {
+            return authData?.account_type === "Logistics" ? "Incoming" : "Outgoing";
         }
+        return authData?.account_type !== "Logistics" ? "Incoming" : "Outgoing";
     }
 
     const bullet = '\u2022'
@@ -93,64 +42,52 @@ const WaybillListItem = ({navigation, item, index, firstWaybill, lastWaybill, si
             style={[
                 style.orderWrapper, 
                 // add top border radius to first waybill in the list
-                index === firstWaybill && style.firstOrderWrapper, 
+                firstWaybill && style.firstOrderWrapper, 
                 // add bottom border radius to last waybill in the list
-                index === lastWaybill && style.lastOrderWrapper
+                lastWaybill && style.lastOrderWrapper
             ]}
-            onPress={handleOnPress}
+            onPress={onPress}
             activeOpacity={0.8}
         >
             <View style={style.waybillDetailsContainer}>
-                {waybillType && <Text style={style.listTypeText}>
-                    Waybill {bullet} {waybillType}</Text>}
+                {isIncrement !== undefined && <Text style={style.listTypeText}>
+                    Waybill {bullet} {waybillTypeText()}
+                </Text>}
                 <View style={style.waybillDetailsWrapper}>
                     {/* waybill image */}
                     <Avatar 
-                        imageUrl={
-                            authData?.account_type === "Logistics" ? 
-                            item?.merchant?.banner_image : 
-                            item?.logistics?.banner_image
-                        }
+                        imageUrl={bannerImage}
+                        fullname={businessName}
                         squared={true}
-                        fullname={
-                            authData?.account_type === "Logistics" ? 
-                            item?.merchant?.business_name : 
-                            item?.logistics?.business_name
-                        }
+                        diameter={40}
                     />
                     {/* waybuill info */}
                     <View style={style.orderInfo}>
                         {/* products */}
-                        <Text 
+                        <Text
+                            numberOfLines={2}
+                            ellipsizeMode='tail'
                             style={[
                                 style.orderMainText,
                                 // if theres a newMessage in the waybill chat, make text color darker
-                                {color: item.newMessage ? black : bodyText},
+                                {color: newMessage ? black : bodyText},
                                 // if theres a newMessage in the waybill chat, use diffrent font weight
-                                {fontFamily: item.newMessage ? 'mulish-bold' : 'mulish-regular'},
+                                {fontFamily: newMessage ? 'mulish-bold' : 'mulish-regular'},
                                 searchQuery && {color: bodyText, fontFamily: 'mulish-regular'},
                             ]}
                         >
-                            {/* map through product array */}
-                            { item.products.map((product, index) => {
-                                // seperate list of products by commas ','
-                                if (index !== 0) {
-                                    return highlightSearchtext(", "+ product.product_name + " x " + product.quantity);
-                                } else {
-                                    return highlightSearchtext(product.product_name + " x " + product.quantity);
-                                }
-                            })}
+                            {products}
                         </Text>
                         {/* datetime */}
-                        {!waybillType && (
-                            <Text style={style.orderDatetime}>{item.datetime}</Text>
+                        {isIncrement === undefined && (
+                            <Text style={style.orderDatetime}>{formattedTimestamp}</Text>
                         )}
                     </View>
                 </View>
             </View>
             {/* indicate waybill status */}
             <View style={style.orderPriceContainer}>
-                <Indicator type={item.status} text={item.status} />
+                <Indicator type={status} text={status} />
             </View>
         </TouchableOpacity>
     );
@@ -215,6 +152,9 @@ const style = StyleSheet.create({
     orderMainText: {
         fontFamily: 'mulish-bold',
         fontSize: 12,
+        lineHeight: 15,
+        maxHeight: 30,
+        textTransform: 'capitalize',
         // color set in component
     },
     orderDatetime: {

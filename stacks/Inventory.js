@@ -289,6 +289,7 @@ const Products = ({navigation, route}) => {
             try {
                 const docRef = doc(database, "products", productId);
                 const docSnap = await getDoc(docRef);
+                // return product name
                 return docSnap.data().product_name;
             } catch (error) {
                 console.log("Error: ", error.message);
@@ -310,7 +311,6 @@ const Products = ({navigation, route}) => {
                     where("business_id", "==", businessId),
                     orderBy("created_at")
                 );
-                // variable to stroe raw warehouse array
                 
                 const unsubscribe = onSnapshot(q, async (querySnapshot) => {
                     let productsArray = [];

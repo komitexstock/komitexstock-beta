@@ -44,7 +44,7 @@ const BusinessCard = ({businessName, bannerImage, totalLocations, totalProducts,
                         </View>
                         {/* business name */}
                         <View style={style.logisticsWrapper}>
-                            {!searchQuery ? <Text style={style.logistics}>{businessName}</Text> : <HighlightSearchedText searchQuery={searchQuery} targetText={businessName}/>}
+                            {!searchQuery ? <Text numberOfLines={1} ellipsizeMode="tail" style={style.logistics}>{businessName}</Text> : <HighlightSearchedText searchQuery={searchQuery} targetText={businessName}/>}
                             { verified && <VerifiedIcon />}
                         </View>
                         {/* display total locations or total products */}

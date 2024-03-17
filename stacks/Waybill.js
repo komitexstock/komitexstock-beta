@@ -9,11 +9,13 @@ import {
     Animated,
     Keyboard
 } from "react-native";
+
 // icons
 import MenuIcon from "../assets/icons/MenuIcon";
 import SearchIcon from '../assets/icons/SearchIcon'
 import CalendarIcon from "../assets/icons/CalendarIcon";
 import SendOrderIcon from "../assets/icons/SendOrderIcon";
+
 // colors
 import {
     background,
@@ -25,8 +27,10 @@ import {
     secondaryColor,
     white,
 } from "../style/colors";
+
 // react hooks
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
+
 // components
 import StatWrapper from "../components/StatWrapper";
 import StatCard from "../components/StatCard";
@@ -42,26 +46,54 @@ import SelectInput from "../components/SelectInput";
 import FilterButtonGroup from "../components/FilterButtonGroup";
 import CalendarSheet from "../components/CalendarSheet";
 import OpenFilterButton from "../components/OpenFilterButton";
+
 // bottomsheet component
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+
 // moment
 import moment from "moment";
+
 // skeleton screen
 import WaybillSkeleton from "../skeletons/WaybillSkeleton";
+
 // globals
 import { useGlobals } from "../context/AppContext";
-// use auth context
-import { useAuth } from "../context/AuthContext";
+
 // data
 import { waybillList } from "../data/waybillList";
 
+// use auth context
+import { useAuth } from "../context/AuthContext";
+
+// firebase
+import {
+    database,
+} from "../Firebase";
+
+// firestore functions
+import {
+    collection,
+    getDoc,
+    onSnapshot,
+    where,
+    query,
+    orderBy,
+    doc,
+} from "firebase/firestore";
+import { windowHeight } from "../utils/helpers";
 const Waybill = ({navigation}) => {
 
     // use auth
     const { authData } = useAuth();
 
-    // bottom sheet refs
-    const { bottomSheetRef, filterSheetRef, calendarSheetRef, calendarSheetOpen} = useGlobals();
+    // global variables
+    const {
+        bottomSheetRef,
+        filterSheetRef,
+        calendarSheetRef,
+        calendarSheetOpen,
+        setToast
+    } = useGlobals();
 
     // stata array
     const stats = [
@@ -94,7 +126,7 @@ const Waybill = ({navigation}) => {
         },
         {
             id: 4,
-            title: "Total Delivered",
+            title: "Total Items Received",
             presentValue: 57,
             oldValue: 55,
             decimal: false,
@@ -103,19 +135,243 @@ const Waybill = ({navigation}) => {
         },
     ];
 
+    // page loading state
     const [pageLoading, setPageLoading] = useState(true);
-
-    useEffect(() => {
-        setTimeout(() => {
-            setPageLoading(false);
-        }, 500);
-    })
 
     // tabs, default as Outgoing for Merchants
     const [tab, setTab] = useState(authData?.account_type === "Merchant" ? "outgoing" : "incoming");
 
     // state to store searchQuery
     const [searchQuery, setSearchQuery] = useState("");
+
+    // waybill state
+    const [waybills, setWaybills] = useState([]);
+
+    // get outgoing waybill
+    const outgoingWaybill = useMemo(() => {
+        const incrementCondition = authData?.account_type === "Merchant";
+        return waybills.filter(waybill => waybill.is_increment === incrementCondition);
+    }, [waybills]);
+
+    // get incoming waybill
+    const incomingWaybill = useMemo(() => {
+        const incrementCondition = authData?.account_type === "Logistics";
+        return waybills.filter(waybill => waybill.is_increment === incrementCondition);
+    }, [waybills]);
+
+    // rendered data in flatlist component
+    const renderData = useMemo(() => {
+        if (tab === "outgoing") {
+            return [
+                {id: "sticky"},
+                ...outgoingWaybill,
+            ]
+        }
+        return [
+            {id: "sticky"},
+            ...incomingWaybill,
+        ]
+    }, [tab, outgoingWaybill, incomingWaybill])
+
+    // get waybill
+    useEffect(() => {
+        // fetch logistics/merchant business details
+        const fetchBusiness = async (businessId) => {
+            try {
+                // businessses collection
+                const docRef = doc(database, "businesses", businessId);
+                const docSnap = await getDoc(docRef);
+                // return businesses object
+                return {
+                    banner_image: docSnap.data().banner_image,
+                    business_name: docSnap.data().business_name,
+                    verified: docSnap.data().verified,
+                };
+            } catch (error) {
+                // indicate error
+                console.log("fetchBusiness Error: ", error.message);
+                setToast({
+                    text: error.message,
+                    visible: true,
+                    type: "error",
+                });
+            }
+        }
+
+        // fetch product name
+        const fetchProductName = async (productId) => {
+            try {
+                const docRef = doc(database, "products", productId);
+                const docSnap = await getDoc(docRef);
+                return docSnap.data().product_name;
+            } catch (error) {
+                console.log("fetchProductName Error: ", error.message);
+                setToast({
+                    text: error.message,
+                    visible: true,
+                    type: "error",
+                });
+            }
+        }
+
+
+        // fetch merchants products with id of array provided
+        const fetchProducts = async (idArray, quantityArray) => {
+            try {
+                let productsArray = [];
+
+                await Promise.all(idArray.map(async (id, index) => {
+                    try {
+                        const docRef = doc(database, "merchant_products", id);
+                        const docSnap = await getDoc(docRef);
+
+                        const productId = docSnap.data()?.product_id;
+                        // console.log("productId: ", productId);
+                        const productName = await fetchProductName(productId);
+
+                        // console.log(productName);
+                        // console.log(quantityArray);
+        
+                        productsArray.push({
+                            product_name: productName,
+                            quantity: quantityArray[index],
+                        });
+                    } catch (error) {
+                        console.log("Error fetching product details: ", error.message);
+                        // Handle the error here if needed
+                        setToast({
+                            text: error.message,
+                            visible: true,
+                            type: "error",
+                        });
+                    }
+                }));
+
+                return productsArray;
+            } catch (error) {
+                console.log("fetchProducts Error: ", error.message);
+                setToast({
+                    text: error.message,
+                    visible: true,
+                    type: "error",
+                });
+            }
+        }
+
+        // fetch warehouses
+        const fetchWaybill = async (business_id) => {
+            try {
+                const collectionRef = collection(database, "waybills");
+
+                const matchField = authData?.account_type === "Merchant" ? 
+                "merchant_business_id" : 
+                "logistics_business_id";
+
+                // Create a Date object for today at 00:00:01 AM
+                const today = new Date();
+                today.setHours(0, 0, 1, 0);
+
+
+                let q = query(
+                    collectionRef,
+                    where(matchField, "==", business_id),
+                    where("edited_at", ">", today),
+                    orderBy("edited_at")
+                );
+                
+                const unsubscribe = onSnapshot(q, async (querySnapshot) => {
+                    let waybillList = [];
+
+                    for (const doc of querySnapshot.docs) {
+                        const waybillData = doc.data();
+                        // Fetch waybill data for the warehouse
+                        const business = await fetchBusiness(
+                            authData?.account_type === "Merchant" ? 
+                            waybillData.logistics_business_id : 
+                            waybillData.merchant_business_id
+                        );
+
+                        // of product id
+                        const merchantProductIdArray = waybillData.merchant_products_id;
+                        const quantityArray = waybillData.quantity;
+
+                        const products = await fetchProducts(merchantProductIdArray, quantityArray);
+
+                        // products listed
+                        const productsListed = products.map(product => {
+                            // seperate list of products by commas ','
+                            return `${product.product_name} \u00D7 ${product.quantity}`;
+                        }).join(", ");
+
+                        const waybillItem = {
+                            id: doc.id,
+                            banner_image: business.banner_image,
+                            business_name: business.business_name,
+                            chat_id: waybillData.chat_id,
+                            is_increment: waybillData.is_increment,
+                            logistics_business_id: waybillData.logistics_business_id,
+                            merchant_business_id: waybillData.merchant_business_id,
+                            status: waybillData.status,
+                            verified: business.verified,
+                            products: productsListed,
+                            created_at: waybillData.created_at,
+                        };
+                        waybillList.push(waybillItem);
+                    }
+
+                    // waybillList.unshift({id: "sticky"});
+
+                    // set waybills
+                    setWaybills(waybillList);
+
+                    // disable page loading state
+                    setPageLoading(false);
+
+                    
+                    }, (error) => { //handle errors
+                        // indicate error
+                        console.log("fetchWaybill Error: ", error.message);
+                        setToast({
+                            text: error.message,
+                            visible: true,
+                            type: "error",
+                        });
+                        // disable page loading state
+                        setPageLoading(false);
+                    }
+                );
+    
+                return unsubscribe;
+            } catch (error) {
+                // indicate error
+                console.log("fetchWaybill Error: ", error.message);
+                setToast({
+                    text: error.message,
+                    visible: true,
+                    type: "error",
+                });
+
+                // disable page loading state
+                setPageLoading(false);
+            }
+        };
+
+        // fetch waybill
+        const unsubscribePromise = fetchWaybill(authData?.business_id);
+
+        // Cleanup function to unsubscribe from snapshot listener
+        return () => {
+            // Unsubscribe from snapshot listener once unsubscribePromise is resolved
+            unsubscribePromise.then(unsubscribe => {
+                if (unsubscribe) {
+                    unsubscribe();
+                }
+            });
+        };
+
+    }, []);
+
+    // console.log(waybills);
 
     // close search modal bottomsheet function
     const closeModal = () => {
@@ -154,16 +410,13 @@ const Waybill = ({navigation}) => {
     // shadow elevation value, to be animated on scroll of flatlist component
     const shadowElevation = useRef(new Animated.Value(0)).current;
 
+    // scroll height
+    const [scrollHeight, setScrollHeight] = useState(0);
+
     // animated shadow when scroll height reaches sticky header
     const animateHeaderOnScroll = (e) => {
         // console.log(stickyHeaderOffset.current);
-        const yOffset = e.nativeEvent.contentOffset.y;
-        // console.log(yOffset);
-        Animated.timing(shadowElevation, {
-            toValue: yOffset > stickyHeaderOffset.current ? 3 : 0,
-            duration: 200,
-            useNativeDriver: false,
-        }).start();
+        setScrollHeight(e.nativeEvent.contentOffset.y)
     }
 
     // filter state
@@ -836,7 +1089,7 @@ const Waybill = ({navigation}) => {
             return searchFilter.find(filterParam => filterParam.title === title).value
         }
     }
-    
+
     // previous date
     const prevDate = new Date();
     prevDate.setDate(prevDate.getDate() - 1);
@@ -1017,8 +1270,8 @@ const Waybill = ({navigation}) => {
                     stackName={"Waybill"}
                     removeBackArrow={true}
                     backgroundColor={background}
-                    icon={<MenuIcon />}
-                    iconFunction={() => {}}
+                    // icon={<MenuIcon />}
+                    // iconFunction={() => {}}
                 />
                 {/* screen content */}
                 <TouchableWithoutFeedback>
@@ -1030,7 +1283,7 @@ const Waybill = ({navigation}) => {
                             <View 
                                 style={style.headerWrapper}
                                 onLayout={e => {
-                                    stickyHeaderOffset.current = e.nativeEvent.layout.height + 57;
+                                    stickyHeaderOffset.current = e.nativeEvent.layout.height;
                                     // where 57 is the height of the Header component
                                 }}
                             >
@@ -1059,18 +1312,18 @@ const Waybill = ({navigation}) => {
                                 />
                             </View>
                         }
-                        contentContainerStyle={{paddingBottom: 90}}
-                        style={style.listWrapper}
+                        contentContainerStyle={style.contentContainer}
+                        style={style.container}
                         keyExtractor={item => item.id}
-                        data={waybill}
+                        data={renderData}
+                        key={waybills.length}
                         renderItem={({ item, index }) => {
                             if (item.id === "sticky") {
                                 return (<>
-                                    {/* // animated view to animated shadow when a scroll offset is met */}
-                                    <Animated.View 
+                                    <View 
                                         style={[
                                             style.stickyHeader,
-                                            {elevation: shadowElevation},
+                                            scrollHeight > stickyHeaderOffset.current && style.shadow,
                                         ]}
                                     >
                                         <View style={style.recentOrderHeading}>
@@ -1154,31 +1407,44 @@ const Waybill = ({navigation}) => {
                                                 })}
                                             </View>
                                         )}
-                                    </Animated.View>
-                                    {waybill.length === 1 && (
-                                        <View style={style.emptyOrderWrapper}>
-                                            <SendOrderIcon />
-                                            <Text style={style.emptyOrderHeading}>No waybill yet</Text>
-                                            <Text style={style.emptyOrderParagraph}>
-                                                Store your products in your logistics  partner’s warehouse
-                                            </Text>
-                                        </View>
-                                    )}
+                                    </View>
                                 </>)
                             } else {
                                 return (
                                     <View style={style.waybillListWrapper}>
                                         <WaybillListItem 
-                                            item={item} 
-                                            index={index}
-                                            lastWaybill={waybill.length - 1}
-                                            firstWaybill={1}
-                                            navigation={navigation}
+                                            lastWaybill={index === renderData.length - 1}
+                                            firstWaybill={index === 1}
+                                            bannerImage={item?.banner_image}
+                                            businesName={item?.business_name}
+                                            status={item?.status}
+                                            products={item?.products}
+                                            newMessage={item?.new_message}
+                                            createdAt={item?.created_at}
+                                            onPress={() => navigation.navigate("Chat", {
+                                                chatId: item?.chat_id,
+                                                chatType: "Waybill",
+                                                isIncrement: item?.is_increment,
+                                                bannerImage: item?.banner_image,
+                                                businessName: item?.business_name,
+                                                verified: item?.verified
+                                            })}
                                         />
                                     </View>
                                 ) 
                             }
                         }}
+                        ListEmptyComponent={<>
+                            {waybills.length === 1 && (
+                                <View style={style.emptyOrderWrapper}>
+                                    <SendOrderIcon />
+                                    <Text style={style.emptyOrderHeading}>No waybill yet</Text>
+                                    <Text style={style.emptyOrderParagraph}>
+                                        Store your products in your logistics  partner’s warehouse
+                                    </Text>
+                                </View>
+                            )}
+                        </>}
                     />
                 </TouchableWithoutFeedback>
             </> : <WaybillSkeleton />}
@@ -1312,10 +1578,14 @@ const Waybill = ({navigation}) => {
 }
 
 const style = StyleSheet.create({
-    listWrapper: {
+    container: {
         width: "100%",
         height: "100%",
         backgroundColor: background,
+    },
+    contentContainer: {
+        paddingBottom: 90,
+        minHeight: windowHeight + 173,
     },
     headerWrapper: {
         width: "100%",
@@ -1350,6 +1620,9 @@ const style = StyleSheet.create({
         shadowColor: blackOut,
         // elevation: 2,
         paddingHorizontal: 20,
+    },
+    shadow: {
+        elevation: 2,
     },
     waybillListWrapper: {
         paddingHorizontal: 20,

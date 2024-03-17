@@ -501,7 +501,7 @@ const SendWaybill = ({navigation, route}) => {
             try {
                 const docRef = doc(database, "merchant_products", merchantProductId);
                 const docSnap = await getDoc(docRef);
-                const productId = docSnap.data().product_id;
+                const productId = docSnap.id;
                 const productImage = docSnap.data().product_image;
                 // Fetch product name
                 const productName = await fetchProductName(productId);

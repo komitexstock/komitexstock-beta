@@ -25,7 +25,7 @@ const WarehouseCard = ({warehouseName, inventoriesCount, address, addNew, onPres
                     </TouchableOpacity>
                 ) : (
                     <>
-                        <Text style={styles.warehouseName}>
+                        <Text numberOfLines={1} ellipsizeMode="tail" style={styles.warehouseName}>
                             {warehouseName}
                         </Text>
                         <Text style={styles.warehouseInventoryCount}>
@@ -40,7 +40,7 @@ const WarehouseCard = ({warehouseName, inventoriesCount, address, addNew, onPres
                         Add New Warehouse
                     </Text>
                 ) : (
-                    <Text style={styles.warehouseAddress}>
+                    <Text numberOfLines={2} ellipsizeMode="tail" style={styles.warehouseAddress}>
                         {address}
                     </Text>
                 )}
@@ -92,6 +92,7 @@ const styles = StyleSheet.create({
         fontSize: 10,
         fontFamily: "mulish-regular",
         lineHeight: 13,
+        maxHeight: 26,
     },
     warehouseName: {
         color: black,

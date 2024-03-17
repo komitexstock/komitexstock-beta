@@ -24,12 +24,12 @@ const WaybillSkeleton = () => {
                     shimmerColors={shimmerColorArray}
                     style={{borderRadius: 2}}
                 />
-                <Skeleton 
+                {/* <Skeleton 
                     height={25}
                     width={25}
                     shimmerColors={shimmerColorArray}
                     style={{borderRadius: 2}}
-                />
+                /> */}
             </View>
 
             <View style={skeleton.statsWrapper}>

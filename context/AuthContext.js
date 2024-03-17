@@ -89,25 +89,25 @@ const AuthProvider = ({children}) => {
 
 		// detect changes in auth state
 		const unsubscribeFromAuthStateChanged = onAuthStateChanged(auth, async (user) => {
-			// console.log("Auth State Changed", user);
-			if (!user) {
-				await removeStoredData();
-				return setAuthLoading(false);
-			}
-
-			const storedData = await getStoredData();
-
-			const claims = await user.getIdTokenResult();
-
-			// console.log(claims.claims);
-			// console.log("Stored Data", storedData);
-			// if there is a stored data
-			if (storedData) {
-				// You have stored data; use it here if needed
-				setAuthData(storedData)
-				return setAuthLoading(false);
-			} else {
-				try {
+			try {
+				// console.log("Auth State Changed", user);
+				if (!user) {
+					await removeStoredData();
+					return setAuthLoading(false);
+				}
+	
+				const storedData = await getStoredData();
+	
+				// const claims = await user.getIdTokenResult();
+	
+				// console.log(claims.claims);
+				// console.log("Stored Data", storedData);
+				// if there is a stored data
+				if (storedData) {
+					// You have stored data; use it here if needed
+					setAuthData(storedData)
+					return setAuthLoading(false);
+				} else {
 					// get user data
 					const user_data = await getUserData(user.uid); 
 					// console.log("User Data:", user_data); // Add this line for debugging
@@ -133,13 +133,11 @@ const AuthProvider = ({children}) => {
 						await setStoredData(data);
 						return setAuthLoading(false);
 					}
-	
-				} catch (error) {
-					console.error(error.message);
-					return setAuthLoading(false);
 				}
+			} catch (error) {
+				console.error(error.message);
+				return setAuthLoading(false);
 			}
-
 		})
 
 		return unsubscribeFromAuthStateChanged;

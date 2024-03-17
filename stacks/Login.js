@@ -61,7 +61,7 @@ const Login = ({navigation}) => {
                 password,
             );
         } catch (error) {
-            console.log(error);
+            console.log("Login Error:", error);
             setToast({
                 visible: true,
                 type: "error",

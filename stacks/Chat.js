@@ -97,10 +97,10 @@ const Chat = ({navigation, route}) => {
 
     // chat route parameters
     const {
-        chat_id,
-        chat_type,
-        business_name,
-        banner_image,
+        chatId,
+        chatType,
+        businessName,
+        bannerImage,
         inventory_action,
         origin_warehouse,
         destination_warehouse,
@@ -430,17 +430,17 @@ const Chat = ({navigation, route}) => {
     // chat header component
     const ChatHeader = (
         <View style={style.headerInfoWrapper}>
-            {chat_type !== "StockTransfer" && (
+            {chatType !== "StockTransfer" && (
                 <Avatar
-                    imageUrl={banner_image}
-                    fullname={business_name}
+                    imageUrl={bannerImage}
+                    fullname={businessName}
                     squared={true}
-                    smallerSize={true}
+                    diameter={30}
                 />
             )}
             <View style={style.headerTextWrapper}>
-                <Text style={style.headerPrimaryText}>{chat_type === "StockTransfer" ? "Stock Transfer" : business_name}</Text>
-                <Text style={style.headerSecondaryText}>{chat_type} ID: {chat_id}</Text>
+                <Text style={style.headerPrimaryText}>{chatType === "StockTransfer" ? "Stock Transfer" : businessName}</Text>
+                <Text style={style.headerSecondaryText}>{chatType} ID: {chatId}</Text>
             </View>
         </View>
     );
@@ -1120,10 +1120,10 @@ const Chat = ({navigation, route}) => {
         Keyboard.dismiss();
         navigation.navigate("CaptureImage", {
             origin: "Chat",
-            chat_id: chat_id,
-            chat_type: chat_type,
-            business_name: business_name,
-            banner_image: banner_image,
+            chatId: chatId,
+            chatType: chatType,
+            businessName: businessName,
+            bannerImage: bannerImage,
         })
     };
 
@@ -1305,13 +1305,13 @@ const Chat = ({navigation, route}) => {
             id: 1,
             icon:<OrderDetailsIcon />,
             text: (() => {
-                if (chat_type === "StockTransfer") return "Transfer Details";
-                return chat_type + " Details";
+                if (chatType === "StockTransfer") return "Transfer Details";
+                return chatType + " Details";
             }).call(),
             onPress: () => {
                 setMenuOpened(false);
-                if (chat_type === "StockTransfer") return navigation.navigate("TransferDetails", { chat_id: chat_id });
-                return navigation.navigate(`${chat_type}Details`, { chat_id: chat_id });
+                if (chatType === "StockTransfer") return navigation.navigate("TransferDetails", { chatId: chatId });
+                return navigation.navigate(`${chatType}Details`, { chatId: chatId });
             },
         },
         {
@@ -1350,7 +1350,7 @@ const Chat = ({navigation, route}) => {
             {status !== "Pending" && (
                 <View style={style.statusIndicator}>
                     <Text style={style.statusChatType}>
-                        {chat_type} status:&nbsp;
+                        {chatType} status:&nbsp;
                         <Text
                             style={[
                                 status === "Delivered" && style.deliveredStatus,
@@ -1446,13 +1446,13 @@ const Chat = ({navigation, route}) => {
                         <TouchableOpacity 
                             style={style.editButton}
                             onPress={() => {
-                                if (chat_type !== "StockTransfer") return openModal("Edit "+chat_type.toLowerCase());
+                                if (chatType !== "StockTransfer") return openModal("Edit "+chatType.toLowerCase());
                                 return openModal("Edit transfer");
                             }}
                         >
                             <EditIcon />
                             <Text style={style.editButtonText}>
-                                Edit {chat_type === "StockTransfer" ? "Transfer" : chat_type}
+                                Edit {chatType === "StockTransfer" ? "Transfer" : chatType}
                             </Text>
                         </TouchableOpacity>
                     </View>
@@ -1486,7 +1486,7 @@ const Chat = ({navigation, route}) => {
         <View style={style.textFieldWrapper}>
             { !replying && !uploading && (
                 <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={style.actionButtonsWrapper}>
-                    { chat_type === "Order" && orderButtons.map((button) => {
+                    { chatType === "Order" && orderButtons.map((button) => {
 
                         // if status is cancelled
                         if (status === "Cancelled") return;
@@ -1540,7 +1540,7 @@ const Chat = ({navigation, route}) => {
                     })}
 
                     {/* waybill chat type */}
-                    { chat_type === "Waybill" && waybillButtons.map((button) => {
+                    { chatType === "Waybill" && waybillButtons.map((button) => {
                         // if account is merchant
                         if (authData?.account_type === "Merchant"){
                             // if status is "Pending", inventory action is increment, render cancel button
@@ -2317,6 +2317,13 @@ const style = StyleSheet.create({
         fontFamily: 'mulish-medium',
         color: black,
         fontSize: 10,
+    },
+    headerTextWrapper: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+        height: 30,
     },
     headerPrimaryText: {
         fontSize: 14,

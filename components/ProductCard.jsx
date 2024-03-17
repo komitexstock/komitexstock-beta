@@ -47,7 +47,7 @@ const ProductCard = ({product_name, quantity, price, imageUrl, onPress, searchQu
             {/* product details */}
             <View style={style.textWrapper}>
                 <View style={style.productMainDetailsWrapper}>
-                    {!searchQuery ? <Text style={style.productName}>{product_name}</Text> : <HighlightSearchedText targetText={product_name} searchQuery={searchQuery} />}
+                    {!searchQuery ? <Text numberOfLines={2} ellipsizeMode="tail" style={style.productName}>{product_name}</Text> : <HighlightSearchedText targetText={product_name} searchQuery={searchQuery} />}
                     <Text style={style.quantity}>{quantity} <Text style={style.stock}>in stock</Text></Text>
                 </View>
                 {/* display price as a string with comma seperations */}
@@ -108,6 +108,8 @@ const style = StyleSheet.create({
         color: black,
         fontFamily: "mulish-semibold",
         fontSize: 12,
+        lineHeight: 15,
+        maxHeight: 30,
         flexWrap: "wrap",   
         width: "100%",
         textTransform: 'capitalize',
