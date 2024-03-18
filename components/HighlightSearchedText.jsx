@@ -48,7 +48,9 @@ const HighlightSearchedText = ({targetText, searchQuery, fontFamily, fontSize, c
             { textArray.map((text, index) => {
                 if (index % 2 === 0) {
                     return (
-                        <Text 
+                        <Text
+                            numberOfLines={1}
+                            ellipsizeMode="tail" 
                             key={index} 
                             style={[
                                 style.searchedText,
@@ -64,6 +66,8 @@ const HighlightSearchedText = ({targetText, searchQuery, fontFamily, fontSize, c
                 } else {
                     return (
                         <Text
+                            numberOfLines={1}
+                            ellipsizeMode="tail"
                             key={index}
                             style={[
                                 style.searchedText,
@@ -89,6 +93,7 @@ const style = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'baseline',
+        flexWrap: 'wrap',
     },
     searchedText: {
         color: black,

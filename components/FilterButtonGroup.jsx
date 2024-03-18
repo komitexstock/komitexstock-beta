@@ -11,7 +11,7 @@ import { background, black, bodyText, primaryColor, secondaryColor } from "../st
 // scroll view from gesture handler
 import { ScrollView } from "react-native-gesture-handler";
 
-const FilterButtonGroup = ({buttons, title}) => {
+const FilterButtonGroup = ({children, buttons, title}) => {
     // buttons => array of objects
     // title => string
 
@@ -26,17 +26,8 @@ const FilterButtonGroup = ({buttons, title}) => {
                 horizontal={true}
                 showsHorizontalScrollIndicator={false}
             >
-                {/* filter button list */}
-                {buttons.map(button => (
-                    // filter button
-                    <ActionButton
-                        key={button.text}
-                        name={button.text}
-                        removeBottomMargin={true}
-                        selected={button.selected}
-                        onPress={button.onPress}
-                    />
-                ))}
+                {/* render children */}
+                {children}
             </ScrollView>
         </View>
     );

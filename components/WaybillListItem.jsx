@@ -2,7 +2,7 @@
 import { TouchableOpacity, Image, View, Text, StyleSheet } from 'react-native';
 // components
 import Indicator from './Indicator';
-import Mark from './Mark';
+import HighlightSearchedText from './HighlightSearchedText'
 import Avatar from './Avatar';
 // colors
 import { black, bodyText, neutral, white } from '../style/colors';
@@ -64,20 +64,26 @@ const WaybillListItem = ({firstWaybill, lastWaybill, searchQuery, bannerImage, b
                     {/* waybuill info */}
                     <View style={style.orderInfo}>
                         {/* products */}
-                        <Text
-                            numberOfLines={2}
-                            ellipsizeMode='tail'
-                            style={[
-                                style.orderMainText,
-                                // if theres a newMessage in the waybill chat, make text color darker
-                                {color: newMessage ? black : bodyText},
-                                // if theres a newMessage in the waybill chat, use diffrent font weight
-                                {fontFamily: newMessage ? 'mulish-bold' : 'mulish-regular'},
-                                searchQuery && {color: bodyText, fontFamily: 'mulish-regular'},
-                            ]}
-                        >
-                            {products}
-                        </Text>
+                        {!searchQuery ? (
+                            <Text
+                                numberOfLines={2}
+                                ellipsizeMode='tail'
+                                style={[
+                                    style.orderMainText,
+                                    // if theres a newMessage in the waybill chat, make text color darker
+                                    {color: newMessage ? black : bodyText},
+                                    // if theres a newMessage in the waybill chat, use diffrent font weight
+                                    {fontFamily: newMessage ? 'mulish-bold' : 'mulish-regular'},
+                                ]}
+                            >
+                                {products}
+                            </Text>
+                        ) : (
+                            <HighlightSearchedText
+                                targetText={products}
+                                searchQuery={searchQuery}
+                            />
+                        )}
                         {/* datetime */}
                         {isIncrement === undefined && (
                             <Text style={style.orderDatetime}>{formattedTimestamp}</Text>
@@ -150,7 +156,6 @@ const style = StyleSheet.create({
         justifyContent: 'center',
     },
     orderMainText: {
-        fontFamily: 'mulish-bold',
         fontSize: 12,
         lineHeight: 15,
         maxHeight: 30,

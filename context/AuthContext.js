@@ -15,7 +15,7 @@ import {
 // firebase
 import { auth, database } from "../Firebase";
 // firestore functions
-import { doc, getDoc, onSnapshot } from "firebase/firestore";
+import { doc, getDoc, onSnapshot, collection, getDocs, updateDoc, serverTimestamp, where, query, orderBy } from "firebase/firestore";
 // auth
 import { signOut } from "firebase/auth";
 
@@ -144,6 +144,63 @@ const AuthProvider = ({children}) => {
 		
 				
 	}, []);
+
+	// repost pending waybills
+	useEffect(() => {
+		// get all docs from waybills collection
+		// where status is pending and edited_at is less than today
+
+		const repostPendingWaybills = async (businessId) => {
+			try {
+				if (!businessId) {
+					return;
+				}
+				const collectionRef = collection(database, "waybills");
+
+                const matchField = authData?.account_type === "Merchant" ? 
+                "merchant_business_id" : 
+                "logistics_business_id";
+
+				const today = new Date();
+				today.setHours(1, 0, 0, 1);
+
+                let q = query(
+                    collectionRef,
+                    where(matchField, "==", businessId),
+					where("status", "==", "Pending"),
+                    where("edited_at", "<", today),
+                );
+
+				// store id of pending waybills
+				let waybillIdArray = [];
+
+				// get docs and return array of ids
+				const querySnapshot = await getDocs(q);
+
+				querySnapshot.forEach((doc) => {
+					// console.log(doc.id, " => ", doc.data());
+					waybillIdArray.push(doc.id);
+				})
+
+				// if no results, return early
+				if (waybillIdArray.length === 0) return;
+
+				// for each member of the array updateDoc, set edited_at to server timestamp
+				waybillIdArray.forEach(async (waybillId) => {
+					const waybillRef = doc(database, "waybills", waybillId);
+					await updateDoc(waybillRef, {
+						edited_at: serverTimestamp(),
+					});
+				})
+
+
+			} catch (error) {
+				console.log(error.message)
+			}
+		}
+
+		repostPendingWaybills(authData?.business_id);
+	}, [authData]);
 
 	// role change listener
 	useLayoutEffect(() => {

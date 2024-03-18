@@ -24,7 +24,7 @@ const StatCard = ({title, presentValue, oldValue, decimal, unit, unitPosition, b
                     {/* if unit is provided and unit location is set at start, render at the beginning */}
                     { unitPosition === "start" && <>{unit}</> }
                     {/* render value as string */}
-                    {presentValue.toLocaleString()}
+                    {presentValue?.toLocaleString()}
                     {/* if value requires decimal, render decimal, with a different fontColor */}
                     {decimal && <Text style={style.statValueDecimal}>
                         .00

@@ -6,12 +6,10 @@ import {
     TouchableOpacity, 
     TouchableWithoutFeedback,
     StyleSheet,
-    Animated,
     Keyboard
 } from "react-native";
 
 // icons
-import MenuIcon from "../assets/icons/MenuIcon";
 import SearchIcon from '../assets/icons/SearchIcon'
 import CalendarIcon from "../assets/icons/CalendarIcon";
 import SendOrderIcon from "../assets/icons/SendOrderIcon";
@@ -46,6 +44,7 @@ import SelectInput from "../components/SelectInput";
 import FilterButtonGroup from "../components/FilterButtonGroup";
 import CalendarSheet from "../components/CalendarSheet";
 import OpenFilterButton from "../components/OpenFilterButton";
+import ActionButton from "../components/ActionButton";
 
 // bottomsheet component
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
@@ -81,6 +80,7 @@ import {
     doc,
 } from "firebase/firestore";
 import { windowHeight } from "../utils/helpers";
+import { filter, uniq } from "lodash";
 const Waybill = ({navigation}) => {
 
     // use auth
@@ -94,46 +94,6 @@ const Waybill = ({navigation}) => {
         calendarSheetOpen,
         setToast
     } = useGlobals();
-
-    // stata array
-    const stats = [
-        {
-            id: 1,
-            title: "Total Waybill Sent",
-            presentValue: 30,
-            oldValue: 28,
-            decimal: false,
-            unit: "",
-            unitPosition: "start",
-        },
-        {
-            id: 2,
-            title: "Total Waybill Recived",
-            presentValue: 5,
-            oldValue: 4,
-            decimal: false,
-            unit: "",
-            unitPosition: "end",
-        },
-        {
-            id: 3,
-            title: "Total Items Sent",
-            presentValue: 74,
-            oldValue: 63,
-            decimal: false,
-            unit: "",
-            unitPosition: "end",
-        },
-        {
-            id: 4,
-            title: "Total Items Received",
-            presentValue: 57,
-            oldValue: 55,
-            decimal: false,
-            unit: "",
-            unitPosition: "end",
-        },
-    ];
 
     // page loading state
     const [pageLoading, setPageLoading] = useState(true);
@@ -172,6 +132,77 @@ const Waybill = ({navigation}) => {
             ...incomingWaybill,
         ]
     }, [tab, outgoingWaybill, incomingWaybill])
+
+    // stata array
+    const stats = useMemo(() => {
+
+        // total outgoing quantity
+        const totalOutgoingQuantity =outgoingWaybill.reduce((totalSum, obj) => {
+            // Calculate the sum of quantities in the current object and add it to the total sum
+            const sumOfCurrentQuantity = obj.quantity.reduce((subtotal, quantity) => subtotal + quantity, 0);
+            return totalSum + sumOfCurrentQuantity;
+        }, 0);
+
+        // total incoming quantity
+        const totalIncomingQuantity =incomingWaybill.reduce((totalSum, obj) => {
+            // Calculate the sum of quantities in the current object and add it to the total sum
+            const sumOfCurrentQuantity = obj.quantity.reduce((subtotal, quantity) => subtotal + quantity, 0);
+            return totalSum + sumOfCurrentQuantity;
+        }, 0);
+
+        return [
+            {
+                id: 1,
+                title: "Total Outgoing Waybill",
+                presentValue: outgoingWaybill?.length,
+                oldValue: 0,
+                decimal: false,
+                unit: "",
+                unitPosition: "start",
+            },
+            {
+                id: 3,
+                title: "Total Incoming Waybill",
+                presentValue: incomingWaybill?.length,
+                oldValue: 0,
+                decimal: false,
+                unit: "",
+                unitPosition: "end",
+            },
+            {
+                id: 2,
+                title: "Total Outgoing Quantity",
+                presentValue: totalOutgoingQuantity,
+                oldValue: 0,
+                decimal: false,
+                unit: "",
+                unitPosition: "end",
+            },
+            {
+                id: 4,
+                title: "Total Incoming Quantity",
+                presentValue: totalIncomingQuantity,
+                oldValue: 0,
+                decimal: false,
+                unit: "",
+                unitPosition: "end",
+            },
+        ];
+    }, [outgoingWaybill, incomingWaybill])
+
+    // previous date
+    const today = new Date();
+
+    // variable to store start date
+    const [startDate, setStartDate] = useState(new Date());
+
+    // variable to indicate start date input active state
+    const [activeStartDate, setActiveStartDate] = useState(false);
+    
+    // variable to store end date
+    const [endDate, setEndDate] = useState(new Date());
+    // variable to indicate end date input active state
+    const [activeEndDate, setActiveEndDate] = useState(false);
 
     // get waybill
     useEffect(() => {
@@ -233,6 +264,7 @@ const Waybill = ({navigation}) => {
                         // console.log(quantityArray);
         
                         productsArray.push({
+                            id: id,
                             product_name: productName,
                             quantity: quantityArray[index],
                         });
@@ -267,15 +299,14 @@ const Waybill = ({navigation}) => {
                 "merchant_business_id" : 
                 "logistics_business_id";
 
-                // Create a Date object for today at 00:00:01 AM
-                const today = new Date();
-                today.setHours(0, 0, 1, 0);
-
+                startDate.setHours(1, 0, 0, 1);
+                endDate.setHours(24, 59, 59, 999);
 
                 let q = query(
                     collectionRef,
                     where(matchField, "==", business_id),
-                    where("edited_at", ">", today),
+                    where("edited_at", ">", startDate),
+                    where("edited_at", "<", endDate),
                     orderBy("edited_at")
                 );
                 
@@ -314,7 +345,9 @@ const Waybill = ({navigation}) => {
                             status: waybillData.status,
                             verified: business.verified,
                             products: productsListed,
+                            products_array: products,
                             created_at: waybillData.created_at,
+                            quantity: quantityArray,
                         };
                         waybillList.push(waybillItem);
                     }
@@ -369,7 +402,7 @@ const Waybill = ({navigation}) => {
             });
         };
 
-    }, []);
+    }, [startDate, endDate]);
 
     // console.log(waybills);
 
@@ -406,9 +439,6 @@ const Waybill = ({navigation}) => {
 
     // sticky header offset
     const stickyHeaderOffset = useRef(0);
-
-    // shadow elevation value, to be animated on scroll of flatlist component
-    const shadowElevation = useRef(new Animated.Value(0)).current;
 
     // scroll height
     const [scrollHeight, setScrollHeight] = useState(0);
@@ -687,8 +717,38 @@ const Waybill = ({navigation}) => {
     }
 
     // filter incoming waybill bottom sheet parameters
-    const [incomingFilter, setIncomingFilter] = useState([
-        {
+    const [incomingFilter, setIncomingFilter] = useState([]);
+    
+    // filter outcoming waybill bottom sheet parameters
+    const [outgoingFilter, setOutgoingFilter] = useState([]);
+
+    // if incoming waybill changes
+    useEffect(() => {
+        // return all unique business_id and business_names from incoming waybill
+        const incomingWaybillBusinesses = incomingWaybill?.map(waybill => {
+            return {
+                business_id: authData?.account_type === "Merchant" ? waybill.logistics_business_id : waybill.merchant_business_id,
+                business_name: waybill.business_name
+            }
+        });
+
+        // unique businesses
+        const uniqueBusinesses = [...new Set(incomingWaybillBusinesses)];
+        
+        // return all unique business_id and business_names from incoming waybill
+        const incomingWaybillProducts = incomingWaybill?.flatMap(waybill => {
+            return waybill.products_array?.map(product => {
+                return {
+                    productName: product.product_name,
+                    id: product.id
+                }
+            })
+        });
+
+        // unique products
+        const uniqueProducts = [...new Set(incomingWaybillProducts)];
+
+        const statusFilter = {
             title: "Status",
             value: "All",
             default: true,
@@ -715,9 +775,14 @@ const Waybill = ({navigation}) => {
                     }
                 },
             ],
-        },
-        {
-            title: "Logistics",
+        };
+
+        // target business account to be filtered
+        const targetBusiness = authData?.account_type !== "Merchant" ? "Merchant" : "Logistics";
+
+        // business filter
+        const businessFilter = {
+            title: targetBusiness,
             value: "All",
             default: true,
             buttons: [
@@ -725,101 +790,87 @@ const Waybill = ({navigation}) => {
                     text: "All",
                     selected: true,
                     onPress: () => {
-                        handleFilterParameters("Logistics", "All", "incoming")
+                        handleFilterParameters(targetBusiness, "All", "incoming")
                     }
                 },
-                {
-                    text: "Komitex",
-                    selected: false,
-                    onPress: () => {
-                        handleFilterParameters("Logistics", "Komitex", "incoming")
+                ...uniqueBusinesses?.map(business => {
+                    return {
+                        text: business.business_name,
+                        selected: false,
+                        onPress: () => {
+                            handleFilterParameters(targetBusiness, business.business_id, "incoming")
+                        }
                     }
-                },
-                {
-                    text: "Fedex",
-                    selected: false,
-                    onPress: () => {
-                        handleFilterParameters("Logistics", "Fedex", "incoming")
-                    }
-                },
-                {
-                    text: "DHL",
-                    selected: false,
-                    onPress: () => {
-                        handleFilterParameters("Logistics", "DHL", "incoming")
-                    }
-                },
-                {
-                    text: "UPS",
-                    selected: false,
-                    onPress: () => {
-                        handleFilterParameters("Logistics", "UPS", "incoming")
-                    }
-                },
+                }),
             ]
-        },
-        {
-            title: "Period",
-            value: "Today",
+        }
+
+        // products filter
+        const productsFilter = {
+            title: "Products",
+            value: "All",
             default: true,
             buttons: [
                 {
-                    text: "Today",
+                    text: "All",
                     selected: true,
                     onPress: () => {
-                        handleFilterParameters("Period", "Today", "incoming")
+                        handleFilterParameters("Products", "All", "incoming")
                     }
                 },
-                {
-                    text: "Yesterday",
-                    selected: false,
-                    onPress: () => {
-                        handleFilterParameters("Period", "Yesterday", "incoming")
+                ...uniqueProducts?.map(product => {
+                    return {
+                        text: product.productName,
+                        selected: false,
+                        onPress: () => {
+                            handleFilterParameters("Products", product.id, "incoming")
+                        }
                     }
-                },
-                {
-                    text: "Current week",
-                    selected: false,
-                    onPress: () => {
-                        handleFilterParameters("Period", "Current week", "incoming")
-                    }
-                },
-                {
-                    text: "Last week",
-                    selected: false,
-                    onPress: () => {
-                        handleFilterParameters("Period", "Last week", "incoming")
-                    }
-                },
-                {
-                    text: "Custom period",
-                    selected: false,
-                    onPress: () => {
-                        handleFilterParameters("Period", "Custom period", "incoming")
-                        openCalendar("StartDate");
-                    }
-                },
-                {
-                    text: "Current month",
-                    selected: false,
-                    onPress: () => {
-                        handleFilterParameters("Period", "Current month", "incoming")
-                    }
-                },
-                {
-                    text: "Last month",
-                    selected: false,
-                    onPress: () => {
-                        handleFilterParameters("Period", "Last month", "incoming")
-                    }
-                },
+                }),
             ]
         }
-    ]);
 
-    // filter outcoming waybill bottom sheet parameters
-    const [outgoingFilter, setOutgoingFilter] = useState([
-        {
+        setIncomingFilter(() => {
+            let filterArray = [statusFilter];
+
+            // if there are more than 1 businesses
+            if (uniqueBusinesses.length > 1) {
+                filterArray.push(businessFilter);
+            }
+
+            // if there are more than 1 products
+            if (uniqueProducts.length > 1) {
+                filterArray.push(productsFilter);
+            }
+            return filterArray;
+        })
+        
+    }, [incomingWaybill])
+
+    // if incoming waybill changes
+    useEffect(() => {
+        // return all unique business_id and business_names from incoming waybill
+        // unique businesses
+        const uniqueBusinesses = outgoingWaybill.reduce((unique, waybill) => {
+            const key = authData?.account_type === "Merchant" ? waybill.logistics_business_id : waybill.merchant_business_id;
+            if (!unique.some(obj => obj.business_id === key)) {
+                unique.push({
+                    business_id: key,
+                    business_name: waybill.business_name
+                });
+            }
+            return unique;
+        }, []);
+
+        console.log("Businesses:", uniqueBusinesses);
+    
+
+        // unique products
+        const uniqueProducts = [...new Map(outgoingWaybill.flatMap(waybill => waybill.products_array.map(product => [`${product.product_name}_${product.id}`, product])))
+        .values()];
+        console.log("Products:", uniqueProducts);
+
+        const statusFilter = {
             title: "Status",
             value: "All",
             default: true,
@@ -828,27 +879,32 @@ const Waybill = ({navigation}) => {
                     text: "All",
                     selected: true,
                     onPress: () => {
-                        handleFilterParameters("Status", "All", "outgoing")
+                        handleFilterParameters("Status", "All", "incoming")
                     }
                 },
                 {
                     text: "Pending",
                     selected: false,
                     onPress: () => {
-                        handleFilterParameters("Status", "Pending", "outgoing")
+                        handleFilterParameters("Status", "Pending", "incoming")
                     }
                 },
                 {
                     text: "Delivered",
                     selected: false,
                     onPress: () => {
-                        handleFilterParameters("Status", "Delivered", "outgoing")
+                        handleFilterParameters("Status", "Delivered", "incoming")
                     }
                 },
             ],
-        },
-        {
-            title: "Logistics",
+        };
+
+        // target business account to be filtered
+        const targetBusiness = authData?.account_type !== "Merchant" ? "Merchant" : "Logistics";
+
+        // business filter
+        const businessFilter = {
+            title: targetBusiness,
             value: "All",
             default: true,
             buttons: [
@@ -856,97 +912,63 @@ const Waybill = ({navigation}) => {
                     text: "All",
                     selected: true,
                     onPress: () => {
-                        handleFilterParameters("Logistics", "All", "outgoing")
+                        handleFilterParameters(targetBusiness, "All", "incoming")
                     }
                 },
-                {
-                    text: "Komitex",
-                    selected: false,
-                    onPress: () => {
-                        handleFilterParameters("Logistics", "Komitex", "outgoing")
+                ...uniqueBusinesses?.map(business => {
+                    return {
+                        text: business.business_name,
+                        selected: false,
+                        onPress: () => {
+                            handleFilterParameters(targetBusiness, business.business_id, "incoming")
+                        }
                     }
-                },
-                {
-                    text: "Fedex",
-                    selected: false,
-                    onPress: () => {
-                        handleFilterParameters("Logistics", "Fedex", "outgoing")
-                    }
-                },
-                {
-                    text: "DHL",
-                    selected: false,
-                    onPress: () => {
-                        handleFilterParameters("Logistics", "DHL", "outgoing")
-                    }
-                },
-                {
-                    text: "UPS",
-                    selected: false,
-                    onPress: () => {
-                        handleFilterParameters("Logistics", "UPS", "outgoing")
-                    }
-                },
+                }),
             ]
-        },
-        {
-            title: "Period",
-            value: "Today",
+        }
+
+        // products filter
+        const productsFilter = {
+            title: "Products",
+            value: "All",
             default: true,
             buttons: [
                 {
-                    text: "Today",
+                    text: "All",
                     selected: true,
                     onPress: () => {
-                        handleFilterParameters("Period", "Today", "outgoing")
+                        handleFilterParameters("Products", "All", "incoming")
                     }
                 },
-                {
-                    text: "Yesterday",
-                    selected: false,
-                    onPress: () => {
-                        handleFilterParameters("Period", "Yesterday", "outgoing")
+                ...uniqueProducts?.map(product => {
+                    return {
+                        text: product.product_name,
+                        selected: false,
+                        onPress: () => {
+                            handleFilterParameters("Products", product.id, "incoming")
+                        }
                     }
-                },
-                {
-                    text: "Current week",
-                    selected: false,
-                    onPress: () => {
-                        handleFilterParameters("Period", "Current week", "outgoing")
-                    }
-                },
-                {
-                    text: "Last week",
-                    selected: false,
-                    onPress: () => {
-                        handleFilterParameters("Period", "Last week", "outgoing")
-                    }
-                },
-                {
-                    text: "Custom period",
-                    selected: false,
-                    onPress: () => {
-                        handleFilterParameters("Period", "Custom period", "outgoing")
-                        openCalendar("StartDate");
-                    }
-                },
-                {
-                    text: "Current month",
-                    selected: false,
-                    onPress: () => {
-                        handleFilterParameters("Period", "Current month", "outgoing")
-                    }
-                },
-                {
-                    text: "Last month",
-                    selected: false,
-                    onPress: () => {
-                        handleFilterParameters("Period", "Last month", "outgoing")
-                    }
-                },
+                }),
             ]
         }
-    ]);
+
+        setOutgoingFilter(() => {
+            let filterArray = [statusFilter];
+
+            // if there are more than 1 businesses
+            if (uniqueBusinesses.length > 1) {
+                filterArray.push(businessFilter);
+            }
+
+            // if there are more than 1 products
+            if (uniqueProducts.length > 1) {
+                filterArray.push(productsFilter);
+            }
+            return filterArray;
+        })
+        
+    }, [outgoingWaybill])
+
 
     // filter order bottom sheet parameters
     const [searchFilter, setSearchFilter] = useState([
@@ -1090,53 +1112,31 @@ const Waybill = ({navigation}) => {
         }
     }
 
-    // previous date
-    const prevDate = new Date();
-    prevDate.setDate(prevDate.getDate() - 1);
-
-    // previous date
-    const today = new Date();
-    // today.setDate(today.getDate());
-
-    // variable to store start date
-    const [startDate, setStartDate] = useState(today);
-
-    // variable to indicate start date input active state
-    const [activeStartDate, setActiveStartDate] = useState(false);
-    
-    // variable to store end date
-    const [endDate, setEndDate] = useState(today);
-    // variable to indicate end date input active state
-    const [activeEndDate, setActiveEndDate] = useState(false);
+    // // previous date
+    // const prevDate = new Date();
+    // prevDate.setDate(prevDate.getDate() - 1);
 
     const [calendar, setCalendar] = useState({
-        setDate: setStartDate,
+        // setDate: setStartDate,
         maxDate: false,
         minDate: false,
     });
 
-    // function to setEnd date as today if start date is selected as today
-    useEffect(() => {
-        if (moment(startDate).format('DD MMMM, YYYY') === moment(today).format('DD MMMM, YYYY')) {
-            setEndDate(today);
-        }
-    }, [startDate])
-
     const openCalendar = (inputType) => {
         if (inputType === "StartDate") {
             setActiveStartDate(true);
-            setCalendar({
-                setDate: setStartDate,
-                maxDate: endDate ? moment(endDate).subtract(1, 'days') : today,
-                minDate: false
-            });
+            // setCalendar({
+            //     // setDate: setStartDate,
+            //     maxDate: endDate.current ? moment(endDate.current).subtract(1, 'days') : today,
+            //     minDate: false
+            // });
         } else {
             setActiveEndDate(true);
-            setCalendar({
-                setDate: setEndDate,
-                maxDate: today,
-                minDate: startDate ? moment(startDate).add(1, 'days') : startDate,
-            });
+            // setCalendar({
+            //     // setDate: setEndDate,
+            //     maxDate: today,
+            //     minDate: startDate ? moment(startDate).add(1, 'days') : startDate,
+            // });
         }
         calendarSheetRef.current?.present();
     }
@@ -1434,13 +1434,22 @@ const Waybill = ({navigation}) => {
                                 ) 
                             }
                         }}
-                        ListEmptyComponent={<>
-                            {waybills.length === 1 && (
+                        ListFooterComponent={<>
+                            {renderData.length === 1 && (
                                 <View style={style.emptyOrderWrapper}>
                                     <SendOrderIcon />
-                                    <Text style={style.emptyOrderHeading}>No waybill yet</Text>
+                                    <Text style={style.emptyOrderHeading}>No Active Waybill</Text>
                                     <Text style={style.emptyOrderParagraph}>
-                                        Store your products in your logistics  partner’s warehouse
+                                        {(() => {
+                                            if (tab === "incoming") {
+                                                if (authData?.account_type === "Merchant") return "Waybills returned by your logistics partners would appear here"
+                                                return "Waybills sent to you by your Merchants would appear here"
+                                            } else {
+                                                if (authData?.account_type !== "Merchant") return "Waybills returned to your Merchants would appear here"
+                                                return "Waybills you send to your logistics partners would appear here"
+                                            }
+                                        })()}
+                                        
                                     </Text>
                                 </View>
                             )}
@@ -1518,26 +1527,59 @@ const Waybill = ({navigation}) => {
             >
                 {filterType === "incoming" && incomingFilter.map(item => (
                     <FilterButtonGroup
-                        buttons={item.buttons}
                         title={item.title}
                         key={item.title}
-                    />
+                    >
+                        {/* filter button list */}
+                        {item.buttons.map(button => (
+                            // filter button
+                            <ActionButton
+                                key={button.text}
+                                name={button.text}
+                                removeBottomMargin={true}
+                                selected={button.selected}
+                                onPress={()  => handleFilterParameters(item.title, button.text, filterType)}
+                            />
+                        ))}
+                    </FilterButtonGroup>
                 ))}
 
                 {filterType === "outgoing" && outgoingFilter.map(item => (
                     <FilterButtonGroup
-                        buttons={item.buttons}
                         title={item.title}
                         key={item.title}
-                    />
+                    >
+                        {/* filter button list */}
+                        {item.buttons.map(button => (
+                            // filter button
+                            <ActionButton
+                                key={button.text}
+                                name={button.text}
+                                removeBottomMargin={true}
+                                selected={button.selected}
+                                onPress={()  => handleFilterParameters(item.title, button.text, filterType)}
+                            />
+                        ))}
+                    </FilterButtonGroup>
                 ))}
 
                 {filterType === "search" && searchFilter.map(item => (
                     <FilterButtonGroup
-                        buttons={item.buttons}
                         title={item.title}
                         key={item.title}
-                    />
+                    >
+                        {/* filter button list */}
+                        {item.buttons.map(button => (
+                            // filter button
+                            <ActionButton
+                                key={button.text}
+                                name={button.text}
+                                removeBottomMargin={true}
+                                selected={button.selected}
+                                onPress={()  => handleFilterParameters(item.title, button.text, filterType)}
+                            />
+                        ))}
+                    </FilterButtonGroup>
                 ))}
                     <View style={style.inputContainer}>
                         {/* Start date */}
@@ -1567,7 +1609,6 @@ const Waybill = ({navigation}) => {
             <CalendarSheet 
                 calendarRef={calendarSheetRef} 
                 closeCalendar={closeCalendar}
-                setDate={calendar.setDate}
                 disableActionButtons={true}
                 snapPointsArray={["60%"]}
                 minDate={calendar.minDate}

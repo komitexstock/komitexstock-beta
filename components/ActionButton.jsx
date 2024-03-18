@@ -47,6 +47,7 @@ const style = StyleSheet.create({
         fontFamily: 'mulish-medium',
         fontSize: 12,
         color: bodyText,
+        textTransform: 'capitalize',
     }
 })
  
