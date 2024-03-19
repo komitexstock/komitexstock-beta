@@ -29,6 +29,10 @@ import {
 // react hooks
 import { useState, useRef, useEffect, useMemo } from "react";
 
+// skeleton imports
+import { createShimmerPlaceholder } from "react-native-shimmer-placeholder";
+import { LinearGradient } from "expo-linear-gradient";
+
 // components
 import StatWrapper from "../components/StatWrapper";
 import StatCard from "../components/StatCard";
@@ -58,9 +62,6 @@ import WaybillSkeleton from "../skeletons/WaybillSkeleton";
 // globals
 import { useGlobals } from "../context/AppContext";
 
-// data
-import { waybillList } from "../data/waybillList";
-
 // use auth context
 import { useAuth } from "../context/AuthContext";
 
@@ -79,9 +80,17 @@ import {
     orderBy,
     doc,
 } from "firebase/firestore";
-import { windowHeight } from "../utils/helpers";
-import { filter, uniq } from "lodash";
+
+// utilities
+import { windowHeight, windowWidth } from "../utils/helpers";
+
+
 const Waybill = ({navigation}) => {
+    // colour array for skeleton loader
+    const shimmerColorArray = ["#ebebeb", "#d9d9d9", "#ebebeb",];
+
+    // skeleton component
+    const Skeleton = createShimmerPlaceholder(LinearGradient);
 
     // use auth
     const { authData } = useAuth();
@@ -89,6 +98,7 @@ const Waybill = ({navigation}) => {
     // global variables
     const {
         bottomSheetRef,
+        bottomSheetOpen,
         filterSheetRef,
         calendarSheetRef,
         calendarSheetOpen,
@@ -97,6 +107,14 @@ const Waybill = ({navigation}) => {
 
     // page loading state
     const [pageLoading, setPageLoading] = useState(true);
+
+    // to indicate fetching waybill state
+    const [fectchingWaybills, setFetchingWaybills] = useState(true);
+
+    // previous period filter value
+    const previousPeriodFilter = useRef(null);
+
+    // console.log("fetching waybills:", fectchingWaybills);
 
     // tabs, default as Outgoing for Merchants
     const [tab, setTab] = useState(authData?.account_type === "Merchant" ? "outgoing" : "incoming");
@@ -119,19 +137,823 @@ const Waybill = ({navigation}) => {
         return waybills.filter(waybill => waybill.is_increment === incrementCondition);
     }, [waybills]);
 
-    // rendered data in flatlist component
-    const renderData = useMemo(() => {
-        if (tab === "outgoing") {
-            return [
-                {id: "sticky"},
-                ...outgoingWaybill,
+    // filter incoming waybill bottom sheet parameters
+    const [incomingFilter, setIncomingFilter] = useState([]);
+
+    // filter outcoming waybill bottom sheet parameters
+    const [outgoingFilter, setOutgoingFilter] = useState([]);
+
+    // get filtervlaue
+    const getFilterValue = (title) => {
+        // if bottomsheets open, return search filter value
+        if (bottomSheetOpen) {
+            return searchFilter?.find(filterParam => filterParam?.title === title)?.value
+        }
+        // if tab is incoming return incoming filter value
+        if (tab === "incoming") {
+            return incomingFilter?.find(filterParam => filterParam?.title === title)?.value
+        }
+        // else for outgoing filter value
+        return outgoingFilter?.find(filterParam => filterParam?.title === title)?.value
+    }
+
+    // if incoming waybill changes, get parameters for outgoing filter
+    useEffect(() => {
+        // return all unique business_id and business_names from incoming waybill
+        const uniqueBusinesses = incomingWaybill.reduce((unique, waybill) => {
+            const key = authData?.account_type === "Merchant" ? waybill.logistics_business_id : waybill.merchant_business_id;
+            if (!unique.some(obj => obj.business_id === key)) {
+                unique.push({
+                    business_id: key,
+                    business_name: waybill.business_name
+                });
+            }
+            return unique;
+        }, []);
+
+        // unique products
+        const uniqueProducts = [...new Map(incomingWaybill.flatMap(waybill => waybill.products_array.map(product => [`${product.product_name}_${product.id}`, product])))
+        .values()];
+
+        const statusFilter = {
+            title: "Status",
+            value: "All",
+            default: true,
+            buttons: [
+                {
+                    text: "All",
+                    selected: true,
+                    onPress: () => {
+                        handleFilterParameters("Status", "All", "incoming")
+                    }
+                },
+                {
+                    text: "Pending",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Status", "Pending", "incoming")
+                    }
+                },
+                {
+                    text: "Delivered",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Status", "Delivered", "incoming")
+                    }
+                },
+            ],
+        };
+
+        // target business account to be filtered
+        const targetBusiness = authData?.account_type !== "Merchant" ? "Merchant" : "Logistics";
+
+        // business filter
+        const businessFilter = {
+            title: targetBusiness,
+            value: "All",
+            default: true,
+            buttons: [
+                {
+                    text: "All",
+                    selected: true,
+                    onPress: () => {
+                        handleFilterParameters(targetBusiness, "All", "incoming")
+                    }
+                },
+                ...uniqueBusinesses?.map(business => {
+                    return {
+                        text: business.business_name,
+                        selected: false,
+                        onPress: () => {
+                            handleFilterParameters(targetBusiness, business.business_name, "incoming")
+                        }
+                    }
+                }),
             ]
         }
+
+        // products filter
+        const productsFilter = {
+            title: "Products",
+            value: "All",
+            default: true,
+            buttons: [
+                {
+                    text: "All",
+                    selected: true,
+                    onPress: () => {
+                        handleFilterParameters("Products", "All", "incoming")
+                    }
+                },
+                ...uniqueProducts?.map(product => {
+                    return {
+                        text: product.product_name,
+                        selected: false,
+                        onPress: () => {
+                            handleFilterParameters("Products", product.product_name, "incoming")
+                        }
+                    }
+                }),
+            ]
+        }
+
+        // period filter
+        const periodFilter = {
+            title: "Period",
+            value: "Today",
+            default: true,
+            buttons: [
+                {
+                    text: "Today",
+                    selected: true,
+                    onPress: () => {
+                        handleFilterParameters("Period", "Today", "incoming")
+                    }
+                },
+                {
+                    text: "Yesterday",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Period", "Yesterday", "incoming")
+                    }
+                },
+                {
+                    text: "Current Week",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Period", "Current Week", "incoming")
+                    }
+                },
+                {
+                    text: "Last Week",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Period", "Last Week", "incoming")
+                    }
+                },
+                
+                {
+                    text: "Current Month",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Period", "Current Month", "incoming")
+                    }
+                },
+                {
+                    text: "Last Month",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Period", "Last Month", "incoming")
+                    }
+                },
+                {
+                    text: "Custom period",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Period", "Custom Period", "incoming")
+                    }
+                },
+            ]
+        }
+
+        // set incoming filter
+        setIncomingFilter((prevFilter) => {
+            let filterArray = [statusFilter];
+            // if there are more than 1 businesses
+            if (uniqueBusinesses.length > 1) {
+                filterArray.push(businessFilter);
+            }
+            // if there are more than 1 products
+            if (uniqueProducts.length > 1) {
+                filterArray.push(productsFilter);
+            }
+            // push period filter 
+            filterArray.push(periodFilter);
+
+            // target business for filter
+            const targetBusiness = authData?.account_type !== "Merchant" ? "Merchant" : "Logistics";
+            // prev status value
+            const prevStatusValue = prevFilter.find(filterParam => filterParam?.title === "Status")?.value;
+            // prev business value
+            const prevBusinessValue = prevFilter.find(filterParam => filterParam?.title === targetBusiness)?.value;
+            // prev products value
+            const prevProductsValue = prevFilter.find(filterParam => filterParam?.title === "Products")?.value;
+            // prev period value
+            const prevPeriodValue = prevFilter.find(filterParam => filterParam?.title === "Period")?.value;
+
+            // return filter array
+            return filterArray.map(filterParam => {
+                // handle status filter
+                if (filterParam?.title === "Status") {
+                    return {
+                        ...filterParam,
+                        default: ["All", undefined].includes(prevStatusValue) ? true : false,
+                        value: ["All", undefined].includes(prevStatusValue) ? "All" : prevStatusValue,
+                        buttons: filterParam.buttons.map(button => {
+                            if (button.text === prevStatusValue) {
+                                return {
+                                    ...button,
+                                    selected: true,
+                                }
+                            } else if (button.text === "All"){
+                                return {
+                                    ...button,
+                                    selected: ["All", undefined].includes(prevStatusValue),
+                                }
+                            }
+                            return {
+                                ...button,
+                                selected: false,
+                            }
+                        })
+                    }
+                }
+
+                // handle business filter
+                if (filterParam?.title === targetBusiness) {
+                    return {
+                        ...filterParam,
+                        default: !["All", undefined].includes(prevBusinessValue) ? false : true,
+                        value:["All", undefined].includes(prevBusinessValue) ? prevBusinessValue : "All",
+                        buttons: filterParam.buttons.some(button => button.text === prevBusinessValue) ? filterParam.buttons.map(button => {
+                            if (button.text === prevBusinessValue) {
+                                return {
+                                    ...button,
+                                    selected: true,
+                                }
+                            } else if (button.text === "All"){
+                                return {
+                                    ...button,
+                                    selected: ["All", undefined].includes(prevBusinessValue),
+                                }
+                            }
+                            return {
+                                ...button,
+                                selected: false,
+                            }
+                        }) : [
+                            ...filterParam.buttons.map(button => {
+                                return {...button, selected: false}
+                            }),
+                            {
+                                text: prevBusinessValue,
+                                selected: true,
+                                onPress: () => {
+                                    handleFilterParameters(targetBusiness, prevBusinessValue, "incoming")
+                                }
+                            },
+                        ],
+                    }
+                }
+
+                // handle products filter
+                if (filterParam?.title === "Products") {
+                    return {
+                        ...filterParam,
+                        default: !["All", undefined].includes(prevProductsValue) ? false : true,
+                        value: !["All", undefined].includes(prevProductsValue) ? prevProductsValue : "All",
+                        buttons: filterParam.buttons.some(button => button.text === prevProductsValue) ? filterParam.buttons.map(button => {
+                            if (button.text === prevProductsValue) {
+                                return {
+                                    ...button,
+                                    selected: true,
+                                }
+                            } else if (button.text === "All"){
+                                return {
+                                    ...button,
+                                    selected: ["All", undefined].includes(prevProductsValue),
+                                }
+                            }
+                            return {
+                                ...button,
+                                selected: false,
+                            }
+                        }) : [
+                            ...filterParam.buttons.map(button => {
+                                return {...button, selected: false}
+                            }),
+                            {
+                                text: prevProductsValue,
+                                selected: true,
+                                onPress: () => {
+                                    handleFilterParameters("Products", prevProductsValue, "incoming")
+                                }
+                            },
+                        ],
+                    }
+                }
+
+
+                // handle period filter
+                if (filterParam?.title === "Period") {
+                    return {
+                        ...filterParam,
+                        default: !["Today", undefined].includes(prevPeriodValue) ? false : true,
+                        value: !["Today", undefined].includes(prevPeriodValue) ? prevPeriodValue : "Today",
+                        buttons: filterParam.buttons.map(button => {
+                            if (button.text === prevPeriodValue) {
+                                return {
+                                    ...button,
+                                    selected: true,
+                                }
+                            } else if (button.text === "All"){
+                                return {
+                                    ...button,
+                                    selected: ["All", undefined].includes(prevPeriodValue),
+                                }
+                            }
+                            return {
+                                ...button,
+                                selected: false,
+                            }
+                        })
+                    }
+                }
+
+                return filterParam;
+            });
+        });
+        
+    }, [incomingWaybill])
+
+    // if outgoing waybill changes, get parameters for imcoming filter
+    useEffect(() => {
+        // return all unique business_id and business_names from incoming waybill
+        // unique businesses
+        const uniqueBusinesses = outgoingWaybill.reduce((unique, waybill) => {
+            const key = authData?.account_type === "Merchant" ? waybill.logistics_business_id : waybill.merchant_business_id;
+            if (!unique.some(obj => obj.business_id === key)) {
+                unique.push({
+                    business_id: key,
+                    business_name: waybill.business_name
+                });
+            }
+            return unique;
+        }, []);
+
+        // unique products
+        const uniqueProducts = [...new Map(outgoingWaybill.flatMap(waybill => waybill.products_array.map(product => [`${product.product_name}_${product.id}`, product])))
+        .values()];
+
+        // status filter parameters
+        const statusFilter = {
+            title: "Status",
+            value: "All",
+            default: true,
+            buttons: [
+                {
+                    text: "All",
+                    selected: true,
+                    onPress: () => {
+                        handleFilterParameters("Status", "All", "outgoing")
+                    }
+                },
+                {
+                    text: "Pending",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Status", "Pending", "outgoing")
+                    }
+                },
+                {
+                    text: "Delivered",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Status", "Delivered", "outgoing")
+                    }
+                },
+            ],
+        };
+
+        // target business account to be filtered
+        const targetBusiness = authData?.account_type !== "Merchant" ? "Merchant" : "Logistics";
+
+        // business filter parameters
+        const businessFilter = {
+            title: targetBusiness,
+            value: "All",
+            default: true,
+            buttons: [
+                {
+                    text: "All",
+                    selected: true,
+                    onPress: () => {
+                        handleFilterParameters(targetBusiness, "All", "outgoing")
+                    }
+                },
+                ...uniqueBusinesses?.map(business => {
+                    return {
+                        text: business.business_name,
+                        selected: false,
+                        onPress: () => {
+                            handleFilterParameters(targetBusiness, business.business_name, "outgoing")
+                        }
+                    }
+                }),
+            ]
+        }
+
+        // products filter parameters
+        const productsFilter = {
+            title: "Products",
+            value: "All",
+            default: true,
+            buttons: [
+                {
+                    text: "All",
+                    selected: true,
+                    onPress: () => {
+                        handleFilterParameters("Products", "All", "outgoing")
+                    }
+                },
+                ...uniqueProducts?.map(product => {
+                    return {
+                        text: product.product_name,
+                        selected: false,
+                        onPress: () => {
+                            handleFilterParameters("Products", product.product_name, "outgoing")
+                        }
+                    }
+                }),
+            ]
+        }
+
+        // period filter parameters
+        const periodFilter = {
+            title: "Period",
+            value: "Today",
+            default: true,
+            buttons: [
+                {
+                    text: "Today",
+                    selected: true,
+                    onPress: () => {
+                        handleFilterParameters("Period", "Today", "outgoing")
+                    }
+                },
+                {
+                    text: "Yesterday",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Period", "Yesterday", "outgoing")
+                    }
+                },
+                {
+                    text: "Current Week",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Period", "Current Week", "outgoing")
+                    }
+                },
+                {
+                    text: "Last Week",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Period", "Last Week", "outgoing")
+                    }
+                },
+                {
+                    text: "Current Month",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Period", "Current Month", "outgoing")
+                    }
+                },
+                {
+                    text: "Last Month",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Period", "Last Month", "outgoing")
+                    }
+                },
+                {
+                    text: "Custom Period",
+                    selected: false,
+                    onPress: () => {
+                        handleFilterParameters("Period", "Custom Period", "outgoing")
+                    }
+                },
+            ]
+        }
+
+        // set outgoing filter
+        setOutgoingFilter((prevFilter) => {
+            let filterArray = [statusFilter];
+
+            // if there are more than 1 businesses
+            if (uniqueBusinesses.length > 1) {
+                filterArray.push(businessFilter);
+            }
+
+            // if there are more than 1 products
+            if (uniqueProducts.length > 1) {
+                filterArray.push(productsFilter);
+            };
+
+            // push period filter
+            filterArray.push(periodFilter)
+
+            // target business for filter
+            const targetBusiness = authData?.account_type !== "Merchant" ? "Merchant" : "Logistics";
+
+            // prev status value
+            const prevStatusValue = prevFilter.find(filterParam => filterParam?.title === "Status")?.value;
+            // prev business value
+            const prevBusinessValue = prevFilter.find(filterParam => filterParam?.title === targetBusiness)?.value;
+            // prev products value
+            const prevProductsValue = prevFilter.find(filterParam => filterParam?.title === "Products")?.value;
+            // prev period value
+            const prevPeriodValue = prevFilter.find(filterParam => filterParam?.title === "Period")?.value;
+
+
+            return filterArray.map(filterParam => {
+                // handle status filter
+                if (filterParam?.title === "Status") {
+                    return {
+                        ...filterParam,
+                        default: ["All", undefined].includes(prevStatusValue) ? true : false,
+                        value: ["All", undefined].includes(prevStatusValue) ? "All" : prevStatusValue,
+                        buttons: filterParam.buttons.map(button => {
+                            if (button.text === prevStatusValue) {
+                                return {
+                                    ...button,
+                                    selected: true,
+                                }
+                            } else if (button.text === "All"){
+                                return {
+                                    ...button,
+                                    selected: ["All", undefined].includes(prevStatusValue),
+                                }
+                            }
+                            return {
+                                ...button,
+                                selected: false,
+                            }
+                        })
+                    }
+                }
+
+                // handle business filter
+                if (filterParam?.title === targetBusiness) {
+                    return {
+                        ...filterParam,
+                        default: !["All", undefined].includes(prevBusinessValue) ? false : true,
+                        value:["All", undefined].includes(prevBusinessValue) ? prevBusinessValue : "All",
+                        buttons: filterParam.buttons.some(button => button.text === prevBusinessValue) ? filterParam.buttons.map(button => {
+                            if (button.text === prevBusinessValue) {
+                                return {
+                                    ...button,
+                                    selected: true,
+                                }
+                            } else if (button.text === "All"){
+                                return {
+                                    ...button,
+                                    selected: ["All", undefined].includes(prevBusinessValue),
+                                }
+                            }
+                            return {
+                                ...button,
+                                selected: false,
+                            }
+                        }) : [
+                            ...filterParam.buttons.map(button => {
+                                return {...button, selected: false}
+                            }),
+                            {
+                                text: prevBusinessValue,
+                                selected: true,
+                                onPress: () => {
+                                    handleFilterParameters(targetBusiness, prevBusinessValue, "outgoing")
+                                }
+                            },
+                        ],
+                    }
+                }
+
+                // handle products filter
+                if (filterParam?.title === "Products") {
+                    return {
+                        ...filterParam,
+                        default: !["All", undefined].includes(prevProductsValue) ? false : true,
+                        value: !["All", undefined].includes(prevProductsValue) ? prevProductsValue : "All",
+                        buttons: filterParam.buttons.some(button => button.text === prevProductsValue) ? filterParam.buttons.map(button => {
+                            if (button.text === prevProductsValue) {
+                                return {
+                                    ...button,
+                                    selected: true,
+                                }
+                            } else if (button.text === "All"){
+                                return {
+                                    ...button,
+                                    selected: ["All", undefined].includes(prevProductsValue),
+                                }
+                            }
+                            return {
+                                ...button,
+                                selected: false,
+                            }
+                        }) : [
+                            ...filterParam.buttons.map(button => {
+                                return {...button, selected: false}
+                            }),
+                            {
+                                text: prevProductsValue,
+                                selected: true,
+                                onPress: () => {
+                                    handleFilterParameters("Products", prevProductsValue, "outgoing")
+                                }
+                            },
+                        ],
+                    }
+                }
+
+                // handle period filter
+                if (filterParam?.title === "Period") {
+                    return {
+                        ...filterParam,
+                        default: !["Today", undefined].includes(prevPeriodValue) ? false : true,
+                        value: !["Today", undefined].includes(prevPeriodValue) ? prevPeriodValue : "Today",
+                        buttons: filterParam.buttons.map(button => {
+                            if (button.text === prevPeriodValue) {
+                                return {
+                                    ...button,
+                                    selected: true,
+                                }
+                            } else if (button.text === "All"){
+                                return {
+                                    ...button,
+                                    selected: ["All", undefined].includes(prevPeriodValue),
+                                }
+                            }
+                            return {
+                                ...button,
+                                selected: false,
+                            }
+                        })
+                    }
+                }
+
+                return filterParam;
+            });
+        })
+        
+    }, [outgoingWaybill])
+    
+    // previous date
+    const today = new Date();
+
+    // variable to store start date
+    const [startDate, setStartDate] = useState(() => {
+        const date = new Date();
+        date.setHours(1, 0, 0, 1);
+        return date;
+    });
+
+    // start datetime for query
+    const [queryStartDateTime, setQueryStartDateTime] = useState(() => {
+        const date = new Date();
+        date.setHours(1, 0, 0, 1);
+        return date;
+    })
+
+    // strt datetime for query
+    const [queryEndDateTime, setQueryEndDateTime] = useState(() => {
+        const date = new Date();
+        date.setHours(23, 59, 59, 999);
+        return date;
+    })
+
+    // variable to indicate start date input active state
+    const [activeStartDate, setActiveStartDate] = useState(false);
+    
+    // variable to store end date
+    const [endDate, setEndDate] = useState(() => {
+        const date = new Date();
+        date.setHours(23, 59, 59, 999);
+        return date;
+    });
+    // variable to indicate end date input active state
+    const [activeEndDate, setActiveEndDate] = useState(false);
+
+    // rendered data in flatlist component
+    const renderData = useMemo(() => {
+        // target business account to be filtered
+        const targetBusiness = authData?.account_type !== "Merchant" ? "Merchant" : "Logistics";
+        const targetFilter = tab === "outgoing" ? outgoingFilter : incomingFilter;
+        const targetWaybill = tab === "outgoing" ? outgoingWaybill : incomingWaybill;
+        // if no filter parameter is set
+        if (targetFilter?.every(item => item?.default)) {
+            return [
+                {id: "sticky"},
+                ...targetWaybill,
+            ]
+        }
+
+        // query time was altered, indicated fetching waybill
+        if (targetFilter?.find(item => item.title === "Period").default !== true) {
+            // period filter value
+            const periodFilterValue = getFilterValue("Period", tab);
+            if (periodFilterValue !== previousPeriodFilter.current) {
+                previousPeriodFilter.current = periodFilterValue;
+                setFetchingWaybills(true);
+            }
+
+            let start;
+            let end;
+
+            if (periodFilterValue === "Yesterday") {
+                start = moment().subtract(1, 'days').startOf('day');
+                end = moment().subtract(1, 'days').endOf('day');
+            } else if (periodFilterValue === "Current Week") {
+                start = moment().startOf('week');
+                end = moment().endOf('week');
+            } else if (periodFilterValue === "Last Week") {
+                start = moment().startOf('week').subtract(1, 'week');
+                end = moment().endOf('week').subtract(1, 'week');
+            } else if (periodFilterValue === "Current Month") {
+                start = moment().startOf('month');
+                end = moment().endOf('month');
+            } else if (periodFilterValue === "Last Month") {
+                start = moment().subtract(1, 'month').startOf('month');
+                end = moment().subtract(1, 'month').endOf('month');
+            } else if (periodFilterValue === "Custom Period") {
+                start = startDate;
+                end = endDate;
+            }
+
+            start = new Date(start)
+            start.setHours(1, 0, 0, 1);
+
+            end = new Date(end)
+            end.setHours(23, 59, 59, 999);
+
+            setStartDate(start);
+            setEndDate(end);
+
+            setQueryStartDateTime(start);
+            setQueryEndDateTime(end);
+
+            console.log("Period Filter Value:", periodFilterValue);
+            console.log("Start At:", start);
+            console.log("End At:", end)
+            console.log("");
+
+        } else {
+            // const start = new Date();
+            // start.setHours(1, 0, 0, 1);
+
+            // const end = new Date();
+            // end.setHours(23, 59, 59, 999);
+
+            // // set calender sheet date input
+            // setStartDate(start);
+            // setEndDate(end);
+
+            // // set query datetime
+            // setQueryStartDateTime(start);
+            // setQueryEndDateTime(end);
+        }
+
+        // business filter value
+        const businessFilterValue = getFilterValue(targetBusiness, tab);
+        // status filter value
+        const statusFilterValue = getFilterValue("Status", tab);
+        // status filter value
+        const productsFilterValue = getFilterValue("Products", tab);
+        // filtered waybill
+        const filteredWaybill = targetWaybill.filter(waybill => {
+            // filter matched
+            const filterMatch = []; // store array of boolean of matches
+            // filter by business
+            if (businessFilterValue !== "All" && businessFilterValue) {
+                if (waybill.business_name !== businessFilterValue) {
+                    // if no match push false
+                    filterMatch.push(false);
+                } else filterMatch.push(true); // else push true
+            }
+            // filter by status
+            if (statusFilterValue !== "All" && statusFilterValue) {
+                if (waybill.status !== statusFilterValue) {
+                    filterMatch.push(false); // if no match push false
+                } else filterMatch.push(true); // else push true
+            }
+            // filter by products
+            if (productsFilterValue !== "All" && productsFilterValue) {
+                if (!waybill.products_array.some(product => product.product_name === productsFilterValue)) {
+                    filterMatch.push(false); // if no match push false
+                } else filterMatch.push(true); // else push true
+            }
+
+            // return match
+            return !filterMatch.includes(false);
+        })
+
+        // return filtered data
         return [
             {id: "sticky"},
-            ...incomingWaybill,
-        ]
-    }, [tab, outgoingWaybill, incomingWaybill])
+            ...filteredWaybill,
+        ];
+    }, [tab, incomingWaybill, outgoingWaybill, incomingFilter, outgoingFilter]);
 
     // stata array
     const stats = useMemo(() => {
@@ -188,21 +1010,49 @@ const Waybill = ({navigation}) => {
                 unitPosition: "end",
             },
         ];
-    }, [outgoingWaybill, incomingWaybill])
-
-    // previous date
-    const today = new Date();
-
-    // variable to store start date
-    const [startDate, setStartDate] = useState(new Date());
-
-    // variable to indicate start date input active state
-    const [activeStartDate, setActiveStartDate] = useState(false);
+    }, [outgoingWaybill, incomingWaybill]);
     
-    // variable to store end date
-    const [endDate, setEndDate] = useState(new Date());
-    // variable to indicate end date input active state
-    const [activeEndDate, setActiveEndDate] = useState(false);
+    const [calendar, setCalendar] = useState({
+        setDate: setStartDate,
+        startPoint: true,
+        maxDate: false,
+        minDate: false,
+    });
+
+    const openCalendar = (inputType) => {
+        if (inputType === "StartDate") {
+            setActiveStartDate(true);
+            setCalendar({
+                setDate: setStartDate,
+                startPoint: true,
+                maxDate: today,
+                minDate: false,
+            });
+        } else {
+            setActiveEndDate(true);
+            setCalendar({
+                setDate: setEndDate,
+                startPoint: false,
+                maxDate: today,
+                minDate: startDate,
+            });
+        }
+        calendarSheetRef.current?.present();
+    }
+
+    const closeCalendar = () => {
+        setActiveEndDate(false);
+        setActiveStartDate(false);
+        calendarSheetRef.current?.close();
+    }
+
+    // disable active calendar inputs
+    useEffect(() => {
+        if (!calendarSheetOpen) {
+            setActiveEndDate(false);
+            setActiveStartDate(false);
+        }
+    }, [calendarSheetOpen])
 
     // get waybill
     useEffect(() => {
@@ -245,7 +1095,6 @@ const Waybill = ({navigation}) => {
             }
         }
 
-
         // fetch merchants products with id of array provided
         const fetchProducts = async (idArray, quantityArray) => {
             try {
@@ -257,12 +1106,8 @@ const Waybill = ({navigation}) => {
                         const docSnap = await getDoc(docRef);
 
                         const productId = docSnap.data()?.product_id;
-                        // console.log("productId: ", productId);
                         const productName = await fetchProductName(productId);
 
-                        // console.log(productName);
-                        // console.log(quantityArray);
-        
                         productsArray.push({
                             id: id,
                             product_name: productName,
@@ -299,19 +1144,18 @@ const Waybill = ({navigation}) => {
                 "merchant_business_id" : 
                 "logistics_business_id";
 
-                startDate.setHours(1, 0, 0, 1);
-                endDate.setHours(24, 59, 59, 999);
-
                 let q = query(
                     collectionRef,
                     where(matchField, "==", business_id),
-                    where("edited_at", ">", startDate),
-                    where("edited_at", "<", endDate),
+                    where("edited_at", ">", queryStartDateTime),
+                    where("edited_at", "<", queryEndDateTime),
                     orderBy("edited_at")
                 );
                 
                 const unsubscribe = onSnapshot(q, async (querySnapshot) => {
+                    
                     let waybillList = [];
+
 
                     for (const doc of querySnapshot.docs) {
                         const waybillData = doc.data();
@@ -360,6 +1204,8 @@ const Waybill = ({navigation}) => {
                     // disable page loading state
                     setPageLoading(false);
 
+                    // disable fetching waybills
+                    setFetchingWaybills(false);
                     
                     }, (error) => { //handle errors
                         // indicate error
@@ -371,6 +1217,9 @@ const Waybill = ({navigation}) => {
                         });
                         // disable page loading state
                         setPageLoading(false);
+
+                        // disable fetching waybills
+                        setFetchingWaybills(false);
                     }
                 );
     
@@ -402,38 +1251,28 @@ const Waybill = ({navigation}) => {
             });
         };
 
-    }, [startDate, endDate]);
-
-    // console.log(waybills);
+    }, [queryEndDateTime, queryEndDateTime]);
 
     // close search modal bottomsheet function
     const closeModal = () => {
         bottomSheetRef.current?.close();
         // reset filter type
-        setFilterType(tab)
     };
     
     // open search modal bottomsheet function
     const openModal = () => {
         // set filter as search filter
-        setFilterType("search")
         bottomSheetRef.current?.present();
     }
-
-    // waybill list
-    const [waybill, setWaybill] = useState([
-        {id: "sticky"},
-        ...waybillList.filter(waybill => waybill.inventory_action === "increment"),
-    ]);
-
-    const [searchedWaybill, setSearchedWaybill] = useState(waybillList);
 
     // function to get number of unread messages
     const getNumberOfUnreadMessages = (inventory_action) => {
         if (inventory_action === "increment") {
-            return waybillList.filter(waybill => waybill.newMessage && waybill.inventory_action === "increment").length
+            return 0;
+            // return waybillList.filter(waybill => waybill.newMessage && waybill.inventory_action === "increment").length
         } else if (inventory_action === "decrement") {
-            return waybillList.filter(waybill => waybill.newMessage && waybill.inventory_action === "decrement").length
+            // return waybillList.filter(waybill => waybill.newMessage && waybill.inventory_action === "decrement").length
+            return 0;
         }
     }
 
@@ -445,12 +1284,8 @@ const Waybill = ({navigation}) => {
 
     // animated shadow when scroll height reaches sticky header
     const animateHeaderOnScroll = (e) => {
-        // console.log(stickyHeaderOffset.current);
         setScrollHeight(e.nativeEvent.contentOffset.y)
     }
-
-    // filter state
-    const [filterType, setFilterType] = useState("outgoing")
 
     // open filter function
     const openFilter = () => {
@@ -470,7 +1305,6 @@ const Waybill = ({navigation}) => {
             setIncomingFilter(prevParamters => {
                 return prevParamters.map(filterParam => {
                     const selectedButton = filterParam.buttons.filter(button => button.selected === true);
-                    // console.log(selectedButton);
                     if (filterParam.title  !== "Period") {
                         return {
                             ...filterParam,
@@ -490,7 +1324,6 @@ const Waybill = ({navigation}) => {
             setOutgoingFilter(prevParamters => {
                 return prevParamters.map(filterParam => {
                     const selectedButton = filterParam.buttons.filter(button => button.selected === true);
-                    // console.log(selectedButton);
                     if (filterParam.title  !== "Period") {
                         return {
                             ...filterParam,
@@ -510,7 +1343,6 @@ const Waybill = ({navigation}) => {
             setSearchFilter(prevParamters => {
                 return prevParamters.map(filterParam => {
                     const selectedButton = filterParam.buttons.filter(button => button.selected === true);
-                    // console.log(selectedButton);
                     if (filterParam.title  !== "Period") {
                         return {
                             ...filterParam,
@@ -533,6 +1365,7 @@ const Waybill = ({navigation}) => {
 
     // function to set filter parameter, runc on click an action button in filter bottomsheet
     const handleFilterParameters = (title, button, filterType) => {
+
         if (filterType === "incoming") {
             setIncomingFilter(prevParamters => {
                 return prevParamters.map(filterParam => {
@@ -559,7 +1392,10 @@ const Waybill = ({navigation}) => {
                 })
             });
             if (title === "Period") {
-                // console.log("Here");
+                // open calendar for cutom period
+                if (button.includes("Custom")) {
+                    openCalendar("StartDate")
+                };
             }
         } else if (filterType === "outgoing") {
             setOutgoingFilter(prevParamters => {
@@ -587,7 +1423,14 @@ const Waybill = ({navigation}) => {
                 })
             });
             if (title === "Period") {
-                // console.log("Here");
+                // if (button.includes("Custom")) {
+                //     console.log("got here 2");
+                //     openCalendar("StartDate")
+                // };
+                if (button === "Custom Period") {
+                    console.log("got here 2");
+                    openCalendar("StartDate")
+                };
             }
         } else if (filterType === "search") {
             setSearchFilter(prevParamters => {
@@ -615,69 +1458,16 @@ const Waybill = ({navigation}) => {
                 })
             });
             if (title === "Period") {
-                // console.log("Here");
             }
         }
+
     }
     
     // function to remove filter
     const handleRemoveFilter = (title) => {
-        if (filterType === "incoming") {
-            setIncomingFilter(prevParamters => {
-                return prevParamters.map(filterParam => {
-                    if (filterParam.title === title) {
-                        return {
-                            ...filterParam,
-                            default: true,
-                            value: title === "Period" ? "Today" : "All",
-                            buttons: filterParam.buttons.map(filterButton => {
-                                if (filterButton.text === "All") {
-                                    return {
-                                        ...filterButton,
-                                        selected: true,
-                                    }
-                                } else {
-                                    return {
-                                        ...filterButton,
-                                        selected: false,
-                                    }
-                                }
-                            }),
-                        }
-                    } else {
-                        return {...filterParam}
-                    }
-                })
-            });
-        } else if (filterType === "outgoing") {
-            setOutgoingFilter(prevParamters => {
-                return prevParamters.map(filterParam => {
-                    if (filterParam.title === title) {
-                        return {
-                            ...filterParam,
-                            default: true,
-                            value: title === "Period" ? "Today" : "All",
-                            buttons: filterParam.buttons.map(filterButton => {
-                                if (filterButton.text === "All") {
-                                    return {
-                                        ...filterButton,
-                                        selected: true,
-                                    }
-                                } else {
-                                    return {
-                                        ...filterButton,
-                                        selected: false,
-                                    }
-                                }
-                            }),
-                        }
-                    } else {
-                        return {...filterParam}
-                    }
-                })
-            });
-        } else if (filterType === "search") {
-            setSearchFilter(prevParamters => {
+        // bottoms sheet is open so set search ilter
+        if (bottomSheetOpen) {
+            return setSearchFilter(prevParamters => {
                 return prevParamters.map(filterParam => {
                     if (filterParam.title === title) {
                         return {
@@ -704,6 +1494,62 @@ const Waybill = ({navigation}) => {
                 })
             });
         }
+        // tab is incoming
+        if (tab === "incoming") {
+            return setIncomingFilter(prevParamters => {
+                return prevParamters.map(filterParam => {
+                    if (filterParam.title === title) {
+                        return {
+                            ...filterParam,
+                            default: true,
+                            value: title === "Period" ? "Today" : "All",
+                            buttons: filterParam.buttons.map(filterButton => {
+                                if (filterButton.text === "All") {
+                                    return {
+                                        ...filterButton,
+                                        selected: true,
+                                    }
+                                } else {
+                                    return {
+                                        ...filterButton,
+                                        selected: false,
+                                    }
+                                }
+                            }),
+                        }
+                    } else {
+                        return {...filterParam}
+                    }
+                })
+            });
+        }
+        // else outgoing tab
+        return setOutgoingFilter(prevParamters => {
+            return prevParamters.map(filterParam => {
+                if (filterParam.title === title) {
+                    return {
+                        ...filterParam,
+                        default: true,
+                        value: title === "Period" ? "Today" : "All",
+                        buttons: filterParam.buttons.map(filterButton => {
+                            if (filterButton.text === "All") {
+                                return {
+                                    ...filterButton,
+                                    selected: true,
+                                }
+                            } else {
+                                return {
+                                    ...filterButton,
+                                    selected: false,
+                                }
+                            }
+                        }),
+                    }
+                } else {
+                    return {...filterParam}
+                }
+            })
+        });
     }
 
     // function to clearAll fiter
@@ -712,263 +1558,10 @@ const Waybill = ({navigation}) => {
         handleRemoveFilter("Period");
         handleRemoveFilter("Status");
         handleRemoveFilter("Logistics");
+        handleRemoveFilter("Merchant");
         // close filter bottomsheet
         closeFilter();
     }
-
-    // filter incoming waybill bottom sheet parameters
-    const [incomingFilter, setIncomingFilter] = useState([]);
-    
-    // filter outcoming waybill bottom sheet parameters
-    const [outgoingFilter, setOutgoingFilter] = useState([]);
-
-    // if incoming waybill changes
-    useEffect(() => {
-        // return all unique business_id and business_names from incoming waybill
-        const incomingWaybillBusinesses = incomingWaybill?.map(waybill => {
-            return {
-                business_id: authData?.account_type === "Merchant" ? waybill.logistics_business_id : waybill.merchant_business_id,
-                business_name: waybill.business_name
-            }
-        });
-
-        // unique businesses
-        const uniqueBusinesses = [...new Set(incomingWaybillBusinesses)];
-        
-        // return all unique business_id and business_names from incoming waybill
-        const incomingWaybillProducts = incomingWaybill?.flatMap(waybill => {
-            return waybill.products_array?.map(product => {
-                return {
-                    productName: product.product_name,
-                    id: product.id
-                }
-            })
-        });
-
-        // unique products
-        const uniqueProducts = [...new Set(incomingWaybillProducts)];
-
-        const statusFilter = {
-            title: "Status",
-            value: "All",
-            default: true,
-            buttons: [
-                {
-                    text: "All",
-                    selected: true,
-                    onPress: () => {
-                        handleFilterParameters("Status", "All", "incoming")
-                    }
-                },
-                {
-                    text: "Pending",
-                    selected: false,
-                    onPress: () => {
-                        handleFilterParameters("Status", "Pending", "incoming")
-                    }
-                },
-                {
-                    text: "Delivered",
-                    selected: false,
-                    onPress: () => {
-                        handleFilterParameters("Status", "Delivered", "incoming")
-                    }
-                },
-            ],
-        };
-
-        // target business account to be filtered
-        const targetBusiness = authData?.account_type !== "Merchant" ? "Merchant" : "Logistics";
-
-        // business filter
-        const businessFilter = {
-            title: targetBusiness,
-            value: "All",
-            default: true,
-            buttons: [
-                {
-                    text: "All",
-                    selected: true,
-                    onPress: () => {
-                        handleFilterParameters(targetBusiness, "All", "incoming")
-                    }
-                },
-                ...uniqueBusinesses?.map(business => {
-                    return {
-                        text: business.business_name,
-                        selected: false,
-                        onPress: () => {
-                            handleFilterParameters(targetBusiness, business.business_id, "incoming")
-                        }
-                    }
-                }),
-            ]
-        }
-
-        // products filter
-        const productsFilter = {
-            title: "Products",
-            value: "All",
-            default: true,
-            buttons: [
-                {
-                    text: "All",
-                    selected: true,
-                    onPress: () => {
-                        handleFilterParameters("Products", "All", "incoming")
-                    }
-                },
-                ...uniqueProducts?.map(product => {
-                    return {
-                        text: product.productName,
-                        selected: false,
-                        onPress: () => {
-                            handleFilterParameters("Products", product.id, "incoming")
-                        }
-                    }
-                }),
-            ]
-        }
-
-        setIncomingFilter(() => {
-            let filterArray = [statusFilter];
-
-            // if there are more than 1 businesses
-            if (uniqueBusinesses.length > 1) {
-                filterArray.push(businessFilter);
-            }
-
-            // if there are more than 1 products
-            if (uniqueProducts.length > 1) {
-                filterArray.push(productsFilter);
-            }
-            return filterArray;
-        })
-        
-    }, [incomingWaybill])
-
-    // if incoming waybill changes
-    useEffect(() => {
-        // return all unique business_id and business_names from incoming waybill
-        // unique businesses
-        const uniqueBusinesses = outgoingWaybill.reduce((unique, waybill) => {
-            const key = authData?.account_type === "Merchant" ? waybill.logistics_business_id : waybill.merchant_business_id;
-            if (!unique.some(obj => obj.business_id === key)) {
-                unique.push({
-                    business_id: key,
-                    business_name: waybill.business_name
-                });
-            }
-            return unique;
-        }, []);
-
-        console.log("Businesses:", uniqueBusinesses);
-    
-
-        // unique products
-        const uniqueProducts = [...new Map(outgoingWaybill.flatMap(waybill => waybill.products_array.map(product => [`${product.product_name}_${product.id}`, product])))
-        .values()];
-        console.log("Products:", uniqueProducts);
-
-        const statusFilter = {
-            title: "Status",
-            value: "All",
-            default: true,
-            buttons: [
-                {
-                    text: "All",
-                    selected: true,
-                    onPress: () => {
-                        handleFilterParameters("Status", "All", "incoming")
-                    }
-                },
-                {
-                    text: "Pending",
-                    selected: false,
-                    onPress: () => {
-                        handleFilterParameters("Status", "Pending", "incoming")
-                    }
-                },
-                {
-                    text: "Delivered",
-                    selected: false,
-                    onPress: () => {
-                        handleFilterParameters("Status", "Delivered", "incoming")
-                    }
-                },
-            ],
-        };
-
-        // target business account to be filtered
-        const targetBusiness = authData?.account_type !== "Merchant" ? "Merchant" : "Logistics";
-
-        // business filter
-        const businessFilter = {
-            title: targetBusiness,
-            value: "All",
-            default: true,
-            buttons: [
-                {
-                    text: "All",
-                    selected: true,
-                    onPress: () => {
-                        handleFilterParameters(targetBusiness, "All", "incoming")
-                    }
-                },
-                ...uniqueBusinesses?.map(business => {
-                    return {
-                        text: business.business_name,
-                        selected: false,
-                        onPress: () => {
-                            handleFilterParameters(targetBusiness, business.business_id, "incoming")
-                        }
-                    }
-                }),
-            ]
-        }
-
-        // products filter
-        const productsFilter = {
-            title: "Products",
-            value: "All",
-            default: true,
-            buttons: [
-                {
-                    text: "All",
-                    selected: true,
-                    onPress: () => {
-                        handleFilterParameters("Products", "All", "incoming")
-                    }
-                },
-                ...uniqueProducts?.map(product => {
-                    return {
-                        text: product.product_name,
-                        selected: false,
-                        onPress: () => {
-                            handleFilterParameters("Products", product.id, "incoming")
-                        }
-                    }
-                }),
-            ]
-        }
-
-        setOutgoingFilter(() => {
-            let filterArray = [statusFilter];
-
-            // if there are more than 1 businesses
-            if (uniqueBusinesses.length > 1) {
-                filterArray.push(businessFilter);
-            }
-
-            // if there are more than 1 products
-            if (uniqueProducts.length > 1) {
-                filterArray.push(productsFilter);
-            }
-            return filterArray;
-        })
-        
-    }, [outgoingWaybill])
-
 
     // filter order bottom sheet parameters
     const [searchFilter, setSearchFilter] = useState([
@@ -1100,165 +1693,10 @@ const Waybill = ({navigation}) => {
             ]
         }
     ]);
-    
-    // get filtervlaue
-    const getFilterValue = (title, filterType) => {
-        if (filterType === "incoming") {
-            return incomingFilter.find(filterParam => filterParam.title === title).value
-        } else if (filterType === "outgoing") {
-            return outgoingFilter.find(filterParam => filterParam.title === title).value
-        } else if (filterType === "search") {
-            return searchFilter.find(filterParam => filterParam.title === title).value
-        }
-    }
 
     // // previous date
     // const prevDate = new Date();
     // prevDate.setDate(prevDate.getDate() - 1);
-
-    const [calendar, setCalendar] = useState({
-        // setDate: setStartDate,
-        maxDate: false,
-        minDate: false,
-    });
-
-    const openCalendar = (inputType) => {
-        if (inputType === "StartDate") {
-            setActiveStartDate(true);
-            // setCalendar({
-            //     // setDate: setStartDate,
-            //     maxDate: endDate.current ? moment(endDate.current).subtract(1, 'days') : today,
-            //     minDate: false
-            // });
-        } else {
-            setActiveEndDate(true);
-            // setCalendar({
-            //     // setDate: setEndDate,
-            //     maxDate: today,
-            //     minDate: startDate ? moment(startDate).add(1, 'days') : startDate,
-            // });
-        }
-        calendarSheetRef.current?.present();
-    }
-
-    const closeCalendar = () => {
-        setActiveEndDate(false);
-        setActiveStartDate(false);
-        calendarSheetRef.current?.close();
-    }
-
-    const updateWaybillList = (tab) => {
-        if (tab === "outgoing") {
-            const outgoingWaybill = waybillList.filter(waybill => waybill.inventory_action === `${authData?.account_type === "Merchant" ? "increment" : "decrement"}`);
-
-            const newWaybillList = outgoingWaybill.filter(waybill => {
-                const filterArray = outgoingFilter.map(filterParam => {
-                    if (filterParam.title !== "Period") {
-                        if (filterParam.value === "All") {
-                            return true;
-                        } else {
-                            if (filterParam.title === "Status") {
-                                return filterParam.value.toLowerCase() === waybill.status.toLowerCase();
-                            } else if (filterParam.title === "Logistics") {
-                                return filterParam.value === waybill.logistics;
-                            }
-                        } 
-                    } else {
-                        return true;
-                    }
-                })
-                // console.log(filterArray);
-
-                return filterArray.every((element) => element === true);;
-            })
-
-            setWaybill([
-                {id: "sticky"},
-                ...newWaybillList
-            ]);            
-        } else {
-            const incomingWaybill = waybillList.filter(waybill => waybill.inventory_action === `${authData?.account_type === "Merchant" ? "decrement" : "increment"}`);
-            // console.log(searchResult);
-    
-            const newWaybillList = incomingWaybill.filter(waybill => {
-                const filterArray = incomingFilter.map(filterParam => {
-                    if (filterParam.title !== "Period") {
-                        if (filterParam.value === "All") {
-                            return true;
-                        } else {
-                            if (filterParam.title === "Status") {
-                                return filterParam.value.toLowerCase() === waybill.status.toLowerCase();
-                            } else if (filterParam.title === "Logistics") {
-                                return filterParam.value === waybill.logistics;
-                            }
-                        } 
-                    } else {
-                        return true;
-                    }
-                })
-                // console.log(filterArray);
-    
-                return filterArray.every((element) => element === true);;
-            })
-    
-            setWaybill([
-                {id: "sticky"},
-                ...newWaybillList
-            ]);
-        }
-    }
-
-    // implement filter in outgoing waybill list
-    useEffect(() => {
-        setFilterType(tab);
-        updateWaybillList(tab);
-    }, [incomingFilter, outgoingFilter, tab]);
-    
-    // implement filter in search waybill list
-    useEffect(() => {
-
-        if (searchQuery === '') {
-            return setSearchedWaybill([]);
-        }
-
-        const searchResult = waybillList.filter(waybill => {
-            return waybill.logistics.toLowerCase().includes(searchQuery.toLowerCase()) || waybill.products.some(product => product.product_name.toLowerCase().includes(searchQuery.toLowerCase()));
-        });
-
-        // console.log(searchResult);
-
-        const newWaybillList = searchResult.filter(waybill => {
-            const filterArray = searchFilter.map(filterParam => {
-                if (filterParam.title !== "Period") {
-                    if (filterParam.value === "All") {
-                        return true;
-                    } else {
-                        if (filterParam.title === "Status") {
-                            return filterParam.value.toLowerCase() === waybill.status.toLowerCase();
-                        } else if (filterParam.title === "Logistics") {
-                            return filterParam.value === waybill.logistics;
-                        }
-                    } 
-                } else {
-                    return true;
-                }
-            })
-            // console.log(filterArray);
-
-            return filterArray.every((element) => element === true);;
-        })
-
-        setSearchedWaybill([
-            ...newWaybillList
-        ]);
-    }, [incomingFilter, outgoingFilter, searchFilter, searchQuery]);
-
-    useEffect(() => {
-        if (!calendarSheetOpen) {
-            setActiveEndDate(false);
-            setActiveStartDate(false);
-        }
-    }, [calendarSheetOpen])
 
     return (
         <>
@@ -1369,11 +1807,11 @@ const Waybill = ({navigation}) => {
                                             </TouchableOpacity>
                                         </View>
                                         {/* check if any filter has been applied, i.e it is not in its default value */}
-                                        {filterType === "outgoing" && outgoingFilter.find(filterParam => filterParam.default === false) && (
+                                        {tab === "outgoing" && outgoingFilter.find(filterParam => filterParam.default === false) && (
                                             <View style={style.filterPillWrapper}>
                                                 {outgoingFilter.map(filterParam => {
                                                     if (!filterParam.default) {
-                                                        if (filterParam.value !== "Custom period") {
+                                                        if (filterParam.value !== "Custom Period") {
                                                             return (
                                                                 <FilterPill
                                                                     key={filterParam.title}
@@ -1383,17 +1821,25 @@ const Waybill = ({navigation}) => {
                                                                 />
                                                             )
                                                         }
+                                                        return (
+                                                            <FilterPill
+                                                                key={filterParam.title}
+                                                                text={moment(queryStartDateTime)?.format('DD MMM, YYYY') + " - " + moment(queryEndDateTime)?.format('DD MMM, YYYY')}
+                                                                onPress={() => handleRemoveFilter(filterParam.title, "search")}
+                                                                background={white}
+                                                            />
+                                                        )
                                                     }
                                                 })}
                                             </View>
                                         )}
 
                                         {/* check if any filter has been applied, i.e it is not in its default value */}
-                                        {filterType === "incoming" && incomingFilter.find(filterParam => filterParam.default === false) && (
+                                        {tab === "incoming" && incomingFilter.find(filterParam => filterParam.default === false) && (
                                             <View style={style.filterPillWrapper}>
                                                 {incomingFilter.map(filterParam => {
                                                     if (!filterParam.default) {
-                                                        if (filterParam.value !== "Custom period") {
+                                                        if (filterParam.value !== "Custom Period") {
                                                             return (
                                                                 <FilterPill
                                                                     key={filterParam.title}
@@ -1403,6 +1849,14 @@ const Waybill = ({navigation}) => {
                                                                 />
                                                             )
                                                         }
+                                                        return (
+                                                            <FilterPill
+                                                                key={filterParam.title}
+                                                                text={moment(queryStartDateTime)?.format('DD MMM, YYYY') + " - " + moment(queryEndDateTime)?.format('DD MMM, YYYY')}
+                                                                onPress={() => handleRemoveFilter(filterParam.title, "search")}
+                                                                background={white}
+                                                            />
+                                                        )
                                                     }
                                                 })}
                                             </View>
@@ -1410,7 +1864,8 @@ const Waybill = ({navigation}) => {
                                     </View>
                                 </>)
                             } else {
-                                return (
+                                // return list if user isn't fetching results
+                                return !fectchingWaybills && (
                                     <View style={style.waybillListWrapper}>
                                         <WaybillListItem 
                                             lastWaybill={index === renderData.length - 1}
@@ -1451,6 +1906,34 @@ const Waybill = ({navigation}) => {
                                         })()}
                                         
                                     </Text>
+                                </View>
+                            )}
+                            {renderData.length !== 1 && fectchingWaybills && (
+                                <View style={style.orderList}>
+                                    <Skeleton 
+                                        height={50}
+                                        width={windowWidth - 60}
+                                        shimmerColors={shimmerColorArray}
+                                        style={{borderRadius: 2}}
+                                    />
+                                    <Skeleton 
+                                        height={50}
+                                        width={windowWidth - 60}
+                                        shimmerColors={shimmerColorArray}
+                                        style={{borderRadius: 2}}
+                                    />
+                                    <Skeleton 
+                                        height={50}
+                                        width={windowWidth - 60}
+                                        shimmerColors={shimmerColorArray}
+                                        style={{borderRadius: 2}}
+                                    />
+                                    <Skeleton 
+                                        height={50}
+                                        width={windowWidth - 60}
+                                        shimmerColors={shimmerColorArray}
+                                        style={{borderRadius: 2}}
+                                    />
                                 </View>
                             )}
                         </>}
@@ -1495,7 +1978,7 @@ const Waybill = ({navigation}) => {
                     </View>
                 )}
                 <BottomSheetScrollView showsVerticalScrollIndicator={false} style={style.orderSearchResults}>
-                    {searchedWaybill.map((item, index) => (
+                    {/* {searchedWaybill.map((item, index) => (
                         <WaybillListItem 
                             key={item.id}
                             item={item}
@@ -1505,7 +1988,7 @@ const Waybill = ({navigation}) => {
                             searchQuery={searchQuery}
                             sideFunctions={closeModal}
                         />
-                    ))}
+                    ))} */}
                 </BottomSheetScrollView>
             </CustomBottomSheet>
             {/* filter bottom sheet */}
@@ -1514,18 +1997,18 @@ const Waybill = ({navigation}) => {
                 closeFilter={closeFilter}
                 clearFilterFunction={handleClearAllFilter}
                 applyFilterFunction={() => {
-                    if (filterType === "search") {
+                    if (bottomSheetOpen) {
                         return handleApplyFilter("search");
-                    } else if (filterType === "incoming") {
+                    } else if (tab === "incoming") {
                         return handleApplyFilter("incoming");
-                    } else if (filterType === "outgoing") {
+                    } else if (tab === "outgoing") {
                         return handleApplyFilter("outgoing");
                         
                     }
                 }}
                 height={"80%"}
             >
-                {filterType === "incoming" && incomingFilter.map(item => (
+                {!bottomSheetOpen && tab === "incoming" && incomingFilter.map(item => (
                     <FilterButtonGroup
                         title={item.title}
                         key={item.title}
@@ -1538,13 +2021,13 @@ const Waybill = ({navigation}) => {
                                 name={button.text}
                                 removeBottomMargin={true}
                                 selected={button.selected}
-                                onPress={()  => handleFilterParameters(item.title, button.text, filterType)}
+                                onPress={()  => handleFilterParameters(item.title, button.text, tab)}
                             />
                         ))}
                     </FilterButtonGroup>
                 ))}
 
-                {filterType === "outgoing" && outgoingFilter.map(item => (
+                {!bottomSheetOpen && tab === "outgoing" && outgoingFilter.map(item => (
                     <FilterButtonGroup
                         title={item.title}
                         key={item.title}
@@ -1557,13 +2040,13 @@ const Waybill = ({navigation}) => {
                                 name={button.text}
                                 removeBottomMargin={true}
                                 selected={button.selected}
-                                onPress={()  => handleFilterParameters(item.title, button.text, filterType)}
+                                onPress={()  => handleFilterParameters(item.title, button.text, tab)}
                             />
                         ))}
                     </FilterButtonGroup>
                 ))}
 
-                {filterType === "search" && searchFilter.map(item => (
+                {bottomSheetOpen && searchFilter.map(item => (
                     <FilterButtonGroup
                         title={item.title}
                         key={item.title}
@@ -1576,34 +2059,35 @@ const Waybill = ({navigation}) => {
                                 name={button.text}
                                 removeBottomMargin={true}
                                 selected={button.selected}
-                                onPress={()  => handleFilterParameters(item.title, button.text, filterType)}
+                                onPress={()  => handleFilterParameters(item.title, button.text, "search")}
                             />
                         ))}
                     </FilterButtonGroup>
                 ))}
-                    <View style={style.inputContainer}>
-                        {/* Start date */}
-                        <SelectInput 
-                            label={"Start Date"} 
-                            placeholder={"DD MMMM, YYYY"} 
-                            value={startDate}
-                            onPress={() => {openCalendar("StartDate")}}
-                            icon={<CalendarIcon />}
-                            active={activeStartDate}
-                            inputFor={"Date"}
-                        />
+                
+                <View style={style.inputContainer}>
+                    {/* Start date */}
+                    <SelectInput 
+                        label={"Start Date"} 
+                        placeholder={"DD MMMM, YYYY"} 
+                        value={startDate}
+                        onPress={() => openCalendar("StartDate")}
+                        icon={<CalendarIcon />}
+                        active={activeStartDate}
+                        inputFor={"Date"}
+                    />
 
-                        {/* End date */}
-                        <SelectInput
-                            label={"End Date"}
-                            placeholder={"DD MMMM, YYYY"}
-                            value={endDate}
-                            onPress={() => {openCalendar("EndDate")}}
-                            icon={<CalendarIcon />}
-                            active={activeEndDate}
-                            inputFor={"Date"}
-                        />
-                    </View>
+                    {/* End date */}
+                    <SelectInput
+                        label={"End Date"}
+                        placeholder={"DD MMMM, YYYY"}
+                        value={endDate}
+                        onPress={() => openCalendar("EndDate")}
+                        icon={<CalendarIcon />}
+                        active={activeEndDate}
+                        inputFor={"Date"}
+                    />
+                </View>
             </FilterBottomSheet>
             {/* calnedar */}
             <CalendarSheet 
@@ -1613,6 +2097,8 @@ const Waybill = ({navigation}) => {
                 snapPointsArray={["60%"]}
                 minDate={calendar.minDate}
                 maxDate={calendar.maxDate}
+                setDate={calendar.setDate}
+                startPoint={calendar.startPoint}
             />
         </>
     );
@@ -1791,6 +2277,14 @@ const style = StyleSheet.create({
         width: 178,
         textAlign: 'center',
     },
+    orderList: {
+        width: "100%",
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        gap: 30,
+    }
 })
  
 export default Waybill;

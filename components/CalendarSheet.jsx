@@ -27,7 +27,7 @@ const paddingHorizontal = 40;
 
 const calendarWidth = windowWidth - paddingHorizontal;
 
-const CalendarSheet = ({calendarRef, closeCalendar, snapPointsArray, setDate, disableActionButtons, minDate, maxDate}) => {
+const CalendarSheet = ({calendarRef, closeCalendar, snapPointsArray, setDate, startPoint, disableActionButtons, minDate, maxDate}) => {
 
     const { setCalendarSheetOpen } = useGlobals();
 
@@ -50,6 +50,7 @@ const CalendarSheet = ({calendarRef, closeCalendar, snapPointsArray, setDate, di
 
     // update date variable
     const onDateChange = (date) => {
+        // log type of date
         setTempDate(date);
         // console.log(date.format("DD-MM-YYYY"));
         // console.log(getCurrentDate());
@@ -103,8 +104,20 @@ const CalendarSheet = ({calendarRef, closeCalendar, snapPointsArray, setDate, di
     ];
 
     const handleSelectedDate = () => {
-        setDate(tempDate);
-        closeCalendar();
+        if (tempDate) {
+            const selectedDate = new Date(tempDate);
+            if (startPoint) {
+                // set time at the begining of the day
+                selectedDate.setHours(1, 0, 0, 1);
+            } else {
+                // set time at the end of the day
+                selectedDate.setHours(23, 59, 59, 999);
+            }
+            setDate(selectedDate);
+            closeCalendar();
+        } else {
+            console.log("No date selected.");
+        }
     }
 
     // get current date  in "DD-MM-YYYY" format
@@ -121,6 +134,7 @@ const CalendarSheet = ({calendarRef, closeCalendar, snapPointsArray, setDate, di
 
     const handleOnSheetChange = (index) => {
         if (index === -1) {
+            closeCalendar();
             setCalendarSheetOpen(false);
             setTempDate("");
             return;

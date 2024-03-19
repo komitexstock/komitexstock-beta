@@ -34,6 +34,7 @@ const style = StyleSheet.create({
         fontSize: 10,
         lineHeight: 13,
         fontFamily: "mulish-regular",
+        textTransform: "capitalize",
     }
 })
  

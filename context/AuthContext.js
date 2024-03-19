@@ -187,15 +187,21 @@ const AuthProvider = ({children}) => {
 
 				// for each member of the array updateDoc, set edited_at to server timestamp
 				waybillIdArray.forEach(async (waybillId) => {
-					const waybillRef = doc(database, "waybills", waybillId);
-					await updateDoc(waybillRef, {
-						edited_at: serverTimestamp(),
-					});
+					try {
+						const waybillRef = doc(database, "waybills", waybillId);
+						await updateDoc(waybillRef, {
+							edited_at: serverTimestamp(),
+						});
+						
+					} catch (error) {
+						
+						console.log("Error:", error.message)
+					}
 				})
 
 
 			} catch (error) {
-				console.log(error.message)
+				console.log("Error:", error.message)
 			}
 		}
 
