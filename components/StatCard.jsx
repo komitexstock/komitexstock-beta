@@ -1,11 +1,22 @@
 // react native components
 import { View, Text, StyleSheet } from 'react-native';
+
 // colors
 import { background, black, bodyText, white } from '../style/colors';
+
 // components
 import PercentageChange from './PercentageChange';
 
-const StatCard = ({title, presentValue, oldValue, decimal, unit, unitPosition, backgroundColor}) => {
+// skeleton imports
+import { createShimmerPlaceholder } from "react-native-shimmer-placeholder";
+import { LinearGradient } from "expo-linear-gradient";
+
+const StatCard = ({title, presentValue, oldValue, decimal, unit, unitPosition, backgroundColor, isLoading}) => {
+    // colour array for skeleton loader
+    const shimmerColorArray = ["#ebebeb", "#d9d9d9", "#ebebeb",];
+
+    // skeleton component
+    const Skeleton = createShimmerPlaceholder(LinearGradient);
 
     // return StatCard component
     return (
@@ -20,18 +31,27 @@ const StatCard = ({title, presentValue, oldValue, decimal, unit, unitPosition, b
                 />
             </View>
             <View style={style.statValueWrapper}>
-                <Text style={style.statValue}>
-                    {/* if unit is provided and unit location is set at start, render at the beginning */}
-                    { unitPosition === "start" && <>{unit}</> }
-                    {/* render value as string */}
-                    {presentValue?.toLocaleString()}
-                    {/* if value requires decimal, render decimal, with a different fontColor */}
-                    {decimal && <Text style={style.statValueDecimal}>
-                        .00
-                    </Text>}
-                    {/* if unit is provided and unit location is set at end, render at the end */}
-                    { unitPosition === "end" && <>{unit}</> }
-                </Text>
+                {!isLoading ? (
+                    <Text style={style.statValue}>
+                        {/* if unit is provided and unit location is set at start, render at the beginning */}
+                        { unitPosition === "start" && <>{unit}</> }
+                        {/* render value as string */}
+                        {presentValue?.toLocaleString()}
+                        {/* if value requires decimal, render decimal, with a different fontColor */}
+                        {decimal && <Text style={style.statValueDecimal}>
+                            .00
+                        </Text>}
+                        {/* if unit is provided and unit location is set at end, render at the end */}
+                        { unitPosition === "end" && <>{unit}</> }
+                    </Text>
+                ) : (
+                    <Skeleton 
+                        width={25}
+                        height={20}
+                        shimmerColors={shimmerColorArray}
+                        style={{borderRadius: 2}}
+                    />
+                )}
             </View>
         </View>
     );
@@ -73,6 +93,7 @@ const style = StyleSheet.create({
         fontFamily: "mulish-extrabold",
         fontSize: 16,
         color: black,
+        lineHeight: 20,
     },
     statValueDecimal: {
         color: bodyText,

@@ -647,14 +647,16 @@ const SendWaybill = ({navigation, route}) => {
 
                 querySnapshot.forEach((doc) => {
                     const warehouseData = doc.data();
-                    // only add warehouses that have a waybill receivable
-                    if (warehouseData.waybill_receivable && authData?.account_type === "Merchant") {
-                        const warehouse = {
-                            id: doc.id,
-                            warehouse_name: warehouseData.warehouse_name,
-                        };
-                        warehouseList.push(warehouse);
-                    } else{
+                    if (authData?.account_type === "Merchant") {
+                        // only add warehouses that have a waybill receivable
+                        if (warehouseData.waybill_receivable) {
+                            const warehouse = {
+                                id: doc.id,
+                                warehouse_name: warehouseData.warehouse_name,
+                            };
+                            warehouseList.push(warehouse);
+                        } 
+                    } else {
                         const warehouse = {
                             id: doc.id,
                             warehouse_name: warehouseData.warehouse_name,

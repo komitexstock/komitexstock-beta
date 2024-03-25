@@ -15,7 +15,7 @@
     "@react-native-clipboard/clipboard": "^1.11.2",
     "@react-navigation/native": "^6.1.6",
     "@react-navigation/native-stack": "^6.9.12",
-    "expo": "^50.0.13",
+    "expo": "50.0.14",
     "expo-camera": "^14.1.1",
     "expo-clipboard": "~5.0.1",
     "expo-document-picker": "~11.10.1",
@@ -33,7 +33,7 @@
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "react": "18.2.0",
-    "react-native": "^0.73.5",
+    "react-native": "0.73.6",
     "react-native-calendar-picker": "^7.1.4",
     "react-native-gesture-handler": "~2.14.0",
     "react-native-raw-bottom-sheet": "^2.2.0",
@@ -42,7 +42,8 @@
     "react-native-screens": "~3.29.0",
     "react-native-shadow-2": "^7.0.8",
     "react-native-shimmer-placeholder": "^2.0.9",
-    "react-native-svg": "^14.1.0"
+    "react-native-svg": "^14.1.0",
+    "expo-sqlite": "~13.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

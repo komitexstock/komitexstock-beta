@@ -112,8 +112,8 @@ const Waybill = ({navigation}) => {
     const [fetchingWaybills, setFetchingWaybills] = useState(true);
 
     // fetching business and fetching products
-    const [fetchingBusiness, setFetchingBusiness] = useState(false);
-    const [fetchingProducts, setFetchingProducts] = useState(false);
+    const [fetchingBusiness, setFetchingBusiness] = useState(true);
+    const [fetchingProducts, setFetchingProducts] = useState(true);
 
     // previous period filter value
     const previousPeriodFilter = useRef(null);
@@ -126,9 +126,255 @@ const Waybill = ({navigation}) => {
     // state to store searchQuery
     const [searchQuery, setSearchQuery] = useState("");
 
+    // previous date
+    const today = new Date();
+
+    // variable to store start date
+    const [startDate, setStartDate] = useState(() => {
+        const date = new Date();
+        date.setHours(1, 0, 0, 1);
+        return date;
+    });
+
+    // start datetime for query
+    const [queryStartDateTime, setQueryStartDateTime] = useState(() => {
+        const date = new Date();
+        date.setHours(1, 0, 0, 1);
+        return date;
+    })
+
+    // strt datetime for query
+    const [queryEndDateTime, setQueryEndDateTime] = useState(() => {
+        const date = new Date();
+        date.setHours(23, 59, 59, 999);
+        return date;
+    })
+
+    // variable to indicate start date input active state
+    const [activeStartDate, setActiveStartDate] = useState(false);
+    
+    // variable to store end date
+    const [endDate, setEndDate] = useState(() => {
+        const date = new Date();
+        date.setHours(23, 59, 59, 999);
+        return date;
+    });
+    // variable to indicate end date input active state
+    const [activeEndDate, setActiveEndDate] = useState(false);
+
     // waybill state
     const [waybills, setWaybills] = useState([]);
 
+    // get waybill
+    useEffect(() => {
+
+        // fetch product name
+        const fetchProductName = async (productId) => {
+            try {
+                const docRef = doc(database, "products", productId);
+                const docSnap = await getDoc(docRef);
+                return docSnap.data().product_name;
+            } catch (error) {
+                console.log("fetchProductName Error: ", error.message);
+                throw error; // Re-throw the error to ensure it's propagated
+            }
+        }
+
+        // fetch logistics/merchant business details
+        const fetchBusiness = async (businessId, size, index) => {
+            try {
+                // businessses collection
+                const docRef = doc(database, "businesses", businessId);
+                const docSnap = await getDoc(docRef);
+                // return businesses object
+                const business = {
+                    banner_image: docSnap.data().banner_image,
+                    business_name: docSnap.data().business_name,
+                    verified: docSnap.data().verified,
+                };
+                
+                return business;
+            } catch (error) {
+                // indicate error
+                console.log("fetchBusiness Error: ", error.message);
+                throw error; // Re-throw the error to ensure it's propagated
+            } finally {
+                // Check if all businesses have been fetched
+                if (index === size - 1) {
+                    setFetchingBusiness(false);
+                }
+            }
+        };
+
+        // fetch merchants products with id of array provided
+        const fetchProducts = async (idArray, quantityArray, size, index) => {
+            try {
+                let productsArray = [];
+
+                const childSize = idArray.length;
+
+                for (let childIndex = 0; childIndex < childSize; childIndex++) {
+                    const id = idArray[childIndex];
+
+                    try {
+                        const docRef = doc(database, "merchant_products", id);
+                        const docSnap = await getDoc(docRef);
+
+                        const productId = docSnap.data()?.product_id;
+                        const productName = await fetchProductName(productId);
+
+                        productsArray.push({
+                            id: id,
+                            product_name: productName,
+                            quantity: quantityArray[childIndex],
+                        });
+
+                    } catch (error) {
+                        console.log("Error fetching product details: ", error.message);
+                        throw error; // Re-throw the error to ensure it's propagated
+                    }
+                }
+
+                return productsArray;
+            } catch (error) {
+                console.log("fetchProducts Error: ", error.message);
+                throw error; // Re-throw the error to ensure it's propagated
+            } finally {
+                // Check if all products have been fetched
+                if (index === size - 1) {
+                    setFetchingProducts(false);
+                }
+            }
+        };
+
+        const fetchWaybill = async (business_id) => {
+
+            try {
+                const collectionRef = collection(database, "waybills");
+                const matchField = authData?.account_type === "Merchant" ? 
+                    "merchant_business_id" : 
+                    "logistics_business_id";
+
+                queryStartDateTime.setHours(1, 0, 0, 1); // set start date hours
+
+                queryEndDateTime.setHours(23, 59, 59, 999); // set end date hours
+        
+                console.log("Start Date:", queryStartDateTime);
+                console.log("End Date:", queryEndDateTime);
+                console.log("");
+        
+                let q = query(
+                    collectionRef,
+                    where(matchField, "==", business_id),
+                    where("edited_at", ">", queryStartDateTime),
+                    where("edited_at", "<", queryEndDateTime),
+                    orderBy("edited_at", "desc")
+                );
+        
+                const unsubscribe = onSnapshot(q, async (querySnapshot) => {
+                    try {
+                        const waybillDocs = querySnapshot.docs;
+                        if (waybillDocs === 0) {
+                            // if no result, disable fetching states
+                            setFetchingBusiness(false);
+                            setFetchingProducts(false);
+                        }
+                        const promises = waybillDocs.map(async (doc, index) => {
+                            try {
+                                const waybillData = doc.data();
+                                const merchantProductIdArray = waybillData.merchant_products_id;
+                                const quantityArray = waybillData.quantity;
+                            
+                                const businessPromise = await fetchBusiness(
+                                    authData?.account_type === "Merchant" ? 
+                                    waybillData.logistics_business_id : 
+                                    waybillData.merchant_business_id,
+                                    waybillDocs.length, // Pass size
+                                    index // Pass index
+                                );
+                            
+                                const productsPromise = await fetchProducts(
+                                    merchantProductIdArray, 
+                                    quantityArray,
+                                    waybillDocs.length, // Pass size
+                                    index // Pass index
+                                );
+                            
+                                return Promise.all([businessPromise, productsPromise])
+                                    .then(([business, products]) => {
+                                        const productsListed = products.map(product => {
+                                            return `${product.product_name} \u00D7 ${product.quantity}`;
+                                        }).join(", ");
+                            
+                                        const waybillItem = {
+                                            id: doc.id,
+                                            banner_image: business.banner_image,
+                                            business_name: business.business_name,
+                                            chat_id: waybillData.chat_id,
+                                            is_increment: waybillData.is_increment,
+                                            logistics_business_id: waybillData.logistics_business_id,
+                                            merchant_business_id: waybillData.merchant_business_id,
+                                            status: waybillData.status,
+                                            verified: business.verified,
+                                            products: productsListed,
+                                            products_array: products,
+                                            created_at: waybillData.created_at,
+                                            quantity: quantityArray,
+                                        };
+                                        return waybillItem;
+                                    }).catch((error) => {
+                                        console.log("fetchWaybill Error: ", error.message);
+                                        throw error;
+                                    });
+                            } catch (error) {
+                                console.log("fetchWaybill Error: ", error.message);
+                                throw error;
+                            }
+                        });
+                        
+                        const waybillList = await Promise.all(promises);
+                        
+                        setWaybills(waybillList);
+
+                        
+                    } catch (error) {
+                        console.log("fetchWaybillSnapshot Error: ", error.message);
+                        throw error;                      
+                    } 
+                });
+
+                // disable page loading state
+                if (!fetchingBusiness && !fetchingProducts) {
+                    setPageLoading(false);
+                    setFetchingWaybills(false)
+                }
+
+                return unsubscribe;
+            } catch (error) {
+                console.log("fetchWaybill Error: ", error.message);
+                setToast({
+                    text: error.message,
+                    visible: true,
+                    type: "error",
+                });  
+            } 
+        };
+        
+        // fetch waybill
+        const unsubscribePromise = fetchWaybill(authData?.business_id);
+
+        // Cleanup function to unsubscribe from snapshot listener
+        return () => {
+            // Unsubscribe from snapshot listener once unsubscribePromise is resolved
+            unsubscribePromise.then(unsubscribe => {
+                if (unsubscribe) {
+                    unsubscribe();
+                }
+            });
+        };
+
+    }, [queryEndDateTime, queryEndDateTime]);
+    
     // get outgoing waybill
     const outgoingWaybill = useMemo(() => {
         const incrementCondition = authData?.account_type === "Merchant";
@@ -837,42 +1083,6 @@ const Waybill = ({navigation}) => {
         })
         
     }, [outgoingWaybill])
-    
-    // previous date
-    const today = new Date();
-
-    // variable to store start date
-    const [startDate, setStartDate] = useState(() => {
-        const date = new Date();
-        date.setHours(1, 0, 0, 1);
-        return date;
-    });
-
-    // start datetime for query
-    const [queryStartDateTime, setQueryStartDateTime] = useState(() => {
-        const date = new Date();
-        date.setHours(1, 0, 0, 1);
-        return date;
-    })
-
-    // strt datetime for query
-    const [queryEndDateTime, setQueryEndDateTime] = useState(() => {
-        const date = new Date();
-        date.setHours(23, 59, 59, 999);
-        return date;
-    })
-
-    // variable to indicate start date input active state
-    const [activeStartDate, setActiveStartDate] = useState(false);
-    
-    // variable to store end date
-    const [endDate, setEndDate] = useState(() => {
-        const date = new Date();
-        date.setHours(23, 59, 59, 999);
-        return date;
-    });
-    // variable to indicate end date input active state
-    const [activeEndDate, setActiveEndDate] = useState(false);
 
     // rendered data in flatlist component
     const renderData = useMemo(() => {
@@ -883,71 +1093,80 @@ const Waybill = ({navigation}) => {
         
         // period filter value
         const periodFilterValue = getFilterValue("Period", tab);
-        if (periodFilterValue !== previousPeriodFilter.current) {
+        if (periodFilterValue !== previousPeriodFilter.current || startDate !== queryStartDateTime || endDate !== queryEndDateTime) {
             previousPeriodFilter.current = periodFilterValue;
-            setFetchingWaybills(true);
-            setFetchingBusiness(true);
-            setFetchingProducts(true);
         }
 
-        // query time was altered, indicated fetching waybill
-        if (targetFilter?.find(item => item.title === "Period")?.default !== true) {
-
-            let start;
-            let end;
-
-            if (periodFilterValue === "Yesterday") {
-                start = moment().subtract(1, 'days').startOf('day');
-                end = moment().subtract(1, 'days').endOf('day');
-            } else if (periodFilterValue === "Current Week") {
-                start = moment().startOf('week');
-                end = moment().endOf('week');
-            } else if (periodFilterValue === "Last Week") {
-                start = moment().startOf('week').subtract(1, 'week');
-                end = moment().endOf('week').subtract(1, 'week');
-            } else if (periodFilterValue === "Current Month") {
-                start = moment().startOf('month');
-                end = moment().endOf('month');
-            } else if (periodFilterValue === "Last Month") {
-                start = moment().subtract(1, 'month').startOf('month');
-                end = moment().subtract(1, 'month').endOf('month');
-            } else if (periodFilterValue === "Custom Period") {
-                start = startDate;
-                end = endDate;
+        // if target filter has a result
+        if (targetFilter.length !== 0) {
+            // query time was altered, indicated fetching waybill
+            if (targetFilter?.find(item => item.title === "Period")?.default !== true) {
+    
+                let start;
+                let end;
+    
+                if (periodFilterValue === "Yesterday") {
+                    start = moment().subtract(1, 'days').startOf('day');
+                    end = moment().subtract(1, 'days').endOf('day');
+                } else if (periodFilterValue === "Current Week") {
+                    start = moment().startOf('week');
+                    end = moment().endOf('week');
+                } else if (periodFilterValue === "Last Week") {
+                    start = moment().startOf('week').subtract(1, 'week');
+                    end = moment().endOf('week').subtract(1, 'week');
+                } else if (periodFilterValue === "Current Month") {
+                    start = moment().startOf('month');
+                    end = moment().endOf('month');
+                } else if (periodFilterValue === "Last Month") {
+                    start = moment().subtract(1, 'month').startOf('month');
+                    end = moment().subtract(1, 'month').endOf('month');
+                } else if (periodFilterValue === "Custom Period") {
+                    start = startDate;
+                    end = endDate;
+                }
+    
+                start = new Date(start)
+                start.setHours(1, 0, 0, 1);
+    
+                end = new Date(end)
+                end.setHours(23, 59, 59, 999);
+    
+                setStartDate(start);
+                setEndDate(end);
+    
+                setQueryStartDateTime(start);
+                setQueryEndDateTime(end);
+    
+            } else {
+                
+                // set calender sheet date input
+                setStartDate(() => {
+                    const start = new Date();
+                    start.setHours(1, 0, 0, 1);
+                    return start;
+                });
+                setEndDate(() => {
+                    const end = new Date();
+                    end.setHours(23, 59, 59, 999);
+                    return end;
+                });
+    
+                // set query datetime
+                setQueryStartDateTime(() => {
+                    const start = new Date();
+                    start.setHours(1, 0, 0, 1);
+                    return start;
+                });
+                setQueryEndDateTime(() => {
+                    const end = new Date();
+                    end.setHours(23, 59, 59, 999);
+                    return end;
+                });
             }
-
-            start = new Date(start)
-            start.setHours(1, 0, 0, 1);
-
-            end = new Date(end)
-            end.setHours(23, 59, 59, 999);
-
-            setStartDate(start);
-            setEndDate(end);
-
-            setQueryStartDateTime(start);
-            setQueryEndDateTime(end);
-
-        } else {
-            const start = new Date();
-            start.setHours(1, 0, 0, 1);
-
-            const end = new Date();
-            end.setHours(23, 59, 59, 999);
-
-            // set calender sheet date input
-            setStartDate(start);
-            setEndDate(end);
-
-            // set query datetime
-            setQueryStartDateTime(start);
-            setQueryEndDateTime(end);
         }
-
 
         // if no filter parameter is set
         if (targetFilter?.every(item => item?.default)) {
-            if (!fetchingBusiness && !fetchingProducts) setFetchingWaybills(false);
             return [
                 {id: "sticky"},
                 ...targetWaybill,
@@ -988,7 +1207,7 @@ const Waybill = ({navigation}) => {
             return !filterMatch.includes(false);
         })
 
-        if (!fetchingBusiness && !fetchingProducts) setFetchingWaybills(false);
+        // if (!fetchingBusiness && !fetchingProducts) setFetchingWaybills(false);
 
         // return filtered data
         return [
@@ -1056,12 +1275,12 @@ const Waybill = ({navigation}) => {
     
     const [calendar, setCalendar] = useState({
         setDate: setStartDate,
-        startPoint: true,
         maxDate: false,
         minDate: false,
     });
 
     const openCalendar = (inputType) => {
+        handleFilterParameters("Period", "Custom Period", tab);
         if (inputType === "StartDate") {
             setActiveStartDate(true);
             setCalendar({
@@ -1095,406 +1314,6 @@ const Waybill = ({navigation}) => {
             setActiveStartDate(false);
         }
     }, [calendarSheetOpen])
-
-    console.log("Business:", fetchingBusiness)
-    console.log("Products:", fetchingProducts)
-    console.log("Waybills:", fetchingWaybills)
-
-    // get waybill
-    useEffect(() => {
-
-        // fetch product name
-        const fetchProductName = async (productId) => {
-            try {
-                const docRef = doc(database, "products", productId);
-                const docSnap = await getDoc(docRef);
-                return docSnap.data().product_name;
-            } catch (error) {
-                console.log("fetchProductName Error: ", error.message);
-                setToast({
-                    text: error.message,
-                    visible: true,
-                    type: "error",
-                });
-            }
-        }
-
-        // fetch logistics/merchant business details
-        const fetchBusiness = async (businessId, size, index) => {
-            try {
-                // businessses collection
-                const docRef = doc(database, "businesses", businessId);
-                const docSnap = await getDoc(docRef);
-                // return businesses object
-                const business = {
-                    banner_image: docSnap.data().banner_image,
-                    business_name: docSnap.data().business_name,
-                    verified: docSnap.data().verified,
-                };
-                // Check if all businesses have been fetched
-                if (index === size - 1) {
-                    setFetchingBusiness(false);
-                }
-                return business;
-            } catch (error) {
-                // indicate error
-                console.log("fetchBusiness Error: ", error.message);
-                setToast({
-                    text: error.message,
-                    visible: true,
-                    type: "error",
-                });
-            }
-        };
-
-        // fetch merchants products with id of array provided
-        const fetchProducts = async (idArray, quantityArray, size, index) => {
-            try {
-                let productsArray = [];
-
-                await Promise.all(idArray.map(async (id, index) => {
-                    try {
-                        const docRef = doc(database, "merchant_products", id);
-                        const docSnap = await getDoc(docRef);
-
-                        const productId = docSnap.data()?.product_id;
-                        const productName = await fetchProductName(productId);
-
-                        productsArray.push({
-                            id: id,
-                            product_name: productName,
-                            quantity: quantityArray[index],
-                        });
-                    } catch (error) {
-                        console.log("Error fetching product details: ", error.message);
-                        // Handle the error here if needed
-                        setToast({
-                            text: error.message,
-                            visible: true,
-                            type: "error",
-                        });
-                    }
-                }));
-
-                // Check if all products have been fetched
-                if (index === size - 1) {
-                    setFetchingProducts(false);
-                }
-                return productsArray;
-            } catch (error) {
-                console.log("fetchProducts Error: ", error.message);
-                setToast({
-                    text: error.message,
-                    visible: true,
-                    type: "error",
-                });
-            }
-        };
-
-
-        // // fetch logistics/merchant business details
-        // const fetchBusiness = async (businessId) => {
-        //     try {
-        //         // businessses collection
-        //         const docRef = doc(database, "businesses", businessId);
-        //         const docSnap = await getDoc(docRef);
-        //         // return businesses object
-        //         return {
-        //             banner_image: docSnap.data().banner_image,
-        //             business_name: docSnap.data().business_name,
-        //             verified: docSnap.data().verified,
-        //         };
-        //     } catch (error) {
-        //         // indicate error
-        //         console.log("fetchBusiness Error: ", error.message);
-        //         setToast({
-        //             text: error.message,
-        //             visible: true,
-        //             type: "error",
-        //         });
-        //     } finally {
-        //         // disable fetching business state
-        //         // setFetchingBusiness(false);
-        //     }
-        // }
-
-        // // fetch merchants products with id of array provided
-        // const fetchProducts = async (idArray, quantityArray) => {
-        //     try {
-        //         let productsArray = [];
-
-        //         await Promise.all(idArray.map(async (id, index) => {
-        //             try {
-        //                 const docRef = doc(database, "merchant_products", id);
-        //                 const docSnap = await getDoc(docRef);
-
-        //                 const productId = docSnap.data()?.product_id;
-        //                 const productName = await fetchProductName(productId);
-
-        //                 productsArray.push({
-        //                     id: id,
-        //                     product_name: productName,
-        //                     quantity: quantityArray[index],
-        //                 });
-        //             } catch (error) {
-        //                 console.log("Error fetching product details: ", error.message);
-        //                 // Handle the error here if needed
-        //                 setToast({
-        //                     text: error.message,
-        //                     visible: true,
-        //                     type: "error",
-        //                 });
-        //             }
-        //         }));
-
-        //         return productsArray;
-        //     } catch (error) {
-        //         console.log("fetchProducts Error: ", error.message);
-        //         setToast({
-        //             text: error.message,
-        //             visible: true,
-        //             type: "error",
-        //         });
-        //     } finally {
-        //         // disbale loading state for products
-        //         // setFetchingProducts(false);
-        //     }
-        // }
-        
-
-        // fetch warehouses
-        // const fetchWaybill = async (business_id) => {
-        //     try {
-        //         const collectionRef = collection(database, "waybills");
-
-        //         const matchField = authData?.account_type === "Merchant" ? 
-        //         "merchant_business_id" : 
-        //         "logistics_business_id";
-                
-        //         console.log("Start Date:", queryStartDateTime);
-        //         console.log("End Date:", queryEndDateTime);
-
-        //         let q = query(
-        //             collectionRef,
-        //             where(matchField, "==", business_id),
-        //             where("edited_at", ">", queryStartDateTime),
-        //             where("edited_at", "<", queryEndDateTime),
-        //             orderBy("edited_at", "desc")
-        //         );
-                
-        //         const unsubscribe = onSnapshot(q, async (querySnapshot) => {
-                    
-        //             let waybillList = [];
-
-
-        //             for (const doc of querySnapshot.docs) {
-        //                 const waybillData = doc.data();
-        //                 // Fetch waybill data for the warehouse
-        //                 // const business = await fetchBusiness(
-        //                 //     authData?.account_type === "Merchant" ? 
-        //                 //     waybillData.logistics_business_id : 
-        //                 //     waybillData.merchant_business_id
-        //                 // );
-
-        //                 // of product id
-        //                 const merchantProductIdArray = waybillData.merchant_products_id;
-        //                 const quantityArray = waybillData.quantity;
-
-        //                 // const products = await fetchProducts(merchantProductIdArray, quantityArray);
-
-        //                 const [business, products] = await Promise.all([
-        //                     fetchBusiness(
-        //                         authData?.account_type === "Merchant" ? 
-        //                         waybillData.logistics_business_id : 
-        //                         waybillData.merchant_business_id
-        //                     ),
-        //                     fetchProducts(merchantProductIdArray, quantityArray)
-        //                 ])
-
-        //                 // products listed
-        //                 const productsListed = products.map(product => {
-        //                     // seperate list of products by commas ','
-        //                     return `${product.product_name} \u00D7 ${product.quantity}`;
-        //                 }).join(", ");
-
-        //                 const waybillItem = {
-        //                     id: doc.id,
-        //                     banner_image: business.banner_image,
-        //                     business_name: business.business_name,
-        //                     chat_id: waybillData.chat_id,
-        //                     is_increment: waybillData.is_increment,
-        //                     logistics_business_id: waybillData.logistics_business_id,
-        //                     merchant_business_id: waybillData.merchant_business_id,
-        //                     status: waybillData.status,
-        //                     verified: business.verified,
-        //                     products: productsListed,
-        //                     products_array: products,
-        //                     created_at: waybillData.created_at,
-        //                     quantity: quantityArray,
-        //                 };
-        //                 waybillList.push(waybillItem);
-        //             }
-
-        //             // waybillList.unshift({id: "sticky"});
-
-        //             // set waybills
-        //             setWaybills(waybillList);
-
-        //             // disable page loading state
-        //             setPageLoading(false);
-
-        //             // disable fetching waybills
-        //             setFetchingWaybills(false);
-                    
-        //             }, (error) => { //handle errors
-        //                 // indicate error
-        //                 console.log("fetchWaybill Error: ", error.message);
-        //                 setToast({
-        //                     text: error.message,
-        //                     visible: true,
-        //                     type: "error",
-        //                 });
-                        
-        //             }
-        //         );
-        //         return unsubscribe;
-
-        //     } catch (error) {
-        //         // indicate error
-        //         console.log("fetchWaybill Error: ", error.message);
-        //         setToast({
-        //             text: error.message,
-        //             visible: true,
-        //             type: "error",
-        //         });
-
-        //     } finally {
-        //         // disable page loading state
-        //         setPageLoading(false);
-
-        //         // disable fetching waybills
-        //         setFetchingWaybills(false);
-        //     }
-        // };
-
-        const fetchWaybill = async (business_id) => {
-
-            const collectionRef = collection(database, "waybills");
-            const matchField = authData?.account_type === "Merchant" ? 
-                "merchant_business_id" : 
-                "logistics_business_id";
-    
-            console.log("Start Date:", queryStartDateTime);
-            console.log("End Date:", queryEndDateTime);
-    
-            let q = query(
-                collectionRef,
-                where(matchField, "==", business_id),
-                where("edited_at", ">", queryStartDateTime),
-                where("edited_at", "<", queryEndDateTime),
-                orderBy("edited_at", "desc")
-            );
-    
-            const unsubscribe = onSnapshot(q, async (querySnapshot) => {
-                try {
-                    const waybillDocs = querySnapshot.docs;
-                    const promises = waybillDocs.map(async (doc, index) => {
-                        try {
-                            const waybillData = doc.data();
-                            const merchantProductIdArray = waybillData.merchant_products_id;
-                            const quantityArray = waybillData.quantity;
-                        
-                            const businessPromise = fetchBusiness(
-                                authData?.account_type === "Merchant" ? 
-                                waybillData.logistics_business_id : 
-                                waybillData.merchant_business_id,
-                                waybillDocs.length, // Pass size
-                                index // Pass index
-                            );
-                        
-                            const productsPromise = fetchProducts(
-                                merchantProductIdArray, 
-                                quantityArray,
-                                waybillDocs.length, // Pass size
-                                index // Pass index
-                            );
-                        
-                            return Promise.all([businessPromise, productsPromise])
-                                .then(([business, products]) => {
-                                    const productsListed = products.map(product => {
-                                        return `${product.product_name} \u00D7 ${product.quantity}`;
-                                    }).join(", ");
-                        
-                                    const waybillItem = {
-                                        id: doc.id,
-                                        banner_image: business.banner_image,
-                                        business_name: business.business_name,
-                                        chat_id: waybillData.chat_id,
-                                        is_increment: waybillData.is_increment,
-                                        logistics_business_id: waybillData.logistics_business_id,
-                                        merchant_business_id: waybillData.merchant_business_id,
-                                        status: waybillData.status,
-                                        verified: business.verified,
-                                        products: productsListed,
-                                        products_array: products,
-                                        created_at: waybillData.created_at,
-                                        quantity: quantityArray,
-                                    };
-                                    return waybillItem;
-                                }).catch((error) => {
-                                    console.log("fetchWaybill Error: ", error.message);
-                                    setToast({
-                                        text: error.message,
-                                        visible: true,
-                                        type: "error",
-                                    });
-                                });
-                        } catch (error) {
-                            console.log("fetchWaybill Error: ", error.message);
-                            setToast({
-                                text: error.message,
-                                visible: true,
-                                type: "error",
-                            });
-                        }
-                    });
-                    
-                    const waybillList = await Promise.all(promises);
-                    
-                    setWaybills(waybillList);
-
-                    
-                } catch (error) {
-                    console.log("fetchWaybillSnapshot Error: ", error.message);
-                    setToast({
-                        text: error.message,
-                        visible: true,
-                        type: "error",
-                    });                        
-                } finally {
-                    // disable page loading state
-                    setPageLoading(false);
-                }
-            });
-    
-            return unsubscribe;
-        };
-        
-
-        // fetch waybill
-        const unsubscribePromise = fetchWaybill(authData?.business_id);
-
-        // Cleanup function to unsubscribe from snapshot listener
-        return () => {
-            // Unsubscribe from snapshot listener once unsubscribePromise is resolved
-            unsubscribePromise.then(unsubscribe => {
-                if (unsubscribe) {
-                    unsubscribe();
-                }
-            });
-        };
-
-    }, [queryEndDateTime, queryEndDateTime]);
 
     // close search modal bottomsheet function
     const closeModal = () => {
@@ -1555,6 +1374,15 @@ const Waybill = ({navigation}) => {
                             default: selectedButton[0].text === "All" ? true : false, 
                         }
                     } else {
+
+                        // if a period filter was applied, set fetching data states
+                        if (selectedButton[0].text !== "Today") {
+                            setFetchingWaybills(true);
+                            setFetchingBusiness(true);
+                            setFetchingProducts(true);
+                        }
+
+                        // return period filter parameters
                         return {
                             ...filterParam,
                             value: selectedButton[0].text,
@@ -1574,6 +1402,15 @@ const Waybill = ({navigation}) => {
                             default: selectedButton[0].text === "All" ? true : false, 
                         }
                     } else {
+
+                        // if a period filter was applied, set fetching data states
+                        if (selectedButton[0].text !== "Today") {
+                            setFetchingWaybills(true);
+                            setFetchingBusiness(true);
+                            setFetchingProducts(true);
+                        }
+
+                        // return period filter parameters
                         return {
                             ...filterParam,
                             value: selectedButton[0].text,
@@ -1720,6 +1557,15 @@ const Waybill = ({navigation}) => {
                 })
             });
         }
+
+        // if its a period filter being removed
+        if (title === "Period") {
+            // set all loading state as true
+            setFetchingWaybills(true);
+            setFetchingBusiness(true);
+            setFetchingProducts(true);
+        }
+
         // tab is incoming
         if (tab === "incoming") {
             return setIncomingFilter(prevParamters => {
@@ -1924,6 +1770,10 @@ const Waybill = ({navigation}) => {
     // const prevDate = new Date();
     // prevDate.setDate(prevDate.getDate() - 1);
 
+    // incomingFilter.map(filter => {
+    //     console.log(filter.buttons)
+    // })
+
     return (
         <>
             {/* header component */}
@@ -1962,6 +1812,7 @@ const Waybill = ({navigation}) => {
                                             decimal={stat.decimal}
                                             unit={stat.unit}
                                             unitPosition={stat.unitPosition}
+                                            isLoading={fetchingBusiness || fetchingWaybills || fetchingProducts} 
                                         />
                                     ))}
                                 </StatWrapper>
@@ -2251,10 +2102,10 @@ const Waybill = ({navigation}) => {
                         key={item.title}
                     >
                         {/* filter button list */}
-                        {item.buttons.map(button => (
+                        {item.buttons.map((button, index) => (
                             // filter button
                             <ActionButton
-                                key={button.text}
+                                key={item.title + button.text + index}
                                 name={button.text}
                                 removeBottomMargin={true}
                                 selected={button.selected}
@@ -2270,10 +2121,10 @@ const Waybill = ({navigation}) => {
                         key={item.title}
                     >
                         {/* filter button list */}
-                        {item.buttons.map(button => (
+                        {item.buttons.map((button, index) => (
                             // filter button
                             <ActionButton
-                                key={button.text}
+                                key={item.title + button.text + index}
                                 name={button.text}
                                 removeBottomMargin={true}
                                 selected={button.selected}
@@ -2335,7 +2186,6 @@ const Waybill = ({navigation}) => {
                 minDate={calendar.minDate}
                 maxDate={calendar.maxDate}
                 setDate={calendar.setDate}
-                startPoint={calendar.startPoint}
             />
         </>
     );

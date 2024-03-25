@@ -27,7 +27,7 @@ const paddingHorizontal = 40;
 
 const calendarWidth = windowWidth - paddingHorizontal;
 
-const CalendarSheet = ({calendarRef, closeCalendar, snapPointsArray, setDate, startPoint, disableActionButtons, minDate, maxDate}) => {
+const CalendarSheet = ({calendarRef, closeCalendar, snapPointsArray, setDate, disableActionButtons, minDate, maxDate}) => {
 
     const { setCalendarSheetOpen } = useGlobals();
 
@@ -106,30 +106,11 @@ const CalendarSheet = ({calendarRef, closeCalendar, snapPointsArray, setDate, st
     const handleSelectedDate = () => {
         if (tempDate) {
             const selectedDate = new Date(tempDate);
-            if (startPoint) {
-                // set time at the begining of the day
-                selectedDate.setHours(1, 0, 0, 1);
-            } else {
-                // set time at the end of the day
-                selectedDate.setHours(23, 59, 59, 999);
-            }
             setDate(selectedDate);
             closeCalendar();
         } else {
             console.log("No date selected.");
         }
-    }
-
-    // get current date  in "DD-MM-YYYY" format
-    const getCurrentDate = () => {
-        const currentDate = new Date();
-        const formattedDate = currentDate.toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-        }).replace(/\//g, '-');
-        
-        return formattedDate;
     }
 
     const handleOnSheetChange = (index) => {
