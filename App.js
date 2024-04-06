@@ -48,12 +48,9 @@ export default function App() {
         return null;
     }
 
-
-    const Stack = createNativeStackNavigator();
-
     return (
         // Safe area provider
-        <SafeAreaView style={{flex: 1}}>
+        <SafeAreaView style={{flex: 1}} onLayout={onLayoutRootView}>
             {/* // navigation container */}
             <NavigationContainer>
                 {/* provides authentication function and variables to the whole software */}

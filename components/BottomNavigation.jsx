@@ -34,7 +34,9 @@ const BottomNavigation = () => {
     const { currentStack } = useGlobals();
 
     // get Auth data
-    const { authData, authLoading } = useAuth();
+    const { authData, authLoading, isConnected } = useAuth();
+
+    console.log("Good Internet Connection?", isConnected)
 
     // console.log(authData?.account_type)
 

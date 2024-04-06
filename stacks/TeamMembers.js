@@ -7,8 +7,10 @@ import {
     TouchableWithoutFeedback,
     Keyboard,
 } from "react-native";
+
 // react hooks
-import { useState, useEffect, useLayoutEffect, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
+
 // components
 import Header from "../components/Header";
 import CustomBottomSheet from "../components/CustomBottomSheet";
@@ -21,24 +23,31 @@ import Avatar from "../components/Avatar";
 import SelectRolePopUpContent from "../components/SelectRolePopUpContent";
 import TeamMemberCard from "../components/TeamMemberCard";
 import SuccessSheet from "../components/SuccessSheet";
+
 // colors
 import { background, black, bodyText, white } from "../style/colors";
+
 // bottomsheet components
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+
 // skeleton screen
 import TeamMembersSkeleton from "../skeletons/TeamMembersSkeleton";
+
 // utils
 import { windowHeight } from "../utils/helpers";
+
 // globals
 import { useGlobals } from "../context/AppContext";
+
 // useAuth
 import { useAuth } from "../context/AuthContext";
+
 // firebase
 import {
     database,
     functions,
-    auth
 } from "../Firebase";
+
 // firestore functions
 import {
     doc,
@@ -52,6 +61,7 @@ import {
     orderBy,
     serverTimestamp,
 } from "firebase/firestore";
+
 // firebase functions
 import { httpsCallable } from "firebase/functions";
 
@@ -67,7 +77,13 @@ const TeamMembers = ({ navigation }) => {
     const [isLoading, setIsLoading] = useState(false);
     
     // bottoms sheef refs
-    const { bottomSheetRef, successSheetRef, popUpSheetRef, popUpSheetOpen, setToast } = useGlobals();
+    const {
+        bottomSheetRef,
+        successSheetRef,
+        popUpSheetRef,
+        popUpSheetOpen,
+        setToast,
+    } = useGlobals();
 
     // state to store members array
     const [members, setMembers] = useState([]);

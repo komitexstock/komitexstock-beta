@@ -3,6 +3,7 @@ import { useNavigation, useIsFocused } from "@react-navigation/native";
 // back handler
 import { BackHandler } from "react-native";
 
+
 const AppContext = createContext();
 
 export const useGlobals = () => useContext(AppContext);
@@ -38,6 +39,11 @@ const AppProvider = ({children}) => {
     const [popUpSheetOpen, setPopUpSheetOpen] = useState(false);
     // state to keep track if success up bottomsheet is open
     const [successSheetOpen, setSuccessSheetOpen] = useState(false);
+    
+    // states to indicate a loading action is being carried out
+    const [isLoading, setIsLoading] = useState(false);
+    // secondary loading state
+    const [isLoadingSecondary, setIsLoadingSecondary] = useState(false);
 
     // state to control toast
     const [toast, setToast] = useState({
@@ -46,6 +52,8 @@ const AppProvider = ({children}) => {
         type: "success",
     });
 
+
+    // block of code to listen for onPress back button
     useEffect(() => {
         // function to run if back button is pressed
         const backAction = () => {
@@ -100,11 +108,24 @@ const AppProvider = ({children}) => {
         const unsubscribe = navigation.addListener('state', () => {
             // update currentStack
             setCurrentStack(navigation.getCurrentRoute().name);
+
+            if (stackedSheetOpen) {
+                // if stacked bottom sheet is open, close it
+                stackedSheetRef?.current.close();
+                return true;
+
+            } else if (bottomSheetOpen) {
+                // if bottom sheet is open, close it
+                bottomSheetRef?.current.close();
+                return true;
+            }
+
         });
+
+
 
         return unsubscribe;
     }, [isFocused, navigation]);
-
     
     return (
         <AppContext.Provider 
@@ -128,6 +149,10 @@ const AppProvider = ({children}) => {
                 setSuccessSheetOpen,
                 toast,
                 setToast,
+                isLoading,
+                setIsLoading,
+                isLoadingSecondary,
+                setIsLoadingSecondary,
             }}
         >
            {children}

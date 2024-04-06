@@ -6,24 +6,48 @@ import {
 	useEffect,
 	useLayoutEffect,
 } from "react";
+
 // async storage
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
 // firebase AUth
 import {
 	onAuthStateChanged,
 } from "firebase/auth";
+
 // firebase
 import { auth, database } from "../Firebase";
+
 // firestore functions
 import { doc, getDoc, onSnapshot, collection, getDocs, updateDoc, serverTimestamp, where, query, orderBy } from "firebase/firestore";
+
 // auth
 import { signOut } from "firebase/auth";
+
+// net information
+import NetInfo from "@react-native-community/netinfo";
 
 const AuthContext = createContext({});
 
 export const useAuth = () => useContext(AuthContext);
 
 const AuthProvider = ({children}) => {
+
+	// state to store network connection status
+	const [isConnected, setIsConnected] = useState(true);
+
+	// listen for network state
+	useEffect(() => {
+		// Subscribe to network state updates
+		const unsubscribe = NetInfo.addEventListener(state => {
+			setIsConnected(state.isConnected);
+		});
+
+		return () => {
+			// Unsubscribe to network state updates
+			unsubscribe();
+		};
+	}, []);
 
 	const setStoredData = async (data) => {
 		setAuthData(data);
@@ -194,14 +218,13 @@ const AuthProvider = ({children}) => {
 						});
 						
 					} catch (error) {
-						
-						console.log("Error:", error.message)
+						throw error;
 					}
 				})
 
 
 			} catch (error) {
-				console.log("Error:", error.message)
+				console.log("repostPendingWaybills Error:", error.message)
 			}
 		}
 
@@ -256,7 +279,7 @@ const AuthProvider = ({children}) => {
 	}, [authData]);
 
 	return (
-		<AuthContext.Provider value={{authData, authLoading, setStoredData }}>
+		<AuthContext.Provider value={{authData, authLoading, setStoredData, isConnected }}>
 			{children}
 		</AuthContext.Provider>
 	)
