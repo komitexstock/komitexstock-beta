@@ -36,10 +36,6 @@ const BottomNavigation = () => {
     // get Auth data
     const { authData, authLoading, isConnected } = useAuth();
 
-    console.log("Good Internet Connection?", isConnected)
-
-    // console.log(authData?.account_type)
-
     // if user navigates to camera screen hide status bar
     if (currentStack === "CaptureImage") {
         StatusBar.setHidden(true);

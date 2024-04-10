@@ -65,7 +65,17 @@ import {
 // firebase functions
 import { httpsCallable } from "firebase/functions";
 
+//local database
+import { handleUsers } from "../sql/handleUsers";
+import { useSQLiteContext } from "expo-sqlite/next";
+
 const TeamMembers = ({ navigation }) => {
+
+    // local database
+    const db = useSQLiteContext();
+
+    // state to trigger getting data from local database
+    const [triggerReload, setTriggerReload] = useState(1);
 
     // auth data
     const { authData } = useAuth();
@@ -85,8 +95,53 @@ const TeamMembers = ({ navigation }) => {
         setToast,
     } = useGlobals();
 
-    // state to store members array
+    // members from local database
     const [members, setMembers] = useState([]);
+
+    // fetch members from local database
+    useEffect(() => {
+        const fetchMembers = async () => {
+            try {
+                // Usage
+                // const startDate = new Date('2024-04-08T14:22:09.487Z').toISOString();
+                // const endDate = new Date('2024-12-31T23:59:59.999Z').toISOString();
+                // const users = await handleUsers.getUsersRange(db, startDate, endDate);
+                const users = await handleUsers.getUsers(db);
+                return users;
+            } catch (error) {
+                console.log("Fetch local members error:", error.message);            
+            }
+        };
+
+        fetchMembers().then((users) => {
+
+            // modify users array 
+            const modifyUsers = users.map(user => {
+                return {
+                    ...user,
+                    admin: user?.admin === 1,
+                    deactivated: user?.deactivated === 1,
+                }
+            });
+
+            // add new member card
+            const addNewCard = { 
+                id: "addNew",
+                add_new: true,
+            }
+
+            setMembers(() => {
+                return [
+                    ...modifyUsers,
+                    addNewCard,
+                ]
+            });
+            // disable loading state
+            setPageLoading(false);
+        })
+    }, [triggerReload])
+
+    // console.log(members);
 
     // get team members
     useEffect(() => {
@@ -101,46 +156,46 @@ const TeamMembers = ({ navigation }) => {
                 );
 
                 const unsubscribe = onSnapshot(q, (querySnapshot) => {
-                    let members = [];
-                    querySnapshot.forEach((doc) => {
-                        const member = {
-                            id: doc.id,
-                            admin: doc.data().admin,
-                            created_by: doc.data().created_by,
-                            email: doc.data().email,
-                            deactivated: doc.data().deactivated,
-                            full_name: doc.data().full_name,
-                            profile_image: doc.data().profile_image,
-                            role: doc.data().role,
-                            onPress: () => openModal("Edit", doc.id),
-                        };
-                        members.push(member);
+                    let users = [];
+                    querySnapshot.forEach(async (doc) => {
+                        try {
+                            const userData = doc.data();
+                            // members
+                            const user = {
+                                id: doc.id,
+                                admin: userData?.admin,
+                                created_at: userData?.created_at,
+                                email: userData?.email,
+                                deactivated: userData?.deactivated,
+                                full_name: userData?.full_name,
+                                phone: userData?.phone,
+                                profile_image: userData?.profile_image,
+                                role: userData.role,
+                            };
+                            users.push(user);
+            
+                            // active user logged in
+                            const activeUser = authData?.uid === user.id;
+
+                            // user data
+                            // create local data clone
+                            await handleUsers.createUser(db, user, activeUser);
+                            // reload team member local data
+                            setTriggerReload((prev) => prev + 1);
+                        } catch (error) {
+                            console.log("Error:", error.message);
+                            throw error;
+                        }    
                     });
 
-                    const addNewCard = { //add new member card 
-                        id: "addNew",
-                        add_new: true,
-                        onPress: () => openModal("Add"),
-                    }
-
-                    // if user is a manager, show them add new member card
-                    if (authData?.role === "Manager") members.push(addNewCard);
-
-                    setMembers(members);
-
-                    // disable loading state
-                    setPageLoading(false);
-
-                    
                     }, (error) => { //handle errors
-                        // console.log("Error: ", error.message);
+                        console.log("Error: ", error.message);
                         setToast({
                             text: error.message,
                             visible: true,
                             type: "error",
                         });
-                        setPageLoading(false);
-                        
+                        throw error;
                     }
                 );
     
@@ -153,7 +208,6 @@ const TeamMembers = ({ navigation }) => {
                     type: "error",
                 })
                 setPageLoading(false);
-
             }
         };
     
@@ -171,7 +225,7 @@ const TeamMembers = ({ navigation }) => {
         };
 
     }, []);
-    
+
     // selected member id
     const [selectedId, setSelectedId] = useState(null);
 
@@ -525,6 +579,9 @@ const TeamMembers = ({ navigation }) => {
             await updateDoc(usersRef, {
                 role: editRole,
             });
+
+            // trigger refresh of data from local db
+            setTriggerReload(prevValue => prevValue + 1);
     
             // reset edited role
             setEditRole("");
@@ -612,15 +669,15 @@ const TeamMembers = ({ navigation }) => {
                 deactivated: !selectedMember.deactivated,
             });
     
-            console.log(response);
-    
             // save data in database
             await updateDoc(usersRef, {
                 deactivated: !selectedMember.deactivated,
             });
+
+            // trigger refresh of data from local db
+            setTriggerReload(prevValue => prevValue + 1);
     
-    
-            // end loadind state
+            // end loading state
             setIsLoading(false);
     
             // open success pop up modal
@@ -703,180 +760,179 @@ const TeamMembers = ({ navigation }) => {
 
 
     // render TeamMember page
-    return (
-        <>
-            {!pageLoading ? (
-                <FlatList 
-                    showsVerticalScrollIndicator={false}
-                    ListHeaderComponent={
-                        <View style={style.headerWrapper}>
-                            <Header 
-                                navigation={navigation} 
-                                stackName={"Team Members"} 
-                                iconFunction={null} 
-                                icon={null}
-                                unpadded={true}
-                            />
-                        </View>
-                    }
-                    columnWrapperStyle={style.listContainer}
-                    style={style.listWrapper}
-                    keyExtractor={item => item.id}
-                    data={members}
-                    numColumns={2}
-                    renderItem={({ item }) => (
-                        <TeamMemberCard
-                            imageUrl={item?.profile_image}
-                            admin={item?.admin}
-                            fullname={item?.full_name}
-                            role={item?.role}
-                            onPress={item?.onPress}
-                            addNew={item?.add_new}
-                            deactivated={item?.deactivated}
-                        />
-                    )}
-                />
-            ) : <TeamMembersSkeleton />}
-            {/* custom bottomsheet */}
-            <CustomBottomSheet
-                bottomSheetModalRef={bottomSheetRef}
-                closeModal={closeModal}
-                snapPointsArray={bottomSheetSnapPoints}
-                autoSnapAt={0}
-                sheetTitle={modal === "Add" ? "Add New Team Memner" : ""}
-                sheetSubtitle={""}
-            >    
-                {/* Add new member modal content */}
-                {modal === "Add" && (
-                    <>
-                        <BottomSheetScrollView contentContainerStyle={style.modalWrapper}>
-                            <TouchableWithoutFeedback
-                                onPress={() => Keyboard.dismiss()}
-                            >
-                                <View style={style.modalContent}>
-                                    <Text style={style.modalText}>We will email your team member an invite</Text>
-                                    {newMemberInputs.map(input => (
-                                        <Input
-                                            key={input.id}
-                                            placeholder={input.placeholder}
-                                            label={input.label}
-                                            value={input.value}
-                                            forceBlur={input.forceBlur}
-                                            onChange={input.onChange}
-                                            error={input.error}
-                                            setError={input.setError}
-                                        />
-                                    ))}
-                                    <SelectInput 
-                                        label={"Role"}
-                                        placeholder={"Role"}
-                                        onPress={() => openPopUpModal("Add")}
-                                        value={role}
-                                        active={roleInputActive}
-                                        inputFor={"String"}
-                                    />
-                                </View>
-                            </TouchableWithoutFeedback>
-                        </BottomSheetScrollView>
-                        <CustomButton
-                            name={"Add New Team Member"}
-                            shrinkWrapper={true}
-                            onPress={handleAddNewMember}
-                            inactive={emptyFields}
+    return (<>
+        {!pageLoading ? (
+            <FlatList 
+                showsVerticalScrollIndicator={false}
+                ListHeaderComponent={
+                    <View style={style.headerWrapper}>
+                        <Header 
+                            navigation={navigation} 
+                            stackName={"Team Members"} 
+                            iconFunction={null} 
+                            icon={null}
                             unpadded={true}
-                            isLoading={isLoading}
                         />
-                    </>
+                    </View>
+                }
+                columnWrapperStyle={style.listContainer}
+                style={style.listWrapper}
+                keyExtractor={item => item.id}
+                data={members}
+                numColumns={2}
+                renderItem={({ item }) => (
+                    <TeamMemberCard
+                        imageUrl={item?.profile_image}
+                        admin={item?.admin}
+                        fullname={item?.full_name}
+                        role={item?.role}
+                        onPress={() => openModal("Edit", item.id)}
+                        onPressAddNew={() => openModal("Add")}
+                        addNew={item?.add_new}
+                        deactivated={item?.deactivated}
+                    />
                 )}
-
-                {/* edit existing member role modal content */}
-                {modal === "Edit" && (
-                    <View style={style.modalWrapper}>
-                        <View style={style.modalContainer}>
-                            <View style={style.infoWrapper}>
-                                <Avatar 
-                                    fullname={selectedMember?.full_name}
-                                    imageUrl={selectedMember?.profile_image}
-                                />
-                                <Indicator
-                                    type={"Dispatched"}
-                                    text={selectedMember?.role}
+            />
+        ) : <TeamMembersSkeleton />}
+        {/* custom bottomsheet */}
+        <CustomBottomSheet
+            bottomSheetModalRef={bottomSheetRef}
+            closeModal={closeModal}
+            snapPointsArray={bottomSheetSnapPoints}
+            autoSnapAt={0}
+            sheetTitle={modal === "Add" ? "Add New Team Memner" : ""}
+            sheetSubtitle={""}
+        >    
+            {/* Add new member modal content */}
+            {modal === "Add" && (
+                <>
+                    <BottomSheetScrollView contentContainerStyle={style.modalWrapper}>
+                        <TouchableWithoutFeedback
+                            onPress={() => Keyboard.dismiss()}
+                        >
+                            <View style={style.modalContent}>
+                                <Text style={style.modalText}>We will email your team member an invite</Text>
+                                {newMemberInputs.map(input => (
+                                    <Input
+                                        key={input.id}
+                                        placeholder={input.placeholder}
+                                        label={input.label}
+                                        value={input.value}
+                                        forceBlur={input.forceBlur}
+                                        onChange={input.onChange}
+                                        error={input.error}
+                                        setError={input.setError}
+                                    />
+                                ))}
+                                <SelectInput 
+                                    label={"Role"}
+                                    placeholder={"Role"}
+                                    onPress={() => openPopUpModal("Add")}
+                                    value={role}
+                                    active={roleInputActive}
+                                    inputFor={"String"}
                                 />
                             </View>
-                            <Text style={style.modalFullnameText}>{selectedMember?.full_name}</Text>
-                            <Text style={style.modalEmailText}>{selectedMember?.email}</Text>
-                            <SelectInput 
-                                label={"Role"}
-                                placeholder={"Role"}
-                                onPress={() => openPopUpModal("Edit")}
-                                value={!editRole ? selectedMember?.role : editRole}
-                                active={roleInputActive}
-                                inputFor={"String"}
-                                disabled={handleCantDeactivate}
+                        </TouchableWithoutFeedback>
+                    </BottomSheetScrollView>
+                    <CustomButton
+                        name={"Add New Team Member"}
+                        shrinkWrapper={true}
+                        onPress={handleAddNewMember}
+                        inactive={emptyFields}
+                        unpadded={true}
+                        isLoading={isLoading}
+                    />
+                </>
+            )}
+
+            {/* edit existing member role modal content */}
+            {modal === "Edit" && (
+                <View style={style.modalWrapper}>
+                    <View style={style.modalContainer}>
+                        <View style={style.infoWrapper}>
+                            <Avatar 
+                                fullname={selectedMember?.full_name}
+                                imageUrl={selectedMember?.profile_image}
+                            />
+                            <Indicator
+                                type={"Dispatched"}
+                                text={selectedMember?.role}
                             />
                         </View>
-                        <View style={style.modalButtonsWrapper}>
-                            <CustomButton
-                                name={"Update Role"}
-                                shrinkWrapper={true}
-                                onPress={handleUpdateRole}
-                                unpadded={true}
-                                inactive={editRole === "" || editRole === selectedMember?.role || handleCantDeactivate}
-                                isLoading={isLoading}
-                            />
-                            <CustomButton
-                                secondaryButton={true}
-                                name={selectedMember?.deactivated ? "Activate User" : "Deactivate User"}
-                                shrinkWrapper={true}
-                                onPress={() => openSuccessModal(selectedMember?.deactivated ? "Activate" : "Deactivate")}
-                                unpadded={true}
-                                inactive={selectedMember?.deactivated ? false : handleCantDeactivate}
-                            />
-                        </View>
+                        <Text style={style.modalFullnameText}>{selectedMember?.full_name}</Text>
+                        <Text style={style.modalEmailText}>{selectedMember?.email}</Text>
+                        <SelectInput 
+                            label={"Role"}
+                            placeholder={"Role"}
+                            onPress={() => openPopUpModal("Edit")}
+                            value={!editRole ? selectedMember?.role : editRole}
+                            active={roleInputActive}
+                            inputFor={"String"}
+                            disabled={handleCantDeactivate}
+                        />
                     </View>
-                )}
+                    <View style={style.modalButtonsWrapper}>
+                        <CustomButton
+                            name={"Update Role"}
+                            shrinkWrapper={true}
+                            onPress={handleUpdateRole}
+                            unpadded={true}
+                            inactive={editRole === "" || editRole === selectedMember?.role || handleCantDeactivate}
+                            isLoading={isLoading}
+                        />
+                        <CustomButton
+                            secondaryButton={true}
+                            name={selectedMember?.deactivated ? "Activate User" : "Deactivate User"}
+                            shrinkWrapper={true}
+                            onPress={() => openSuccessModal(selectedMember?.deactivated ? "Activate" : "Deactivate")}
+                            unpadded={true}
+                            inactive={selectedMember?.deactivated ? false : handleCantDeactivate}
+                        />
+                    </View>
+                </View>
+            )}
 
-            </CustomBottomSheet>
-            {/* popup bottom sheet */}
-            <PopUpBottomSheet
-                bottomSheetModalRef={popUpSheetRef}
-                closeModal={closePopUpModal}
-                snapPointsArray={[250]}
-                autoSnapAt={0}
-                sheetTitle={"Select Role"}
-                hideCloseButton={true}
-                centered={true}
-            >   
-                {/* select role pop up for editing team member role */}
-                { popUp.type === "Edit" && 
-                    <SelectRolePopUpContent
-                        hanldeRoleSelect={hanldeRoleUpdate}
-                    />
-                }
+        </CustomBottomSheet>
+        {/* popup bottom sheet */}
+        <PopUpBottomSheet
+            bottomSheetModalRef={popUpSheetRef}
+            closeModal={closePopUpModal}
+            snapPointsArray={[250]}
+            autoSnapAt={0}
+            sheetTitle={"Select Role"}
+            hideCloseButton={true}
+            centered={true}
+        >   
+            {/* select role pop up for editing team member role */}
+            { popUp.type === "Edit" && 
+                <SelectRolePopUpContent
+                    hanldeRoleSelect={hanldeRoleUpdate}
+                />
+            }
 
-                {/* select role pop up for adding new team member */}
-                { popUp.type === "Add" && 
-                    <SelectRolePopUpContent
-                        hanldeRoleSelect={hanldeRoleSelect}
-                    />
-                }
-            </PopUpBottomSheet>
-            {/* success bottom sheet */}
-            {/* success up modal */}
-            <SuccessSheet
-                successSheetRef={successSheetRef}
-                heading={successModal?.heading}
-                height={successModal?.height}
-                paragraph={successModal?.paragragh}
-                caution={successModal?.caution}
-                primaryFunction={successModal?.primaryFunction}
-                primaryButtonText={successModal?.primaryButtonText}
-                secondaryFunction={successModal?.secondaryFunction}
-                secondaryButtonText={successModal?.secondaryButtonText}
-                isLoadingPrimary={isLoading}
-            />
-        </>
-    );
+            {/* select role pop up for adding new team member */}
+            { popUp.type === "Add" && 
+                <SelectRolePopUpContent
+                    hanldeRoleSelect={hanldeRoleSelect}
+                />
+            }
+        </PopUpBottomSheet>
+        {/* success bottom sheet */}
+        {/* success up modal */}
+        <SuccessSheet
+            successSheetRef={successSheetRef}
+            heading={successModal?.heading}
+            height={successModal?.height}
+            paragraph={successModal?.paragragh}
+            caution={successModal?.caution}
+            primaryFunction={successModal?.primaryFunction}
+            primaryButtonText={successModal?.primaryButtonText}
+            secondaryFunction={successModal?.secondaryFunction}
+            secondaryButtonText={successModal?.secondaryButtonText}
+            isLoadingPrimary={isLoading}
+        />
+    </>);
 }
 
 // stylesheet

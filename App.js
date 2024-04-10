@@ -22,6 +22,8 @@ import { white } from './style/colors';
 import { SafeAreaView } from 'react-native';
 // navigator
 import Navigator from './router/Navigator';
+// sql lite
+import { SQLiteProvider } from 'expo-sqlite/next';
 
 export default function App() {
     
@@ -55,29 +57,69 @@ export default function App() {
             <NavigationContainer>
                 {/* provides authentication function and variables to the whole software */}
                 <AuthProvider>
-                    {/* AppProvider, access to global variables */}
-                    <AppProvider>
-                        {/* GestureHandlerRootView required to render bottomsheet */}
-                        <GestureHandlerRootView style={{ flex: 1 }}>
-                            {/* BottomSheetModalProvider required to render bottomsheet */}
-                            <BottomSheetModalProvider>
-                                {/* custom status bar */}
-                                <StatusBar backgroundColor={white} barStyle="dark-content" />
-                                {/* barStyle 
-                                    "light-content": Sets the status bar style to light content, 
-                                    which is usually used when the status bar background color is darker. 
-                                    "dark-content": Sets the status bar style to dark content, which is usually used when the status bar background color is lighte
-                                */}
-                                <Toast />
-                                <Navigator />
-                                <BottomNavigation />
-                            </BottomSheetModalProvider>
-                        </GestureHandlerRootView>
-                    </AppProvider>
+                    {/* sql provider */}
+                    <SQLiteProvider  databaseName="komitex.db" onInit={migrateDbIfNeeded}>
+                        {/* AppProvider, access to global variables */}
+                        <AppProvider>
+                            {/* GestureHandlerRootView required to render bottomsheet */}
+                            <GestureHandlerRootView style={{ flex: 1 }}>
+                                {/* BottomSheetModalProvider required to render bottomsheet */}
+                                <BottomSheetModalProvider>
+                                    {/* custom status bar */}
+                                    <StatusBar backgroundColor={white} barStyle="dark-content" />
+                                    {/* barStyle 
+                                        "light-content": Sets the status bar style to light content, 
+                                        which is usually used when the status bar background color is darker. 
+                                        "dark-content": Sets the status bar style to dark content, which is usually used when the status bar background color is lighte
+                                    */}
+                                    <Toast />
+                                    <Navigator />
+                                    <BottomNavigation />
+                                </BottomSheetModalProvider>
+                            </GestureHandlerRootView>
+                        </AppProvider>
+                    </SQLiteProvider>
                 </AuthProvider>
             </NavigationContainer>
         </SafeAreaView>
     );
+}
+
+async function migrateDbIfNeeded(db) {
+    try {
+        
+        const DATABASE_VERSION = 1;
+        let { user_version: currentDbVersion } = await db.getFirstAsync(
+            'PRAGMA user_version'
+        );
+        if (currentDbVersion >= DATABASE_VERSION) {
+            return;
+        }
+        if (currentDbVersion === 0) {
+            await db.execAsync(`
+                PRAGMA journal_mode = WAL;
+                CREATE TABLE IF NOT EXISTS users (
+                    id STRING PRIMARY KEY NOT NULL,
+                    active_user BOOLEAN NOT NULL,
+                    admin BOOLEAN NOT NULL,
+                    created_at DATETIME NOT NULL,
+                    email TEXT NOT NULL,
+                    deactivated BOOLEAN NOT NULL,
+                    full_name TEXT NOT NULL,
+                    phone TEXT NULL,
+                    profile_image TEXT NULL,
+                    role TEXT NOT NULL
+                );
+            `);
+            currentDbVersion = 1;
+        }
+        // if (currentDbVersion === 1) {
+        //   Add more migrations
+        // }
+        await db.execAsync(`PRAGMA user_version = ${DATABASE_VERSION}`);
+    } catch (error) {
+        console.log("DB SETUP ERROR:", error.message)
+    }
 }
 
 AppRegistry.registerComponent('MyApp', () => App);

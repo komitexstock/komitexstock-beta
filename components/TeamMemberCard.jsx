@@ -16,7 +16,7 @@ import Indicator from "./Indicator";
 import Avatar from "./Avatar";
 
 const maxCardWidth = Dimensions.get("window").width/2 - 28;
-const TeamMemberCard = ({ imageUrl, admin, fullname, role, onPress, addNew, deactivated}) => {
+const TeamMemberCard = ({ imageUrl, admin, fullname, role, onPress, onPressAddNew, addNew, deactivated}) => {
     // imageUrl => string | path to image
     // admin, addNew, deactivated => boolean
     // fullname, role => string
@@ -54,7 +54,7 @@ const TeamMemberCard = ({ imageUrl, admin, fullname, role, onPress, addNew, deac
             ) : (
                 // if addNew is true, render a special component to trigger add new member bottomsheet modal
                 <View style={style.addNewCardWrapper}>
-                    <TouchableOpacity style={style.addNewButton} onPress={onPress}>
+                    <TouchableOpacity style={style.addNewButton} onPress={onPressAddNew}>
                         <AddIcon />
                     </TouchableOpacity>
                     <Text style={style.addNewText}>Add New Team Member</Text>

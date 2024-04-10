@@ -13,7 +13,7 @@ import { useAuth } from '../context/AuthContext';
 // moment
 import moment from 'moment';
 // utils
-import { serverTImestampToMilliseconds } from '../utils/serverTImestampToMilliseconds';
+import { time } from '../utils/time';
 
 const WaybillListItem = ({firstWaybill, lastWaybill, searchQuery, bannerImage, businessName, isIncrement, status, products, onPress, newMessage, createdAt}) => {
     // item => object
@@ -23,7 +23,7 @@ const WaybillListItem = ({firstWaybill, lastWaybill, searchQuery, bannerImage, b
     const { authData } = useAuth();
 
     // Assuming createdAt is the timestamp from Firebase
-    const formattedTimestamp = moment(serverTImestampToMilliseconds(createdAt)).format('YYYY-MM-DD HH:m');
+    const formattedTimestamp = moment(time.serverTImestampToMilliseconds(createdAt)).format('YYYY-MM-DD HH:m');
     // const formattedTimestamp = moment(serverTImestampToMilliseconds(createdAt)).format('ddd h:mma, DD/MM/YYYY');
 
     // waybill type text
