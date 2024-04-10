@@ -75,9 +75,6 @@ const updateUser = async (db, user, data) => {
                 $created_at: time.serverTimestampToISOString(data.created_at),
                 $id: user?.id,
             });
-            
-            console.log('Updated ', user.full_name);
-            console.log('Updated ', execute);
             return user.id;
     
         } catch (error) {
@@ -138,7 +135,6 @@ const createUser = async (db, user, activeUser) => {
         );
 
         try {
-            console.log('Checking for ', user.full_name);
             // check if users exist
             const result = await getUser(db, user.id);
 

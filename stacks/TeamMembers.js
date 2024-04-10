@@ -6,6 +6,7 @@ import {
     StyleSheet,
     TouchableWithoutFeedback,
     Keyboard,
+    Platform,
 } from "react-native";
 
 // react hooks
@@ -89,6 +90,7 @@ const TeamMembers = ({ navigation }) => {
     // bottoms sheef refs
     const {
         bottomSheetRef,
+        bottomSheetOpen,
         successSheetRef,
         popUpSheetRef,
         popUpSheetOpen,
@@ -254,7 +256,7 @@ const TeamMembers = ({ navigation }) => {
     const [roleInputActive, setRoleInputActive] = useState(false);
 
     // bottomsheet snap points
-    const [bottomSheetSnapPoints, setBottomSheetSnapPoints] = useState(["60%"]);
+    const [bottomSheetSnapPoints, setBottomSheetSnapPoints] = useState([484]);
 
     // function to close modal
     const closeModal = () => {
@@ -273,11 +275,11 @@ const TeamMembers = ({ navigation }) => {
         
         if (type === "Edit") {
             // console.log(type);
-            setBottomSheetSnapPoints(["60%"])
+            setBottomSheetSnapPoints([484])
             // const chosenMember = ;
             setSelectedId(id);
         } else {
-            setBottomSheetSnapPoints([0.7 * windowHeight])
+            setBottomSheetSnapPoints([582])
         }
     }
 
@@ -757,6 +759,33 @@ const TeamMembers = ({ navigation }) => {
             setIsLoading(false);
         }
     }
+
+    // listen for keyboard opening or closing
+    useEffect(() => {
+        // if keyboard is open
+        const keyboardDidShowListener = Keyboard.addListener(
+            Platform.OS === 'android' ? 'keyboardDidShow' : 'keyboardWillShow', () => {
+                // if keyboard is open, make bottomheet occupy the rest of the screen
+                return setBottomSheetSnapPoints(["100%"])
+            }
+        );
+        
+        // keyboard is closed
+        const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+            // if keyboard is closed reset modal height
+            if (modal === "Edit") {
+                // console.log(type);
+                setBottomSheetSnapPoints([484])
+            } else {
+                setBottomSheetSnapPoints([582])
+            }
+        });
+    
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        };
+    }, [bottomSheetOpen ]);
 
 
     // render TeamMember page

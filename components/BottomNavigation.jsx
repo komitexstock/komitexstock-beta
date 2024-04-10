@@ -43,6 +43,7 @@ const BottomNavigation = () => {
         StatusBar.setHidden(false);
     }
 
+
     // stack where navigation should be visible
     const visibleNavigation = ["Home", "Orders", "Waybill", "Inventory", "Warehouse", "Products", "Account"]; 
 

@@ -36,24 +36,13 @@ const AuthProvider = ({children}) => {
 	// state to store network connection status
 	const [isConnected, setIsConnected] = useState(true);
 
-	// listen for network state
-	useEffect(() => {
-		// Subscribe to network state updates
-		const unsubscribe = NetInfo.addEventListener(state => {
-			setIsConnected(state.isConnected);
-		});
-
-		return () => {
-			// Unsubscribe to network state updates
-			unsubscribe();
-		};
-	}, []);
-
+	// set stored data to async storage
 	const setStoredData = async (data) => {
 		setAuthData(data);
 		await AsyncStorage.setItem("@user", JSON.stringify(data));
 	}
 
+	// get stored data from async storage
 	const getStoredData = async () => {
 		try {
 			const data = await AsyncStorage.getItem("@user");
@@ -65,6 +54,7 @@ const AuthProvider = ({children}) => {
 		}
 	}
 
+	// removed stored data from async storage
 	const removeStoredData = async () => {
 		try {
 			await AsyncStorage.removeItem("@user");
@@ -74,6 +64,7 @@ const AuthProvider = ({children}) => {
 		}
 	}
 
+	// get user data
 	const getUserData = async (uid) => {
 		const docRef = doc(database, 'users', uid);
 		try {
@@ -85,6 +76,7 @@ const AuthProvider = ({children}) => {
 		}
 	}
 
+	// get business data from firestore
 	const getBusinessData = async (id) => {
 		const docRef = doc(database, 'businesses', id)
 		try {
@@ -277,6 +269,21 @@ const AuthProvider = ({children}) => {
 		return unsubscribe;
 		// }
 	}, [authData]);
+
+	// listen for network state
+	useEffect(() => {
+		// Subscribe to network state updates
+		const unsubscribe = NetInfo.addEventListener(state => {
+			setIsConnected(state.isConnected);
+		});
+
+		return () => {
+			// Unsubscribe to network state updates
+			unsubscribe();
+		};
+	}, []);
+
+    console.log("Healthy Internet", isConnected);
 
 	return (
 		<AuthContext.Provider value={{authData, authLoading, setStoredData, isConnected }}>
