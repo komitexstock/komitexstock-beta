@@ -49,7 +49,17 @@ import {
     getDoc,
 } from "firebase/firestore";
 
+// local database
+import { handleLocations } from "../sql/handleLocation";
+import { useSQLiteContext } from "expo-sqlite/next";
+
 const AvailableLocations = ({navigation, route}) => {
+
+    // local database
+    const db = useSQLiteContext();
+
+    // sate to trigger reload of local db
+    const [triggerReload, setTriggerReload] = useState(1);
 
     // get auth date
     const { authData } = useAuth();
@@ -71,6 +81,61 @@ const AvailableLocations = ({navigation, route}) => {
 
     // states and delivery locations 
     const [states, setStates] = useState([])
+
+    useEffect(() => {
+        const fetchLocations = async () => {
+            try {
+                const locations = await handleLocations.getLocations(db);
+                return locations;
+            } catch (error) {
+                console.log("fetch local locations eror", error.message);   
+                throw error;             
+            }
+        }
+
+        // group locations by state
+        const groupByState = (locations) => {
+            const groupedByState = locations?.reduce((acc, obj, index) => {
+                const { state, ...rest } = obj;
+                // Check if state is defined and not null
+                if (state !== undefined && state !== null) {
+                    if (!acc[state]) {
+                        acc[state] = { id: Math.random(), name: state, opened: false, locations: [] };
+                        // acc[state] = { name: state, opened: false, locations: [] };
+                    }
+                    acc[state].locations.push(rest);
+                }
+                return acc;
+            }, {});
+
+            return Object.values(groupedByState);
+        }
+
+        fetchLocations().then((locations) => {
+
+            // set states local 
+            setStates(() => {
+                return groupByState(locations);
+            });
+            // disable page loading state
+            setPageLoading(false);
+            
+        }).catch((error) => {
+            // show error message
+            console.log("fetch local locations eror", error.message);   
+            
+            // show toast
+            setToast({
+                text: error.message,
+                visible: true,
+                type: "error",
+            });
+
+            // disable page loading state
+            setPageLoading(false);
+        })
+
+    }, [triggerReload])
 
     // get states
     useEffect(() => {
@@ -100,6 +165,8 @@ const AvailableLocations = ({navigation, route}) => {
                     where("business_id", "==", businessId),
                 );
 
+                await handleLocations.createTableLocations(db);
+
                 const unsubscribe = onSnapshot(q, (querySnapshot) => {
                     let locationList = [];
 
@@ -113,86 +180,30 @@ const AvailableLocations = ({navigation, route}) => {
                     // Wait for all promises to resolve
                     Promise.all(fetchWarehouseNamePromises).then((warehouseNames) => {
                         // Iterate over the query snapshot again to construct locationList
-                        querySnapshot.docs.forEach((doc, index) => {
-                            const location = {
-                                id: doc.id,
-                                delivery_charge: doc.data().delivery_charge,
-                                region: doc.data().region,
-                                state: doc.data().state,
-                                warehouse_id: doc.data().warehouse_id,
-                                warehouse_name: warehouseNames[index], // Use the corresponding warehouse name
-                            };
-                            locationList.push(location);
+                        querySnapshot.docs.forEach(async (doc, index) => {
+                            try {
+                                const location = {
+                                    id: doc.id, // string
+                                    delivery_charge: doc.data().delivery_charge, // number
+                                    region: doc.data().region, // string
+                                    state: doc.data().state, // string
+                                    warehouse_id: doc.data().warehouse_id, // string
+                                    warehouse_name: warehouseNames[index], // Use the corresponding warehouse name
+                                };
+                                locationList.push(location);
+    
+                                // add data to local database
+                                await handleLocations.createLocation(db, location);
+                                
+                            } catch (error) {
+                                console.log("create location error:", error.message);
+                                throw error;
+                            }
                         });
 
-                        // group locations by state
-                        const groupByState = (locations) => {
-                            const groupedByState = locations?.reduce((acc, obj) => {
-                                const { state, ...rest } = obj;
-                                // Check if state is defined and not null
-                                if (state !== undefined && state !== null) {
-                                    if (!acc[state]) {
-                                        acc[state] = { id: Math.random(), name: state, opened: false, locations: [] };
-                                        // acc[state] = { name: state, opened: false, locations: [] };
-                                    }
-                                    acc[state].locations.push(rest);
-                                }
-                                return acc;
-                            }, {});
-
-                            return Object.values(groupedByState);
-                        }
-
-                        // sort locations by regions
-                        const sortLocationsByRegion = (locations) => {
-                            return locations.sort((a, b) => {
-                                const regionA = a.region.toUpperCase();
-                                const regionB = b.region.toUpperCase();
-                                
-                                if (regionA < regionB) {
-                                    return -1;
-                                }
-                                if (regionA > regionB) {
-                                    return 1;
-                                }
-                                return 0;
-                            });
-                        }
-
-                        // sort locations by regions
-                        const sortLocationsByState = (states) => {
-                            return states.sort((a, b) => {
-                                const stateA = a.name.toUpperCase();
-                                const stateB = b.name.toUpperCase();
-                                
-                                if (stateA < stateB) {
-                                    return -1;
-                                }
-                                if (stateA > stateB) {
-                                    return 1;
-                                }
-                                return 0;
-                            });
-                        }
-
-                        // group locations by state
-                        const states_ = groupByState(locationList);
-
-                        const sortedStates = sortLocationsByState(states_);
-
-                        // sort regions function
-                        const sortRegions = sortedStates.map(state => {
-                            // console.log(state);
-                            return {
-                                ...state,
-                                locations: sortLocationsByRegion(state.locations),
-                            }
-                        })
-
-                        // set states
-                        setStates(sortRegions);
-
-                        setPageLoading(false);
+                        // trigger reload
+                        setTriggerReload(prevValue => prevValue++);
+                       
                     }).catch(error => {
                         console.log("Error: ", error.message);
                         setToast({
@@ -215,7 +226,6 @@ const AvailableLocations = ({navigation, route}) => {
                 });
             }
         };
-
 
         // fetch warehouses
         const unsubscribePromise = fetchLocations(business_id);
@@ -249,85 +259,7 @@ const AvailableLocations = ({navigation, route}) => {
                 return isMatch;
             });
 
-            return filteredStates.map(state => {
-                return {
-                    ...state,
-                    opened: true,
-                    name: (() => { // self invoking function
-                        // if state doesn't match search keyword, return state name
-                        if (!state.name.toLowerCase().includes(searchQuery.toLowerCase())) return state.name;
-                        // split text according to position of search keyword
-                        let textArray = state.name.toLowerCase().split(searchQuery.toLowerCase());
-                        const fullString = textArray.join(`%!#${searchQuery}%!#`)
-
-                        textArray = fullString.split('%!#');
-                        // console.log(textArray);
-
-                        return textArray.map((text, index) => {
-                            if (index % 2 === 0) {
-                                return (
-                                    <Text 
-                                        key={index} 
-                                        style={index === 0 && {textTransform: 'capitalize'}}
-                                    >
-                                        {text}
-                                    </Text>
-                                ) 
-                            } else {
-                                return (
-                                    <Text
-                                        key={index}
-                                        style={textArray[0] === "" && index === 1 && {textTransform: 'capitalize'}}
-                                    >
-                                        <Mark key={index}>{text?.toLowerCase()}</Mark>
-                                    </Text>
-                                )
-                            }
-                        })
-                    })(), 
-                    locations: state.locations.map((location) => {
-                        // search for keyword in location region
-                        const searchIndex = location.region?.toLowerCase()?.indexOf(searchQuery?.toLowerCase());
-                        // if keyword doesn't exist return location object
-                        if (searchIndex === -1)  return location;
-                        // split text according to index of search keyword
-                        let textArray = location.region?.toLowerCase()?.split(searchQuery?.toLowerCase());
-                        // joion text unique string
-                        const fullString = textArray.join(`%!#${searchQuery}%!#`)
-                        
-                        // split text again
-                        textArray = fullString.split('%!#');
-                        return {
-                            ...location,
-                            region: textArray.map((text, index) => {
-                                if (index % 2 === 0) {
-                                    return (
-                                        <Text 
-                                            key={index} 
-                                            style={{
-                                                textTransform: textArray[0] !== "" && index === 0 ? 'capitalize' : 'lowercase',
-                                            }}
-                                        >
-                                            {text.toLowerCase()}
-                                        </Text>
-                                    ) 
-                                } else {
-                                    return (
-                                        <Text
-                                            key={index}
-                                            style={{
-                                                textTransform: textArray[0] === "" && index === 1 ? 'capitalize' : 'lowercase',
-                                            }}
-                                        >
-                                            <Mark key={index}>{text?.toLowerCase()}</Mark>
-                                        </Text>
-                                    )
-                                }
-                            }) 
-                        }
-                    }),
-                }
-            });
+            return filteredStates;
         }
 
         setSearchedStates(() => {
@@ -375,11 +307,11 @@ const AvailableLocations = ({navigation, route}) => {
                             />
                             <View style={style.paragraphWrapper}>
                                 <Text style={style.headingText}>
-                                    {writable ? <>
-                                        Merchants will be able to see all your listed locations
-                                    </> : <>
-                                        Find all available locations and the associated fees {business_name} offers 
-                                    </>}
+                                    {writable ? (
+                                        'Merchants will be able to see all your listed locations'
+                                    ) : (
+                                        `Find all available locations and the associated fees ${business_name} offers` 
+                                    )}
                                 </Text>
                                 {/* check if any location has been added to data base */}
                                 {states.length !== 0 && <>
@@ -402,6 +334,7 @@ const AvailableLocations = ({navigation, route}) => {
                                             key={state.id}
                                             states={states}
                                             state={state.name}
+                                            searchQuery={searchQuery}
                                             locations={state.locations}
                                             opened={state.opened}
                                             showEditButton={true}
@@ -414,6 +347,7 @@ const AvailableLocations = ({navigation, route}) => {
                                             key={state.id}
                                             states={states}
                                             state={state.name}
+                                            searchQuery={searchQuery}
                                             locations={state.locations}
                                             opened={state.opened}
                                             showEditButton={true}

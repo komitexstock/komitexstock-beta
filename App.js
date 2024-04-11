@@ -110,6 +110,14 @@ async function migrateDbIfNeeded(db) {
                     profile_image TEXT NULL,
                     role TEXT NOT NULL
                 );
+                CREATE TABLE IF NOT EXISTS locations (
+                    id STRING PRIMARY KEY NOT NULL,
+                    delivery_charge FLOAT NOT NULL,
+                    region TEXT NOT NULL,
+                    state TEXT NOT NULL,
+                    warehouse_id TEXT NOT NULL,
+                    warehouse_name TEXT NOT NULL
+                );
             `);
             currentDbVersion = 1;
         }

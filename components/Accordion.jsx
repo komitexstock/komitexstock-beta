@@ -13,6 +13,7 @@ import ArrowDownSmall from '../assets/icons/ArrowDownSmall';
 import { background, black, bodyText, subText } from '../style/colors';
 // components
 import CustomButton from './CustomButton';
+import HighlightSearchedText from './HighlightSearchedText'
 // import react hook
 import { useEffect } from 'react';
 
@@ -21,7 +22,7 @@ if (Platform.OS === 'android') {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-const Accordion = ({states, state, locations, opened, showEditButton, navigation}) => {
+const Accordion = ({states, state, locations, opened, searchQuery, showEditButton, navigation}) => {
     const [expanded, setExpanded] = useState(opened);
 
     const toggleAccordion = () => {
@@ -66,7 +67,11 @@ const Accordion = ({states, state, locations, opened, showEditButton, navigation
     return (<>
         <View style={style.container}>
             <TouchableOpacity style={style.header} onPress={toggleAccordion}>
-                <Text style={style.title}>{state}</Text>
+                {searchQuery !== "" ? (
+                    <HighlightSearchedText targetText={state} searchQuery={searchQuery} />
+                ) : (
+                    <Text style={style.title}>{state}</Text>
+                )}
                 <View style={style.priceRangeWrapper}>
                     <Text style={style.priceRangeText}>₦{minCharge} - ₦{maxCharge}</Text>
                     <View style={expanded && {transform: [{rotate: '180deg'}]}}>
@@ -84,7 +89,11 @@ const Accordion = ({states, state, locations, opened, showEditButton, navigation
             >
                 {locations.map((location) => (
                     <View key={location.id} style={style.locationsItems}>
-                        <Text style={style.locationsText}>{location?.region}</Text>
+                        {searchQuery !== "" ? (
+                            <HighlightSearchedText targetText={location?.region} searchQuery={searchQuery} />
+                        ) : (
+                            <Text style={style.locationsText}>{location?.region}</Text>
+                        )}
                         <Text style={style.locationsPrice}>
                             ₦{location.delivery_charge.toLocaleString()}
                             <Text style={style.decimal}>.00</Text>    

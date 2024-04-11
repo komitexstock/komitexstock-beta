@@ -40,7 +40,7 @@ const updateUser = async (db, user, data) => {
                 deactivated = $deactivated,
                 profile_image = $profile_image,
                 created_at = $created_at
-            WHERE id = $id;`
+            WHERE id = $id`
         );
 
         // check if full_name was not changed
@@ -151,7 +151,7 @@ const createUser = async (db, user, activeUser) => {
                 $active_user: activeUser,
                 $admin: user?.admin,
                 $email: user?.email,
-                $created_at: JSON.stringify(user?.created_at), // save timestamp as a string
+                $created_at: time.serverTimestampToISOString(user?.created_at), // save timestamp as a string
                 $deactivated: user?.deactivated,
                 $full_name: user?.full_name,
                 $phone: user?.phone,

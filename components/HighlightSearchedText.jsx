@@ -8,7 +8,7 @@ import { black } from "../style/colors";
 const HighlightSearchedText = ({targetText, searchQuery, fontFamily, fontSize, color, containerStyle}) => {
     if (!searchQuery) return <></>;
     // split text according to position of search keyword
-    let textArray = targetText.toLowerCase().split(searchQuery.toLowerCase());
+    let textArray = targetText?.toLowerCase()?.split(searchQuery?.toLowerCase());
     const fullString = textArray.join(`%!#${searchQuery}%!#`)
 
     textArray = fullString.split('%!#');
