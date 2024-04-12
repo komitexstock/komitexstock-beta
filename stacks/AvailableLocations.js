@@ -71,8 +71,10 @@ const AvailableLocations = ({navigation, route}) => {
     }, [route]);
 
     // page loading state
-    const [pageLoading, setPageLoading] = useState(preloaded_data.length === 0);
+    const [pageLoading, setPageLoading] = useState(preloaded_data.length === 0 || preloaded_data === null);
 
+    // state to check if online data has been loaded
+    const [onlineDataFetched, setOnlineDataFetched] = useState(false);
 
     // state to store search query
     const [searchQuery, setSearchQuery] = useState("");
@@ -136,8 +138,6 @@ const AvailableLocations = ({navigation, route}) => {
                 ]
             });
 
-            console.log('reload', triggerReload)
-            
         }).catch((error) => {
             // show error message
             console.log("fetch local locations eror", error.message);   
@@ -150,8 +150,8 @@ const AvailableLocations = ({navigation, route}) => {
             });
 
         }).finally(() => {
-            // disable page loading state
-            setPageLoading(false);
+            // if online data has updated local data, disable loading state
+            if (onlineDataFetched) setPageLoading(false);
         });
 
     }, [triggerReload])
@@ -241,7 +241,8 @@ const AvailableLocations = ({navigation, route}) => {
                     type: "error",
                 });
             } finally {
-                setPageLoading(false);
+                // indicate online data has been loaded
+                setOnlineDataFetched(true);
             }
         };
 
@@ -258,9 +259,6 @@ const AvailableLocations = ({navigation, route}) => {
             });        
         };
     }, []);
-
-    console.log(triggerReload);
-
 
     // state to store searched results
     const [searchedStates, setSearchedStates] = useState([])

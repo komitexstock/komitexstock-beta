@@ -9,14 +9,18 @@ import Header from '../components/Header'
 import AccountButtons from '../components/AccountButtons'
 import { background } from '../style/colors'
 
+// globals
+import { useGlobals } from "../context/AppContext";
+
 // use auth
 import { useAuth } from '../context/AuthContext'
-
 
 // local database
 import { handleLocations } from "../sql/handleLocations";
 import { handleBusinessPolicies } from '../sql/handleBusinessPolicies';
 import { useSQLiteContext } from "expo-sqlite/next";
+
+
 
 const BusinessSettings = ({navigation}) => {
 
@@ -25,6 +29,9 @@ const BusinessSettings = ({navigation}) => {
 
     // local database
     const db = useSQLiteContext();
+
+    // bottoms sheef refs
+    const { currentStack, setToast } = useGlobals();
 
     // preloaded data
     const [preload, setPreload] = useState({
@@ -115,7 +122,6 @@ const BusinessSettings = ({navigation}) => {
 
         // fetch business policies
         fetchBusinessPolicies().then((businessPolicy) => {
-            console.log('Local db policies', businessPolicy);
             // set preloaded data for businessPolicies
             setPreload((prevState) => {
                 return {
@@ -138,7 +144,7 @@ const BusinessSettings = ({navigation}) => {
             });
         });
 
-    }, []);
+    }, [currentStack]);
     
     // business button list
     const businessButtons = useMemo(() => {

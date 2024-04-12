@@ -115,12 +115,10 @@ const createBusinessPolicy = async (db, businessPolicy) => {
             
             // if result exist return, else insert into locations table
             if (result) {
-                console.log('businessPolicy result', result);
                 await updateBusinessPolicy(db, result, businessPolicy);
                 return 'businessPolicy already exist';
             };
             
-            console.log('creating business policy data');
 
             // execute async
             const execute = await statement.executeAsync({

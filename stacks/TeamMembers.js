@@ -86,9 +86,10 @@ const TeamMembers = ({ navigation, route }) => {
     }, [route?.params]);
 
     // page loading state
-    const [pageLoading, setPageLoading] = useState(preloaded_data.length === 0 || false);
+    const [pageLoading, setPageLoading] = useState(preloaded_data.length === 1);
 
-    console.log(preloaded_data);
+    // state to check if online data has been loaded
+    const [onlineDataFetched, setOnlineDataFetched] = useState(false);
 
     // button loading state
     const [isLoading, setIsLoading] = useState(false);
@@ -123,7 +124,6 @@ const TeamMembers = ({ navigation, route }) => {
         };
 
         fetchMembers().then((users) => {
-
             // modify users array 
             const modifyUsers = users.map(user => {
                 return {
@@ -146,8 +146,19 @@ const TeamMembers = ({ navigation, route }) => {
                 ]
             });
             // disable loading state
-            setPageLoading(false);
+            // setPageLoading(false);
+        }).catch((error) => {
+            console.log("Fetch local members error:", error.message);
+            setToast({
+                text: error.message,
+                visible: true,
+                type: "error",
+            })
+        }).finally(() => {
+            // if online data has been loaded, disable page loadin state
+            if (onlineDataFetched) setPageLoading(false);
         });
+
     }, [triggerReload])
 
     // console.log(members);
@@ -166,6 +177,7 @@ const TeamMembers = ({ navigation, route }) => {
 
                 const unsubscribe = onSnapshot(q, (querySnapshot) => {
                     let users = [];
+                    console.log("Size of data retrieved", querySnapshot.size);
                     querySnapshot.forEach(async (doc) => {
                         try {
                             const userData = doc.data();
@@ -216,7 +228,9 @@ const TeamMembers = ({ navigation, route }) => {
                     visible: true,
                     type: "error",
                 })
-                setPageLoading(false);
+            } finally {
+                // indicate online data has been fetched
+                setOnlineDataFetched(true);
             }
         };
     

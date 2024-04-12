@@ -75,9 +75,7 @@ const BusinessPolicy = ({navigation, route}) => {
     }, [route]);
 
     // page loading state
-    const [pageLoading, setPageLoading] = useState((preloaded_data === null|| preloaded_data?.length === 0) || false);
-
-    console.log("preloaded_data: ", preloaded_data);
+    const [pageLoading, setPageLoading] = useState(preloaded_data === null|| preloaded_data?.length === 0);
 
     // bottomsheet varaibels
     const { bottomSheetRef, bottomSheetOpen, setToast } = useGlobals();

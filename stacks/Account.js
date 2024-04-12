@@ -77,7 +77,7 @@ const Account = ({navigation, route}) => {
     const { authData, setStoredData, utilityData } = useAuth();
 
     // bottomsheet ref
-    const { bottomSheetRef, setToast } = useGlobals();
+    const { bottomSheetRef, setToast, currentStack } = useGlobals();
 
     // state to store preloaded data
     const [preload, setPreload] = useState({
@@ -140,7 +140,7 @@ const Account = ({navigation, route}) => {
                 type: "error",
             });
         })
-    }, [])
+    }, [currentStack])
 
     // console.log(preload.teamMembers.data);
 
