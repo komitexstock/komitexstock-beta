@@ -34,9 +34,6 @@ import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 // skeleton screen
 import TeamMembersSkeleton from "../skeletons/TeamMembersSkeleton";
 
-// utils
-import { windowHeight } from "../utils/helpers";
-
 // globals
 import { useGlobals } from "../context/AppContext";
 
@@ -70,7 +67,7 @@ import { httpsCallable } from "firebase/functions";
 import { handleUsers } from "../sql/handleUsers";
 import { useSQLiteContext } from "expo-sqlite/next";
 
-const TeamMembers = ({ navigation }) => {
+const TeamMembers = ({ navigation, route }) => {
 
     // local database
     const db = useSQLiteContext();
@@ -81,8 +78,17 @@ const TeamMembers = ({ navigation }) => {
     // auth data
     const { authData } = useAuth();
 
+    // route params
+    // const { preloaded_data } = route?.params || {};
+
+    const { preloaded_data } = useMemo(() => {
+        return route?.params || {};
+    }, [route?.params]);
+
     // page loading state
-    const [pageLoading, setPageLoading] = useState(true);
+    const [pageLoading, setPageLoading] = useState(preloaded_data.length === 0 || false);
+
+    console.log(preloaded_data);
 
     // button loading state
     const [isLoading, setIsLoading] = useState(false);
@@ -97,8 +103,9 @@ const TeamMembers = ({ navigation }) => {
         setToast,
     } = useGlobals();
 
+
     // members from local database
-    const [members, setMembers] = useState([]);
+    const [members, setMembers] = useState(preloaded_data);
 
     // fetch members from local database
     useEffect(() => {
@@ -140,7 +147,7 @@ const TeamMembers = ({ navigation }) => {
             });
             // disable loading state
             setPageLoading(false);
-        })
+        });
     }, [triggerReload])
 
     // console.log(members);
@@ -167,8 +174,8 @@ const TeamMembers = ({ navigation }) => {
                                 id: doc.id,
                                 admin: userData?.admin,
                                 created_at: userData?.created_at,
-                                email: userData?.email,
                                 deactivated: userData?.deactivated,
+                                email: userData?.email,
                                 full_name: userData?.full_name,
                                 phone: userData?.phone,
                                 profile_image: userData?.profile_image,
@@ -233,7 +240,9 @@ const TeamMembers = ({ navigation }) => {
 
     // selected member
     const selectedMember = useMemo(() => {
-        return members.find((member) => member?.id === selectedId);
+        // if no member seleted, return null
+        if (!selectedId) return null;
+        return members?.find((member) => member?.id === selectedId);
     }, [selectedId, members]);
 
 
@@ -713,7 +722,7 @@ const TeamMembers = ({ navigation }) => {
                 password: defaultPassword,
             });
 
-            console.log(authResponse);
+            // console.log(authResponse);
 
             // ref to users collection
             const usersRef = doc(database, "users", authResponse?.data?.uid);

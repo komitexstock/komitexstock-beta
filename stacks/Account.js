@@ -38,22 +38,114 @@ import CameraPrimaryLargeIcon from "../assets/icons/CameraPrimaryLargeIcon";
 import GalleryIcon from "../assets/icons/GalleryIcon";
 import MerchantsIcon from "../assets/icons/MerchantsIcon";
 import BusinessSettingsIcon from "../assets/icons/BusinessSettingsIcon";
+
 // import image picker library
 import * as ImagePicker from "expo-image-picker";
+
 // import global
 import { useGlobals } from "../context/AppContext";
+
 // auth functions
 import { useAuth } from "../context/AuthContext";
 import { auth } from "../Firebase";
 import { signOut } from "firebase/auth";
+
 // upload file function
 import { uploadFile } from "../database/common/storage";
-// test
+
+// firebase
+import {
+    database,
+} from "../Firebase";
+
+// firestore functions
+import {
+    doc,
+    updateDoc,
+} from "firebase/firestore";
+
+//local database
+import { handleUsers } from "../sql/handleUsers";
+import { useSQLiteContext } from "expo-sqlite/next";
 
 const Account = ({navigation, route}) => {
 
+    // local database
+    const db = useSQLiteContext();
+
     // auth data
-    const { authData, setStoredData } = useAuth();
+    const { authData, setStoredData, utilityData } = useAuth();
+
+    // bottomsheet ref
+    const { bottomSheetRef, setToast } = useGlobals();
+
+    // state to store preloaded data
+    const [preload, setPreload] = useState({
+        teamMembers: { // data for temMembers screen
+            data: []
+        },
+        analytics: { // data for analytics screen
+            data: []
+        },
+        merchants: { // data for merchants
+            data: []
+        },
+        logistics: { // data for logistics
+            data: []
+        },
+        security: { // data for security
+            data: utilityData?.fingerprint,
+        },
+    });
+
+    // fetch members from local database
+    useEffect(() => {
+        const fetchMembers = async () => {
+            try {
+                // get team members
+                const users = await handleUsers.getUsers(db);
+                return users;
+            } catch (error) {
+                console.log("Fetch local members error:", error.message);            
+            }
+        };
+
+        fetchMembers().then((users) => {
+            // modify users array 
+            const modifyUsers = users.map(user => {
+                return {
+                    ...user,
+                    admin: user?.admin === 1,
+                    deactivated: user?.deactivated === 1,
+                }
+            });
+
+            // add new member card
+            const addNewCard = { 
+                id: "addNew",
+                add_new: true,
+            }
+
+            // set team members preloaded_data
+            setPreload(prevState => {
+                return {
+                    ...prevState,
+                    teamMembers: {
+                        data: [...modifyUsers, addNewCard],
+                    }
+                }
+            });
+        }).catch((error) => {
+            console.log("Fetch members Error: ", error.message);
+            setToast({
+                text: error.message,
+                visible: true,
+                type: "error",
+            });
+        })
+    }, [])
+
+    // console.log(preload.teamMembers.data);
 
     // merchant account business group buttons
     const merchantBusinessButtons = () => {
@@ -65,7 +157,9 @@ const Account = ({navigation, route}) => {
                 title: "Team Members",
                 subtitle: false,
                 icon: <TeamIcon />,
-                onPress: () => {navigation.navigate("TeamMembers")},
+                onPress: () => navigation.navigate("TeamMembers", {
+                    preloaded_data: preload.teamMembers.data,
+                }),
             },
         ];
 
@@ -76,21 +170,25 @@ const Account = ({navigation, route}) => {
                 title: "Analytics",
                 subtitle: false,
                 icon: <AnalyticsIcon />,
-                onPress: () => {navigation.navigate("Analytics")},
+                onPress: () => navigation.navigate("Analytics", {
+                    preloaded_data: preload.analytics,
+                }),
             },
             {
                 id: 4,
                 title: "Generate Business Report",
                 subtitle: false,
                 icon: <BusinessReportIcon />,
-                onPress: () => {navigation.navigate("GenerateBusinessReport")},
+                onPress: () => navigation.navigate("GenerateBusinessReport"),
             },
             {
                 id: 3,
                 title: "logistics",
                 subtitle: false,
                 icon: <LogisticsIcon />,
-                onPress: () => {navigation.navigate("Logistics")},
+                onPress: () => navigation.navigate("Logistics", {
+                    preloaded_data: preload.logistics.data,
+                }),
             },
         ];
 
@@ -113,8 +211,9 @@ const Account = ({navigation, route}) => {
                 title: "Team Members",
                 subtitle: false,
                 icon: <TeamIcon />,
-                onPress: () => {navigation.navigate("TeamMembers")},
-            },
+                onPress: () => navigation.navigate("TeamMembers", {
+                    preloaded_data: preload.teamMembers.data,
+                }),            },
         ];
 
         // manager buttons
@@ -124,8 +223,9 @@ const Account = ({navigation, route}) => {
                 title: "Analytics",
                 subtitle: false,
                 icon: <AnalyticsIcon />,
-                onPress: () => {navigation.navigate("Analytics")},
-            },
+                onPress: () => navigation.navigate("Analytics", {
+                    preloaded_data: preload.analytics.data,
+                }),            },
             {
                 id: 5,
                 title: "Business Settings",
@@ -145,8 +245,9 @@ const Account = ({navigation, route}) => {
                 title: "Merchants",
                 subtitle: false,
                 icon: <MerchantsIcon />,
-                onPress: () => {navigation.navigate("Merchants")},
-            },
+                onPress: () => navigation.navigate("Merchants", {
+                    preloaded_data: preload.merchants.data,
+                }),            },
         ];
 
         // if user is a manager, include manager buttons
@@ -174,7 +275,9 @@ const Account = ({navigation, route}) => {
                 title: "Security",
                 subtitle: false,
                 icon: <SecurityIcon />,
-                onPress: () => {navigation.navigate("Security")},
+                onPress: () => navigation.navigate("Security", {
+                    preloaded_data: preload.security.data,
+                }),
             },
             {
                 id: 2,
@@ -192,9 +295,6 @@ const Account = ({navigation, route}) => {
             },
         ],
     }
-
-    // bottomsheet ref
-    const { bottomSheetRef } = useGlobals();
   
     // modal state
     const [modal, setModal] = useState({
@@ -285,11 +385,30 @@ const Account = ({navigation, route}) => {
     }
 
     // enable notification state 
-    const [enableNotifications, setEnableNotifications] = useState(false);
+    const [enableNotifications, setEnableNotifications] = useState(utilityData?.notification);
 
     // toggle notification
-    const handleToggle = () => {
-        setEnableNotifications(!enableNotifications);
+    const handleToggle = async () => {
+        try {
+            // ref to users collection
+            const usersRef = doc(database, "users", authData?.uid);
+            
+            // save data in database
+            await updateDoc(usersRef, {
+                notification: !enableNotifications,
+            });
+            
+            // toggle notifications
+            setEnableNotifications(prevValue => !prevValue);
+    
+        } catch (error) {
+            console.log(error.message);
+            setToast({
+                text: error.message,
+                visible: true,
+                type: "error",
+            })            
+        }
     }
 
     // buttons in support bottom sheet modal
@@ -512,7 +631,6 @@ const Account = ({navigation, route}) => {
                         icon={<NotificationBlackIcon />}
                         length={0}
                         index={0}
-                        onPress={() => {}}
                         toggle={true}
                         isEnabled={enableNotifications}
                         handleToggle={handleToggle}

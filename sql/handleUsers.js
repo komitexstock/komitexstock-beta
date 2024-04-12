@@ -39,7 +39,7 @@ const updateUser = async (db, user, data) => {
                 role = $role, 
                 deactivated = $deactivated,
                 profile_image = $profile_image,
-                created_at = $created_at
+                created_at = $created_at,
             WHERE id = $id`
         );
 

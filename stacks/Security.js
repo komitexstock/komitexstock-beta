@@ -6,7 +6,7 @@ import {
     Keyboard,
 } from "react-native";
 // react hooks
-import { useState } from "react";
+import { useMemo, useState } from "react";
 // icons
 import ThumbPrintIcon from "../assets/icons/ThumbPrintIcon";
 import KeyIcon from "../assets/icons/KeyIcon";
@@ -16,23 +16,64 @@ import AccountButtons from "../components/AccountButtons";
 import CustomBottomSheet from "../components/CustomBottomSheet";
 import CustomButton from "../components/CustomButton";
 import Input from "../components/Input";
+
+// utility
 import { windowHeight } from "../utils/helpers";
+
 // colors
 import { background } from "../style/colors";
+
 // globals
 import { useGlobals } from "../context/AppContext";
+
+// auth functions
+import { useAuth } from "../context/AuthContext";
+
+// firestore functions
+import {
+    doc,
+    updateDoc,
+} from "firebase/firestore";
+
+// firebase
+import {
+    database,
+} from "../Firebase";
+
 
 const Security = ({navigation}) => {
 
     // bottomsheet ref
     const { bottomSheetRef } = useGlobals();
 
+    // auth data
+    const { authData, utilityData } = useAuth();
+
     // state to store and update if face ID unlock or thumprint unlock is enabled
-    const [isEnabled, setIsEnabled] = useState(false);
+    const [isEnabled, setIsEnabled] = useState(utilityData?.fingerprint);
 
     // handle toggle of enable thumprint
-    const handleToggle = () => {
-        setIsEnabled(!isEnabled);
+    const handleToggle = async () => {
+        try {
+            // ref to users collection
+            const usersRef = doc(database, "users", authData?.uid);
+            
+            // // save data in database
+            await updateDoc(usersRef, {
+                fingerprint: !isEnabled,
+            });
+
+            // toggle fingerprint
+            setIsEnabled(prevValue => !prevValue);
+    
+        } catch (error) {
+            console.log('Toggle fingerprint error', error.message);
+            setToast({
+                text: error.message,
+                visible: true,
+                type: "error",
+            })            
+        }
     }
 
     // list of security button
@@ -45,7 +86,7 @@ const Security = ({navigation}) => {
             onPress: () => {},
             toggle: true,
             isEnabled: isEnabled,
-            handleToggle: handleToggle
+            handleToggle: () => handleToggle(),
         },
         {
             id: 3,

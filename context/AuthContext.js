@@ -36,10 +36,17 @@ const AuthProvider = ({children}) => {
 	// state to store network connection status
 	const [isConnected, setIsConnected] = useState(true);
 
+	// utility data
+	const [utilityData, setUtilityData] = useState(null);
+
 	// set stored data to async storage
 	const setStoredData = async (data) => {
-		setAuthData(data);
-		await AsyncStorage.setItem("@user", JSON.stringify(data));
+		try {
+			setAuthData(data);
+			await AsyncStorage.setItem("@user", JSON.stringify(data));
+		} catch (error) {
+			console.log(error.message);			
+		}
 	}
 
 	// get stored data from async storage
@@ -60,7 +67,7 @@ const AuthProvider = ({children}) => {
 			await AsyncStorage.removeItem("@user");
 			setAuthData(null);
 		} catch (error) {
-			// console.log(error.message)
+			console.log(error.message)
 		}
 	}
 
@@ -85,6 +92,15 @@ const AuthProvider = ({children}) => {
 		} catch (error) {
 			// console.log(error.message);
 			return null;
+		}
+	}
+
+	// store utility data
+	const storeUtilityData = async (data) => {
+		try {
+			await AsyncStorage.setItem("@utility", JSON.stringify(data));
+		} catch (error) {
+			// console.log(error.message);
 		}
 	}
 
@@ -231,37 +247,39 @@ const AuthProvider = ({children}) => {
 		// if (!auth.currentUser) {
 		const userRef = doc(database, 'users', authData?.uid ? authData?.uid : "x");
 		const unsubscribe = onSnapshot(userRef, async (doc) => {
-			const data = doc.data();
-			if (data) {
-				const { role, deactivated } = data;
-				// console.log("DB Role: ", role);
-				// console.log("Stored Role: ", authData.role);
+			try {
+				const data = doc.data();
+				if (data) {
+					const { role, deactivated, notification, fingerprint } = data;
+					// console.log("DB Role: ", role);
+					// console.log("Stored Role: ", authData.role);
 	
-				// Check if the role has changed
-				if (role !== authData.role) {
-					try {
+					// store utility data
+					await storeUtilityData({notification, fingerprint})
+	
+					setUtilityData({notification, fingerprint})
+		
+					// Check if the role has changed
+					if (role !== authData.role) {
 						console.log("updating data...")
 						// update role
 						await setStoredData({
 							...authData,
 							role: role,
 						})
-					} catch (error) {
-						console.log(error.message)
 					}
-				}
-				
-				// Check if deactivated status has changed
-				if (deactivated !== authData?.deactivated && authData?.deactivated !== undefined) {
-					try {
+					
+					// Check if deactivated status has changed
+					if (deactivated !== authData?.deactivated && authData?.deactivated !== undefined) {
 						// force signout
 						setTimeout(async () => {
 							await signOut(auth);
 						}, 3000);
-					} catch (error) {
-						console.log(error.message)
 					}
 				}
+			} catch (error) {
+				console.log(error.message)
+				throw error;				
 			}
 		}, (error) => {
 			console.log("Getting User data error:", error.message);
@@ -286,7 +304,7 @@ const AuthProvider = ({children}) => {
     console.log("Healthy Internet", isConnected);
 
 	return (
-		<AuthContext.Provider value={{authData, authLoading, setStoredData, isConnected }}>
+		<AuthContext.Provider value={{authData, authLoading, setStoredData, isConnected, utilityData}}>
 			{children}
 		</AuthContext.Provider>
 	)

@@ -1,3 +1,7 @@
+
+// react hooks
+import { useState } from "react";
+
 // react native components
 import { 
     Text, 
@@ -17,6 +21,16 @@ const AccountButtons = ({title, subtitle, mainInfoText, icon, length, index, onP
     // onPress, handleToggle => function
     // isEnabled, toggle, disabled, unpadded => boolean     
     // render account button
+
+
+    const [toggleValue, setToggleValue] = useState(isEnabled);
+
+    const handleToggleValue = () => {
+        setToggleValue(!toggleValue);
+        handleToggle();
+    }
+
+
     return !toggle ? (
         // if toggle is false, make whole component a button
         <TouchableOpacity 
@@ -78,10 +92,10 @@ const AccountButtons = ({title, subtitle, mainInfoText, icon, length, index, onP
             </View>
             <Switch 
                 trackColor={{ false: "#E6E6E6", true: {secondaryColor} }}
-                thumbColor={isEnabled ? primaryColor : "#AFAFAF"}
+                thumbColor={toggleValue ? primaryColor : "#AFAFAF"}
                 ios_backgroundColor={secondaryColor}
-                onValueChange={handleToggle}
-                value={isEnabled}     
+                onValueChange={handleToggleValue}
+                value={toggleValue}     
             />
         </View>
         
