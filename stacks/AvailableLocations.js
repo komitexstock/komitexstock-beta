@@ -81,7 +81,7 @@ const AvailableLocations = ({navigation, route}) => {
     const writable = authData.business_id === business_id && authData.account_type === "Logistics" && authData?.role === "Manager";
 
     // globals
-    const { setToast } = useGlobals();
+    const { setToast, currentStack } = useGlobals();
 
     // states and delivery locations 
     const [states, setStates] = useState(preload_states)
@@ -121,7 +121,24 @@ const AvailableLocations = ({navigation, route}) => {
 
             // if data is the most recent, retrun from function
             if (recent) {
-                setStates(route?.params?.preload_states);
+
+                // preloaded data
+                const preloadedStates = route?.params?.preload_states; 
+                
+                // set states
+                setStates(prevStates => {
+                    return [
+                        ...preloadedStates.map(state => {
+                            // get active state
+                            const activeState = prevStates.find(prevState => prevState.id === state.id);
+    
+                            return {
+                                ...state,
+                                opened: activeState?.opened || false, // retain previous value, else set as false
+                            }
+                        }),
+                    ]
+                });
                 // data already exist return
                 return;
             }
@@ -132,7 +149,6 @@ const AvailableLocations = ({navigation, route}) => {
             setStates(prevStates => {
                 return [
                     ...groupState.map(state => {
-
                         // get active state
                         const activeState = prevStates.find(prevState => prevState.id === state.id);
 
@@ -158,9 +174,11 @@ const AvailableLocations = ({navigation, route}) => {
         }).finally(() => {
             // disable page loading state
             setPageLoading(false);
-        })
+        });
 
-    }, [triggerReload, route])
+        console.log("CURRENT STACK:", currentStack);
+
+    }, [triggerReload, currentStack])
 
     // get states from online db
     useEffect(() => {
@@ -237,7 +255,7 @@ const AvailableLocations = ({navigation, route}) => {
             // Unsubscribe from snapshot listener once unsubscribePromise is resolved
             unsubscribePromise.then(() => {});
         };
-    }, [route]);
+    }, []);
 
 
     // state to store searched results

@@ -434,8 +434,6 @@ const AddLocation = ({navigation}) => {
             // group location by states
             const groupStates = groupByState(locations);
 
-            navigation.se
-
             // navigate to available locations screen
             navigation.navigate("AvailableLocations", {
                 toastType: "Success",

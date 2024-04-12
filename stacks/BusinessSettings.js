@@ -171,7 +171,6 @@ const BusinessSettings = ({navigation, route}) => {
         };
     }, [route]);
     
-
     // business button list
     const businessButtons = useMemo(() => {
         return [

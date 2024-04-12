@@ -10,7 +10,6 @@ import {
 // react hooks
 import React, {useState, useEffect, useMemo, useRef} from 'react'
 // icons
-import DeleteBlackLargeIcon from "../assets/icons/DeleteBlackLargeIcon";
 import EditBlackLargeIcon from '../assets/icons/EditBlackLargeIcon';
 import LocationLightIcon from '../assets/icons/LocationLightIcon';
 // components
@@ -54,10 +53,21 @@ import {
     doc,
 } from "firebase/firestore";
 
+// local database
+import { handleLocations } from "../sql/handleLocation";
+import { useSQLiteContext } from "expo-sqlite/next";
+
+// react navigation
+import { useFocusEffect } from '@react-navigation/native';
+
+
 const EditLocation = ({navigation, route}) => {
 
     // auth data
     const { authData } = useAuth();
+
+    // local database
+    const db = useSQLiteContext();
 
     // page loading
     const [pageLoading, setPageLoading] = useState(true);
@@ -79,6 +89,17 @@ const EditLocation = ({navigation, route}) => {
 
     // location state, to store list of locations
     const [sublocations, setSublocations] = useState([]);
+
+    // preloade states
+    const [newPreloadStates, setNewPreloadStates] = useState([]);
+    
+    // Inside the functional component for screen C
+    useFocusEffect(
+        React.useCallback(() => {
+        // Update the navigation params when the screen comes into focus
+        navigation.setParams({preload_states: newPreloadStates});
+        }, [newPreloadStates])
+    );
 
     // group state locations by warehouses
     useEffect(() => {
@@ -547,9 +568,6 @@ const EditLocation = ({navigation, route}) => {
                 type: "success",
             });
 
-            // disable button loading state
-            setIsLoading(false);
-
         } catch (error) {
             console.log("Caught Error: ", error.message);
             setToast({
@@ -558,7 +576,8 @@ const EditLocation = ({navigation, route}) => {
                 type: "error",
             });
 
-            // disable button loading state
+        } finally {
+            // enable button loading state
             setIsLoading(false);
         }
     }
@@ -712,9 +731,6 @@ const EditLocation = ({navigation, route}) => {
             setSelectedTownId(null);
             setSelectedWarehouseId(null);
 
-            // disable button loading state
-            setIsLoading(false);
-
             // show success toast
             setToast({
                 text: "Location edited successfully",
@@ -730,6 +746,7 @@ const EditLocation = ({navigation, route}) => {
                 type: "error",
             });
 
+        } finally {
             // disable button loading state
             setIsLoading(false);
         }
