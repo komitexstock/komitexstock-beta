@@ -585,14 +585,14 @@ const TeamMembers = ({ navigation }) => {
             // trigger refresh of data from local db
             setTriggerReload(prevValue => prevValue + 1);
     
-            // reset edited role
-            setEditRole("");
-    
             // end loadind state
             setIsLoading(false);
-    
+            
             // open success modal
             openSuccessModal("UpdateSuccess");
+
+            // reset edited role
+            setEditRole("");
             
         } catch (error) {
             console.log("Caught Error: ", error);
@@ -663,7 +663,7 @@ const TeamMembers = ({ navigation }) => {
             const setRole = httpsCallable(functions, "setRole");
     
             // setRole and token
-            const response = await setRole({ 
+            await setRole({ 
                 email: selectedMember.email, 
                 role: selectedMember.role, 
                 account_type: authData?.account_type,

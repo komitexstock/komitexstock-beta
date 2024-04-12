@@ -54,16 +54,15 @@ const updateLocation = async (db, location, data) => {
         }
 
         try {
-            
             // execute
             await statement.executeAsync({
                 $delivery_charge: data?.delivery_charge || location?.delivery_charge,
                 $region: data?.region || location?.region,
                 $warehouse_id: data?.warehouse_id || location?.warehouse_id,
                 $warehouse_name: data?.warehouse_id || location?.warehouse_id,
-                $id: location?.warehouse_id,
+                $id: location?.id,
             });
-            
+
             return location?.id;
     
         } catch (error) {
@@ -119,9 +118,6 @@ const createLocation = async (db, location) => {
                 return 'location already exist';
             };
             
-            console.log("creating location...");
-
-
             // execute async
             const execute = await statement.executeAsync({
                 $id: location?.id,

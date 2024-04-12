@@ -33,14 +33,14 @@ const CustomBottomSheet = ({bottomSheetModalRef, closeModal, snapPointsArray, au
         if (index === -1) {
             // close modal
             closeModal();
-            // if its a stacked sheet
+            // // if its a stacked sheet
             if (stacked) return setStackedSheetOpen(false);
             // if it's a regular bottomsheet
             return setBottomSheetOpen(false)
         } else { // else if sheet is opened
             // if its a stacked sheet
             if (stacked) return setStackedSheetOpen(true);
-            // if it's a regular bottomsheet
+            // // if it's a regular bottomsheet
             return setBottomSheetOpen(true)
         }
     }

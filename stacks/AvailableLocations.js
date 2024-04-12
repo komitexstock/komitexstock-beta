@@ -43,7 +43,7 @@ import {
 import {
     doc,
     collection,
-    onSnapshot,
+    getDocs,
     where,
     query,
     getDoc,
@@ -64,14 +64,16 @@ const AvailableLocations = ({navigation, route}) => {
     // get auth date
     const { authData } = useAuth();
 
+    // business id and business name of logistics company
+    const {business_id, business_name, preload_states, recent} = route?.params || {};
+
     // page loading state
-    const [pageLoading, setPageLoading] = useState(true);
+    const [pageLoading, setPageLoading] = useState(preload_states.length === 0);
+
 
     // state to store search query
     const [searchQuery, setSearchQuery] = useState("");
 
-    // business id and business name of logistics company
-    const {business_id, business_name} = route?.params || {};
 
     // parameter to determine if location is read only or writeable
     const writable = authData.business_id === business_id && authData.account_type === "Logistics" && authData?.role === "Manager";
@@ -80,9 +82,11 @@ const AvailableLocations = ({navigation, route}) => {
     const { setToast } = useGlobals();
 
     // states and delivery locations 
-    const [states, setStates] = useState([])
+    const [states, setStates] = useState(preload_states)
 
+    // get states from local db
     useEffect(() => {
+
         const fetchLocations = async () => {
             try {
                 const locations = await handleLocations.getLocations(db);
@@ -95,7 +99,7 @@ const AvailableLocations = ({navigation, route}) => {
 
         // group locations by state
         const groupByState = (locations) => {
-            const groupedByState = locations?.reduce((acc, obj, index) => {
+            const groupedByState = locations?.reduce((acc, obj) => {
                 const { state, ...rest } = obj;
                 // Check if state is defined and not null
                 if (state !== undefined && state !== null) {
@@ -113,12 +117,17 @@ const AvailableLocations = ({navigation, route}) => {
 
         fetchLocations().then((locations) => {
 
-            // set states local 
-            setStates(() => {
-                return groupByState(locations);
-            });
-            // disable page loading state
-            setPageLoading(false);
+            // if data is the most recent, retrun from function
+            if (recent) {
+                setStates(route?.params?.preload_states);
+                // data already exist return
+                return;
+            }
+
+            const groupState = groupByState(locations);
+            
+            // set states 
+            setStates(groupState);
             
         }).catch((error) => {
             // show error message
@@ -131,13 +140,14 @@ const AvailableLocations = ({navigation, route}) => {
                 type: "error",
             });
 
+        }).finally(() => {
             // disable page loading state
             setPageLoading(false);
         })
 
-    }, [triggerReload])
+    }, [triggerReload, route?.params])
 
-    // get states
+    // get states from online db
     useEffect(() => {
         // fetch warehouse name
         const fetchWarehouseName = async (id) => {
@@ -159,63 +169,36 @@ const AvailableLocations = ({navigation, route}) => {
         // fetch locations
         const fetchLocations = async (businessId) => {
             try {
+                // if data is the most recent, return from function
+                if (recent) return;
+
+                // fetch locations
                 const collectionRef = collection(database, "locations");
-                let q = query(
+                const q = query(
                     collectionRef,
                     where("business_id", "==", businessId),
                 );
 
-                await handleLocations.createTableLocations(db);
+                const querySnapshot = await getDocs(q);
 
-                const unsubscribe = onSnapshot(q, (querySnapshot) => {
-                    let locationList = [];
+                let locationList = [];
 
-                    // Create an array to hold promises for fetching warehouse names
-                    const fetchWarehouseNamePromises = querySnapshot.docs.map(async (doc) => {
-                        // Fetch warehouse name
-                        const warehouse_name = await fetchWarehouseName(doc.data().warehouse_id);
-                        return warehouse_name;
-                    });
+                for (const doc of querySnapshot.docs) {
+                    const warehouse_name = await fetchWarehouseName(doc.data().warehouse_id);
+                    const location = {
+                        id: doc.id, // string
+                        delivery_charge: doc.data().delivery_charge, // number
+                        region: doc.data().region, // string
+                        state: doc.data().state, // string
+                        warehouse_id: doc.data().warehouse_id, // string
+                        warehouse_name: warehouse_name, // Use the corresponding warehouse name
+                    };
+                    locationList.push(location);
+                    // add data to local database
+                    await handleLocations.createLocation(db, location);
+                }
 
-                    // Wait for all promises to resolve
-                    Promise.all(fetchWarehouseNamePromises).then((warehouseNames) => {
-                        // Iterate over the query snapshot again to construct locationList
-                        querySnapshot.docs.forEach(async (doc, index) => {
-                            try {
-                                const location = {
-                                    id: doc.id, // string
-                                    delivery_charge: doc.data().delivery_charge, // number
-                                    region: doc.data().region, // string
-                                    state: doc.data().state, // string
-                                    warehouse_id: doc.data().warehouse_id, // string
-                                    warehouse_name: warehouseNames[index], // Use the corresponding warehouse name
-                                };
-                                locationList.push(location);
-    
-                                // add data to local database
-                                await handleLocations.createLocation(db, location);
-                                
-                            } catch (error) {
-                                console.log("create location error:", error.message);
-                                throw error;
-                            }
-                        });
-
-                        // trigger reload
-                        setTriggerReload(prevValue => prevValue++);
-                       
-                    }).catch(error => {
-                        console.log("Error: ", error.message);
-                        setToast({
-                            text: error.message,
-                            visible: true,
-                            type: "error",
-                        })
-                    });
-
-                });
-
-                return unsubscribe;
+                setTriggerReload(prevValue => prevValue++);
 
             } catch (error) {
                 console.log("Caught this Error: ", error.message);
@@ -228,16 +211,12 @@ const AvailableLocations = ({navigation, route}) => {
         };
 
         // fetch warehouses
-        const unsubscribePromise = fetchLocations(business_id);
+        const unsubscribePromise = fetchLocations(authData?.business_id);
 
         // Cleanup function to unsubscribe from snapshot listener
         return () => {
             // Unsubscribe from snapshot listener once unsubscribePromise is resolved
-            unsubscribePromise.then(unsubscribe => {
-                if (unsubscribe) {
-                    unsubscribe();
-                }
-            });
+            unsubscribePromise.then(() => {});
         };
     }, []);
 

@@ -44,17 +44,26 @@ import {
     where,
     query,
     orderBy,
+    doc,
+    getDoc,
     serverTimestamp,
     addDoc,
 } from "firebase/firestore";
+
+// local database
+import { handleLocations } from "../sql/handleLocation";
+import { useSQLiteContext } from "expo-sqlite/next";
 
 const AddLocation = ({navigation}) => {
         
     // auth data
     const { authData } = useAuth();
 
+    // local database
+    const db = useSQLiteContext();
+
     // gloabsl
-    const { bottomSheetRef, stackedSheetRef, stackedSheetOpen, setToast } = useGlobals();
+    const { bottomSheetRef, stackedSheetRef, setToast } = useGlobals();
 
     // main action button loadins state
     const [isLoading, setIsLoading] = useState(false);
@@ -242,18 +251,12 @@ const AddLocation = ({navigation}) => {
         setStateInputActive(false);
     }
 
-    // check if back button is pressesd when stacked sheet is opne
-    useEffect(() => {
-        if (!stackedSheetOpen) {
-            setWarehouseInputActive(false);
-        }
-    }, [stackedSheetOpen])
-
     // open stacked bottom sheet function
     const openStackedModal = () => {
         stackedSheetRef?.current?.present();
         // set modal type
         setWarehouseInputActive(true);
+        console.log("Opening Stacked Modal");
         // dismiss keyboard
         Keyboard.dismiss();
     }
@@ -261,6 +264,7 @@ const AddLocation = ({navigation}) => {
     // close stacked bottom sheet function
     const closeStackedModal = () => {
         stackedSheetRef?.current?.close();
+        setWarehouseInputActive(false);
     }
 
     // state to store modaltype, which controls some of the bottomsheet parameters
@@ -277,9 +281,78 @@ const AddLocation = ({navigation}) => {
 
     // handle confirm location
     const handleConfirmLocations = async () => {
-        // signify loading state for main button
-        setIsLoading(true);
+
+        const fetchLocationsLocal = async () => {
+            try {
+                const locations = await handleLocations.getLocations(db);
+                return locations;
+            } catch (error) {
+                console.log("fetch local locations eror", error.message);   
+                throw error;             
+            }
+        }
+
+        // group locations by state
+        const groupByState = (locations) => {
+            const groupedByState = locations?.reduce((acc, obj) => {
+                const { state, ...rest } = obj;
+                // Check if state is defined and not null
+                if (state !== undefined && state !== null) {
+                    if (!acc[state]) {
+                        acc[state] = { id: Math.random(), name: state, opened: false, locations: [] };
+                        // acc[state] = { name: state, opened: false, locations: [] };
+                    }
+                    acc[state].locations.push(rest);
+                }
+                return acc;
+            }, {});
+
+            return Object.values(groupedByState);
+        }
+
+        // fetch locations
+        const fetchLocationsOnline = async (businessId) => {
+            try {
+                const collectionRef = collection(database, "locations");
+                const q = query(
+                    collectionRef,
+                    where("business_id", "==", businessId),
+                );
+
+                const querySnapshot = await getDocs(q);
+
+                let locationList = [];
+
+                for (const doc of querySnapshot.docs) {
+                    // warehouse name
+                    const warehouseName = warehouses.find(warehouse => warehouse.id === doc.data().warehouse_id)?.warehouse_name;
+                    const location = {
+                        id: doc.id, // string
+                        delivery_charge: doc.data().delivery_charge, // number
+                        region: doc.data().region, // string
+                        state: doc.data().state, // string
+                        warehouse_id: doc.data().warehouse_id, // string
+                        warehouse_name: warehouseName, // Use the corresponding warehouse name
+                    };
+                    locationList.push(location);
+                    // add data to local database
+                    await handleLocations.createLocation(db, location);
+                }
+
+            } catch (error) {
+                console.log("Caught this Error: ", error.message);
+                setToast({
+                    text: error.message,
+                    visible: true,
+                    type: "error",
+                });
+            }
+        };
+
         try {
+            // signify loading state for main button
+            setIsLoading(true);
+
             // check for empty fields
             if (sublocations.length === 0 || editingLocation || stateInput === "") {
                 // throw error if fields are empty
@@ -352,8 +425,16 @@ const AddLocation = ({navigation}) => {
                 }));
             }));
 
-            // disable button loading state
-            setIsLoading(false);
+            // fetching fromk onlide db also updates local db
+            await fetchLocationsOnline(authData?.business_id);
+
+            // fetch locations frok local db
+            const locations = await fetchLocationsLocal()
+
+            // group location by states
+            const groupStates = groupByState(locations);
+
+            navigation.se
 
             // navigate to available locations screen
             navigation.navigate("AvailableLocations", {
@@ -361,6 +442,8 @@ const AddLocation = ({navigation}) => {
                 toastMessage: "Location successfully added",
                 business_id: authData.business_id,
                 business_name: authData.business_name,
+                preload_states: groupStates,
+                recent: true,
             });
 
         } catch (error) { // handke errors
@@ -371,6 +454,7 @@ const AddLocation = ({navigation}) => {
                 type: "error",
                 text: error.message,
             });
+        } finally {
             // disable loading state
             setIsLoading(false);
         }
