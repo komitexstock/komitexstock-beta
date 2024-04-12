@@ -44,6 +44,7 @@ import {
     doc,
     collection,
     getDocs,
+    onSnapshot,
     where,
     query,
     getDoc,
@@ -81,10 +82,28 @@ const AvailableLocations = ({navigation, route}) => {
     const writable = authData.business_id === business_id && authData.account_type === "Logistics" && authData?.role === "Manager";
 
     // globals
-    const { setToast, currentStack } = useGlobals();
+    const { setToast } = useGlobals();
 
     // states and delivery locations 
-    const [states, setStates] = useState(preload_states)
+    const [states, setStates] = useState(preload_states);
+
+    // group locations by state
+    const groupByState = (locations) => {
+        const groupedByState = locations?.reduce((acc, obj) => {
+            const { state, ...rest } = obj;
+            // Check if state is defined and not null
+            if (state !== undefined && state !== null) {
+                if (!acc[state]) {
+                    acc[state] = { id: state, name: state, opened: false, locations: [] };
+                    // acc[state] = { name: state, opened: false, locations: [] };
+                }
+                acc[state].locations.push(rest);
+            }
+            return acc;
+        }, {});
+
+        return Object.values(groupedByState);
+    }
 
     // get states from local db
     useEffect(() => {
@@ -99,50 +118,7 @@ const AvailableLocations = ({navigation, route}) => {
             }
         }
 
-        // group locations by state
-        const groupByState = (locations) => {
-            const groupedByState = locations?.reduce((acc, obj) => {
-                const { state, ...rest } = obj;
-                // Check if state is defined and not null
-                if (state !== undefined && state !== null) {
-                    if (!acc[state]) {
-                        acc[state] = { id: state, name: state, opened: false, locations: [] };
-                        // acc[state] = { name: state, opened: false, locations: [] };
-                    }
-                    acc[state].locations.push(rest);
-                }
-                return acc;
-            }, {});
-
-            return Object.values(groupedByState);
-        }
-
         fetchLocations().then((locations) => {
-
-            // if data is the most recent, retrun from function
-            if (recent) {
-
-                // preloaded data
-                const preloadedStates = route?.params?.preload_states; 
-                
-                // set states
-                setStates(prevStates => {
-                    return [
-                        ...preloadedStates.map(state => {
-                            // get active state
-                            const activeState = prevStates.find(prevState => prevState.id === state.id);
-    
-                            return {
-                                ...state,
-                                opened: activeState?.opened || false, // retain previous value, else set as false
-                            }
-                        }),
-                    ]
-                });
-                // data already exist return
-                return;
-            }
-
             const groupState = groupByState(locations);
             
             // set states 
@@ -159,6 +135,8 @@ const AvailableLocations = ({navigation, route}) => {
                     }),
                 ]
             });
+
+            console.log('reload', triggerReload)
             
         }).catch((error) => {
             // show error message
@@ -176,9 +154,7 @@ const AvailableLocations = ({navigation, route}) => {
             setPageLoading(false);
         });
 
-        console.log("CURRENT STACK:", currentStack);
-
-    }, [triggerReload, currentStack])
+    }, [triggerReload])
 
     // get states from online db
     useEffect(() => {
@@ -202,40 +178,66 @@ const AvailableLocations = ({navigation, route}) => {
         // fetch locations
         const fetchLocations = async (businessId) => {
             try {
-                // if data is the most recent, return from function
-                if (recent) return;
-
-                // fetch locations
                 const collectionRef = collection(database, "locations");
-                const q = query(
+                let q = query(
                     collectionRef,
                     where("business_id", "==", businessId),
                 );
 
-                const querySnapshot = await getDocs(q);
+                const unsubscribe = onSnapshot(q, (querySnapshot) => {
+                    let locationList = [];
 
-                let locationList = [];
+                    // Create an array to hold promises for fetching warehouse names
+                    const fetchWarehouseNamePromises = querySnapshot.docs.map(async (doc) => {
+                        // Fetch warehouse name
+                        const warehouse_name = await fetchWarehouseName(doc.data().warehouse_id);
+                        return warehouse_name;
+                    });
 
-                for (const doc of querySnapshot.docs) {
-                    const warehouse_name = await fetchWarehouseName(doc.data().warehouse_id);
-                    const location = {
-                        id: doc.id, // string
-                        delivery_charge: doc.data().delivery_charge, // number
-                        region: doc.data().region, // string
-                        state: doc.data().state, // string
-                        warehouse_id: doc.data().warehouse_id, // string
-                        warehouse_name: warehouse_name, // Use the corresponding warehouse name
-                    };
-                    locationList.push(location);
-                    // add data to local database
-                    await handleLocations.createLocation(db, location);
-                }
+                    // Wait for all promises to resolve
+                    Promise.all(fetchWarehouseNamePromises).then((warehouseNames) => {
+                        // Iterate over the query snapshot again to construct locationList
+                        querySnapshot.docs.forEach(async (doc, index) => {
+                            try {
+                                const location = {
+                                    id: doc.id, // string
+                                    delivery_charge: doc.data().delivery_charge, // number
+                                    region: doc.data().region, // string
+                                    state: doc.data().state, // string
+                                    warehouse_id: doc.data().warehouse_id, // string
+                                    warehouse_name: warehouseNames[index], // Use the corresponding warehouse name
+                                };
+                                locationList.push(location);
+    
+                                // add data to local database
+                                await handleLocations.createLocation(db, location);
+                                
+                            } catch (error) {
+                                console.log("create location error:", error.message);
+                                throw error;
+                            }
+                        });
 
-                // prune locations that dont exist any more
-                await handleLocations.pruneLocations(db, locationList);
+                        console.log(locationList);
 
-                // trigger reload of local db
-                setTriggerReload(prevValue => prevValue++);
+                        setStates(groupByState(locationList));
+
+
+                        // trigger reload
+                        setTriggerReload(prevValue => prevValue++);
+                       
+                    }).catch(error => {
+                        console.log("Error: ", error.message);
+                        setToast({
+                            text: error.message,
+                            visible: true,
+                            type: "error",
+                        })
+                    });
+
+                });
+
+                return unsubscribe;
 
             } catch (error) {
                 console.log("Caught this Error: ", error.message);
@@ -253,7 +255,11 @@ const AvailableLocations = ({navigation, route}) => {
         // Cleanup function to unsubscribe from snapshot listener
         return () => {
             // Unsubscribe from snapshot listener once unsubscribePromise is resolved
-            unsubscribePromise.then(() => {});
+            unsubscribePromise.then(unsubscribe => {
+                if (unsubscribe) {
+                    unsubscribe();
+                }
+            });        
         };
     }, []);
 
