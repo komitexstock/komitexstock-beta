@@ -218,14 +218,8 @@ const AvailableLocations = ({navigation, route}) => {
                             }
                         });
 
-                        console.log(locationList);
-
-                        setStates(groupByState(locationList));
-
-
                         // trigger reload
-                        setTriggerReload(prevValue => prevValue++);
-                       
+                        setTriggerReload(prevValue => prevValue + 1);
                     }).catch(error => {
                         console.log("Error: ", error.message);
                         setToast({
@@ -246,6 +240,8 @@ const AvailableLocations = ({navigation, route}) => {
                     visible: true,
                     type: "error",
                 });
+            } finally {
+                setPageLoading(false);
             }
         };
 
@@ -262,6 +258,8 @@ const AvailableLocations = ({navigation, route}) => {
             });        
         };
     }, []);
+
+    console.log(triggerReload);
 
 
     // state to store searched results
