@@ -118,6 +118,13 @@ async function migrateDbIfNeeded(db) {
                     warehouse_id TEXT NOT NULL,
                     warehouse_name TEXT NOT NULL
                 );
+                CREATE TABLE IF NOT EXISTS business_policies (
+                    id STRING PRIMARY KEY NOT NULL,
+                    additional_policy TEXT NOT NULL,
+                    failed_delivery_percentage TEXT NOT NULL, 
+                    max_inactive_inventory TEXT NOT NULL, 
+                    max_remittance_duration TEXT NOT NULL
+                );
             `);
             currentDbVersion = 1;
         }

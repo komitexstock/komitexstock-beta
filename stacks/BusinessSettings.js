@@ -12,26 +12,13 @@ import { background } from '../style/colors'
 // use auth
 import { useAuth } from '../context/AuthContext'
 
-// firebase
-import {
-    database,
-} from "../Firebase";
-
-// firestore functions
-import {
-    doc,
-    collection,
-    getDocs,
-    where,
-    query,
-    getDoc,
-} from "firebase/firestore";
 
 // local database
-import { handleLocations } from "../sql/handleLocation";
+import { handleLocations } from "../sql/handleLocations";
+import { handleBusinessPolicies } from '../sql/handleBusinessPolicies';
 import { useSQLiteContext } from "expo-sqlite/next";
 
-const BusinessSettings = ({navigation, route}) => {
+const BusinessSettings = ({navigation}) => {
 
     // auth data
     const { authData } = useAuth();
@@ -39,19 +26,39 @@ const BusinessSettings = ({navigation, route}) => {
     // local database
     const db = useSQLiteContext();
 
-    // preload states
-    const [preloadStates, setPreloadStates] = useState([]);
+    // preloaded data
+    const [preload, setPreload] = useState({
+        locations: { 
+            data: [] // data for AvailableLocations screen
+        },
+        businessPolicy: {
+            data: [] // data for BusinessPolicy screen
+        },
+        reviews: {
+            data: [] // data for Reviews screen
+        }
+    })
 
-    // most recent states obtained
-    const [recent, setRecent] = useState(false);
-
-    // get states from local db
+    // get locations and policies from local db
     useEffect(() => {
         // function to fetch locations
         const fetchLocations = async () => {
             try {
                 const locations = await handleLocations.getLocations(db);
                 return locations;
+            } catch (error) {
+                console.log("fetch local locations eror", error.message);   
+                throw error;             
+            }
+        }
+
+        // function to fetch locations
+        const fetchBusinessPolicies = async () => {
+            try {
+                const businessPolicy = await handleBusinessPolicies.getBusinessPolicy(db, authData?.business_id);
+                // await handleBusinessPolicies.createTableBusinessPolicy(db);
+                // return 'success';
+                return businessPolicy;
             } catch (error) {
                 console.log("fetch local locations eror", error.message);   
                 throw error;             
@@ -82,7 +89,17 @@ const BusinessSettings = ({navigation, route}) => {
             const grougState = groupByState(locations)
             
             // set states 
-            setPreloadStates(grougState);
+            // setPreloadStates(grougState);
+
+            // set preloaded data fro locations
+            setPreload((prevState) => {
+                return {
+                    ...prevState,
+                    locations: {
+                        data: grougState,
+                    }
+                }
+            });
 
         }).catch((error) => {
             // show error message
@@ -94,82 +111,34 @@ const BusinessSettings = ({navigation, route}) => {
                 visible: true,
                 type: "error",
             });
-        })
+        });
 
-    }, [recent, route]);
-
-    // get states from online db
-    useEffect(() => {
-        // fetch warehouse name
-        const fetchWarehouseName = async (id) => {
-            try {
-                const docRef = doc(database, "warehouses", id);
-                const docSnap = await getDoc(docRef);
-                // return warehouse name
-                return docSnap.data().warehouse_name;
-
-            } catch (error) {
-                setToast({
-                    text: error.message,
-                    visible: true,
-                    type: "error",
-                });
-            }
-        }
-
-        // fetch locations
-        const fetchLocations = async (businessId) => {
-            try {
-                const collectionRef = collection(database, "locations");
-                const q = query(
-                    collectionRef,
-                    where("business_id", "==", businessId),
-                );
-
-                const querySnapshot = await getDocs(q);
-
-                let locationList = [];
-
-                for (const doc of querySnapshot.docs) {
-                    const warehouse_name = await fetchWarehouseName(doc.data().warehouse_id);
-                    const location = {
-                        id: doc.id, // string
-                        delivery_charge: doc.data().delivery_charge, // number
-                        region: doc.data().region, // string
-                        state: doc.data().state, // string
-                        warehouse_id: doc.data().warehouse_id, // string
-                        warehouse_name: warehouse_name, // Use the corresponding warehouse name
-                    };
-                    locationList.push(location);
-                    // add data to local database
-                    await handleLocations.createLocation(db, location);
+        // fetch business policies
+        fetchBusinessPolicies().then((businessPolicy) => {
+            console.log('Local db policies', businessPolicy);
+            // set preloaded data for businessPolicies
+            setPreload((prevState) => {
+                return {
+                    ...prevState,
+                    businessPolicy: {
+                        data: businessPolicy,
+                    }
                 }
+            });
 
-                // prune locations that dont exist any more
-                await handleLocations.pruneLocations(db, locationList);
+        }).catch((error) => {
+            // show error message
+            console.log("fetch local locations eror", error.message);   
+            
+            // show toast
+            setToast({
+                text: error.message,
+                visible: true,
+                type: "error",
+            });
+        });
 
-                // most recent iteration of data
-                setRecent(true);
-
-            } catch (error) {
-                console.log("Caught this Error: ", error.message);
-                setToast({
-                    text: error.message,
-                    visible: true,
-                    type: "error",
-                });
-            }
-        };
-
-        // fetch warehouses
-        const unsubscribePromise = fetchLocations(authData?.business_id);
-
-        // Cleanup function to unsubscribe from snapshot listener
-        return () => {
-            // Unsubscribe from snapshot listener once unsubscribePromise is resolved
-            unsubscribePromise.then(() => {});
-        };
-    }, [route]);
+    }, []);
     
     // business button list
     const businessButtons = useMemo(() => {
@@ -181,8 +150,7 @@ const BusinessSettings = ({navigation, route}) => {
             onPress: () => navigation.navigate("AvailableLocations", {
                 business_id: authData.business_id,
                 business_name: authData.business_name,
-                preload_states: preloadStates,
-                recent: recent,
+                preloaded_data: preload.locations.data,
             }),
         },
         {
@@ -191,6 +159,7 @@ const BusinessSettings = ({navigation, route}) => {
             mainInfoText: "Let your merchants know how you operate",
             onPress: () => navigation.navigate("BusinessPolicy", {
                 business_id: authData.business_id,
+                preloaded_data: preload.businessPolicy.data,
             }),
         },
         {
@@ -199,10 +168,11 @@ const BusinessSettings = ({navigation, route}) => {
             mainInfoText: "See how well you are performing",
             onPress: () => navigation.navigate("Reviews", {
                 business_id: authData.business_id,
+                preloaded_data: preload.reviews.data,
             }),
         },
         ];
-    }, [preloadStates]);
+    }, [preload]);
 
 
     return (

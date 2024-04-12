@@ -93,9 +93,6 @@ const Account = ({navigation, route}) => {
         logistics: { // data for logistics
             data: []
         },
-        security: { // data for security
-            data: utilityData?.fingerprint,
-        },
     });
 
     // fetch members from local database
@@ -275,9 +272,7 @@ const Account = ({navigation, route}) => {
                 title: "Security",
                 subtitle: false,
                 icon: <SecurityIcon />,
-                onPress: () => navigation.navigate("Security", {
-                    preloaded_data: preload.security.data,
-                }),
+                onPress: () => navigation.navigate("Security"),
             },
             {
                 id: 2,

@@ -51,7 +51,7 @@ import {
 } from "firebase/firestore";
 
 // local database
-import { handleLocations } from "../sql/handleLocation";
+import { handleLocations } from "../sql/handleLocations";
 import { useSQLiteContext } from "expo-sqlite/next";
 
 const AddLocation = ({navigation}) => {
@@ -440,8 +440,7 @@ const AddLocation = ({navigation}) => {
                 toastMessage: "Location successfully added",
                 business_id: authData.business_id,
                 business_name: authData.business_name,
-                preload_states: groupStates,
-                recent: true,
+                preloaded_data: groupStates,
             });
 
         } catch (error) { // handke errors

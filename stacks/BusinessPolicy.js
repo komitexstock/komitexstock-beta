@@ -57,19 +57,27 @@ import {
     serverTimestamp,
 } from "firebase/firestore";
 
+// local database
+import { handleBusinessPolicies } from '../sql/handleBusinessPolicies';
+import { useSQLiteContext } from "expo-sqlite/next";
 
 const BusinessPolicy = ({navigation, route}) => {
 
     // useAuth
     const { authData } = useAuth();
 
-    // page loading state
-    const [pageLoading, setPageLoading] = useState(true);
-
+    // local database
+    const db = useSQLiteContext();
+    
     // business id retreived from route parameters
-    const { business_id, preload_business_policy, recent } = useMemo(() => {
+    const { business_id, preloaded_data } = useMemo(() => {
         return route.params || {};
     }, [route]);
+
+    // page loading state
+    const [pageLoading, setPageLoading] = useState((preloaded_data === null|| preloaded_data?.length === 0) || false);
+
+    console.log("preloaded_data: ", preloaded_data);
 
     // bottomsheet varaibels
     const { bottomSheetRef, bottomSheetOpen, setToast } = useGlobals();
@@ -78,22 +86,22 @@ const BusinessPolicy = ({navigation, route}) => {
     const [isLoading, setIsLoading] = useState(false);
 
     // remittance policy
-    const [remittancePolicy, setRemittancePolicy] = useState("");
+    const [remittancePolicy, setRemittancePolicy] = useState(preloaded_data?.max_remittance_duration || "");
 
     // failed delivery policy
-    const [failedDeliveryPolicy, setFailedDeliveryPolicy] = useState("");
+    const [failedDeliveryPolicy, setFailedDeliveryPolicy] = useState(preloaded_data?.failed_delivery_percentage || "");
 
     // inactive inventory policy
-    const [inactiveInventoryPolicy, setInactiveInventoryPolicy] = useState("");
+    const [inactiveInventoryPolicy, setInactiveInventoryPolicy] = useState(preloaded_data?.max_inactive_inventory || "");
 
     // additional policy
-    const [additionalPolicy, setAdditionalPolicy] = useState("");
+    const [additionalPolicy, setAdditionalPolicy] = useState(preloaded_data?.additional_policy || "");
 
     // remittance input
-    const [remittanceInput, setRemittanceInput] = useState("");
+    const [remittanceInput, setRemittanceInput] = useState(preloaded_data?.max_remittance_duration || "");
     
     // error state for remit period input
-    const [errorRemittanceInput, setErrorRemittanceInput] = useState("");
+    const [errorRemittanceInput, setErrorRemittanceInput] = useState(false);
 
     // bottom sheet height
     const [bottomSheetHeight, setBottomSheetHeight] = useState(386);
@@ -186,10 +194,10 @@ const BusinessPolicy = ({navigation, route}) => {
     }
 
     // failedDelivery input
-    const [failedDeliveryInput, setFailedDeliveryInput] = useState("");
+    const [failedDeliveryInput, setFailedDeliveryInput] = useState(preloaded_data?.failed_delivery_percentage || "");
     
     // error state for remit period input
-    const [errorFailedDeliveryInput, setErrorFailedDeliveryInput] = useState("");
+    const [errorFailedDeliveryInput, setErrorFailedDeliveryInput] = useState(false);
 
     // update failedDelivery input function, triggered onnchange in Input component
     const updateFailedDeliveryInput = (text) => {
@@ -248,10 +256,10 @@ const BusinessPolicy = ({navigation, route}) => {
     }
 
     // inactiveInventory input
-    const [inactiveInventoryInput, setInactiveInventoryInput] = useState("");
+    const [inactiveInventoryInput, setInactiveInventoryInput] = useState(preloaded_data?.max_inactive_inventory || "");
     
     // error state for remit period input
-    const [errorInactiveInventoryInput, setErrorInactiveInventoryInput] = useState("");
+    const [errorInactiveInventoryInput, setErrorInactiveInventoryInput] = useState(false);
 
     // update inactiveInventory input function, triggered onnchange in Input component
     const updateInactiveInventoryInput = (text) => {
@@ -310,10 +318,10 @@ const BusinessPolicy = ({navigation, route}) => {
     }
 
     // additional input
-    const [additionalInput, setAdditionalInput] = useState("");
+    const [additionalInput, setAdditionalInput] = useState(preloaded_data?.additional_policy || "");
     
     // error state for remit period input
-    const [errorAdditionalInput, setErrorAdditionalInput] = useState("");
+    const [errorAdditionalInput, setErrorAdditionalInput] = useState(false);
 
     // update additional input function, triggered onnchange in Input component
     const updateAdditionalInput = (text) => {
@@ -381,33 +389,36 @@ const BusinessPolicy = ({navigation, route}) => {
                 const docRef = doc(database, 'business_policies', id);
                 const policies = await getDoc(docRef);
 
+                // date
+                const policiesData = {...policies?.data(), id:  policies.id};
 
                 // handle failed deliveries policy
                 const failedDeliveryData = handleFailedDeliveryData(
-                    policies?.data()?.failed_delivery_percentage
+                    policiesData?.failed_delivery_percentage
                 );
 
                 // handle additional policy
                 const additionalPolicyData = handleAdditionalPolicyData(
-                    policies?.data()?.additional_policy
+                    policiesData?.additional_policy
                 );
                 
                 // handle additional policy
                 const inactiveInventoryData = handleInactiveInventoryData(
-                    policies?.data()?.max_inactive_inventory
+                    policiesData?.max_inactive_inventory
                 );
                 
                 // handle remittance policy
                 const remittanceData = handleRemittanceData(
-                    policies?.data()?.max_remittance_duration
+                    policiesData?.max_remittance_duration
                 );
 
                 setPoliciesExist(() => {
                     return failedDeliveryData || additionalPolicyData || inactiveInventoryData || remittanceData; 
                 });
 
-                // update page loading state
-                setPageLoading(false);
+                // send data to local db
+                await handleBusinessPolicies.createBusinessPolicy(db, policiesData)
+
                 
             } catch (error) {
 
@@ -418,6 +429,7 @@ const BusinessPolicy = ({navigation, route}) => {
                     type: "error",
                 });
 
+            } finally {
                 // update page loading state
                 setPageLoading(false);
             }

@@ -54,7 +54,7 @@ import {
 } from "firebase/firestore";
 
 // local database
-import { handleLocations } from "../sql/handleLocation";
+import { handleLocations } from "../sql/handleLocations";
 import { useSQLiteContext } from "expo-sqlite/next";
 
 // react navigation

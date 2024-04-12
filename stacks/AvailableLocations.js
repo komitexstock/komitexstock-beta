@@ -51,7 +51,7 @@ import {
 } from "firebase/firestore";
 
 // local database
-import { handleLocations } from "../sql/handleLocation";
+import { handleLocations } from "../sql/handleLocations";
 import { useSQLiteContext } from "expo-sqlite/next";
 
 const AvailableLocations = ({navigation, route}) => {
@@ -66,12 +66,12 @@ const AvailableLocations = ({navigation, route}) => {
     const { authData } = useAuth();
 
     // business id and business name of logistics company
-    const {business_id, business_name, preload_states, recent} = useMemo(() => {
+    const { business_id, business_name, preloaded_data } = useMemo(() => {
         return route?.params || {};
     }, [route]);
 
     // page loading state
-    const [pageLoading, setPageLoading] = useState(preload_states.length === 0);
+    const [pageLoading, setPageLoading] = useState(preloaded_data.length === 0);
 
 
     // state to store search query
@@ -79,13 +79,13 @@ const AvailableLocations = ({navigation, route}) => {
 
 
     // parameter to determine if location is read only or writeable
-    const writable = authData.business_id === business_id && authData.account_type === "Logistics" && authData?.role === "Manager";
+    const writable = (authData.business_id === business_id ) && (authData.account_type === "Logistics") && (authData?.role === "Manager");
 
     // globals
     const { setToast } = useGlobals();
 
     // states and delivery locations 
-    const [states, setStates] = useState(preload_states);
+    const [states, setStates] = useState(preloaded_data);
 
     // group locations by state
     const groupByState = (locations) => {
