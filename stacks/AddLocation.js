@@ -299,7 +299,7 @@ const AddLocation = ({navigation}) => {
                 // Check if state is defined and not null
                 if (state !== undefined && state !== null) {
                     if (!acc[state]) {
-                        acc[state] = { id: Math.random(), name: state, opened: false, locations: [] };
+                        acc[state] = { id: state, name: state, opened: false, locations: [] };
                         // acc[state] = { name: state, opened: false, locations: [] };
                     }
                     acc[state].locations.push(rest);

@@ -197,6 +197,27 @@ const deleteLocations = async (db, id) => {
     }
 }
 
+// delete location
+const pruneLocations = async (db, data) => {
+    try {
+        // loctions array
+        const locations = await getLocations(db);
+
+        // locations
+        locations.forEach(async (location) => {
+            // check if location, exist in recent data
+            if (!data.find(item => item.id === location.id)) {
+                // delete location, that  dont exis in online db
+                await deleteLocations(db, location.id);
+            }
+        });
+
+    } catch (error) {
+        console.log("PRUNE LOCATION ERROR", error.message)
+        throw error;        
+    }
+}
+
 // create locations table location
 const createTableLocations = async (db) => {
     try {
@@ -235,5 +256,6 @@ export const handleLocations = {
     createLocation, // function to create location
     updateLocation, // update location
     deleteLocations, //.delete location
+    pruneLocations, // prune locations
     createTableLocations, // create locations table
 }

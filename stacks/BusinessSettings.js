@@ -21,7 +21,6 @@ import {
 import {
     doc,
     collection,
-    onSnapshot,
     getDocs,
     where,
     query,
@@ -32,7 +31,7 @@ import {
 import { handleLocations } from "../sql/handleLocation";
 import { useSQLiteContext } from "expo-sqlite/next";
 
-const BusinessSettings = ({navigation}) => {
+const BusinessSettings = ({navigation, route}) => {
 
     // auth data
     const { authData } = useAuth();
@@ -66,7 +65,7 @@ const BusinessSettings = ({navigation}) => {
                 // Check if state is defined and not null
                 if (state !== undefined && state !== null) {
                     if (!acc[state]) {
-                        acc[state] = { id: Math.random(), name: state, opened: false, locations: [] };
+                        acc[state] = { id: state, name: state, opened: false, locations: [] };
                         // acc[state] = { name: state, opened: false, locations: [] };
                     }
                     acc[state].locations.push(rest);
@@ -97,7 +96,7 @@ const BusinessSettings = ({navigation}) => {
             });
         })
 
-    }, [recent]);
+    }, [recent, route]);
 
     // get states from online db
     useEffect(() => {
@@ -146,6 +145,9 @@ const BusinessSettings = ({navigation}) => {
                     await handleLocations.createLocation(db, location);
                 }
 
+                // prune locations that dont exist any more
+                await handleLocations.pruneLocations(db, locationList);
+
                 // most recent iteration of data
                 setRecent(true);
 
@@ -167,7 +169,7 @@ const BusinessSettings = ({navigation}) => {
             // Unsubscribe from snapshot listener once unsubscribePromise is resolved
             unsubscribePromise.then(() => {});
         };
-    }, []);
+    }, [route]);
     
 
     // business button list

@@ -38,7 +38,7 @@ import { useAuth } from "../context/AuthContext";
 import { useGlobals } from "../context/AppContext";
 
 // react hoooks
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 // utilities
 import { windowHeight } from "../utils/helpers";
@@ -67,7 +67,9 @@ const BusinessPolicy = ({navigation, route}) => {
     const [pageLoading, setPageLoading] = useState(true);
 
     // business id retreived from route parameters
-    const { business_id } = route.params || {};
+    const { business_id, preload_business_policy, recent } = useMemo(() => {
+        return route.params || {};
+    }, [route]);
 
     // bottomsheet varaibels
     const { bottomSheetRef, bottomSheetOpen, setToast } = useGlobals();

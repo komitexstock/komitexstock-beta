@@ -65,7 +65,9 @@ const AvailableLocations = ({navigation, route}) => {
     const { authData } = useAuth();
 
     // business id and business name of logistics company
-    const {business_id, business_name, preload_states, recent} = route?.params || {};
+    const {business_id, business_name, preload_states, recent} = useMemo(() => {
+        return route?.params || {};
+    }, [route]);
 
     // page loading state
     const [pageLoading, setPageLoading] = useState(preload_states.length === 0);
@@ -104,7 +106,7 @@ const AvailableLocations = ({navigation, route}) => {
                 // Check if state is defined and not null
                 if (state !== undefined && state !== null) {
                     if (!acc[state]) {
-                        acc[state] = { id: Math.random(), name: state, opened: false, locations: [] };
+                        acc[state] = { id: state, name: state, opened: false, locations: [] };
                         // acc[state] = { name: state, opened: false, locations: [] };
                     }
                     acc[state].locations.push(rest);
@@ -127,7 +129,20 @@ const AvailableLocations = ({navigation, route}) => {
             const groupState = groupByState(locations);
             
             // set states 
-            setStates(groupState);
+            setStates(prevStates => {
+                return [
+                    ...groupState.map(state => {
+
+                        // get active state
+                        const activeState = prevStates.find(prevState => prevState.id === state.id);
+
+                        return {
+                            ...state,
+                            opened: activeState?.opened || false, // retain previous value, else set as false
+                        }
+                    }),
+                ]
+            });
             
         }).catch((error) => {
             // show error message
@@ -145,7 +160,7 @@ const AvailableLocations = ({navigation, route}) => {
             setPageLoading(false);
         })
 
-    }, [triggerReload, route?.params])
+    }, [triggerReload, route])
 
     // get states from online db
     useEffect(() => {
@@ -198,6 +213,10 @@ const AvailableLocations = ({navigation, route}) => {
                     await handleLocations.createLocation(db, location);
                 }
 
+                // prune locations that dont exist any more
+                await handleLocations.pruneLocations(db, locationList);
+
+                // trigger reload of local db
                 setTriggerReload(prevValue => prevValue++);
 
             } catch (error) {
@@ -218,7 +237,7 @@ const AvailableLocations = ({navigation, route}) => {
             // Unsubscribe from snapshot listener once unsubscribePromise is resolved
             unsubscribePromise.then(() => {});
         };
-    }, []);
+    }, [route]);
 
 
     // state to store searched results
