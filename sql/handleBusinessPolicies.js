@@ -196,10 +196,10 @@ const createTableBusinessPolicy = async (db) => {
         const statement = await db.prepareAsync(
             `CREATE TABLE IF NOT EXISTS business_policies (
                 id STRING PRIMARY KEY NOT NULL,
-                additional_policy TEXT NOT NULL,
-                failed_delivery_percentage TEXT NOT NULL, 
-                max_inactive_inventory TEXT NOT NULL, 
-                max_remittance_duration TEXT NOT NULL
+                additional_policy TEXT NULL,
+                failed_delivery_percentage TEXT NULL, 
+                max_inactive_inventory TEXT NULL, 
+                max_remittance_duration TEXT NULL
             )`
         );
 

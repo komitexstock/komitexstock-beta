@@ -57,10 +57,6 @@ import {
 import { handleLocations } from "../sql/handleLocations";
 import { useSQLiteContext } from "expo-sqlite/next";
 
-// react navigation
-import { useFocusEffect } from '@react-navigation/native';
-
-
 const EditLocation = ({navigation, route}) => {
 
     // auth data
@@ -89,17 +85,6 @@ const EditLocation = ({navigation, route}) => {
 
     // location state, to store list of locations
     const [sublocations, setSublocations] = useState([]);
-
-    // preloade states
-    const [newPreloadStates, setNewPreloadStates] = useState([]);
-    
-    // Inside the functional component for screen C
-    useFocusEffect(
-        React.useCallback(() => {
-        // Update the navigation params when the screen comes into focus
-        navigation.setParams({preload_states: newPreloadStates});
-        }, [newPreloadStates])
-    );
 
     // group state locations by warehouses
     useEffect(() => {

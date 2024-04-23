@@ -90,7 +90,14 @@ const Home = ({navigation}) => {
     // console.log("Auth Data:", authData);
       
     // sheef refs
-    const { bottomSheetRef, filterSheetRef, calendarSheetRef, calendarSheetOpen, setToast } = useGlobals();
+    const {
+        bottomSheetRef,
+        filterSheetRef,
+        calendarSheetRef,
+        calendarSheetOpen,
+        setToast,
+        bottomSheetParameters,
+    } = useGlobals();
 
     // page loading state
     const [pageLoading, setPageLoading] = useState(true);
@@ -834,12 +841,13 @@ const Home = ({navigation}) => {
                                 <View style={style.homeOrdersHeader}>
                                     <Text style={style.homeOrdersHeading}>Recent Activities</Text>
                                     <TouchableOpacity
-                                        onPress={() => {navigation.navigate("RecentActivities")}}
+                                        // onPress={() => {navigation.navigate("RecentActivities")}}
                                         // onPress={() => {navigation.navigate("OrderDetails")}}
                                         // onPress={() => {navigation.navigate("WaybillDetails")}}
                                         // onPress={() => {navigation.navigate("TransferDetails")}}
                                         // onPress={() => {navigation.navigate("Share")}}
                                         // onPress={() => {navigation.navigate("WriteReview")}}
+                                        onPress={bottomSheetParameters.openModal}
                                     >
                                         <Text style={style.seeMore} >
                                             See more

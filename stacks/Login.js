@@ -31,7 +31,7 @@ const Login = ({navigation}) => {
     const [password, setPassword] = useState("komitex1234"); // string
 
     // email address
-    const [emailAddress, setEmailAddress] = useState("tonystark@gmail.com"); // string
+    const [emailAddress, setEmailAddress] = useState("johndoe@gmail.com"); // string
 
     // state to store password error
     const [errorPassword, setErrorPassword] = useState(""); // string

@@ -161,8 +161,6 @@ const TeamMembers = ({ navigation, route }) => {
 
     }, [triggerReload])
 
-    // console.log(members);
-
     // get team members
     useEffect(() => {
         // fetch team members data
@@ -177,7 +175,6 @@ const TeamMembers = ({ navigation, route }) => {
 
                 const unsubscribe = onSnapshot(q, (querySnapshot) => {
                     let users = [];
-                    console.log("Size of data retrieved", querySnapshot.size);
                     querySnapshot.forEach(async (doc) => {
                         try {
                             const userData = doc.data();

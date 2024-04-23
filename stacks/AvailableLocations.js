@@ -172,6 +172,7 @@ const AvailableLocations = ({navigation, route}) => {
                     visible: true,
                     type: "error",
                 });
+                throw error;
             }
         }
 
@@ -183,8 +184,10 @@ const AvailableLocations = ({navigation, route}) => {
                     collectionRef,
                     where("business_id", "==", businessId),
                 );
-
+                
                 const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    
+                    // locations list array
                     let locationList = [];
 
                     // Create an array to hold promises for fetching warehouse names
@@ -195,29 +198,44 @@ const AvailableLocations = ({navigation, route}) => {
                     });
 
                     // Wait for all promises to resolve
-                    Promise.all(fetchWarehouseNamePromises).then((warehouseNames) => {
-                        // Iterate over the query snapshot again to construct locationList
-                        querySnapshot.docs.forEach(async (doc, index) => {
-                            try {
-                                const location = {
-                                    id: doc.id, // string
-                                    delivery_charge: doc.data().delivery_charge, // number
-                                    region: doc.data().region, // string
-                                    state: doc.data().state, // string
-                                    warehouse_id: doc.data().warehouse_id, // string
-                                    warehouse_name: warehouseNames[index], // Use the corresponding warehouse name
-                                };
-                                locationList.push(location);
+                    Promise.all(fetchWarehouseNamePromises).then(async (warehouseNames) => {
+                        try {
+                            // Iterate over the query snapshot again to construct locationList
+                            querySnapshot.docs.forEach(async (doc, index) => {
+                                try {
+                                    const location = {
+                                        id: doc.id, // string
+                                        delivery_charge: doc.data().delivery_charge, // number
+                                        region: doc.data().region, // string
+                                        state: doc.data().state, // string
+                                        warehouse_id: doc.data().warehouse_id, // string
+                                        warehouse_name: warehouseNames[index], // Use the corresponding warehouse name
+                                    };
+                                    locationList.push(location);
+        
+                                    // add data to local database
+                                    await handleLocations.createLocation(db, location);
     
-                                // add data to local database
-                                await handleLocations.createLocation(db, location);
-                                
-                            } catch (error) {
-                                console.log("create location error:", error.message);
-                                throw error;
-                            }
-                        });
-
+                                    
+                                } catch (error) {
+                                    console.log("create location error:", error.message);
+                                    throw error;
+                                }
+                            });
+    
+                            // prune deleted locations
+                            await handleLocations.pruneLocations(db, locationList);
+                            
+                        } catch (error) {
+                            console.log("Error pruning locations: ", error.message);
+                            setToast({
+                                text: error.message,
+                                visible: true,
+                                type: "error",
+                            });
+                            throw error;
+                        }
+                        
                         // trigger reload
                         setTriggerReload(prevValue => prevValue + 1);
                     }).catch(error => {
@@ -226,10 +244,15 @@ const AvailableLocations = ({navigation, route}) => {
                             text: error.message,
                             visible: true,
                             type: "error",
-                        })
+                        });
+                        throw error;
                     });
 
                 });
+
+                // consol
+                // prune deleted locations
+                // await handleLocations.pruneLocations(db, locationList);
 
                 return unsubscribe;
 

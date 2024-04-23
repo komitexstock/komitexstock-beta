@@ -77,7 +77,7 @@ const Account = ({navigation, route}) => {
     const { authData, setStoredData, utilityData } = useAuth();
 
     // bottomsheet ref
-    const { bottomSheetRef, setToast, currentStack } = useGlobals();
+    const { bottomSheetParameters, setBottomSheetParameters, setToast, currentStack } = useGlobals();
 
     // state to store preloaded data
     const [preload, setPreload] = useState({
@@ -291,12 +291,6 @@ const Account = ({navigation, route}) => {
         ],
     }
   
-    // modal state
-    const [modal, setModal] = useState({
-        type: "Notifications",
-        snapPoints: ["35%"],
-    });
-
     // uploading profile state
     const [uploadingProfile, setUploadingProfile] = useState(false);
     
@@ -349,34 +343,131 @@ const Account = ({navigation, route}) => {
         }
     }, [route?.params]);
 
-    // close modal function
-    const closeModal = () => {
-        bottomSheetRef.current?.close();
-    };
+    // notifications bottom sheet
+    const NotificationsSheet = () => (
+        <AccountButtons
+            title="Allow Push Notifications"
+            subtitle={false}
+            icon={<NotificationBlackIcon />}
+            length={0}
+            index={0}
+            toggle={true}
+            isEnabled={enableNotifications}
+            handleToggle={handleToggle}
+            unpadded={true}
+        />
+    );
+
+    // help & support bottom sheet
+    const HelpSupportSheet = () => (supportButtons.map((item, index) => (
+        <AccountButtons
+            key={item.id}
+            title={item.title}
+            subtitle={false}
+            icon={item.icon}
+            length={supportButtons.length - 1}
+            index={index}
+            onPress={item.onPress}
+            unpadded={true}
+        />
+    )))
+
+    // open width sheet
+    const OpenWithSheet = () => (
+        <View style={style.uploadButtonsWrapper}>
+            {/* navigate to camera screen button */}
+            <TouchableOpacity
+                style={style.uploadButton}
+                onPress={() => { 
+                    navigation.navigate("CaptureImage", {
+                        origin: "Account",
+                        imageType: imageType,
+                    })
+                }}
+            >
+                <View style={style.uploadIconWrapper}>
+                    <CameraPrimaryLargeIcon />
+                </View>
+                <Text style={style.uploadButtonText}>Camera</Text>
+            </TouchableOpacity>
+
+            {/* open gallery image picker button */}
+            <TouchableOpacity
+                style={style.uploadButton}
+                onPress={pickImageAsync}
+            >
+                <View style={style.uploadIconWrapper}>
+                    <GalleryIcon />
+                </View>
+                <Text style={style.uploadButtonText}>Gallery</Text>
+            </TouchableOpacity>
+            
+        </View> 
+    );
 
     // open modal function
     const openModal = (type) => {
         // open bottomsheet modal
-        bottomSheetRef.current?.present();
+        // bottomSheetRef.current?.present();
         // set modal type
         if (type === "Notifications") {
-            return setModal({
-                type: type,
-                snapPoints: [271],
+            // set sheet parameters
+            setBottomSheetParameters(prevParamaters => {
+                return {
+                    ...prevParamaters,
+                    sheetTitle: type,
+                    sheetOpened: true,
+                    snapPointsArray: [271],
+                    content: <NotificationsSheet />,
+                }
             });
+
+            // open bottomsheet modal
+            bottomSheetParameters.openModal();
         }
         else if (type === "Help & Support") {
-            return setModal({
-                type: type,
-                snapPoints: [368],
+            // set sheet parameters
+            setBottomSheetParameters(prevParamaters => {
+                return {
+                    ...prevParamaters,
+                    sheetTitle: type,
+                    sheetOpened: true,
+                    snapPointsArray: [368],
+                    content: <HelpSupportSheet />,
+                }
             });
+    
+            // open bottomsheet modal
+            bottomSheetParameters.openModal();
         } 
         else if (type === "Open with") {
-            return setModal({
-                type: type,
-                snapPoints: [198],
+            // set sheet parameters
+            setBottomSheetParameters(prevParamaters => {
+                return {
+                    ...prevParamaters,
+                    sheetTitle: type,
+                    sheetOpened: true,
+                    snapPointsArray: [198],
+                    content: <OpenWithSheet />,
+                }
             });
+    
+            // open bottomsheet modal
+            bottomSheetParameters.openModal();
         } 
+    }
+
+    const closeModal = () => {
+        // update sheet closed state
+        setBottomSheetParameters(prevParamaters => {
+            return {
+                ...prevParamaters,
+                sheetOpened: false,
+                content: <></>,
+            }
+        });
+        // close bottomsheet modal
+        bottomSheetParameters.closeModal();
     }
 
     // enable notification state 
@@ -608,80 +699,6 @@ const Account = ({navigation, route}) => {
                     </View>
                 </View>
             </ScrollView>
-            
-            {/* Bottom sheet component */}
-            {/* Bottom sheet for Notification, Help and Supoort and image upload option */}
-            <CustomBottomSheet 
-                bottomSheetModalRef={bottomSheetRef}
-                closeModal={closeModal}
-                snapPointsArray={modal.snapPoints}
-                autoSnapAt={0}
-                sheetTitle={modal.type}
-            >
-                {/* Notifications bottomsheet content */}
-                { modal.type === "Notifications" && (
-                    <AccountButtons
-                        title="Allow Push Notifications"
-                        subtitle={false}
-                        icon={<NotificationBlackIcon />}
-                        length={0}
-                        index={0}
-                        toggle={true}
-                        isEnabled={enableNotifications}
-                        handleToggle={handleToggle}
-                        unpadded={true}
-                    />
-                )}
-
-                {/* Help and support bittonsheet content */}
-                { modal.type === "Help & Support" && supportButtons.map((item, index) => (
-                    <AccountButtons
-                        key={item.id}
-                        title={item.title}
-                        subtitle={false}
-                        icon={item.icon}
-                        length={supportButtons.length - 1}
-                        index={index}
-                        onPress={item.onPress}
-                        unpadded={true}
-                    />
-                ))}
-
-                {/* Upload profile photo bottomsheet */}
-                { modal.type === "Open with" && (
-                    <View style={style.uploadButtonsWrapper}>
-                        
-                        {/* navigate to camera screen button */}
-                        <TouchableOpacity
-                            style={style.uploadButton}
-                            onPress={() => { 
-                                closeModal();
-                                navigation.navigate("CaptureImage", {
-                                    origin: "Account",
-                                    imageType: imageType,
-                                })
-                            }}
-                        >
-                            <View style={style.uploadIconWrapper}>
-                                <CameraPrimaryLargeIcon />
-                            </View>
-                            <Text style={style.uploadButtonText}>Camera</Text>
-                        </TouchableOpacity>
-
-                        {/* open gallery image picker button */}
-                        <TouchableOpacity
-                            style={style.uploadButton}
-                            onPress={pickImageAsync}
-                        >
-                            <View style={style.uploadIconWrapper}>
-                                <GalleryIcon />
-                            </View>
-                            <Text style={style.uploadButtonText}>Gallery</Text>
-                        </TouchableOpacity>
-                        
-                    </View>   
-                )}
-            </CustomBottomSheet>
         </>
     );
 }

@@ -74,11 +74,31 @@ const BusinessPolicy = ({navigation, route}) => {
         return route.params || {};
     }, [route]);
 
+    // state to indicate some policies has already been added
+    const [policiesExist, setPoliciesExist] = useState(!preloaded_data);
+
     // page loading state
     const [pageLoading, setPageLoading] = useState(preloaded_data === null|| preloaded_data?.length === 0);
 
     // bottomsheet varaibels
-    const { bottomSheetRef, bottomSheetOpen, setToast } = useGlobals();
+    const { stackedSheetRef, stackedSheetOpen, setToast } = useGlobals();
+    
+    // modal type
+    const [modalType, setModalType] = useState("Remittance");
+
+    // open bottomsheet modal function
+    const openModal = (type, enableEdit)  => {
+        if (enableEdit && type === "Additional Policy") {
+            setAdditionalInput(additionalPolicy);
+        }
+        setModalType(type);
+        stackedSheetRef.current?.present();
+    }
+
+    // close bottomsheet modal function
+    const closeModal = () => {
+        stackedSheetRef.current?.close();
+    }
 
     // const indicate lodaing state for buttons
     const [isLoading, setIsLoading] = useState(false);
@@ -109,7 +129,7 @@ const BusinessPolicy = ({navigation, route}) => {
         // if keyboard is open
         const keyboardDidShowListener = Keyboard.addListener(
             Platform.OS === 'android' ? 'keyboardDidShow' : 'keyboardWillShow', () => {
-                if (!bottomSheetOpen) return;
+                if (!stackedSheetOpen) return;
                 setBottomSheetHeight(windowHeight)
             }
         );
@@ -124,7 +144,7 @@ const BusinessPolicy = ({navigation, route}) => {
 
         // this is useful if the bottomsheet is closed 
         // without performing an action
-        if (!bottomSheetOpen) {
+        if (!stackedSheetOpen) {
             // rese bottom sheet height
             setBottomSheetHeight(386)
         }
@@ -133,7 +153,7 @@ const BusinessPolicy = ({navigation, route}) => {
             keyboardDidShowListener.remove();
             keyboardDidHideListener.remove();
         };
-    }, [bottomSheetOpen]);
+    }, [stackedSheetOpen]);
 
     // update remittance input function, triggered onnchange in Input component
     const updateRemittanceInput = (text) => {
@@ -168,6 +188,15 @@ const BusinessPolicy = ({navigation, route}) => {
                 // acknowledge policy exist
                 setPoliciesExist(true);
             }
+
+            // update local db
+            await handleBusinessPolicies.createBusinessPolicy(
+                db, 
+                { 
+                    max_remittance_duration: remittanceInput,
+                    id: business_id,
+                }
+            );
 
             // update policy state
             setRemittancePolicy(remittanceInput);
@@ -204,6 +233,7 @@ const BusinessPolicy = ({navigation, route}) => {
 
     // update failedDelivery policy
     const handleUpdateFailedDeliveryPolicy = async () => {
+        
         try {
             // dismiss keyborad
             Keyboard.dismiss();
@@ -231,7 +261,16 @@ const BusinessPolicy = ({navigation, route}) => {
                 setPoliciesExist(true);
             }
 
+            // update local db
+            await handleBusinessPolicies.createBusinessPolicy(
+                db, 
+                { 
+                    failed_delivery_percentage: failedDeliveryInput,
+                    id: business_id,
+                }
+            );
 
+            // update policy state
             setFailedDeliveryPolicy(failedDeliveryInput);
 
             // close bottomsheet
@@ -242,7 +281,7 @@ const BusinessPolicy = ({navigation, route}) => {
             
         } catch (error) {
             // disable loading state
-            setIsLoading(false);;
+            setIsLoading(false);
 
             console.log("Caught Error: ", error.message);
             setToast({
@@ -293,7 +332,16 @@ const BusinessPolicy = ({navigation, route}) => {
                 setPoliciesExist(true);
             }
 
+            // update local db
+            await handleBusinessPolicies.createBusinessPolicy(
+                db, 
+                { 
+                    max_inactive_inventory: inactiveInventoryInput,
+                    id: business_id,
+                },
+            )
 
+            // set local state
             setInactiveInventoryPolicy(inactiveInventoryInput);
 
             // close bottomsheet
@@ -355,7 +403,16 @@ const BusinessPolicy = ({navigation, route}) => {
                 setPoliciesExist(true);
             }
 
+            // update local db
+            await handleBusinessPolicies.createBusinessPolicy(
+                db, 
+                {
+                    additional_policy: additionalInput,
+                    id: business_id,
+                }
+            )
 
+            // update local state
             setAdditionalPolicy(additionalInput);
 
             // close bottomsheet
@@ -377,61 +434,8 @@ const BusinessPolicy = ({navigation, route}) => {
         }
     }
 
-    const [policiesExist, setPoliciesExist] = useState(false);
-
     // fetch business policies
     useEffect(() => {
-        
-        const fetchBusinessPolicies = async (id) => {
-            try {
-                const docRef = doc(database, 'business_policies', id);
-                const policies = await getDoc(docRef);
-
-                // date
-                const policiesData = {...policies?.data(), id:  policies.id};
-
-                // handle failed deliveries policy
-                const failedDeliveryData = handleFailedDeliveryData(
-                    policiesData?.failed_delivery_percentage
-                );
-
-                // handle additional policy
-                const additionalPolicyData = handleAdditionalPolicyData(
-                    policiesData?.additional_policy
-                );
-                
-                // handle additional policy
-                const inactiveInventoryData = handleInactiveInventoryData(
-                    policiesData?.max_inactive_inventory
-                );
-                
-                // handle remittance policy
-                const remittanceData = handleRemittanceData(
-                    policiesData?.max_remittance_duration
-                );
-
-                setPoliciesExist(() => {
-                    return failedDeliveryData || additionalPolicyData || inactiveInventoryData || remittanceData; 
-                });
-
-                // send data to local db
-                await handleBusinessPolicies.createBusinessPolicy(db, policiesData)
-
-                
-            } catch (error) {
-
-                console.log("Caught Error: ", error.message);
-                setToast({
-                    text: error.message,
-                    visible: true,
-                    type: "error",
-                });
-
-            } finally {
-                // update page loading state
-                setPageLoading(false);
-            }
-        }
 
         // function to set states related to failed delivery
         const handleFailedDeliveryData = (fetchedData) => {
@@ -472,7 +476,62 @@ const BusinessPolicy = ({navigation, route}) => {
             // return data
             return fetchedData;
         }
+        
+        // fetch business policies
+        const fetchBusinessPolicies = async (id) => {
+            try {
+                const docRef = doc(database, 'business_policies', id);
+                const policies = await getDoc(docRef);
 
+                // date
+                const policiesData = policies?.data();
+
+                // handle failed deliveries policy
+                handleFailedDeliveryData(
+                    policiesData?.failed_delivery_percentage
+                );
+
+                // handle additional policy
+                handleAdditionalPolicyData(
+                    policiesData?.additional_policy
+                );
+                
+                // handle additional policy
+                handleInactiveInventoryData(
+                    policiesData?.max_inactive_inventory
+                );
+                
+                // handle remittance policy
+                handleRemittanceData(
+                    policiesData?.max_remittance_duration
+                );
+
+                setPoliciesExist(() => {
+                    return policiesData; 
+                });
+
+                // send data to local db if data is available
+                if (policiesData) {
+                    await handleBusinessPolicies.createBusinessPolicy(
+                        db, 
+                        {...policiesData, id: policies.id}
+                    )
+                }
+
+                
+            } catch (error) {
+                console.log("Caught Error: ", error.message);
+                setToast({
+                    text: error.message,
+                    visible: true,
+                    type: "error",
+                });
+
+            } finally {
+                // update page loading state
+                setPageLoading(false);
+            }
+        }
 
         fetchBusinessPolicies(business_id);
     }, [])
@@ -516,23 +575,6 @@ const BusinessPolicy = ({navigation, route}) => {
             ]  
         },
     ];
-
-    // modal type
-    const [modalType, setModalType] = useState("Remittance");
-
-    // open bottomsheet modal function
-    const openModal = (type, enableEdit)  => {
-        if (enableEdit && type === "Additional Policy") {
-            setAdditionalInput(additionalPolicy);
-        }
-        setModalType(type);
-        bottomSheetRef.current?.present();
-    }
-
-    // close bottomsheet modal function
-    const closeModal = () => {
-        bottomSheetRef.current?.close();
-    }
 
     // render business policy screen
     return (<>
@@ -690,12 +732,12 @@ const BusinessPolicy = ({navigation, route}) => {
             </ScrollView>
         </> : <BusinessPolicySkeleton />}
         <CustomBottomSheet
-            bottomSheetModalRef={bottomSheetRef}
+            bottomSheetModalRef={stackedSheetRef}
             sheetTitle={modalType}
+            closeModal={closeModal}
             autoSnapAt={0}
             snapPointsArray={[bottomSheetHeight]}
         >
-            
             {/* modal content for Remittance policy */}
             {modalType === "Remittance" && <>
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

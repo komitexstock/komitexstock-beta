@@ -4,10 +4,10 @@ import { useCallback } from 'react';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 // components
 import BottomNavigation from './components/BottomNavigation';
 import Toast from './components/Toast';
+import BottomSheetScreen from './components/BottomSheetScreen';
 // context
 import AuthProvider from './context/AuthContext';
 import AppProvider from './context/AppContext';
@@ -74,6 +74,7 @@ export default function App() {
                                     */}
                                     <Toast />
                                     <Navigator />
+                                    <BottomSheetScreen />
                                     <BottomNavigation />
                                 </BottomSheetModalProvider>
                             </GestureHandlerRootView>
@@ -120,10 +121,10 @@ async function migrateDbIfNeeded(db) {
                 );
                 CREATE TABLE IF NOT EXISTS business_policies (
                     id STRING PRIMARY KEY NOT NULL,
-                    additional_policy TEXT NOT NULL,
-                    failed_delivery_percentage TEXT NOT NULL, 
-                    max_inactive_inventory TEXT NOT NULL, 
-                    max_remittance_duration TEXT NOT NULL
+                    additional_policy TEXT NULL,
+                    failed_delivery_percentage TEXT NULL, 
+                    max_inactive_inventory TEXT NULL, 
+                    max_remittance_duration TEXT NULL
                 );
             `);
             currentDbVersion = 1;

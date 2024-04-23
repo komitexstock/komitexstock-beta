@@ -6,7 +6,6 @@ import CloseIcon from "../assets/icons/CloseIcon";
 import { bodyText, primaryColor } from "../style/colors";
 // import globals
 import { useGlobals } from "../context/AppContext";
-import { windowWidth } from "../utils/helpers";
 
 const CustomBottomSheet = ({bottomSheetModalRef, closeModal, snapPointsArray, autoSnapAt, children, sheetTitle, sheetSubtitle, topContentPadding, stacked, disablePanToClose}) => {
 
@@ -47,17 +46,6 @@ const CustomBottomSheet = ({bottomSheetModalRef, closeModal, snapPointsArray, au
 
     return (
         <>
-            {/* {showOverlay && (
-                <View
-                    style={styles.overlay}
-                >
-                    <TouchableOpacity
-                        style={styles.closeOverlay}
-                        onPress={closeModal}
-                    >
-                    </TouchableOpacity>
-                </View>
-            )} */}
             <View style={styles.container}>
                 <BottomSheetModal
                     ref={bottomSheetModalRef}

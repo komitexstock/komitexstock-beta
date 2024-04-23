@@ -2,7 +2,7 @@ import { createContext, useState, useEffect, useContext, useRef } from "react";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 // back handler
 import { BackHandler } from "react-native";
-
+import { Text } from "react-native";
 
 const AppContext = createContext();
 
@@ -16,6 +16,8 @@ const AppProvider = ({children}) => {
 
     // regular bottom sheet ref
     const bottomSheetRef = useRef(null);
+    // regular bottom sheet ref
+    const bottomSheetScreenRef = useRef(null);
     // stacked bottom sheet ref
     const stackedSheetRef = useRef(null);
     // filter bottom sheet ref
@@ -51,6 +53,25 @@ const AppProvider = ({children}) => {
         text: "",
         type: "success",
     });
+
+    const [bottomSheetParameters, setBottomSheetParameters] = useState({
+        index: 0,
+        snapPointsArray: ['50%'],
+        enablePanDownToClose: true,
+        sheetTitle: '',
+        sheetSubtitleText: '',
+        sheetOpened: false,
+        contentContainerStyle: undefined,
+        content: <></>,
+        closeModal: (callback) => {
+            if (typeof callback === "function") callback();
+            bottomSheetScreenRef.current?.close();
+        },
+        openModal: (callback) => {
+            if (typeof callback === "function") callback();
+            bottomSheetScreenRef.current?.present();
+        },
+    })
 
 
     // block of code to listen for onPress back button
@@ -109,23 +130,15 @@ const AppProvider = ({children}) => {
             // update currentStack
             setCurrentStack(navigation.getCurrentRoute().name);
 
-            if (stackedSheetOpen) {
-                // if stacked bottom sheet is open, close it
-                stackedSheetRef?.current.close();
-                return true;
-
-            } else if (bottomSheetOpen) {
-                // if bottom sheet is open, close it
-                bottomSheetRef?.current.close();
-                return true;
-            }
-
+            // close bottomsheet
+            bottomSheetParameters.closeModal();
         });
 
 
 
         return unsubscribe;
     }, [isFocused, navigation]);
+
     
     return (
         <AppContext.Provider 
@@ -153,6 +166,9 @@ const AppProvider = ({children}) => {
                 setIsLoading,
                 isLoadingSecondary,
                 setIsLoadingSecondary,
+                bottomSheetScreenRef,
+                bottomSheetParameters,
+                setBottomSheetParameters,
             }}
         >
            {children}
