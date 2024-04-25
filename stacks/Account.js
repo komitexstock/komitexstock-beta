@@ -83,15 +83,15 @@ const Account = ({navigation, route}) => {
     const [sheetParameters, setSheetParameters] = useState({
         sheetTitle: "Open with",
         snapPointsArray: [198],
-    })
+    });
 
     // global varaibles/states
-    const { setBottomsheet, setToast, currentStack } = useGlobals();
+    const { setBottomSheet, setToast, currentStack } = useGlobals();
 
     useEffect(() => {
-        setBottomsheet(prevState=> {
+        setBottomSheet(prevState=> {
             return {...prevState, close: () => sheetRef.current?.close()}
-        })
+        });
     }, [])
     
     // state to store preloaded data
@@ -358,20 +358,6 @@ const Account = ({navigation, route}) => {
         }
     }, [route?.params]);
 
-    // help & support bottom sheet
-    const HelpSupportSheet = () => (supportButtons.map((item, index) => (
-        <AccountButtons
-            key={item.id}
-            title={item.title}
-            subtitle={false}
-            icon={item.icon}
-            length={supportButtons.length - 1}
-            index={index}
-            onPress={item.onPress}
-            unpadded={true}
-        />
-    )))
-
     // open modal function
     const openModal = (type) => {
         
@@ -387,7 +373,7 @@ const Account = ({navigation, route}) => {
         
         sheetRef.current?.present();
 
-        setBottomsheet(prevState => {
+        setBottomSheet(prevState => {
             return {
                 ...prevState,
                 opened: true,
@@ -397,7 +383,7 @@ const Account = ({navigation, route}) => {
 
     const closeModal = () => {
         sheetRef.current?.close();
-        setBottomsheet(prevState => {
+        setBottomSheet(prevState => {
             return {
                 ...prevState,
                 opened: false,

@@ -51,74 +51,44 @@ const AppProvider = ({children}) => {
         type: "success",
     });
 
-    // REFACTORED SHEETS REF
-    const [bottomSheet, setBottomsheet] = useState({
+    // REFACTORED SHEETS STATES
+    // regular bottomsheet
+    const [bottomSheet, setBottomSheet] = useState({
         opened: false,
         close: () => {},
     })
 
-    // regular bottom sheet ref
-    const bottomSheetScreenRef = useRef(null);
-    
-    // stacked bottomsheet ref
-    const stackedBottomSheetScreenRef = useRef(null);
-
-    // bottoms sheet paramaters
-    const [bottomSheetParameters, setBottomSheetParameters] = useState({
-        index: 0,
-        snapPointsArray: ['50%'],
-        enablePanDownToClose: true,
-        sheetTitle: '',
-        sheetSubtitleText: '',
-        sheetOpened: false,
-        contentContainerStyle: undefined,
-        content: <></>,
-        closeModal: (callback) => {
-            if (typeof callback === "function") callback();
-            bottomSheetScreenRef.current?.close();
-        },
-        openModal: (callback) => {
-            if (typeof callback === "function") callback();
-            bottomSheetScreenRef.current?.present();
-        },
-    });
-
-    // stacked bottom sheet paramaters
-    const [stackedBottomSheetParameters, setStackedBottomSheetParameters] = useState({
-        index: 0,
-        snapPointsArray: ['50%'],
-        enablePanDownToClose: true,
-        sheetTitle: '',
-        sheetSubtitleText: '',
-        sheetOpened: false,
-        contentContainerStyle: undefined,
-        content: <></>,
-        closeModal: (callback) => {
-            if (typeof callback === "function") callback();
-            stackedBottomSheetScreenRef.current?.close();
-        },
-        openModal: (callback) => {
-            if (typeof callback === "function") callback();
-            stackedBottomSheetScreenRef.current?.present();
-        },
-    });
-
+    // stacked bottomsheet
+    const [stackedBottomSheet, setStackedBottomSheet] = useState({
+        opened: false,
+        close: () => {},
+    })
 
     // block of code to listen for onPress back button
     useEffect(() => {
         // function to run if back button is pressed
         const backAction = () => {
 
-            // if bottoms sheet is opened
-            if (bottomSheet.opened) {
-                bottomSheet.close();
-                setBottomsheet(prevState => {
+            if (stackedBottomSheet.opened) { // if stacked bottomsheet is opened
+                stackedBottomSheet.close();
+                setStackedBottomSheet(prevState => {
                     return {
                         ...prevState,
                         opened: false,
                     }
                 })
                 return true;
+            } else if (bottomSheet.opened) { // if bottomheet is opened
+                bottomSheet.close();
+                setBottomSheet(prevState => {
+                    return {
+                        ...prevState,
+                        opened: false,
+                    }
+                })
+                return true;
+            } else {
+                return false;
             }
         };
     
@@ -130,7 +100,7 @@ const AppProvider = ({children}) => {
     
         return () => backHandler.remove();
 
-    }, [bottomSheet]);
+    }, [bottomSheet, stackedBottomSheet]);
 
     // function to listen for change in navigation, and update currentStack
     useEffect(() => {
@@ -138,20 +108,14 @@ const AppProvider = ({children}) => {
             // update currentStack
             setCurrentStack(navigation.getCurrentRoute().name);
 
-            if (bottomSheetParameters.sheetOpened) {
-                // reste sheet state
-                setBottomSheetParameters(prevParamaters => {
+            if (bottomSheet.opened) { // if bottomheet is opened
+                bottomSheet.close();
+                setBottomSheet(prevState => {
                     return {
-                        ...prevParamaters,
-                        sheetTitle: '',
-                        sheetSubtitleText: '',
-                        sheetOpened: false,
-                        content: <></>,
+                        ...prevState,
+                        opened: false,
                     }
                 })
-
-                // close bottomsheet
-                bottomSheetParameters.closeModal();
             }
         });
 
@@ -187,13 +151,8 @@ const AppProvider = ({children}) => {
                 setIsLoading,
                 isLoadingSecondary,
                 setIsLoadingSecondary,
-                bottomSheetScreenRef,
-                bottomSheetParameters,
-                setBottomSheetParameters,
-                stackedBottomSheetScreenRef,
-                stackedBottomSheetParameters, 
-                setStackedBottomSheetParameters,
-                setBottomsheet,
+                setBottomSheet,
+                setStackedBottomSheet,
             }}
         >
            {children}
