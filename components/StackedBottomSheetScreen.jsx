@@ -3,12 +3,16 @@ import { BottomSheetModal, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import { useMemo, useCallback } from "react";
 import ModalHandle from "./ModalHandle";
 import CloseIcon from "../assets/icons/CloseIcon";
-import { bodyText, primaryColor } from "../style/colors";
+import { background, bodyText, primaryColor } from "../style/colors";
 // import globals
+import { useGlobals } from "../context/AppContext";
 
-const CustomBottomSheet = ({sheetRef, closeModal, snapPointsArray, index, children, sheetTitle, sheetSubtitle, enablePanDownToClose, contentContainerStyle}) => {
+const StackedBottomSheetScreen = () => {
 
-    const snapPoints = useMemo(() => snapPointsArray, [snapPointsArray]);
+    
+    const { stackedBottomSheetScreenRef, stackedBottomSheetParameters, setStackedBottomSheetParameters } = useGlobals();
+    
+    const snapPoints = useMemo(() => stackedBottomSheetParameters.snapPointsArray, [stackedBottomSheetParameters.snapPointsArray]);
 
     // render popup bottomsheet modal backdrop 
     const renderBackdrop = useCallback(
@@ -18,6 +22,7 @@ const CustomBottomSheet = ({sheetRef, closeModal, snapPointsArray, index, childr
                 disappearsOnIndex={-1}
                 appearsOnIndex={0}
                 opacity={0.3}
+                // onPress={stackedBottomSheetParameters.closeModal}
             />
         ),
         []
@@ -25,41 +30,71 @@ const CustomBottomSheet = ({sheetRef, closeModal, snapPointsArray, index, childr
 
     const handleOpenSheetStates = (index) => {
         // if sheet is closed
-        if (index === -1 && typeof closeModal === 'function') return closeModal();
+        if (index === -1) {
+            // update sheet state
+            setStackedBottomSheetParameters(prevParamaters => {
+                return {
+                    ...prevParamaters,
+                    sheetOpened: false,
+                }
+            })
+            // close modal
+            stackedBottomSheetParameters.closeModal();
+        }
     }
 
     return (
         <BottomSheetModal
-            ref={sheetRef}
-            index={index === undefined ? 0 : index}
+            ref={stackedBottomSheetScreenRef}
+            index={stackedBottomSheetParameters?.index}
             snapPoints={snapPoints}
-            enablePanDownToClose={enablePanDownToClose === undefined || enablePanDownToClose}
-            backgroundStyle={{ borderRadius: 24}}
-            handleComponent={() => <ModalHandle />}
-            stackBehavior={"push"} // stacked ? "push" : "replace"
+            enablePanDownToClose={stackedBottomSheetParameters?.enablePanDownToClose}
+            backgroundStyle={styles.backgroundStyle}
+            // over other bottomsheet
+            stackBehavior={"push"}
             backdropComponent={renderBackdrop}
             onChange={(index) => handleOpenSheetStates(index)}
+            handleComponent={() => (
+                <ModalHandle />
+            )}
         >
             <View style={styles.sheetTitle}>
                 <TouchableOpacity 
                     style={styles.closeButtonWrapper} 
-                    onPress={closeModal}
+                    onPress={stackedBottomSheetParameters.closeModal}
                 >
                     <CloseIcon />
                 </TouchableOpacity>
                 <View style={styles.titleWrapper}>
-                    {sheetTitle && <Text style={styles.sheetTitleText}>{sheetTitle}</Text>}
-                    {sheetSubtitle && <Text style={styles.sheetSubtitleText}>{sheetSubtitle}</Text>}
+                    { stackedBottomSheetParameters?.sheetTitle && (
+                        <Text style={styles.sheetTitleText}>
+                            {stackedBottomSheetParameters?.sheetTitle}
+                        </Text>
+                    )}
+                    { stackedBottomSheetParameters?.sheetSubtitle && ( 
+                        <Text style={styles.sheetSubtitleText}>
+                            {stackedBottomSheetParameters?.sheetSubtitle}
+                        </Text>
+                    )}
                 </View>
             </View>
-            <View style={[styles.modalWrapper, contentContainerStyle]}>
-                {children}
+            <View 
+                style={[
+                    styles.modalWrapper, 
+                    stackedBottomSheetParameters?.contentContainerStyle,
+                ]}
+            >
+                {stackedBottomSheetParameters.content}
             </View>
         </BottomSheetModal>
     );
 }
  
 const styles = StyleSheet.create({
+    backgroundStyle: {
+        borderRadius: 24,
+        backgroundColor: background,
+    },
     sheetTitle: {
         width: "100%",
         minHeight: 20,
@@ -116,4 +151,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default CustomBottomSheet;
+export default StackedBottomSheetScreen;

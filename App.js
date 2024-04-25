@@ -8,6 +8,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import BottomNavigation from './components/BottomNavigation';
 import Toast from './components/Toast';
 import BottomSheetScreen from './components/BottomSheetScreen';
+import StackedBottomSheetScreen from './components/StackedBottomSheetScreen';
 // context
 import AuthProvider from './context/AuthContext';
 import AppProvider from './context/AppContext';
@@ -75,6 +76,7 @@ export default function App() {
                                     <Toast />
                                     <Navigator />
                                     <BottomSheetScreen />
+                                    <StackedBottomSheetScreen />
                                     <BottomNavigation />
                                 </BottomSheetModalProvider>
                             </GestureHandlerRootView>

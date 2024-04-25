@@ -2,7 +2,6 @@ import { createContext, useState, useEffect, useContext, useRef } from "react";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 // back handler
 import { BackHandler } from "react-native";
-import { Text } from "react-native";
 
 const AppContext = createContext();
 
@@ -16,8 +15,6 @@ const AppProvider = ({children}) => {
 
     // regular bottom sheet ref
     const bottomSheetRef = useRef(null);
-    // regular bottom sheet ref
-    const bottomSheetScreenRef = useRef(null);
     // stacked bottom sheet ref
     const stackedSheetRef = useRef(null);
     // filter bottom sheet ref
@@ -54,6 +51,19 @@ const AppProvider = ({children}) => {
         type: "success",
     });
 
+    // REFACTORED SHEETS REF
+    const [bottomSheet, setBottomsheet] = useState({
+        opened: false,
+        close: () => {},
+    })
+
+    // regular bottom sheet ref
+    const bottomSheetScreenRef = useRef(null);
+    
+    // stacked bottomsheet ref
+    const stackedBottomSheetScreenRef = useRef(null);
+
+    // bottoms sheet paramaters
     const [bottomSheetParameters, setBottomSheetParameters] = useState({
         index: 0,
         snapPointsArray: ['50%'],
@@ -71,7 +81,27 @@ const AppProvider = ({children}) => {
             if (typeof callback === "function") callback();
             bottomSheetScreenRef.current?.present();
         },
-    })
+    });
+
+    // stacked bottom sheet paramaters
+    const [stackedBottomSheetParameters, setStackedBottomSheetParameters] = useState({
+        index: 0,
+        snapPointsArray: ['50%'],
+        enablePanDownToClose: true,
+        sheetTitle: '',
+        sheetSubtitleText: '',
+        sheetOpened: false,
+        contentContainerStyle: undefined,
+        content: <></>,
+        closeModal: (callback) => {
+            if (typeof callback === "function") callback();
+            stackedBottomSheetScreenRef.current?.close();
+        },
+        openModal: (callback) => {
+            if (typeof callback === "function") callback();
+            stackedBottomSheetScreenRef.current?.present();
+        },
+    });
 
 
     // block of code to listen for onPress back button
@@ -79,38 +109,16 @@ const AppProvider = ({children}) => {
         // function to run if back button is pressed
         const backAction = () => {
 
-            if (calendarSheetOpen) {
-                // if calendar bottom sheet is open, close it
-                calendarSheetRef?.current.close();
+            // if bottoms sheet is opened
+            if (bottomSheet.opened) {
+                bottomSheet.close();
+                setBottomsheet(prevState => {
+                    return {
+                        ...prevState,
+                        opened: false,
+                    }
+                })
                 return true;
-                
-            } else if (filterSheetOpen) {
-                // if filter bottom sheet is open, close it
-                filterSheetRef?.current.close();
-                return true;
-                
-            } else if (popUpSheetOpen) {
-                // if popup bottom sheet is open, close it
-                popUpSheetRef?.current.close();
-                return true;
-
-            } else if (successSheetOpen) {
-                // if succes bottom sheet is open disable back buttons
-                return true;
-
-            } else if (stackedSheetOpen) {
-                // if stacked bottom sheet is open, close it
-                stackedSheetRef?.current.close();
-                return true;
-
-            } else if (bottomSheetOpen) {
-                // if bottom sheet is open, close it
-                bottomSheetRef?.current.close();
-                return true;
-
-            } else {
-                // if any bottomsheet isnt opened return false
-                return false;
             }
         };
     
@@ -122,7 +130,7 @@ const AppProvider = ({children}) => {
     
         return () => backHandler.remove();
 
-    }, [bottomSheetOpen, stackedSheetOpen, filterSheetOpen, successSheetOpen, calendarSheetOpen, popUpSheetOpen]);
+    }, [bottomSheet]);
 
     // function to listen for change in navigation, and update currentStack
     useEffect(() => {
@@ -130,8 +138,21 @@ const AppProvider = ({children}) => {
             // update currentStack
             setCurrentStack(navigation.getCurrentRoute().name);
 
-            // close bottomsheet
-            bottomSheetParameters.closeModal();
+            if (bottomSheetParameters.sheetOpened) {
+                // reste sheet state
+                setBottomSheetParameters(prevParamaters => {
+                    return {
+                        ...prevParamaters,
+                        sheetTitle: '',
+                        sheetSubtitleText: '',
+                        sheetOpened: false,
+                        content: <></>,
+                    }
+                })
+
+                // close bottomsheet
+                bottomSheetParameters.closeModal();
+            }
         });
 
 
@@ -169,6 +190,10 @@ const AppProvider = ({children}) => {
                 bottomSheetScreenRef,
                 bottomSheetParameters,
                 setBottomSheetParameters,
+                stackedBottomSheetScreenRef,
+                stackedBottomSheetParameters, 
+                setStackedBottomSheetParameters,
+                setBottomsheet,
             }}
         >
            {children}

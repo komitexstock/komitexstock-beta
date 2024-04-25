@@ -12,14 +12,15 @@ import {
 import { 
     useState, 
     useEffect,
+    useRef,
 } from "react";
 // colors
 import { primaryColor, secondaryColor, background, black, bodyText, white, cancelledText, } from '../style/colors';
 // custom components
-import CustomBottomSheet from "../components/CustomBottomSheet";
 import AccountButtons from "../components/AccountButtons";
 import Indicator from "../components/Indicator";
 import Avatar from "../components/Avatar";
+import CustomBottomSheet from "../components/CustomBottomSheet";
 // icons
 import CameraIcon from "../assets/icons/CameraIcon";
 import EditUserIcon from "../assets/icons/EditUserIcon";
@@ -76,9 +77,23 @@ const Account = ({navigation, route}) => {
     // auth data
     const { authData, setStoredData, utilityData } = useAuth();
 
-    // bottomsheet ref
-    const { bottomSheetParameters, setBottomSheetParameters, setToast, currentStack } = useGlobals();
+    // sheet ref
+    const sheetRef = useRef(null);
 
+    const [sheetParameters, setSheetParameters] = useState({
+        sheetTitle: "Open with",
+        snapPointsArray: [198],
+    })
+
+    // global varaibles/states
+    const { setBottomsheet, setToast, currentStack } = useGlobals();
+
+    useEffect(() => {
+        setBottomsheet(prevState=> {
+            return {...prevState, close: () => sheetRef.current?.close()}
+        })
+    }, [])
+    
     // state to store preloaded data
     const [preload, setPreload] = useState({
         teamMembers: { // data for temMembers screen
@@ -343,21 +358,6 @@ const Account = ({navigation, route}) => {
         }
     }, [route?.params]);
 
-    // notifications bottom sheet
-    const NotificationsSheet = () => (
-        <AccountButtons
-            title="Allow Push Notifications"
-            subtitle={false}
-            icon={<NotificationBlackIcon />}
-            length={0}
-            index={0}
-            toggle={true}
-            isEnabled={enableNotifications}
-            handleToggle={handleToggle}
-            unpadded={true}
-        />
-    );
-
     // help & support bottom sheet
     const HelpSupportSheet = () => (supportButtons.map((item, index) => (
         <AccountButtons
@@ -372,102 +372,37 @@ const Account = ({navigation, route}) => {
         />
     )))
 
-    // open width sheet
-    const OpenWithSheet = () => (
-        <View style={style.uploadButtonsWrapper}>
-            {/* navigate to camera screen button */}
-            <TouchableOpacity
-                style={style.uploadButton}
-                onPress={() => { 
-                    navigation.navigate("CaptureImage", {
-                        origin: "Account",
-                        imageType: imageType,
-                    })
-                }}
-            >
-                <View style={style.uploadIconWrapper}>
-                    <CameraPrimaryLargeIcon />
-                </View>
-                <Text style={style.uploadButtonText}>Camera</Text>
-            </TouchableOpacity>
-
-            {/* open gallery image picker button */}
-            <TouchableOpacity
-                style={style.uploadButton}
-                onPress={pickImageAsync}
-            >
-                <View style={style.uploadIconWrapper}>
-                    <GalleryIcon />
-                </View>
-                <Text style={style.uploadButtonText}>Gallery</Text>
-            </TouchableOpacity>
-            
-        </View> 
-    );
-
     // open modal function
     const openModal = (type) => {
-        // open bottomsheet modal
-        // bottomSheetRef.current?.present();
-        // set modal type
-        if (type === "Notifications") {
-            // set sheet parameters
-            setBottomSheetParameters(prevParamaters => {
-                return {
-                    ...prevParamaters,
-                    sheetTitle: type,
-                    sheetOpened: true,
-                    snapPointsArray: [271],
-                    content: <NotificationsSheet />,
-                }
-            });
+        
+        // set sheet parameters
+        setSheetParameters({
+            sheetTitle: type,
+            snapPointsArray: (() => {
+               if (type === "Notifications") return [271];
+               else if (type === "Help & Support") return [368];
+               return [198] 
+            })(),
+        });
+        
+        sheetRef.current?.present();
 
-            // open bottomsheet modal
-            bottomSheetParameters.openModal();
-        }
-        else if (type === "Help & Support") {
-            // set sheet parameters
-            setBottomSheetParameters(prevParamaters => {
-                return {
-                    ...prevParamaters,
-                    sheetTitle: type,
-                    sheetOpened: true,
-                    snapPointsArray: [368],
-                    content: <HelpSupportSheet />,
-                }
-            });
-    
-            // open bottomsheet modal
-            bottomSheetParameters.openModal();
-        } 
-        else if (type === "Open with") {
-            // set sheet parameters
-            setBottomSheetParameters(prevParamaters => {
-                return {
-                    ...prevParamaters,
-                    sheetTitle: type,
-                    sheetOpened: true,
-                    snapPointsArray: [198],
-                    content: <OpenWithSheet />,
-                }
-            });
-    
-            // open bottomsheet modal
-            bottomSheetParameters.openModal();
-        } 
+        setBottomsheet(prevState => {
+            return {
+                ...prevState,
+                opened: true,
+            }
+        });
     }
 
     const closeModal = () => {
-        // update sheet closed state
-        setBottomSheetParameters(prevParamaters => {
+        sheetRef.current?.close();
+        setBottomsheet(prevState => {
             return {
-                ...prevParamaters,
-                sheetOpened: false,
-                content: <></>,
+                ...prevState,
+                opened: false,
             }
         });
-        // close bottomsheet modal
-        bottomSheetParameters.closeModal();
     }
 
     // enable notification state 
@@ -699,6 +634,72 @@ const Account = ({navigation, route}) => {
                     </View>
                 </View>
             </ScrollView>
+            <CustomBottomSheet
+                sheetRef={sheetRef}
+                sheetTitle={sheetParameters.sheetTitle}
+                snapPointsArray={sheetParameters.snapPointsArray}
+                closeModal={closeModal}
+            >
+                {/* open with bottomsheet */}
+                {sheetParameters.sheetTitle === "Open with" && (
+                    <View style={style.uploadButtonsWrapper}>
+                        {/* navigate to camera screen button */}
+                        <TouchableOpacity
+                            style={style.uploadButton}
+                            onPress={() => { 
+                                navigation.navigate("CaptureImage", {
+                                    origin: "Account",
+                                    imageType: imageType,
+                                })
+                            }}
+                        >
+                            <View style={style.uploadIconWrapper}>
+                                <CameraPrimaryLargeIcon />
+                            </View>
+                            <Text style={style.uploadButtonText}>Camera</Text>
+                        </TouchableOpacity>
+            
+                        {/* open gallery image picker button */}
+                        <TouchableOpacity
+                            style={style.uploadButton}
+                            onPress={pickImageAsync}
+                        >
+                            <View style={style.uploadIconWrapper}>
+                                <GalleryIcon />
+                            </View>
+                            <Text style={style.uploadButtonText}>Gallery</Text>
+                        </TouchableOpacity>
+                    </View> 
+                )}
+                {/* notifications bottomsheet */}
+                {sheetParameters.sheetTitle === "Notifications" && (
+                    <AccountButtons
+                        title="Allow Push Notifications"
+                        subtitle={false}
+                        icon={<NotificationBlackIcon />}
+                        length={0}
+                        index={0}
+                        toggle={true}
+                        isEnabled={enableNotifications}
+                        handleToggle={handleToggle}
+                        unpadded={true}
+                    />
+                )}
+                
+                {/* help and support bottomsheet */}
+                {sheetParameters.sheetTitle === "Help & Support" && supportButtons.map((item, index) => (
+                    <AccountButtons
+                        key={item.id}
+                        title={item.title}
+                        subtitle={false}
+                        icon={item.icon}
+                        length={supportButtons.length - 1}
+                        index={index}
+                        onPress={item.onPress}
+                        unpadded={true}
+                    />
+                ))}
+            </CustomBottomSheet>
         </>
     );
 }

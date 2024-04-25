@@ -44,8 +44,6 @@ import {
     where,
     query,
     orderBy,
-    doc,
-    getDoc,
     serverTimestamp,
     addDoc,
 } from "firebase/firestore";
@@ -53,6 +51,109 @@ import {
 // local database
 import { handleLocations } from "../sql/handleLocations";
 import { useSQLiteContext } from "expo-sqlite/next";
+
+// add sublocation sheet
+// const AddSubLocationSheet = ({
+//     townInput,
+//     setTownInput,
+//     townInputError,
+//     setTownInputError,
+//     openStackedModal,
+//     warehouseInput,
+//     warehouseInputActive,
+//     chargeInput,
+//     updateChargeInput,
+//     chargeInputError,
+//     setChargeInputError,
+//     handleAddLocations,
+// }) => (
+//     <View style={styles.modalWrapper}>
+//         <View style={styles.modalContent}>
+//             <Text style={styles.modalParagraph}>
+//                 Add sub-location an it's corresponding delivery charge
+//             </Text>
+//             <View style={styles.modalInputWrapper}>
+//                 {/*Delivery Town/City input */}
+//                 <Input 
+//                     label={"Region"}
+//                     placeholder={"City or Town"}
+//                     helperText={"Refers to a region grouped under one delivery charge"}
+//                     value={townInput}
+//                     onChange={setTownInput}
+//                     error={townInputError}
+//                     setError={setTownInputError}
+//                 />
+//                 {/* select warehouse input */}
+//                 <SelectInput
+//                     label={"Select Warehouse"}
+//                     placeholder={"Select warehouse for the city above"}
+//                     inputFor={"String"}
+//                     onPress={openStackedModal}
+//                     value={warehouseInput?.warehouse_name}
+//                     active={warehouseInputActive}
+//                 />
+//                 {/* delivery charge input */}                                
+//                 <Input 
+//                     label={"Charge"}
+//                     placeholder={"Delivery charge"}
+//                     value={chargeInput?.toLocaleString()}
+//                     onChange={updateChargeInput}
+//                     error={chargeInputError}
+//                     setError={setChargeInputError}
+//                     keyboardType={"numeric"}
+//                 />
+//             </View>
+//         </View>
+//         {/* save date button */}
+//         <CustomButton
+//             shrinkWrapper={true}
+//             name={"Save"}
+//             unpadded={true}
+//             inactive={warehouseInput === null || chargeInput === "" || townInput === ""}
+//             onPress={handleAddLocations}
+//         />
+//     </View>
+// );
+
+// select states sheet
+const StatesSheet = ({states, handleSelectState}) => (
+    <BottomSheetScrollView 
+        showsVerticalScrollIndicator={false}
+        style={styles.stackedModalWrapper}
+    >
+        <View style={styles.listWrapper}>
+            {states.map((state) => (
+                <TouchableOpacity 
+                    key={state} 
+                    style={styles.listItem}
+                    onPress={() => handleSelectState(state)}
+                >
+                    <Text style={styles.listText}>{state}</Text>
+                </TouchableOpacity>
+            ))}
+        </View>
+    </BottomSheetScrollView>
+);
+
+// // warehouse sheet
+// const WarehouseSheet = ({warehouses, updateWarehouse}) => (
+//     <BottomSheetScrollView
+//         showsVerticalScrollIndicator={false}
+//         style={styles.stackedModalWrapper}
+//     >
+//         <View style={styles.listWrapper}>
+//             {warehouses.map((warehouse) => (
+//                 <TouchableOpacity 
+//                     key={warehouse.id} 
+//                     style={styles.listItem}
+//                     onPress={() => updateWarehouse(warehouse.id)}
+//                 >
+//                     <Text style={styles.listText}>{warehouse.warehouse_name}</Text>
+//                 </TouchableOpacity>
+//             ))}
+//         </View>
+//     </BottomSheetScrollView>
+// );
 
 const AddLocation = ({navigation}) => {
         
@@ -63,34 +164,21 @@ const AddLocation = ({navigation}) => {
     const db = useSQLiteContext();
 
     // gloabsl
-    const { bottomSheetRef, stackedSheetRef, setToast } = useGlobals();
+    const {
+        bottomSheetRef,
+        stackedSheetRef,
+        bottomSheetParameters,
+        setBottomSheetParameters,
+        stackedBottomSheetParameters,
+        setStackedBottomSheetParameters,
+        setToast
+    } = useGlobals();
 
     // main action button loadins state
     const [isLoading, setIsLoading] = useState(false);
 
     // location state, to store list of locations
-    const [sublocations, setSublocations] = useState([
-        // {
-        //     warehouse_id: 1,
-        //     warehouse_name: "Warri",
-        //     towns: [
-        //         {
-        //             id: 1,
-        //             town: "Warri",
-        //             charge: 3000,
-        //             editing: false,
-        //             disabled: false,
-        //         },
-        //         {
-        //             id: 2,
-        //             town: "Udu",
-        //             charge: 3500,
-        //             editing: false,
-        //             disabled: false,
-        //         },
-        //     ]
-        // },
-    ]);
+    const [sublocations, setSublocations] = useState([]);
 
     // console.log('Sublocations', sublocations[0]);
 
@@ -211,20 +299,25 @@ const AddLocation = ({navigation}) => {
 
     // function to select a state where delivery location is to be added to
     const handleSelectState = (selectedState) => {
-        setStateInput(selectedState);
         // close state select bottomsheet after state has been selected
-        closeModal();
+        bottomSheetParameters.closeModal(() => {
+            // update state input
+            setStateInput(selectedState);
+            setStateInputActive(false);
+        });
+
+        // reste bottomsheet paramters
+        setBottomSheetParameters(prevParamaters => {
+            return {
+                ...prevParamaters,
+                sheetOpened: false,
+                content: <></>
+            }
+        });
+
     }
 
-    // update warehouse function
-    const updateWarehouse = (id) => {
-        // close stacked bottomsheet
-        closeStackedModal();
-        // set warehouse input
-        setWarehouseInput(warehouses.find((item) => item.id === id));
-        // disable input active state
-        setWarehouseInputActive(false);
-    }
+    console.log("Seleted Warehouse:", warehouseInput);
 
     // update charge state on text change in input component
     const updateChargeInput = (text) => {
@@ -233,15 +326,89 @@ const AddLocation = ({navigation}) => {
         if (newText) setChargeInput(parseFloat(newText));
         else setChargeInput("");
     }
+
+    // // select states sheet
+    // const StatesSheet = () => (
+    //     <BottomSheetScrollView 
+    //         showsVerticalScrollIndicator={false}
+    //         style={styles.stackedModalWrapper}
+    //     >
+    //         <View style={styles.listWrapper}>
+    //             {states.map((state) => (
+    //                 <TouchableOpacity 
+    //                     key={state} 
+    //                     style={styles.listItem}
+    //                     onPress={() => handleSelectState(state)}
+    //                 >
+    //                     <Text style={styles.listText}>{state}</Text>
+    //                 </TouchableOpacity>
+    //             ))}
+    //         </View>
+    //     </BottomSheetScrollView>
+    // );
+
+
+
+    console.log(warehouses)
     
+    // update warehouse function
+    const updateWarehouse = (id) => {
+        console.log("got here")
+        // console.log("CHOSEN WAREHOUSES:", warehouses.find((item) => item.id === id));
+        console.log("")
+        console.log("")
+        // console.log("ID CHOSEN:", id)
+        // close bottomsheet
+        stackedBottomSheetParameters.closeModal(() => {
+            // set warehouse input
+            setWarehouseInput(warehouses.find((item) => item.id === id));
+            // disable input active state
+            setWarehouseInputActive(false);
+
+            // rerender Add sub location bottomsheet
+            setBottomSheetParameters(prevParamaters => {
+                console.log("Inside function");
+                return {
+                    ...prevParamaters,
+                    content: AddSubLocationSheet
+                }
+            });
+        });
+
+        // reset bottomsheet paramteres
+        setStackedBottomSheetParameters(prevParamaters => {
+            return {
+                ...prevParamaters,
+                sheetOpened: false,
+                content: <></>
+            }
+        });
+    }
+
     // open bottom sheet function
     const openModal = (type) => {
-        bottomSheetRef?.current?.present();
-        // set modal type
-        setModalType(type);
+        // bottomsheet parameters
+        setBottomSheetParameters(prevParamaters => {
+            return {
+                ...prevParamaters,
+                index: type === "Select" ? 2 : 0,
+                sheetOpened: true,
+                sheetTitle: type === "Select" ? "Select State" : `Add${sublocations.length !== 0 ? " New" : ""} Sub-Location`,
+                snapPointsArray: type === "Select" ? ["50%", "75%", "100%"] : ["100%"],
+                content: type === "Select" ? (
+                    <StatesSheet 
+                        states={states}
+                        handleSelectState={handleSelectState}
+                    />
+                ) : AddSubLocationSheet,
+            }
+        });
 
-        // set state select input active if select bottomsheet is triggered
-        if (type === "Select") setStateInputActive(true);
+        // open bottomsheet modal
+        bottomSheetParameters.openModal(() => {
+            // set state select input active if select bottomsheet is triggered
+            if (type === "Select") setStateInputActive(true);
+        });
     }
 
     // close bottom sheet function
@@ -253,31 +420,109 @@ const AddLocation = ({navigation}) => {
 
     // open stacked bottom sheet function
     const openStackedModal = () => {
-        stackedSheetRef?.current?.present();
-        // set modal type
-        setWarehouseInputActive(true);
-        console.log("Opening Stacked Modal");
-        // dismiss keyboard
-        Keyboard.dismiss();
+        // set stacked bottomsheet parameters
+        setStackedBottomSheetParameters(prevParamaters => {
+            return {
+                ...prevParamaters,
+                sheetOpened: true,
+                sheetTitle: "Select Warehouse",
+                snapPointsArray: ["50%", "100%"],
+                content: WarehouseSheet,
+            }
+        });
+
+        // open stacked bottomsheet modal
+        stackedBottomSheetParameters.openModal(() => {
+            setWarehouseInputActive(true);
+            // dismiss keyboard
+            Keyboard.dismiss();
+        });
     }
 
-    // close stacked bottom sheet function
-    const closeStackedModal = () => {
-        stackedSheetRef?.current?.close();
-        setWarehouseInputActive(false);
-    }
+    // add sublocation sheet
+    const AddSubLocationSheet = useMemo(() =>(
+        <View style={styles.modalWrapper}>
+            <View style={styles.modalContent}>
+                <Text style={styles.modalParagraph}>
+                    Add sub-location an it's corresponding delivery charge
+                </Text>
+                <View style={styles.modalInputWrapper}>
+                    {/*Delivery Town/City input */}
+                    <Input 
+                        label={"Region"}
+                        placeholder={"City or Town"}
+                        helperText={"Refers to a region grouped under one delivery charge"}
+                        value={townInput}
+                        onChange={setTownInput}
+                        error={townInputError}
+                        setError={setTownInputError}
+                    />
+                    {/* select warehouse input */}
+                    <SelectInput
+                        label={"Select Warehouse"}
+                        placeholder={"Select warehouse for the city above"}
+                        inputFor={"String"}
+                        onPress={openStackedModal}
+                        value={warehouseInput?.warehouse_name}
+                        active={warehouseInputActive}
+                    />
+                    {/* delivery charge input */}                                
+                    <Input 
+                        label={"Charge"}
+                        placeholder={"Delivery charge"}
+                        value={chargeInput?.toLocaleString()}
+                        onChange={updateChargeInput}
+                        error={chargeInputError}
+                        setError={setChargeInputError}
+                        keyboardType={"numeric"}
+                    />
+                </View>
+            </View>
+            {/* save date button */}
+            <CustomButton
+                shrinkWrapper={true}
+                name={"Save"}
+                unpadded={true}
+                inactive={warehouseInput === null || chargeInput === "" || townInput === ""}
+                onPress={handleAddLocations}
+            />
+        </View>
+    ), [townInput, townInputError, warehouseInput, warehouseInputActive, chargeInput, chargeInputError]);
 
-    // state to store modaltype, which controls some of the bottomsheet parameters
-    const [modalType, setModalType] = useState("")
+    
+    // warehouse sheet
+    const WarehouseSheet = useMemo(() => (
+        <BottomSheetScrollView
+            showsVerticalScrollIndicator={false}
+            style={styles.stackedModalWrapper}
+        >
+            <View style={styles.listWrapper}>
+                {warehouses.map((warehouse) => (
+                    <TouchableOpacity 
+                        key={warehouse.id} 
+                        style={styles.listItem}
+                        onPress={() => updateWarehouse(warehouse.id)}
+                    >
+                        <Text style={styles.listText}>{warehouse.warehouse_name}</Text>
+                    </TouchableOpacity>
+                ))}
+            </View>
+        </BottomSheetScrollView>
+    ), [warehouses]);
 
-    // memorize the bottomsheet paramters according to the modal type
-    const bottomSheetProps = useMemo(() => {
-        return {
-            snapPointsArray: modalType === "Select" ? ["50%", "75%", "100%"] : ["100%"],
-            autoSnapAt: modalType === "Select" ? 1 : 0,
-            sheetTitle: modalType === "Select" ? "Select State" : `Add${sublocations.length !== 0 ? " New" : ""} Sub-Location`,
-        }
-    }, [modalType]);
+    // check if list of warehouses has been fetched
+    useEffect(() => {
+        // set stacked bottomsheet parameters
+        setStackedBottomSheetParameters(prevParamaters => {
+            return {
+                ...prevParamaters,
+                sheetOpened: true,
+                sheetTitle: "Select Warehouse",
+                snapPointsArray: ["50%", "100%"],
+                content: WarehouseSheet,
+            }
+        });
+    }, [warehouses])
 
     // handle confirm location
     const handleConfirmLocations = async () => {
@@ -1025,111 +1270,6 @@ const AddLocation = ({navigation}) => {
                 />
             )}
         </ScrollView>
-        {/* bottomsheet */}
-        <CustomBottomSheet
-            bottomSheetModalRef={bottomSheetRef}
-            snapPointsArray={bottomSheetProps.snapPointsArray}
-            autoSnapAt={bottomSheetProps.autoSnapAt}
-            sheetTitle={bottomSheetProps.sheetTitle}
-            closeModal={closeModal}
-        >
-            {/* select state buttom sheet */}
-            {modalType === "Select" ? (
-                <BottomSheetScrollView 
-                    showsVerticalScrollIndicator={false}
-                    style={styles.stackedModalWrapper}
-                >
-                    <View style={styles.listWrapper}>
-                        {states.map((state) => (
-                            <TouchableOpacity 
-                                key={state} 
-                                style={styles.listItem}
-                                onPress={() => handleSelectState(state)}
-                            >
-                                <Text style={styles.listText}>{state}</Text>
-                            </TouchableOpacity>
-                        ))}
-                    </View>
-                </BottomSheetScrollView>
-            ) : (
-                <TouchableWithoutFeedback
-                    // onPress={Keyboard.dismiss}
-                >
-                    <View style={styles.modalWrapper}>
-                        <View style={styles.modalContent}>
-                            <Text style={styles.modalParagraph}>
-                                Add sub-location an it's corresponding delivery charge
-                            </Text>
-                            <View style={styles.modalInputWrapper}>
-                                {/*Delivery Town/City input */}
-                                <Input 
-                                    label={"Region"}
-                                    placeholder={"City or Town"}
-                                    helperText={"Refers to a region grouped under one delivery charge"}
-                                    value={townInput}
-                                    onChange={setTownInput}
-                                    error={townInputError}
-                                    setError={setTownInputError}
-                                />
-                                {/* select warehouse input */}
-                                <SelectInput
-                                    label={"Select Warehouse"}
-                                    placeholder={"Select warehouse for the city above"}
-                                    inputFor={"String"}
-                                    onPress={openStackedModal}
-                                    value={warehouseInput?.warehouse_name}
-                                    active={warehouseInputActive}
-                                />
-                                {/* delivery charge input */}                                
-                                <Input 
-                                    label={"Charge"}
-                                    placeholder={"Delivery charge"}
-                                    value={chargeInput?.toLocaleString()}
-                                    onChange={updateChargeInput}
-                                    error={chargeInputError}
-                                    setError={setChargeInputError}
-                                    keyboardType={"numeric"}
-                                />
-                            </View>
-                        </View>
-                        {/* save date button */}
-                        <CustomButton
-                            shrinkWrapper={true}
-                            name={"Save"}
-                            unpadded={true}
-                            inactive={warehouseInput === null || chargeInput === "" || townInput === ""}
-                            onPress={handleAddLocations}
-                        />
-                    </View>
-                </TouchableWithoutFeedback>
-            )}
-        </CustomBottomSheet>
-        {/* stacked bottomsheet */}
-        <CustomBottomSheet
-            bottomSheetModalRef={stackedSheetRef}
-            snapPointsArray={["50%", "75%"]}
-            autoSnapAt={0}
-            sheetTitle={"Select Warehouse"}
-            closeModal={closeStackedModal}
-            stacked={true}
-        >
-            <BottomSheetScrollView
-                showsVerticalScrollIndicator={false}
-                style={styles.stackedModalWrapper}
-            >
-                <View style={styles.listWrapper}>
-                    {warehouses.map((warehouse) => (
-                        <TouchableOpacity 
-                            key={warehouse.id} 
-                            style={styles.listItem}
-                            onPress={() => updateWarehouse(warehouse.id)}
-                        >
-                            <Text style={styles.listText}>{warehouse.warehouse_name}</Text>
-                        </TouchableOpacity>
-                    ))}
-                </View>
-            </BottomSheetScrollView>
-        </CustomBottomSheet>
         {/* fixed buttons */}
         <CustomButton 
             fixed={true}
