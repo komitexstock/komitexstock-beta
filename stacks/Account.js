@@ -88,6 +88,7 @@ const Account = ({navigation, route}) => {
     // global varaibles/states
     const { setBottomSheet, setToast, currentStack } = useGlobals();
 
+    // update bottomsheet global state
     useEffect(() => {
         setBottomSheet(prevState=> {
             return {...prevState, close: () => sheetRef.current?.close()}

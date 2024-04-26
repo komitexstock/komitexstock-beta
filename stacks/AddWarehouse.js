@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 
 // react hooks
-
 import React, { useEffect, useRef, useState } from 'react'
 
 // components 
@@ -176,9 +175,6 @@ const AddWarehouse = ({navigation}) => {
         setBottomSheet(prevState=> {
             return {...prevState, opened: true}
         });
-
-        // update index
-        setIndex(0);
     }
 
     // close bottomsheet modal modal function
@@ -290,9 +286,6 @@ const AddWarehouse = ({navigation}) => {
         navigation.navigate("Warehouse");
     }
 
-    // state to control bottomsheet snap point
-    const [index, setIndex] = useState(0);
-
     // listen for keyboard opening or closing
     useEffect(() => {
         // if keyboard is open
@@ -300,7 +293,7 @@ const AddWarehouse = ({navigation}) => {
             Platform.OS === 'android' ? 'keyboardDidShow' : 'keyboardWillShow', () => {
                 if (!bottomSheet.opened) return;
                 // console.log("got here")
-                setIndex(2);
+                sheetRef.current?.snapToIndex(2);
             }
         );
         
@@ -390,12 +383,11 @@ const AddWarehouse = ({navigation}) => {
             </TouchableWithoutFeedback>
             {/* bottomsheet to select managers */}
             <CustomBottomSheet
+                index={0}
                 sheetRef={sheetRef}
+                closeModal={closeModal}
                 sheetTitle={"Select Manager"}
                 snapPointsArray={["50%", "75%", "100%"]}
-                index={index}
-                setIndex={setIndex}
-                closeModal={closeModal}
             >
                 {/* search bar to search for managers */}
                 <SearchBar

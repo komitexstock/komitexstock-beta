@@ -81,19 +81,6 @@ const AddLocation = ({navigation}) => {
         setToast
     } = useGlobals();
 
-    // update botomsheet global states
-    useEffect(() => {
-        // set bottomsheet state
-        setBottomSheet(prevState=> {
-            return {...prevState, close: () => sheetRef.current?.close()}
-        });
-
-        // set bottomsheet state
-        setStackedBottomSheet(prevState=> {
-            return {...prevState, close: () => stackedSheetRef.current?.close()}
-        });
-    }, []);
-
     // main action button loadins state
     const [isLoading, setIsLoading] = useState(false);
 
@@ -131,6 +118,28 @@ const AddLocation = ({navigation}) => {
 
     // warehosue input active
     const [stateInputActive, setStateInputActive] = useState(false);
+
+    // update botomsheet global states
+    useEffect(() => {
+        // set bottomsheet state
+        setBottomSheet(prevState=> {
+            return {...prevState, close: () => {
+                sheetRef.current?.close();
+                // deactivate active state in state input
+                setStateInputActive(false);
+            }}
+        });
+
+        // set bottomsheet state
+        setStackedBottomSheet(prevState=> {
+            return {...prevState, close: () => {
+                // close bottomsheet
+                stackedSheetRef.current?.close();
+                // set warehouse input inactive
+                setWarehouseInputActive(false);
+            }}
+        });
+    }, []);
 
     // country of user
     const country = "Nigeria";
@@ -293,7 +302,7 @@ const AddLocation = ({navigation}) => {
                 opened: true,
             }
         });
-    }
+    }    
 
     // close stacked bottom sheet function
     const closeStackedModal = () => {

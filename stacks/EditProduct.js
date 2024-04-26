@@ -57,7 +57,6 @@ const EditProduct = ({navigation, route}) => {
     // global variables
     const {
         setBottomSheet,
-        bottomSheetRef,
         setToast,
     } = useGlobals();
 

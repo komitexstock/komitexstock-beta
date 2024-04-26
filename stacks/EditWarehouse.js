@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 
 // react hooks
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
 // components 
 import Header from '../components/Header';
@@ -80,8 +80,24 @@ const EditWarehouse = ({navigation, route}) => {
         waybill_receivable
     } = route?.params || {};
 
-    // bottomsheet refs
-    const { stackedSheetRef, stackedSheetOpen, successSheetRef, setToast } = useGlobals();
+    // sheet ref
+    const sheetRef = useRef(null);
+
+    // global variables
+    const {
+        bottomSheet,
+        setBottomSheet,
+        stackedSheetRef,
+        stackedSheetOpen,
+        successSheetRef,
+        setToast
+    } = useGlobals();
+
+    const [sheetParameters, setSheetParameters] = useState({
+        content: "support",
+        sheetTitle: "Help & Support",
+        snapPointsArray: [280],
+    });
 
     // warehouse name
     const warehouseName = warehouse_name.charAt(0).toUpperCase() + warehouse_name.slice(1);
@@ -103,9 +119,17 @@ const EditWarehouse = ({navigation, route}) => {
     // reacieve waybill state
     const [waybillReceivable, setWaybillReceivable] = useState(waybill_receivable);
 
-    // console.log("default manager", warehouse_manager);
-    // console.log("new manager", warehouseManager);
-    // console.log("");
+    // update bottomsheet global state
+    useEffect(() => {
+        setBottomSheet(prevState=> {
+            return {...prevState, close: () => {
+                // close bottomsheet
+                sheetRef.current?.close()
+                // set input as inactive
+                setActiveWarehouseManager(false);
+            }}
+        });
+    }, [])
 
 
     // get managers
@@ -153,47 +177,64 @@ const EditWarehouse = ({navigation, route}) => {
         setWarehouseManager(() => {
             return managers.find(manager => manager.id === id);
         });
-        closeStackedModal();
+        closeModal();
     }
 
     // search query
     const [searchQuery, setSearchQuery] = useState(null);
 
-    // modal type state, defaults as "managers"
-    const [modalType, setModalType] = useState("managers");
 
-    // state to control bottomsheet snap point
-    const [snapPoint, setSnapPoint] = useState(0);
-
+    // open bottomsheet modal function
     const openModal = (type) => {
-        setSnapPoint(0);
-        // set modat type
-        setModalType(type);
-        // open bottom sheet
-        stackedSheetRef?.current?.present();
         // dismiss keyboard
         Keyboard.dismiss();
+
         // set warehouse manager select input as active
         setActiveWarehouseManager(true);
+
+        // set sheet paramters
+        setSheetParameters({
+            content: type,
+            sheetTitle: (() => {
+                if (type === "managers") return "Select Managers";
+                return "Help & Support";
+            })(), //self invoking function
+            snapPointsArray: (() => {
+                if (type === "managers") return ["75%", "100%"];
+                return [280];
+            })() //self invoking function 
+        });
+
+        // open bottom sheet
+        sheetRef?.current?.present();
+
+        // update bottomsheet global state
+        setBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: true,
+            }
+        });
     }
 
     // close modal function
-    const closeStackedModal = () => {
+    const closeModal = () => {
+        
         // close stacked modal
-        stackedSheetRef?.current?.close();
+        sheetRef?.current?.close();
+
         // set warehouse manager select input as inactive
         setActiveWarehouseManager(false);
+
+        // update bottomsheet global state
+        setBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: false,
+            }
+        });
+
     }
-    
-    // disable active states for select input if back button is pressed
-    // if bottomsheet is closed without selecting a manager
-    useEffect(() => {
-        // if bottomsheet is close
-        if (!stackedSheetOpen) {
-            // set warehouse manager select input as inactive
-            setActiveWarehouseManager(false);
-        }
-    }, [stackedSheetOpen])
 
     // handle save changes
     const handleSaveChanges = async () => {
@@ -263,9 +304,9 @@ const EditWarehouse = ({navigation, route}) => {
         // if keyboard is open
         const keyboardDidShowListener = Keyboard.addListener(
             Platform.OS === 'android' ? 'keyboardDidShow' : 'keyboardWillShow', () => {
-                if (!stackedSheetOpen) return;
-                if (modalType !== "managers") return;
-                setSnapPoint(2);
+                if (!bottomSheet.opened) return;
+                if (sheetParameters.content !== "managers") return;
+                sheetRef.current?.snapToIndex(1);
             }
         );
         
@@ -273,13 +314,14 @@ const EditWarehouse = ({navigation, route}) => {
         const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
             // run any desired function here
             // if wareehouse address is empty
+            sheetRef.current?.snapToIndex(0);
         });
     
         return () => {
             keyboardDidShowListener.remove();
             keyboardDidHideListener.remove();
         };
-    }, [stackedSheetOpen, modalType]);
+    }, [bottomSheet.opened]);
 
     // buttons in support bottom sheet modal
     const supportButtons = [
@@ -393,14 +435,13 @@ const EditWarehouse = ({navigation, route}) => {
                 </View>
             </TouchableWithoutFeedback>
             <CustomBottomSheet
-                bottomSheetModalRef={stackedSheetRef}
-                sheetTitle={modalType === "managers" ? "Select Managers" : "Help & Support"}
-                snapPointsArray={modalType === "managers" ? ["50%", "75%", "100%"] : [280]}
-                autoSnapAt={snapPoint}
-                closeModal={closeStackedModal}
-                stacked={true}
+                index={0}
+                sheetRef={sheetRef}
+                closeModal={closeModal}
+                sheetTitle={sheetParameters.sheetTitle}
+                snapPointsArray={sheetParameters.snapPointsArray}
             >
-                {modalType === "managers" && <>
+                {sheetParameters.content === "managers" && <>
                     {/* search bar */}
                     <SearchBar
                         searchQuery={searchQuery}
@@ -447,7 +488,7 @@ const EditWarehouse = ({navigation, route}) => {
                     </BottomSheetScrollView>
                 </>}
                 {/* Help and supoort bottomsheet */}
-                { modalType === "support" && supportButtons.map((item, index) => (
+                { sheetParameters.content === "support" && supportButtons.map((item, index) => (
                     <AccountButtons
                         key={item.id}
                         title={item.title}
@@ -459,7 +500,6 @@ const EditWarehouse = ({navigation, route}) => {
                         unpadded={true}
                     />
                 ))}
-
             </CustomBottomSheet>
             {/* success bottom sheet */}
             <SuccessSheet

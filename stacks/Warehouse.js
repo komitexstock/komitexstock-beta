@@ -78,15 +78,33 @@ const Warehouse = ({navigation, route}) => {
     // page loading state
     const [pageLoading, setPageLoading] = useState(true);
 
+    // sheet ref
+    const sheetRef = useRef(null);
+
     // globals
     const {
-        bottomSheetRef,
-        bottomSheetOpen,
+        bottomSheet,
+        setBottomSheet,
         filterSheetRef,
         calendarSheetRef,
         calendarSheetOpen,
         setToast 
     } = useGlobals();
+    
+    // bottom sheet parameters
+    const [sheetParameters, setSheetParameters] = useState({
+        content: "Edit",
+        sheetTitle: "",
+        snapPointsArray: [124],
+        enablePanDownToClose: true,
+    });
+
+    // update bottomsheet global state
+    useEffect(() => {
+        setBottomSheet(prevState=> {
+            return {...prevState, close: () => sheetRef.current?.close()}
+        });
+    }, [])
 
     // tab state
     const [tab, setTab] = useState("warehouse");
@@ -177,10 +195,10 @@ const Warehouse = ({navigation, route}) => {
                             }, // Assign manager's full name
                             warehouse_address: warehouseData.warehouse_address,
                             waybill_receivable: warehouseData.waybill_receivable,
-                            onPress: () => navigation.navigate("Inventory", {
-                                warehouse_id: doc.id
-                            }),
-                            onPressMenu: () => openModal("Edit", doc.id),
+                            // onPress: () => navigation.navigate("Inventory", {
+                            //     warehouse_id: doc.id
+                            // }),
+                            // onPressMenu: () => openModal("Edit", doc.id),
                         };
                         warehouseList.push(warehouse);
                     }
@@ -293,7 +311,7 @@ const Warehouse = ({navigation, route}) => {
         const keyboardDidShowListener = Keyboard.addListener(
             Platform.OS === 'android' ? 'keyboardDidShow' : 'keyboardWillShow', () => {
                 // if bottom sheet is open just return early
-                if (bottomSheetOpen) return;
+                if (bottomSheet.opened) return;
                 // if user has already scrolled
                 if (scrollOffset >= stickyHeaderOffset) return;
 
@@ -312,22 +330,45 @@ const Warehouse = ({navigation, route}) => {
             keyboardDidShowListener.remove();
             keyboardDidHideListener.remove();
         };
-    }, [scrollOffset]);
-
-    const [modalType, setModalType] = useState("Edit");
+    }, [scrollOffset, bottomSheet]);
 
     // function to open BottomSheet
     const openModal = (type, id) => {
-        bottomSheetRef?.current?.present();
+        console.log("Inside open modal:", sheetRef.current)
+        // set edit warehouse id
+        setEditWarehouseId(id)
         
-        // set modal type
-        setModalType(type);
+        // set sheet parameters
+        setSheetParameters({
+            content: type,
+            sheetTitle: type === "Edit" ? "" : "Stock Transfers",
+            snapPointsArray: type === "Edit" ? [124] : ["100%"],
+            enablePanDownToClose: type === "Edit",
+        });
 
-        if (type === "Edit") return setEditWarehouseId(id);
+        // open bottom sheet
+        sheetRef.current?.present();
+
+        // update bottomsheet global state
+        setBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: true,
+            }
+        });
     }
 
     const closeModal = () => {
-        bottomSheetRef?.current?.close()
+        // close bottom sheet
+        sheetRef?.current?.close();
+
+        // update bottomsheet global state
+        setBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: false,
+            }
+        });
     }
 
     // function to navigate to edit warehouse screen
@@ -835,9 +876,11 @@ const Warehouse = ({navigation, route}) => {
                                                 warehouseName={item?.warehouse_name}
                                                 inventoriesCount={item?.inventories_count}
                                                 address={item?.warehouse_address}
-                                                onPress={item?.onPress}
-                                                onPressMenu={item?.onPressMenu}
                                                 addNew={item?.add_new}
+                                                onPressMenu={() => openModal("Edit", item?.id)}
+                                                onPress={() => navigation.navigate("Inventory", {
+                                                    warehouse_id: item?.id,
+                                                })}
                                             />
                                         </View>
                                     )
@@ -862,14 +905,14 @@ const Warehouse = ({navigation, route}) => {
             </>) : <WarehouseSkeleton /> }
             {/* bottomsheet */}
             <CustomBottomSheet
-                bottomSheetModalRef={bottomSheetRef}
-                snapPointsArray={modalType === "Edit" ? [124] : ["100%"]}
-                autoSnapAt={0}
+                index={0}
+                sheetRef={sheetRef}
                 closeModal={closeModal}
-                sheetTitle={modalType === "Edit" ? "" : "Stock Transfers"} 
-                disablePanToClose={modalType === "Edit" ? false : true}
+                sheetTitle={sheetParameters.sheetTitle} 
+                snapPointsArray={sheetParameters.snapPointsArray}
+                enablePanDownToClose={sheetParameters.enablePanDownToClose}
             >
-                {modalType === "Edit" && (
+                {sheetParameters.content === "Edit" && (
                     <View style={styles.modalWrapper}>
                         <TouchableOpacity
                             style={styles.sheetButton}
@@ -882,7 +925,7 @@ const Warehouse = ({navigation, route}) => {
                         </TouchableOpacity>
                     </View>
                 )}
-                {modalType === "Search" && <>
+                {sheetParameters.content === "Search" && <>
                     {/* text input search bar */}
                     <SearchBar 
                         placeholder={"Search stock transfers"}
