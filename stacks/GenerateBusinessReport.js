@@ -20,7 +20,7 @@ import { background, black, bodyText} from "../style/colors";
 import ArrowDown from "../assets/icons/ArrowDown";
 import CalendarIcon from "../assets/icons/CalendarIcon";
 // react hooks
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 // import moment
 import moment from "moment";
 // helpers
@@ -30,8 +30,32 @@ import { useGlobals } from "../context/AppContext";
 
 const GenerateBusinessReport = ({navigation}) => {
 
-    // bottomsheets refs
-    const { bottomSheetRef, popUpSheetRef, successSheetRef, calendarSheetRef, calendarSheetOpen, bottomSheetOpen } = useGlobals();
+    // sheet ref
+    const sheetRef = useRef(null);
+
+    // global variables/states
+    const {
+        setBottomSheet,
+        successSheetRef,
+        calendarSheetRef,
+        calendarSheetOpen,
+    } = useGlobals();
+
+    // update bottomsheet global state
+    useEffect(() => {
+        // update bottomsheet global state
+        setBottomSheet(prevState => {
+            return {
+                ...prevState,
+                close: () => {
+                    // update input active state
+                    setActiveFormat(false);
+                    // close bottomsheet
+                    sheetRef.current?.close()
+                },
+            }
+        });
+    }, [])
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -109,20 +133,38 @@ const GenerateBusinessReport = ({navigation}) => {
         ].some(
             (item) => item === null || item === ''
     );
-
-    // close modal function
-    const closeModal = () => {
-        bottomSheetRef.current?.close();
-        setActiveFormat(false);
-    };
-
+    
     // open modal function
     const openModal = () => {
         // open bottomsheet modal
-        bottomSheetRef.current?.present();
+        sheetRef.current?.present();
         setActiveFormat(true);
+
+        // updaet bottomsheet global state
+        setBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: true,
+            }
+        });
     }
 
+    // close modal function
+    const closeModal = () => {
+        sheetRef.current?.close();
+
+        // update input active state
+        setActiveFormat(false);
+
+        // updaet bottomsheet global state
+        setBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: false,
+            }
+        });
+    };
+    
     // close popup modal bottomsheet function
     const closeSuccessModal = () => {
         successSheetRef.current?.close();
@@ -148,11 +190,7 @@ const GenerateBusinessReport = ({navigation}) => {
             setActiveStartDate(false);
         }
 
-        if (!bottomSheetOpen) {
-            setActiveFormat(false);
-        }
-
-    }, [calendarSheetOpen, bottomSheetOpen])
+    }, [calendarSheetOpen])
     
     // render GenerateBusinessReport page
     return (
@@ -230,12 +268,10 @@ const GenerateBusinessReport = ({navigation}) => {
 
             {/* custome bottom sheet */}
             <CustomBottomSheet 
-                bottomSheetModalRef={bottomSheetRef}
-                setShowOverlay={setShowOverlay}
-                showOverlay={showOverlay}
+                index={0}
+                sheetRef={sheetRef}
                 closeModal={closeModal}
                 snapPointsArray={["25%"]}
-                autoSnapAt={0}
                 sheetTitle={"Select Format"}
             >
                 <View style={style.selectContainer}>

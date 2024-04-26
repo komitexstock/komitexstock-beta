@@ -189,15 +189,16 @@ const EditWarehouse = ({navigation, route}) => {
         // dismiss keyboard
         Keyboard.dismiss();
 
-        // set warehouse manager select input as active
-        setActiveWarehouseManager(true);
-
+        
         // set sheet paramters
         setSheetParameters({
             content: type,
             sheetTitle: (() => {
-                if (type === "managers") return "Select Managers";
-                return "Help & Support";
+                if (type !== "managers") return "Help & Support";
+                // set warehouse manager select input as active
+                setActiveWarehouseManager(true);
+                // return title
+                return "Select Managers";
             })(), //self invoking function
             snapPointsArray: (() => {
                 if (type === "managers") return ["75%", "100%"];
