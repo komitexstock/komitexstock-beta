@@ -38,7 +38,7 @@ import { useAuth } from "../context/AuthContext";
 import { useGlobals } from "../context/AppContext";
 
 // react hoooks
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 
 // utilities
 import { windowHeight } from "../utils/helpers";
@@ -80,24 +80,68 @@ const BusinessPolicy = ({navigation, route}) => {
     // page loading state
     const [pageLoading, setPageLoading] = useState(preloaded_data === null|| preloaded_data?.length === 0);
 
-    // bottomsheet varaibels
-    const { stackedSheetRef, stackedSheetOpen, setToast } = useGlobals();
-    
-    // modal type
-    const [modalType, setModalType] = useState("Remittance");
+    // bottom sheet ref
+    const sheetRef = useRef(null);
 
+    // bottomsheet varaibels
+    const {
+        bottomSheet,
+        setBottomSheet,
+        setToast
+    } = useGlobals();
+
+    // update bottomsheet close function
+    useEffect(() => {
+        setBottomSheet(prevState=> {
+            return {...prevState, close: () => sheetRef.current?.close()}
+        });
+    }, []);
+
+    // botomsheet parameters 
+    const [sheetParameters, setSheetParameters] = useState({
+        sheetTitle: "Remittance",
+        snapPointsArray: [386],
+    })
+    
     // open bottomsheet modal function
     const openModal = (type, enableEdit)  => {
+        // enable active state for input
         if (enableEdit && type === "Additional Policy") {
             setAdditionalInput(additionalPolicy);
         }
-        setModalType(type);
-        stackedSheetRef.current?.present();
+
+        // set sheet parameters
+        setSheetParameters(prevParameters => {
+            return {
+                ...prevParameters,
+                sheetTitle: type,
+            }
+        });
+
+        // open bottom sheet modal
+        sheetRef.current?.present();
+
+        // update bottmsheet global state
+        setBottomSheet(prevValue => {
+            return {
+                ...prevValue,
+                opened: true,
+            }
+        });
     }
 
     // close bottomsheet modal function
     const closeModal = () => {
-        stackedSheetRef.current?.close();
+        // close bottomsheet modal
+        sheetRef.current?.close();
+
+        // update bottmsheet global state
+        setBottomSheet(prevValue => {
+            return {
+                ...prevValue,
+                opened: false,
+            }
+        });
     }
 
     // const indicate lodaing state for buttons
@@ -121,16 +165,19 @@ const BusinessPolicy = ({navigation, route}) => {
     // error state for remit period input
     const [errorRemittanceInput, setErrorRemittanceInput] = useState(false);
 
-    // bottom sheet height
-    const [bottomSheetHeight, setBottomSheetHeight] = useState(386);
-
     // listen for keyboard opening or closing
     useEffect(() => {
         // if keyboard is open
         const keyboardDidShowListener = Keyboard.addListener(
             Platform.OS === 'android' ? 'keyboardDidShow' : 'keyboardWillShow', () => {
-                if (!stackedSheetOpen) return;
-                setBottomSheetHeight(windowHeight)
+                if (!bottomSheet.opened) return;
+                // set bottomsheet paramteres
+                setSheetParameters(prevValue => {
+                    return {
+                        ...prevValue,
+                        snapPointsArray: [windowHeight],
+                    }
+                })
             }
         );
         
@@ -138,22 +185,33 @@ const BusinessPolicy = ({navigation, route}) => {
         const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
             // run any desired function here
             // if wareehouse address is empty
-            setBottomSheetHeight(386)
+            // set bottomsheet paramteres
+            setSheetParameters(prevValue => {
+                return {
+                    ...prevValue,
+                    snapPointsArray: [386],
+                }
+            })
 
         });
 
         // this is useful if the bottomsheet is closed 
         // without performing an action
-        if (!stackedSheetOpen) {
-            // rese bottom sheet height
-            setBottomSheetHeight(386)
+        if (!bottomSheet.opened) {
+            // set bottomsheet paramteres
+            setSheetParameters(prevValue => {
+                return {
+                    ...prevValue,
+                    snapPointsArray: [386],
+                }
+            })
         }
 
         return () => {
             keyboardDidShowListener.remove();
             keyboardDidHideListener.remove();
         };
-    }, [stackedSheetOpen]);
+    }, [bottomSheet.opened]);
 
     // update remittance input function, triggered onnchange in Input component
     const updateRemittanceInput = (text) => {
@@ -732,14 +790,14 @@ const BusinessPolicy = ({navigation, route}) => {
             </ScrollView>
         </> : <BusinessPolicySkeleton />}
         <CustomBottomSheet
-            bottomSheetModalRef={stackedSheetRef}
-            sheetTitle={modalType}
+            index={0}
+            sheetRef={sheetRef}
             closeModal={closeModal}
-            autoSnapAt={0}
-            snapPointsArray={[bottomSheetHeight]}
+            snapPointsArray={sheetParameters.snapPointsArray}
+            sheetTitle={sheetParameters.sheetTitle}
         >
             {/* modal content for Remittance policy */}
-            {modalType === "Remittance" && <>
+            {sheetParameters.sheetTitle === "Remittance" && <>
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                     <View style={style.modalWrapper}>
                         <View style={style.modalContent}>
@@ -771,7 +829,7 @@ const BusinessPolicy = ({navigation, route}) => {
                 </TouchableWithoutFeedback>
             </>}
             {/* Modal content for cost of failed delivery */}
-            {modalType === "Cost for failed delivery" && <>
+            {sheetParameters.sheetTitle === "Cost for failed delivery" && <>
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                     <View style={style.modalWrapper}>
                         <View style={style.modalContent}>
@@ -803,7 +861,7 @@ const BusinessPolicy = ({navigation, route}) => {
                 </TouchableWithoutFeedback>
             </>}
             {/* Modal content for Incative Inventory */}
-            {modalType === "Inactive Inventory" && <>
+            {sheetParameters.sheetTitle === "Inactive Inventory" && <>
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                     <View style={style.modalWrapper}>
                         <View style={style.modalContent}>
@@ -835,7 +893,7 @@ const BusinessPolicy = ({navigation, route}) => {
                 </TouchableWithoutFeedback>
             </>}
             {/* Modal content for additional policy */}
-            {modalType === "Additional Policy" && <>
+            {sheetParameters.sheetTitle === "Additional Policy" && <>
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                     <View style={style.modalWrapper}>
                         <View style={style.modalContent}>
