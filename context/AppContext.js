@@ -151,6 +151,7 @@ const AppProvider = ({children}) => {
                 setIsLoading,
                 isLoadingSecondary,
                 setIsLoadingSecondary,
+                bottomSheet,
                 setBottomSheet,
                 setStackedBottomSheet,
             }}

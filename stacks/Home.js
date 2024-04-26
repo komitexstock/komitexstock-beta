@@ -96,7 +96,6 @@ const Home = ({navigation}) => {
         calendarSheetRef,
         calendarSheetOpen,
         setToast,
-        bottomSheetParameters,
     } = useGlobals();
 
     // page loading state
@@ -847,7 +846,7 @@ const Home = ({navigation}) => {
                                         // onPress={() => {navigation.navigate("TransferDetails")}}
                                         // onPress={() => {navigation.navigate("Share")}}
                                         // onPress={() => {navigation.navigate("WriteReview")}}
-                                        onPress={bottomSheetParameters.openModal}
+                                        // onPress={bottomSheetParameters.openModal}
                                     >
                                         <Text style={style.seeMore} >
                                             See more

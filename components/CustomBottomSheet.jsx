@@ -6,7 +6,7 @@ import CloseIcon from "../assets/icons/CloseIcon";
 import { bodyText, primaryColor } from "../style/colors";
 // import globals
 
-const CustomBottomSheet = ({sheetRef, closeModal, snapPointsArray, index, stackBehavior, children, sheetTitle, sheetSubtitle, enablePanDownToClose, contentContainerStyle}) => {
+const CustomBottomSheet = ({sheetRef, closeModal, snapPointsArray, index, setIndex, stackBehavior, children, sheetTitle, sheetSubtitle, enablePanDownToClose, contentContainerStyle}) => {
 
     const snapPoints = useMemo(() => snapPointsArray, [snapPointsArray]);
 
@@ -24,6 +24,9 @@ const CustomBottomSheet = ({sheetRef, closeModal, snapPointsArray, index, stackB
     );
 
     const handleOpenSheetStates = (index) => {
+        // if set index is ont undefined
+        if (setIndex !== undefined) setIndex(index);
+        
         // if sheet is closed
         if (index === -1 && typeof closeModal === 'function') return closeModal();
     }

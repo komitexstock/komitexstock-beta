@@ -11,7 +11,7 @@ import {
 
 // react hooks
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 // components 
 import Header from '../components/Header';
@@ -65,8 +65,23 @@ const AddWarehouse = ({navigation}) => {
     // state to store progress of obtaining managers list
     const [obtainedManagers, setObtainedManagers] = useState(false);
 
+    // bottom sheet ref
+    const sheetRef = useRef(null);
+
     // bottomsheet refs
-    const { bottomSheetRef, bottomSheetOpen, successSheetRef, setToast } = useGlobals();
+    const {
+        bottomSheet,
+        setBottomSheet,
+        successSheetRef,
+        setToast
+    } = useGlobals();
+
+    // update bottomsheet close function
+    useEffect(() => {
+        setBottomSheet(prevState=> {
+            return {...prevState, close: () => sheetRef.current?.close()}
+        });
+    }, []);
 
     // warehouse name 
     const [warehouseName, setWarehouseName] = useState("");
@@ -144,6 +159,41 @@ const AddWarehouse = ({navigation}) => {
         }
     }, [obtainedManagers])
     
+    // search query
+    const [searchQuery, setSearchQuery] = useState('');
+
+    // open bottomsheet modal function
+    const openModal = () => {
+        // present/open bottom sheet
+        sheetRef?.current?.present();
+        // set warehouseManager select input as active
+        // this is the only component on the screen running the openModal function
+        setActiveWarehouseManager(true);
+        // dismiss keyboard if opened
+        Keyboard.dismiss();
+
+        // update bottom sheet global state
+        setBottomSheet(prevState=> {
+            return {...prevState, opened: true}
+        });
+
+        // update index
+        setIndex(0);
+    }
+
+    // close bottomsheet modal modal function
+    const closeModal = () => {
+        // close bottom sheet
+        sheetRef?.current?.close();
+        // disable active input state for warehouse manager select component
+        setActiveWarehouseManager(false);
+
+        // update bottom sheet global state
+        setBottomSheet(prevState=> {
+            return {...prevState, opened: true}
+        });
+    }
+
     // handle selected warehouse, function runs when a warehouse is clicked in select warehouse bottomsheet
     const handleWarehouseSelection = (id) => {
         // update the choseb warehouse
@@ -154,28 +204,6 @@ const AddWarehouse = ({navigation}) => {
         closeModal();
     }
 
-    // search query
-    const [searchQuery, setSearchQuery] = useState('');
-
-    // open bottomsheet modal function
-    const openModal = () => {
-        // present/open bottom sheet
-        bottomSheetRef?.current?.present();
-        // set warehouseManager select input as active
-        // this is the only component on the screen running the openModal function
-        setActiveWarehouseManager(true);
-        // dismiss keyboard if opened
-        Keyboard.dismiss();
-    }
-
-    // close bottomsheet modal modal function
-    const closeModal = () => {
-        // close bottom sheet
-        bottomSheetRef?.current?.close();
-        // disable active input state for warehouse manager select component
-        setActiveWarehouseManager(false);
-        
-    }
     
     // open success pop up bottomsheet modal
     const openSuccessModal = () => {
@@ -263,39 +291,30 @@ const AddWarehouse = ({navigation}) => {
     }
 
     // state to control bottomsheet snap point
-    const [snapPoint, setSnapPoint] = useState(0);
+    const [index, setIndex] = useState(0);
 
     // listen for keyboard opening or closing
     useEffect(() => {
         // if keyboard is open
         const keyboardDidShowListener = Keyboard.addListener(
             Platform.OS === 'android' ? 'keyboardDidShow' : 'keyboardWillShow', () => {
-                if (!bottomSheetOpen) return;
+                if (!bottomSheet.opened) return;
                 // console.log("got here")
-                setSnapPoint(2);
+                setIndex(2);
             }
         );
         
         // keyboard is closed
         const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
             // run any desired function here
-            // if wareehouse address is empty
+            // if warehouse address is empty
         });
-
-        // disable active states for select input if back button is pressed
-        // this is useful if the select warehouse bottomsheet is closed 
-        // without selecting a warehouse
-        if (!bottomSheetOpen) {
-            setActiveWarehouseManager(false);
-            // reset snapoints
-            setSnapPoint(0);
-        }
 
         return () => {
             keyboardDidShowListener.remove();
             keyboardDidHideListener.remove();
         };
-    }, [bottomSheetOpen]);
+    }, [bottomSheet.opened]);
 
 
     return (
@@ -371,10 +390,11 @@ const AddWarehouse = ({navigation}) => {
             </TouchableWithoutFeedback>
             {/* bottomsheet to select managers */}
             <CustomBottomSheet
-                bottomSheetModalRef={bottomSheetRef}
+                sheetRef={sheetRef}
                 sheetTitle={"Select Manager"}
                 snapPointsArray={["50%", "75%", "100%"]}
-                autoSnapAt={snapPoint}
+                index={index}
+                setIndex={setIndex}
                 closeModal={closeModal}
             >
                 {/* search bar to search for managers */}
