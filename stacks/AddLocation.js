@@ -82,7 +82,6 @@ const AddLocation = ({navigation}) => {
     } = useGlobals();
 
     useEffect(() => {
-        
         // set bottomsheet state
         setBottomSheet(prevState=> {
             return {...prevState, close: () => sheetRef.current?.close()}

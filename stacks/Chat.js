@@ -92,8 +92,46 @@ const Chat = ({navigation, route}) => {
     // auth data
     const { authData } = useAuth()
 
+    // bottom sheet ref
+    const sheetRef = useRef(null);
+
+    // stcked sheet ref
+    const stackedSheetRef = useRef(null);
+
     // parameters for all bottomsheets
-    const { bottomSheetRef, stackedSheetRef, calendarSheetRef, bottomSheetOpen, setToast } = useGlobals();
+    const {
+        setBottomSheet,
+        setStackedBottomSheet,
+        calendarSheetRef,
+        bottomSheetOpen,
+        setToast
+    } = useGlobals();
+
+    // sheet paramteres
+    const [sheetParameters, setSheetParameters] = useState({
+        sheetTitle: "Open with",
+        snapPointsArray: [198],
+    });
+
+    // stacked sheet parameters
+    const [stackedSheetParameters, setStackedSheetParameters] = useState({
+        sheetTitle: "Products",
+    });
+
+
+    // set bottomsheets gloabl states
+    useEffect(() => {
+        // set bottomsheet state
+        setBottomSheet(prevState=> {
+            return {...prevState, close: () => sheetRef.current?.close()}
+        });
+
+        // set bottomsheet state
+        setStackedBottomSheet(prevState=> {
+            return {...prevState, close: () => stackedSheetRef.current?.close()}
+        });
+    }, [])
+    
 
     // chat route parameters
     const {
@@ -445,18 +483,6 @@ const Chat = ({navigation, route}) => {
         </View>
     );
 
-    // modal state
-    const [modal, setModal] = useState({
-        type: "Open with",
-        snapPoints: [198],
-    });
-
-    // modal state
-    const [stackedModal, setStackedModal] = useState({
-        type: "Products",
-        snapPoints: ["75%"],
-    });
-
     // state to temporarily store phone number in a link
     // before user decides on texting, calling or whatsapp message
     const [linkPhoneNumber, setLinkPhoneNumber] = useState("");
@@ -479,59 +505,93 @@ const Chat = ({navigation, route}) => {
     
     // close modal function
     const closeModal = () => {
-        bottomSheetRef.current?.close();
+        sheetRef.current?.close();
         setReason("");
+
+        // set bottomsheet global state
+        setBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: false,
+            }
+        });
     };
 
     // open bottomsheet modal function
     const openModal = (type) => {
+
+        // order actionables
+        const orderActionables = [
+            "Cancel order", 
+            "Dispatch order", 
+            "Deliver order", 
+            "Reschedule order", 
+            "Return order"
+        ];
+
+        // other modal type 
+        const otherModals = [
+            "Open with",
+            "",
+        ];
+
+        // set bottomshee parameters
+        setSheetParameters({
+            sheetTitle: type,
+            snapPointsArray: (() => {
+                if (orderActionables.includes(type)) {
+                    return ["100%"];
+                } else if (otherModals.includes(type)) {
+                    return [198];
+                }
+                // else return full height
+                return ["100%"];
+            })()
+        })
+
         // open bottomsheet modal
-        bottomSheetRef.current?.present();
+        sheetRef.current?.present();
 
-        const orderActionables = ["Cancel order", "Dispatch order", "Deliver order", "Reschedule order", "Return order"];
-
-        // set modal type
-        if (type === "Open with") { 
-            // bottomsheet parameters to handle onclick phone number
-            return setModal({
-                type: type,
-                snapPoints: [198],
-            });
-        } else if (orderActionables.includes(type)) {
-            // bottomsheet parameters for cancel order, dispatch order or deliver order flows
-            return setModal({
-                type: type,
-                snapPoints: ["100%"],
-            });
-        } else if (type === "") {
-            // bottomsheet parameters for the type of file to be attached
-            return setModal({
-                type: type,
-                snapPoints: [198],
-            });
-        } else {
-            // default state
-            return setModal({
-                type: type,
-                snapPoints: ["100%"],
-            });
-        } 
+        // set bottomsheet global state
+        setBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: true,
+            }
+        });
     }
 
     // function to open stacked bottom sheet
     const openStackedModal = (type) => {
+        // set stacked sheet parameters
+        setStackedSheetParameters({
+            sheetTitle: type
+        });
+
+        // open botomsheet
         stackedSheetRef.current?.present();
-        setStackedModal({
-            type: type,
-            snapPoints: ["75%"],
-        })
-        // if (type === "Products") {
-        // }
+
+        // set bottomsheet global state
+        setStackedBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: true,
+            }
+        });
     }
 
     // function to close stacked bottom sheet
     const closeStackedModal = () => {
+        // close bottomsheet
         stackedSheetRef.current?.close();
+
+        // set bottomsheet global state
+        setStackedBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: false,
+            }
+        });
     };
 
     // function to handle on press phone number link
@@ -1629,15 +1689,15 @@ const Chat = ({navigation, route}) => {
         
         {/* Bottom sheet component */}
         <CustomBottomSheet 
-            bottomSheetModalRef={bottomSheetRef}
+            index={0}
+            sheetRef={sheetRef}
             closeModal={closeModal}
-            snapPointsArray={modal.snapPoints}
-            autoSnapAt={0}
-            sheetTitle={modal.type}
-            topContentPadding={8}
+            snapPointsArray={sheetParameters.snapPointsArray}
+            sheetTitle={sheetParameters.sheetTitle}
+            contentContainerStyle={{paddingTop: 8}}
         >
             {/* edit order */}
-            { modal.type === "Edit order" && (<>
+            { sheetParameters.sheetTitle === "Edit order" && (<>
                 <BottomSheetScrollView showsVerticalScrollIndicator={false} contentContainerStyle={style.modalWrapper}>
                     <View style={style.modalContent}>
                         <Text style={style.editModalParagragh}>
@@ -1720,7 +1780,7 @@ const Chat = ({navigation, route}) => {
                 />
             </>)}
             {/* edit waybill */}
-            { modal.type === "Edit waybill" && (<>
+            { sheetParameters.sheetTitle === "Edit waybill" && (<>
                 <BottomSheetScrollView showsVerticalScrollIndicator={false} contentContainerStyle={style.modalWrapper}>
                     <View style={style.modalContent}>
                         <Text style={style.editModalParagragh}>
@@ -1788,7 +1848,7 @@ const Chat = ({navigation, route}) => {
                 />
             </>)}
             {/* edit stock transfer */}
-            { modal.type === "Edit transfer" && (<>
+            { sheetParameters.sheetTitle === "Edit transfer" && (<>
                 <BottomSheetScrollView showsVerticalScrollIndicator={false} contentContainerStyle={style.modalWrapper}>
                     <View style={style.modalContent}>
                         <Text style={style.editModalParagragh}>
@@ -1856,7 +1916,7 @@ const Chat = ({navigation, route}) => {
                 />
             </>)}
             {/* Reschedule order */}
-            { modal.type === "Reschedule order" && (
+            { sheetParameters.sheetTitle === "Reschedule order" && (
                 <>
                     <BottomSheetScrollView showsVerticalScrollIndicator={false} contentContainerStyle={style.modalWrapper}>
                         <View style={style.modalContent}>
@@ -1922,7 +1982,7 @@ const Chat = ({navigation, route}) => {
                 </>
             )}
             {/* cancel order */}
-            { modal.type === "Cancel order" && (
+            { sheetParameters.sheetTitle === "Cancel order" && (
                 <>
                     <BottomSheetScrollView showsVerticalScrollIndicator={false} contentContainerStyle={style.modalWrapper}>
                         <View style={style.modalContent}>
@@ -1977,7 +2037,7 @@ const Chat = ({navigation, route}) => {
                 </>
             )}
             {/* dispatch order */}
-            { modal.type === "Dispatch order" && (
+            { sheetParameters.sheetTitle === "Dispatch order" && (
                 <>
                     <BottomSheetScrollView showsVerticalScrollIndicator={false} contentContainerStyle={style.modalWrapper}>
                         <View style={style.modalContent}>
@@ -2031,7 +2091,7 @@ const Chat = ({navigation, route}) => {
                 </>
             )}
             {/* return order bottomsheet */}
-            { modal.type === "Return order" && (
+            { sheetParameters.sheetTitle === "Return order" && (
                 <>
                     <BottomSheetScrollView showsVerticalScrollIndicator={false} contentContainerStyle={style.modalWrapper}>
                         <View style={style.modalContent}>
@@ -2083,7 +2143,7 @@ const Chat = ({navigation, route}) => {
                 </>
             )}
             {/* dispatch order */}
-            { modal.type === "Deliver order" && (
+            { sheetParameters.sheetTitle === "Deliver order" && (
                 <>
                     <BottomSheetScrollView showsVerticalScrollIndicator={false} contentContainerStyle={style.modalWrapper}>
                         <View style={style.modalContent}>
@@ -2135,7 +2195,7 @@ const Chat = ({navigation, route}) => {
                 </>
             )}
             {/* onclick phone number */}
-            { modal.type === "Open with" && (
+            { sheetParameters.sheetTitle === "Open with" && (
                 <View style={style.uploadButtonsWrapper}>
                     <TouchableOpacity
                         style={style.uploadButton}
@@ -2167,7 +2227,7 @@ const Chat = ({navigation, route}) => {
                 </View>   
             )}
             {/* onclick phone number */}
-            { modal.type === "" && (
+            { sheetParameters.sheetTitle === "" && (
                 <View style={style.uploadButtonsWrapper}>
                     <TouchableOpacity
                         style={style.uploadButton}
@@ -2202,27 +2262,27 @@ const Chat = ({navigation, route}) => {
 
         {/* bottom sheet to edit product and location, should have stack behaviour */}
         <CustomBottomSheet 
-            bottomSheetModalRef={stackedSheetRef}
+            index={0}
+            sheetRef={stackedSheetRef}
             closeModal={closeStackedModal}
-            snapPointsArray={stackedModal.snapPoints}
-            autoSnapAt={0}
-            sheetTitle={stackedModal.type}
-            topContentPadding={8}
-            stacked={true}
+            snapPointsArray={["75%"]}
+            sheetTitle={stackedSheetParameters.sheetTitle}
+            contentContainerStyle={{paddingTop: 8}}
+            stackBehavior={"push"}
         >
-            {stackedModal.type === "Products" && (
+            {stackedSheetParameters.sheetTitle === "Products" && (
                 <AddProductsModalContent 
                     addProducts={addProducts} selectedProducts={products}
                 />
             )}
 
-            {stackedModal.type === "Locations" && (
+            {stackedSheetParameters.sheetTitle === "Locations" && (
                 <AddLocationModalContent 
                     handleSelectedLocation={handleSelectedLocation}
                 />
             )}
 
-            {stackedModal.type === "Warehouses" && (
+            {stackedSheetParameters.sheetTitle === "Warehouses" && (
                 <BottomSheetScrollView showsVerticalScrollIndicator={false}>
                     <View style={style.listWrapper}>
                         {warehouses.map((warehouse) => (
