@@ -34,7 +34,7 @@ import CalendarSheet from "../components/CalendarSheet";
 import FilterPill from "../components/FilterPill";
 import NoResult from "../components/NoResult";
 // react hooks
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 // bottomsheet component
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 // colors
@@ -87,16 +87,32 @@ const Home = ({navigation}) => {
 
     const { authData, authLoading } = useAuth();
 
-    // console.log("Auth Data:", authData);
-      
-    // sheef refs
+    // sheet ref
+    const sheetRef = useRef(null);
+
+    // globals sates
     const {
-        bottomSheetRef,
+        setBottomSheet,
         filterSheetRef,
         calendarSheetRef,
         calendarSheetOpen,
         setToast,
     } = useGlobals();
+
+    const [sheetParameters, setSheetParameters] = useState({
+        content: "Search",
+        sheetTitle: "",
+        snapPointsArray: ["100%"],
+        enablePanDownToClose: false,
+    })
+
+    // update botomsheet global state
+    useEffect(() => {
+        // set bottomsheet state
+        setBottomSheet(prevState=> {
+            return {...prevState, close: () => sheetRef.current?.close()}
+        });
+    }, []);
 
     // page loading state
     const [pageLoading, setPageLoading] = useState(true);
@@ -106,11 +122,6 @@ const Home = ({navigation}) => {
 
     // state to hold search query
     const [searchQuery, setSearchQuery] = useState("");
-
-    // close bottom sheet functiom
-    const closeModal = () => {
-        bottomSheetRef.current?.close();
-    };
 
     // setup guide array
     const [setupGuide, setSetupGuide] = useState([]);
@@ -257,34 +268,46 @@ const Home = ({navigation}) => {
     }
     
     // open bottom sheet functiom
-    const openModal = () => {
-        // reset modal parameters
-        setModal({
-            type: "Search",
-            title: "",
-            snapPointsArray: ["100%"],
-            autoSnapAt: 0,
+    const openModal = (type) => {
+
+        // update sheet parameters
+        setSheetParameters({
+            content: type,
+            sheetTitle: type === "Search" ? "" : "Review",
+            snapPointsArray: type === "Search" ? ["100%"] : [359],
+            enablePanDownToClose: type !== "Search",
         });
-        bottomSheetRef.current?.present();
+
+        // open bottomsheet
+        sheetRef.current?.present();
+
+        // update bottomsheet global state
+        setBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: true,
+            }
+        });
     }
 
-    const [modal, setModal] = useState({
-        type: "Search",
-        title: "",
-        snapPointsArray: ["100%"],
-        autoSnapAt: 0,
-    })
+    // close bottom sheet functiom
+    const closeModal = () => {
+        // close bottmsheet
+        sheetRef.current?.close();
+
+        // update bottomsheet global state
+        setBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: false,
+            }
+        });
+    };
 
     // useEffect to open portal to review Bottomsheet
     // useEffect(() => {
     //     setTimeout(() => {
-    //         setModal({
-    //             type: "Review",
-    //             title: "",
-    //             snapPointsArray: ["45%"],
-    //             autoSnapAt: 0,
-    //         });
-    //         bottomSheetRef.current?.present();
+    //         openModal("Review");
     //     }, 5000);
     // }, [])
 
@@ -783,7 +806,7 @@ const Home = ({navigation}) => {
                                     backgroundColor={white}
                                     disableFilter={true}
                                     button={true}
-                                    onPress={openModal}
+                                    onPress={() => openModal("Search")}
                                 />
                             ) : (
                                 <View>
@@ -920,14 +943,13 @@ const Home = ({navigation}) => {
             ) : <HomeSkeleton />}
             {/* bottomsheet */}
             <CustomBottomSheet
-                bottomSheetModalRef={bottomSheetRef}
+                sheetRef={sheetRef}
                 closeModal={closeModal}
-                snapPointsArray={modal.snapPointsArray}
-                autoSnapAt={modal.autoSnapAt} // search bottomsheet auto snap at fullscreen
-                sheetTitle={modal.title}
-                disablePanToClose={true}
+                sheetTitle={sheetParameters.sheetTitle}
+                snapPointsArray={sheetParameters.snapPointsArray}
+                enablePanDownToClose={sheetParameters.enablePanDownToClose}
             >
-                {modal.type === "Search" && 
+                {sheetParameters.content === "Search" && 
                     <>
                         {/* text input search bar */}
                         <SearchBar 
@@ -983,7 +1005,7 @@ const Home = ({navigation}) => {
                     </> 
                 }
 
-                {modal.type === "Review" && 
+                {sheetParameters.content === "Review" && 
                     <View style={style.modalWrapper}>
                         <View style={style.modalTextWrapper}>
                             <Text style={style.modalHeading}>
