@@ -11,7 +11,7 @@ import {
     Linking
 } from "react-native";
 // bottomsheet component
-import { black, bodyText, inputLabel, listSeparator, listSeperator3, primaryColor, secondaryColor, subText, white } from "../style/colors";
+import { black, bodyText, inputLabel, listSeperator3, primaryColor, secondaryColor, white } from "../style/colors";
 // components
 import Input from "../components/Input";
 import CustomButton from "../components/CustomButton";
@@ -22,7 +22,7 @@ import BusinessListItem from "../components/BusinessListItem";
 // bottomsheet components
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 // react hook
-import { useMemo, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 // image picker method
 import * as ImagePicker from 'expo-image-picker';
 // icon
@@ -45,10 +45,29 @@ const EditProduct = ({navigation, route}) => {
     // route paramsa
     const {id, product_name, quantity, initial_price, image_uri, product_scope} = route?.params;
 
-    // console.log(product_scope);
+    // sheet ref
+    const sheetRef = useRef(null);
+
+    const [sheetParameters, setSheetParameters] = useState({
+        sheetTitle: "Support",
+        snapPointsArray: [280],
+        content: "Help & Support",
+    });
 
     // global variables
-    const { bottomSheetRef, setToast } = useGlobals();
+    const {
+        setBottomSheet,
+        bottomSheetRef,
+        setToast,
+    } = useGlobals();
+
+    // update botomsheet global states
+    useEffect(() => {
+        // set bottomsheet state
+        setBottomSheet(prevState=> {
+            return {...prevState, close: () => sheetRef.current?.close()}
+        });
+    }, []);
 
     // warehouses
     const warehouses = [
@@ -174,43 +193,56 @@ const EditProduct = ({navigation, route}) => {
         }
     };
 
-    const [modalType, setModalType] = useState("Support");
-
-    const bottomSheetProps = useMemo(() => {
-        if (modalType === "Support") {
-            return {
-                snapPointsArray: [280],
-                sheetTitle: "Help & Support"
-            }
-        } else if (modalType === "Logistics") {
-            return {
-                snapPointsArray: ["50%", "75%"],
-                sheetTitle: totalLogistics + " Logistics"
-            }
-        } else if (modalType === "Warehouses") {
-            return {
-                snapPointsArray: ["50%", "75%"],
-                sheetTitle: totalWarehouses + `${totalWarehouses > 1 ? " Warehouses" : " Warehouse"}`
-            }
-        } else {
-            return {
-                snapPointsArray: ["50%"],
-                sheetTitle: ""
-            }
-        }
-    }, [modalType])
-
     // open bottom sheet modal
     const openModal = (type) => {
-        // set modal type
-        setModalType(type);
+        // set sheet parameters
+        setSheetParameters({
+            content: type,
+            snapPointsArray: (() => {
+                if (type === "Support") {
+                    return [280];
+                } else if (type === "Logistics" || type === "Warehouses") {
+                    return ["50%", "75%"];
+                }
+                // else just return a height of 50% by default
+                return ["50%"];
+            })(),
+            sheetTitle: (() => {
+                if (type === "Support") { // support
+                    return "Help & Support";
+                } else if (type === "Logistics") { // logistic
+                    return totalLogistics + " Logistics";
+                } else if (type === "Warehouses") { // warehouse sheet
+                    return totalWarehouses + `${totalWarehouses > 1 ? " Warehouses" : " Warehouse"}`
+                }
+                // else just return a height of 50% by default
+                return "";
+            })()
+        })
 
         // open bottomsheet 
-        bottomSheetRef.current?.present();
+        sheetRef.current?.present();
+
+        // update bottomsheet global state
+        setBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: true,
+            }
+        });
     }
 
     const closeModal = () => {
-        bottomSheetRef.current?.close();
+        // close bottom sheet
+        sheetRef.current?.close();
+
+        // update bottomsheet global state
+        setBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: false,
+            }
+        });
     }
 
     // buttons in support bottom sheet modal
@@ -379,13 +411,13 @@ const EditProduct = ({navigation, route}) => {
                 </ScrollView>
             </TouchableWithoutFeedback>
             <CustomBottomSheet
-                bottomSheetModalRef={bottomSheetRef}
+                index={0}
+                sheetRef={sheetRef}
                 closeModal={closeModal}
-                snapPointsArray={bottomSheetProps.snapPointsArray}
-                autoSnapAt={0}
-                sheetTitle={bottomSheetProps.sheetTitle}
+                snapPointsArray={sheetParameters.snapPointsArray}
+                sheetTitle={sheetParameters.sheetTitle}
             >
-                { modalType === "Support" && supportButtons.map((item, index) => (
+                { sheetParameters.content === "Support" && supportButtons.map((item, index) => (
                     <AccountButtons
                         key={item.id}
                         title={item.title}
@@ -398,7 +430,7 @@ const EditProduct = ({navigation, route}) => {
                     />
                 ))}
 
-                { modalType === "Warehouses" && (
+                { sheetParameters.content === "Warehouses" && (
                     <BottomSheetScrollView 
                         showsVerticalScrollIndicator={false}
                     >
@@ -415,7 +447,7 @@ const EditProduct = ({navigation, route}) => {
                     </BottomSheetScrollView>
                 )}
 
-                { modalType === "Logistics" && (
+                { sheetParameters.content === "Logistics" && (
                     <BottomSheetScrollView 
                         showsVerticalScrollIndicator={false}
                     >

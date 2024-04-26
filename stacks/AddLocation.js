@@ -81,6 +81,7 @@ const AddLocation = ({navigation}) => {
         setToast
     } = useGlobals();
 
+    // update botomsheet global states
     useEffect(() => {
         // set bottomsheet state
         setBottomSheet(prevState=> {
@@ -91,7 +92,7 @@ const AddLocation = ({navigation}) => {
         setStackedBottomSheet(prevState=> {
             return {...prevState, close: () => stackedSheetRef.current?.close()}
         });
-    }, [])
+    }, []);
 
     // main action button loadins state
     const [isLoading, setIsLoading] = useState(false);

@@ -366,7 +366,7 @@ const Account = ({navigation, route}) => {
             sheetTitle: type,
             snapPointsArray: (() => {
                if (type === "Notifications") return [271];
-               else if (type === "Help & Support") return [368];
+               else if (type === "Help & Support") return [280];
                return [198] 
             })(),
         });
