@@ -80,8 +80,32 @@ const EditLocation = ({navigation, route}) => {
     // country
     const country = "Nigeria";
 
+    // sheet ref
+    const sheetRef = useRef(null);
+
+    // sheet ref
+    const stackedSheetRef = useRef(null);
+
     // globals
-    const { bottomSheetRef, stackedSheetRef, setToast } = useGlobals();
+    const {
+        setBottomSheet,
+        setStackedBottomSheet,
+        bottomSheetRef,
+        setToast
+    } = useGlobals();
+
+    // update global bottomsheet states
+    useEffect(() => {
+        // set bottomsheet state
+        setBottomSheet(prevState=> {
+            return {...prevState, close: () => sheetRef.current?.close()}
+        });
+
+        // set bottomsheet state
+        setStackedBottomSheet(prevState=> {
+            return {...prevState, close: () => stackedSheetRef.current?.close()}
+        });
+    }, [])
 
     // location state, to store list of locations
     const [sublocations, setSublocations] = useState([]);
@@ -194,24 +218,66 @@ const EditLocation = ({navigation, route}) => {
     // open bottom sheet function
     const openModal = () => {
         // present bottomsheet
-        bottomSheetRef?.current?.present();
+        sheetRef?.current?.present();
 
         // close menu if open, close menu
         if (menu.open) closeMenu();
+
+        // update bottomsheet global state
+        setBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: true,
+            }
+        });
     }
 
     // close bottom sheet function
     const closeModal = () => {
-        bottomSheetRef?.current?.close();
+        // close bottomsheet
+        sheetRef?.current?.close();
+
+        // update bottomsheet global state
+        setBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: false,
+            }
+        });
     }
 
     // open stacked bottom sheet function
     const openStackedModal = () => {
-        stackedSheetRef?.current?.present();
-        // set modal type
-        setWarehouseInputActive(true);
         // dismiss keyboard
         Keyboard.dismiss();
+        
+        // set input as active
+        setWarehouseInputActive(true);
+
+        // open stacked bottomsheet
+        stackedSheetRef?.current?.present();
+
+        // update bottomsheet global state
+        setStackedBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: true,
+            }
+        });
+    }
+
+    // close stacked bottom sheet function
+    const closeStackedModal = () => {
+        // open stacked sheet
+        stackedSheetRef?.current?.close();
+
+        // update bottomsheet global state
+        setStackedBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: false,
+            }
+        });
     }
 
     // warehouses
@@ -256,19 +322,11 @@ const EditLocation = ({navigation, route}) => {
         fetchWarehouses(authData?.business_id);
     }, []);
 
-    // console.log("Warehouses:", warehouses);
-
-    // close stacked bottom sheet function
-    const closeStackedModal = () => {
-        stackedSheetRef?.current?.close();
-    }
-
     const [menu, setMenu] = useState({
         open: false,
         // position the menu initially off screen
         top: 2 * windowHeight,
     });
-
 
     // warehouse offsets
     const [warehouseOffsets, setWarehouseOffsets] = useState([]);
@@ -895,9 +953,9 @@ const EditLocation = ({navigation, route}) => {
         ) : <EditLocationsSkeleton />}
         {/* bottomsheet */}
         <CustomBottomSheet
-            bottomSheetModalRef={bottomSheetRef}
+            index={0}
+            sheetRef={sheetRef}
             snapPointsArray={["100%"]}
-            autoSnapAt={0}
             sheetTitle={"Add New Sub-location"}
             closeModal={closeModal}
         >
@@ -949,12 +1007,12 @@ const EditLocation = ({navigation, route}) => {
         </CustomBottomSheet>
         {/* stacked bottomsheet */}
         <CustomBottomSheet
-            bottomSheetModalRef={stackedSheetRef}
-            snapPointsArray={["50%", "75%"]}
-            autoSnapAt={0}
-            sheetTitle={"Select Warehouse"}
+            index={0}
+            stackBehavior={"push"}
+            sheetRef={stackedSheetRef}
             closeModal={closeStackedModal}
-            stacked={true}
+            sheetTitle={"Select Warehouse"}
+            snapPointsArray={["50%", "75%"]}
         >
             <BottomSheetScrollView
                 showsVerticalScrollIndicator={false}
