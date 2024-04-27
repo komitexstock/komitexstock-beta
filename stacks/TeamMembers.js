@@ -10,7 +10,7 @@ import {
 } from "react-native";
 
 // react hooks
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 
 // components
 import Header from "../components/Header";
@@ -72,6 +72,28 @@ const TeamMembers = ({ navigation, route }) => {
     // local database
     const db = useSQLiteContext();
 
+    // sheet ref
+    const sheetRef = useRef(null);
+
+    // bottoms sheef refs
+    const {
+        bottomSheet,
+        setBottomSheet,
+        bottomSheetRef,
+        bottomSheetOpen,
+        successSheetRef,
+        popUpSheetRef,
+        popUpSheetOpen,
+        setToast,
+    } = useGlobals();
+
+    // sheet parameters
+    const [sheetParameters, setSheetParameters] = useState({
+        content: '',
+        sheetTitle: '',
+        snapPointsArray: [],
+    })
+
     // state to trigger getting data from local database
     const [triggerReload, setTriggerReload] = useState(1);
 
@@ -93,17 +115,6 @@ const TeamMembers = ({ navigation, route }) => {
 
     // button loading state
     const [isLoading, setIsLoading] = useState(false);
-    
-    // bottoms sheef refs
-    const {
-        bottomSheetRef,
-        bottomSheetOpen,
-        successSheetRef,
-        popUpSheetRef,
-        popUpSheetOpen,
-        setToast,
-    } = useGlobals();
-
 
     // members from local database
     const [members, setMembers] = useState(preloaded_data);
@@ -249,18 +260,25 @@ const TeamMembers = ({ navigation, route }) => {
     // selected member id
     const [selectedId, setSelectedId] = useState(null);
 
+    // update botomsheet global states
+    useEffect(() => {
+        // set bottomsheet state
+        setBottomSheet(prevState=> {
+            return {...prevState, close: () => {
+                // close bottomsheet 
+                sheetRef.current?.close()
+                // reset selected user id
+                setSelectedId(null);
+            }}
+        });
+    }, []);
+
     // selected member
     const selectedMember = useMemo(() => {
         // if no member seleted, return null
         if (!selectedId) return null;
         return members?.find((member) => member?.id === selectedId);
     }, [selectedId, members]);
-
-
-    // console.log(members);
-
-    // state to control modal type
-    const [modal, setModal] = useState("");
 
     // state to control popUp type
     const [popUp, setPopUp] = useState({
@@ -275,33 +293,49 @@ const TeamMembers = ({ navigation, route }) => {
     // state to prompt user to confirm deactivation
     const [roleInputActive, setRoleInputActive] = useState(false);
 
-    // bottomsheet snap points
-    const [bottomSheetSnapPoints, setBottomSheetSnapPoints] = useState([484]);
-
-    // function to close modal
-    const closeModal = () => {
-        bottomSheetRef.current?.close();
-
-        setSelectedId(null);
-    };
-
-    // function to open bottom sheet modal
+    // open modal function
     const openModal = (type, id) => {
-        bottomSheetRef.current?.present();
-        setModal(type);
 
-        // console.log("ID: ", id);
-        // console.log("Type: ", type);
-        
+        // set bottomsheet paramteres
+        setSheetParameters({
+            content: type,
+            snapPointsArray: type === "Edit" ? [484] : [582],
+            sheetTitle: type === "Edit" ? "" : "Add New Team Member",
+        });
+
         if (type === "Edit") {
-            // console.log(type);
-            setBottomSheetSnapPoints([484])
-            // const chosenMember = ;
-            setSelectedId(id);
-        } else {
-            setBottomSheetSnapPoints([582])
+            // selected user
+            setSelectedId(id)
         }
+
+        // open bottomsheet
+        sheetRef?.current?.present();
+
+        // update bottomsheet global state
+        setBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: true,
+            }
+        });
     }
+    
+    // close modal function
+    const closeModal = () => {
+        // close bottomsheet
+        sheetRef?.current?.close();
+
+        // reset selected user id
+        setSelectedId(null);
+
+        // update bottomsheet global state
+        setBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: false,
+            }
+        });
+    };
 
     // function to know if member can be deactivated
     const handleCantDeactivate = useMemo(() => {
@@ -309,7 +343,7 @@ const TeamMembers = ({ navigation, route }) => {
         if (selectedId === null) return true;
         const member = members?.find((member) => member?.id === selectedId);
         // admins can't be deactivated
-        if (member.admin) return true;
+        if (member?.admin) return true;
         // if users are not managers
         if (member.deactivated) return true;
         if (authData?.role !== "Manager") return true;
@@ -567,7 +601,7 @@ const TeamMembers = ({ navigation, route }) => {
                         warehouseList.push(id);
                     });
                     // team admin
-                    const adminUser = members.find(member => member.admin);
+                    const adminUser = members.find(member => member?.admin);
 
                     // foor all warehouses that target user manages
                     await Promise.all(warehouseList.map(async (id) => {
@@ -660,7 +694,7 @@ const TeamMembers = ({ navigation, route }) => {
                     });
 
                     // team admin
-                    const adminUser = members.find(member => member.admin);
+                    const adminUser = members.find(member => member?.admin);
 
                     // foor all warehouses that target user manages
                     await Promise.all(warehouseList.map(async (id) => {
@@ -785,27 +819,35 @@ const TeamMembers = ({ navigation, route }) => {
         // if keyboard is open
         const keyboardDidShowListener = Keyboard.addListener(
             Platform.OS === 'android' ? 'keyboardDidShow' : 'keyboardWillShow', () => {
-                // if keyboard is open, make bottomheet occupy the rest of the screen
-                return setBottomSheetSnapPoints(["100%"])
+                if (!bottomSheet.opened) return;
+                // set bottomsheet paramteres
+                setSheetParameters(prevValue => {
+                    return {
+                        ...prevValue,
+                        snapPointsArray: ["100%"],
+                    }
+                });
             }
         );
         
         // keyboard is closed
         const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
-            // if keyboard is closed reset modal height
-            if (modal === "Edit") {
-                // console.log(type);
-                setBottomSheetSnapPoints([484])
-            } else {
-                setBottomSheetSnapPoints([582])
-            }
+            // run any desired function here
+            // set bottomsheet paramteres
+            setSheetParameters(prevValue => {
+                return {
+                    ...prevValue,
+                    snapPointsArray: prevValue.sheetTitle === "" ? [484] : [582],
+
+                }
+            });
         });
-    
+
         return () => {
             keyboardDidShowListener.remove();
             keyboardDidHideListener.remove();
         };
-    }, [bottomSheetOpen ]);
+    }, [bottomSheet.opened]);
 
 
     // render TeamMember page
@@ -845,58 +887,54 @@ const TeamMembers = ({ navigation, route }) => {
         ) : <TeamMembersSkeleton />}
         {/* custom bottomsheet */}
         <CustomBottomSheet
-            bottomSheetModalRef={bottomSheetRef}
+            sheetRef={sheetRef}
             closeModal={closeModal}
-            snapPointsArray={bottomSheetSnapPoints}
-            autoSnapAt={0}
-            sheetTitle={modal === "Add" ? "Add New Team Memner" : ""}
-            sheetSubtitle={""}
+            snapPointsArray={sheetParameters.snapPointsArray}
+            sheetTitle={sheetParameters.sheetTitle}
         >    
             {/* Add new member modal content */}
-            {modal === "Add" && (
-                <>
-                    <BottomSheetScrollView contentContainerStyle={style.modalWrapper}>
-                        <TouchableWithoutFeedback
-                            onPress={() => Keyboard.dismiss()}
-                        >
-                            <View style={style.modalContent}>
-                                <Text style={style.modalText}>We will email your team member an invite</Text>
-                                {newMemberInputs.map(input => (
-                                    <Input
-                                        key={input.id}
-                                        placeholder={input.placeholder}
-                                        label={input.label}
-                                        value={input.value}
-                                        forceBlur={input.forceBlur}
-                                        onChange={input.onChange}
-                                        error={input.error}
-                                        setError={input.setError}
-                                    />
-                                ))}
-                                <SelectInput 
-                                    label={"Role"}
-                                    placeholder={"Role"}
-                                    onPress={() => openPopUpModal("Add")}
-                                    value={role}
-                                    active={roleInputActive}
-                                    inputFor={"String"}
+            {sheetParameters.content === "Add" && (<>
+                <BottomSheetScrollView contentContainerStyle={style.modalWrapper}>
+                    <TouchableWithoutFeedback
+                        onPress={() => Keyboard.dismiss()}
+                    >
+                        <View style={style.modalContent}>
+                            <Text style={style.modalText}>We will email your team member an invite</Text>
+                            {newMemberInputs.map(input => (
+                                <Input
+                                    key={input.id}
+                                    placeholder={input.placeholder}
+                                    label={input.label}
+                                    value={input.value}
+                                    forceBlur={input.forceBlur}
+                                    onChange={input.onChange}
+                                    error={input.error}
+                                    setError={input.setError}
                                 />
-                            </View>
-                        </TouchableWithoutFeedback>
-                    </BottomSheetScrollView>
-                    <CustomButton
-                        name={"Add New Team Member"}
-                        shrinkWrapper={true}
-                        onPress={handleAddNewMember}
-                        inactive={emptyFields}
-                        unpadded={true}
-                        isLoading={isLoading}
-                    />
-                </>
-            )}
+                            ))}
+                            <SelectInput 
+                                label={"Role"}
+                                placeholder={"Role"}
+                                onPress={() => openPopUpModal("Add")}
+                                value={role}
+                                active={roleInputActive}
+                                inputFor={"String"}
+                            />
+                        </View>
+                    </TouchableWithoutFeedback>
+                </BottomSheetScrollView>
+                <CustomButton
+                    name={"Add New Team Member"}
+                    shrinkWrapper={true}
+                    onPress={handleAddNewMember}
+                    inactive={emptyFields}
+                    unpadded={true}
+                    isLoading={isLoading}
+                />
+            </>)}
 
             {/* edit existing member role modal content */}
-            {modal === "Edit" && (
+            {sheetParameters.content === "Edit" && (
                 <View style={style.modalWrapper}>
                     <View style={style.modalContainer}>
                         <View style={style.infoWrapper}>

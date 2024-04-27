@@ -49,8 +49,19 @@ const Products = ({navigation, route}) => {
     // auth data
     const { authData } = useAuth();
 
+    // sheet ref
+    const sheetRef= useRef(null);
+
     // bottomsheet ref
-    const { bottomSheetRef, filterSheetRef } = useGlobals();
+    const { setBottomSheet, filterSheetRef } = useGlobals();
+
+    // update botomsheet global states
+    useEffect(() => {
+        // set bottomsheet state
+        setBottomSheet(prevState=> {
+            return {...prevState, close: () => sheetRef.current?.close()}
+        });
+    }, []);
 
     // stats array
     const stats = [
@@ -180,15 +191,33 @@ const Products = ({navigation, route}) => {
     // state to store search query
     const [searchQuery, setSearchQuery] = useState("");
 
-    // close modal function
-    const closeModal = () => {
-        bottomSheetRef.current?.close();
-    };
-
     // open modal function
     const openModal = () => {
-        bottomSheetRef.current?.present();
+        // open bottomsheet
+        sheetRef?.current?.present();
+
+        // update bottomsheet global state
+        setBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: true,
+            }
+        });
     }
+    
+    // close modal function
+    const closeModal = () => {
+        // close bottomsheet
+        sheetRef?.current?.close();
+
+        // update bottomsheet global state
+        setBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: false,
+            }
+        });
+    };
 
     const handleEditProduct = (id) => {
         // console.log("right here");
@@ -808,12 +837,11 @@ const Products = ({navigation, route}) => {
             </> : <ProductsSkeleton />}
             {/* search products bottomsheet */}
             <CustomBottomSheet 
-                bottomSheetModalRef={bottomSheetRef}
+                sheetRef={sheetRef}
                 closeModal={closeModal}
                 snapPointsArray={["100%"]}
-                autoSnapAt={0}
                 sheetTitle={"Products"}
-                disablePanToClose={true}
+                enablePanDownToClose={false}
             >
                 <SearchBar 
                     placeholder={"Search prodcuts"}

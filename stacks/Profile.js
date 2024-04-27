@@ -8,6 +8,7 @@ import {
     StyleSheet,
     Linking,
     Keyboard,
+    Platform,
 } from "react-native";
 // compoents
 import AccountButtons from "../components/AccountButtons";
@@ -16,7 +17,7 @@ import Input from "../components/Input";
 import CustomButton from "../components/CustomButton"
 import CustomBottomSheet from "../components/CustomBottomSheet";
 // react hooks
-import { useState } from "react";
+import { useRef, useState, useEffect } from "react";
 // icons
 import PhoneIcon from "../assets/icons/PhoneIcon";
 import SmsIcon from "../assets/icons/SmsIcon";
@@ -37,8 +38,28 @@ const Profile = ({navigation}) => {
 
     const [isLoading, setIsLoading] = useState(false);
 
-    // bottomsheet ref
-    const { bottomSheetRef, setToast } = useGlobals();
+    // sheet ref
+    const sheetRef = useRef(null);
+
+    // global states
+    const {
+        bottomSheet,
+        setBottomSheet,
+        setToast
+    } = useGlobals();
+
+    const [sheetParameters, setSheetParameters] = useState({
+        sheetTitle: "Help & Support",
+        snapPointsArray: [280],
+    })
+
+    // update botomsheet global states
+    useEffect(() => {
+        // set bottomsheet state
+        setBottomSheet(prevState=> {
+            return {...prevState, close: () => sheetRef.current?.close()}
+        });
+    }, []);
 
     // state to store full name input value
     const [fullName, setFullName] = useState(authData?.full_name);
@@ -94,19 +115,47 @@ const Profile = ({navigation}) => {
         },
     ];
 
-    // state to store modal parameters
-    const [modal, setModal] = useState("")
-
-    // close modal function
-    const closeModal = () => {
-        bottomSheetRef.current?.close();
-    };
-
     // open modal function
     const openModal = (type) => {
-        setModal(type);
-        bottomSheetRef.current?.present();
+
+        setSheetParameters({
+            sheetTitle: type,
+            snapPointsArray: (() => {
+                if (type === "Full Name") {
+                    return [270];
+                } else if (type === "Phone Number") {
+                    return [386];
+                }
+                // else return default
+                return [280];
+            })()
+        })
+
+        // open bottomsheet
+        sheetRef?.current?.present();
+
+        // update bottomsheet global state
+        setBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: true,
+            }
+        });
     }
+    
+    // close modal function
+    const closeModal = () => {
+        // close bottomsheet
+        sheetRef?.current?.close();
+
+        // update bottomsheet global state
+        setBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: false,
+            }
+        });
+    };
 
     // support button list to populate support bottomsheet
     const supportButtons = [
@@ -200,131 +249,186 @@ const Profile = ({navigation}) => {
         }
     }
 
+    
+    // listen for keyboard opening or closing
+    useEffect(() => {
+        // if keyboard is open
+        const keyboardDidShowListener = Keyboard.addListener(
+            Platform.OS === 'android' ? 'keyboardDidShow' : 'keyboardWillShow', () => {
+                if (!bottomSheet.opened) return;
+                // set bottomsheet paramteres
+                setSheetParameters(prevValue => {
+                    return {
+                        ...prevValue,
+                        snapPointsArray: ["100%"],
+                    }
+                })
+            }
+        );
+        
+        // keyboard is closed
+        const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+            // run any desired function here
+            // if wareehouse address is empty
+            // set bottomsheet paramteres
+            setSheetParameters(prevValue => {
+                return {
+                    ...prevValue,
+                    snapPointsArray: (() => {
+                        if (prevValue.sheetTitle === "Full Name") {
+                            return [270];
+                        } else if (prevValue.sheetTitle === "Phone Number") {
+                            return [386];
+                        }
+                        // else return default
+                        return [280];
+                    })()
+                }
+            })
+
+        });
+
+        // this is useful if the bottomsheet is closed 
+        // without performing an action
+        if (!bottomSheet.opened) {
+            // set bottomsheet paramteres
+            setSheetParameters(prevValue => {
+                return {
+                    ...prevValue,
+                    snapPointsArray: [386],
+                }
+            })
+        }
+
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        };
+    }, [bottomSheet.opened]);
+
+
     // render Profile page/stack
-    return (
-        <>
-            <TouchableWithoutFeedback>
-                <ScrollView
-                    showsVerticalScrollIndicator={false}
-                    style={style.container}
-                >
-                    <View style={style.main}>
-                        <Header 
-                            navigation={navigation} 
-                            stackName={"Profile"} 
-                            iconFunction={null} 
-                            icon={null} 
-                            unpadded={true}
-                        />
-                        <Text style={style.paragraph}>
-                            You can only change your full name and phone number. To change other information, please contact 
-                            <TouchableOpacity 
-                                style={style.link}
-                                onPress={() => openModal("Help & Support")}
-                            >
-                                <Text style={style.linkText}>support</Text>
-                            </TouchableOpacity>
-                        </Text>
-                        { profileButtons.map((button, index) => (
-                            <AccountButtons 
-                                key={button.id}
-                                title={button.title}
-                                mainInfoText={button.mainInfoText}
-                                length={profileButtons.length - 1}
-                                index={index}
-                                onPress={button.onPress}
-                                disabled={button.disabled}
-                            />
-                        )) }
-                    </View>
-                </ScrollView>
-            </TouchableWithoutFeedback>
-            {/* bottomsheet modal */}
-            <CustomBottomSheet 
-                bottomSheetModalRef={bottomSheetRef}
-                closeModal={closeModal}
-                snapPointsArray={modal === "Help & Support" ? [270] : [270]}
-                autoSnapAt={0}
-                sheetTitle={modal}
-            >   
-                {/* help and support bottomsheet content */}
-                { modal === "Help & Support" && supportButtons.map((item, index) => (
-                    <AccountButtons
-                        key={item.id}
-                        title={item.title}
-                        subtitle={false}
-                        icon={item.icon}
-                        length={supportButtons.length - 1}
-                        index={index}
-                        onPress={item.onPress}
+    return (<>
+        <TouchableWithoutFeedback>
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                style={style.container}
+            >
+                <View style={style.main}>
+                    <Header 
+                        navigation={navigation} 
+                        stackName={"Profile"} 
+                        iconFunction={null} 
+                        icon={null} 
                         unpadded={true}
                     />
-                ))}
-                {/* edit full name bottomsheet modal content */}
-                { modal === "Full Name" && (
-                    <TouchableWithoutFeedback
-                        onPress={() => Keyboard.dismiss()}
-                    >   
-                        <View style={style.modalWrapper}>
-                            <View style={style.inputWrapper}>
-                                {/* full name input */}
-                                <Input 
-                                    label={"Full Name"}
-                                    placeholder={"Full Name"}
-                                    value={fullName}
-                                    onChange={updateFullName}
-                                    error={errorFullName}
-                                    setError={setErrorFullName}
-                                />
-                            </View>
-                            {/* modal button to save changes */}
-                            <CustomButton
-                                name={"Save Changes"}
-                                inactive={authData?.full_name === fullName}
-                                shrinkWrapper={true}
-                                onPress={handleUpdateFullname}
-                                unpadded={true}
-                                isLoading={isLoading}
+                    <Text style={style.paragraph}>
+                        You can only change your full name and phone number. To change other information, please contact 
+                        <TouchableOpacity 
+                            style={style.link}
+                            onPress={() => openModal("Help & Support")}
+                        >
+                            <Text style={style.linkText}>support</Text>
+                        </TouchableOpacity>
+                    </Text>
+                    { profileButtons.map((button, index) => (
+                        <AccountButtons 
+                            key={button.id}
+                            title={button.title}
+                            mainInfoText={button.mainInfoText}
+                            length={profileButtons.length - 1}
+                            index={index}
+                            onPress={button.onPress}
+                            disabled={button.disabled}
+                        />
+                    )) }
+                </View>
+            </ScrollView>
+        </TouchableWithoutFeedback>
+        {/* bottomsheet modal */}
+        <CustomBottomSheet 
+            closeModal={closeModal}
+            sheetRef={sheetRef}
+            sheetTitle={sheetParameters.sheetTitle}
+            snapPointsArray={sheetParameters.snapPointsArray}
+        >   
+            {/* help and support bottomsheet content */}
+            { sheetParameters.sheetTitle === "Help & Support" && supportButtons.map((item, index) => (
+                <AccountButtons
+                    key={item.id}
+                    title={item.title}
+                    subtitle={false}
+                    icon={item.icon}
+                    length={supportButtons.length - 1}
+                    index={index}
+                    onPress={item.onPress}
+                    unpadded={true}
+                />
+            ))}
+            {/* edit full name bottomsheet modal content */}
+            { sheetParameters.sheetTitle === "Full Name" && (
+                <TouchableWithoutFeedback
+                    onPress={() => Keyboard.dismiss()}
+                >   
+                    <View style={style.modalWrapper}>
+                        <View style={style.inputWrapper}>
+                            {/* full name input */}
+                            <Input 
+                                label={"Full Name"}
+                                placeholder={"Full Name"}
+                                value={fullName}
+                                onChange={updateFullName}
+                                error={errorFullName}
+                                setError={setErrorFullName}
                             />
                         </View>
-                    </TouchableWithoutFeedback>
-                )}
-                {/* edit phone number bottomsheet modal content */}
-                { modal === "Phone Number" && (
-                    <TouchableWithoutFeedback
-                        onPress={() => Keyboard.dismiss()}
-                    >   
-                        <View style={style.modalWrapper}>
-                            <View style={style.inputWrapper}>
-                                <Text style={style.modalText}>
-                                    Please type in your new phone number. 
-                                    We will send a code to the phone member to confirm you own it.
-                                </Text>
-                                <Input 
-                                    label={"Phone number"}
-                                    placeholder={"Phone number"}
-                                    value={phoneNumber}
-                                    keyboardType={"phone-pad"}
-                                    onChange={updatePhoneNumber}
-                                    error={errorPhoneNumber}
-                                    setError={setErrorPhoneNumber}
-                                />
-                            </View>
-                            {/* modal button to save changes */}
-                            <CustomButton
-                                name={"Save Changes"}
-                                inactive={authData?.phone === phoneNumber}
-                                shrinkWrapper={true}
-                                isLoading={isLoading}
-                                onPress={handleUpdatePhoneNumber}
-                                unpadded={true}
+                        {/* modal button to save changes */}
+                        <CustomButton
+                            name={"Save Changes"}
+                            inactive={authData?.full_name === fullName}
+                            shrinkWrapper={true}
+                            onPress={handleUpdateFullname}
+                            unpadded={true}
+                            isLoading={isLoading}
+                        />
+                    </View>
+                </TouchableWithoutFeedback>
+            )}
+            {/* edit phone number bottomsheet modal content */}
+            { sheetParameters.sheetTitle === "Phone Number" && (
+                <TouchableWithoutFeedback
+                    onPress={() => Keyboard.dismiss()}
+                >   
+                    <View style={style.modalWrapper}>
+                        <View style={style.inputWrapper}>
+                            <Text style={style.modalText}>
+                                Please type in your new phone number. 
+                                We will send a code to the phone member to confirm you own it.
+                            </Text>
+                            <Input 
+                                label={"Phone number"}
+                                placeholder={"Phone number"}
+                                value={phoneNumber}
+                                keyboardType={"phone-pad"}
+                                onChange={updatePhoneNumber}
+                                error={errorPhoneNumber}
+                                setError={setErrorPhoneNumber}
                             />
                         </View>
-                    </TouchableWithoutFeedback>
-                )}
-            </CustomBottomSheet>
-        </>
-    );
+                        {/* modal button to save changes */}
+                        <CustomButton
+                            name={"Save Changes"}
+                            inactive={authData?.phone === phoneNumber}
+                            shrinkWrapper={true}
+                            isLoading={isLoading}
+                            onPress={handleUpdatePhoneNumber}
+                            unpadded={true}
+                        />
+                    </View>
+                </TouchableWithoutFeedback>
+            )}
+        </CustomBottomSheet>
+    </>);
 }
 
 // stylesheet

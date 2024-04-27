@@ -1,6 +1,6 @@
-import { StyleSheet, TouchableWithoutFeedback, Text, View, Keyboard, TouchableOpacity } from 'react-native'
+import { StyleSheet, TouchableWithoutFeedback, Text, View, Keyboard, TouchableOpacity, Platform } from 'react-native'
 // react hooks
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 // import 
 import Header from '../components/Header';
 import SelectInput from '../components/SelectInput';
@@ -19,8 +19,19 @@ import { windowHeight } from '../utils/helpers';
 
 const StockTransfer = ({navigation}) => {
 
+    // sheet ref
+    const sheetRef = useRef(null);
+
     // bottomsheet refs
-    const { bottomSheetRef, bottomSheetOpen } = useGlobals();
+    const {
+        bottomSheet,
+        setBottomSheet,
+    } = useGlobals();
+
+    // sheet parameters
+    const [sheetParameters,setSheetParameters] = useState({
+        content: '',
+    })
 
     // additional details
     const [additionalDetails, setAdditionalDetails] = useState("");
@@ -64,6 +75,20 @@ const StockTransfer = ({navigation}) => {
     // active input state
     const [activeDestinationWarehouse, setActiveDestinationWarehouse] = useState(false);
 
+    // update botomsheet global states
+    useEffect(() => {
+        // set bottomsheet state
+        setBottomSheet(prevState=> {
+            return {...prevState, close: () => {
+                // close bottomsheet 
+                sheetRef.current?.close()
+                // disable inputs active states
+                setActiveDestinationWarehouse(false);
+                setActiveOriginWarehouse(false);
+            }}
+        });
+    }, []);
+
     const handleWarehouseSelection = (id, type) => {
         if (type === "origin") {
             setOriginWarehouse(() => {
@@ -77,154 +102,190 @@ const StockTransfer = ({navigation}) => {
         closeModal();
     }
 
-    // console.log(originWarehouse);
-
-    // state to control list of selectable warehouse in bottomsheet 
-    const [modalContent, setModalContent] = useState(null);
-
     // search query
     const [searchQuery, setSearchQuery] = useState(null);
 
+    // open modal function
     const openModal = (type) => {
-        bottomSheetRef?.current?.present();
-        setModalContent(type);
+        // dismiss keyboard
         Keyboard.dismiss();
-        if (type === "origin") return setActiveOriginWarehouse(true);
-        return setActiveDestinationWarehouse(true);
-    }
 
-    // close modal function
-    const closeModal = () => {
-        bottomSheetRef?.current?.close();
-        setActiveDestinationWarehouse(false);
-        setActiveOriginWarehouse(false);
+        // set sheet parameters
+        setSheetParameters({
+            content: type,
+        })
+
+        // set active state for corresponding input
+        if (type === "origin") setActiveOriginWarehouse(true);
+        else if (type === "destination") setActiveDestinationWarehouse(true); 
+
+        // open bottomsheet
+        sheetRef?.current?.present();
+
+        // update bottomsheet global state
+        setBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: true,
+            }
+        });
     }
     
-    // disable active states for select input if back button is pressed
+    // close modal function
+    const closeModal = () => {
+        // close bottomsheet
+        sheetRef?.current?.close();
+
+        // deactiavte active states for select inputs
+        setActiveDestinationWarehouse(false);
+        setActiveOriginWarehouse(false);
+
+        // update bottomsheet global state
+        setBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: false,
+            }
+        });
+    };
+
+    // listen for keyboard opening or closing
     useEffect(() => {
-        if (!bottomSheetOpen) {
-            setActiveDestinationWarehouse(false);
-            setActiveOriginWarehouse(false);
-        }
-    }, [bottomSheetOpen])
+        // if keyboard is open
+        const keyboardDidShowListener = Keyboard.addListener(
+            Platform.OS === 'android' ? 'keyboardDidShow' : 'keyboardWillShow', () => {
+                if (!bottomSheet.opened) return;
+                // set bottomsheet paramteres
+                sheetRef.current?.snapToIndex(2);
+            }
+        );
+        
+        // keyboard is closed
+        const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+            // run any desired function here
+            // if wareehouse address is empty
+        });
+
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        };
+    }, [bottomSheet.opened]);
 
 
-    return (
-        <>
-            <TouchableWithoutFeedback
-                onPress={Keyboard.dismiss}
-            >
-                <View style={style.container}>
-                    <View style={style.mainWrapper}>
-                        <Header
-                            stackName={"Stock transfer"}
-                            navigation={navigation}
-                            unpadded={true}
-                        />
-                        <Text style={style.paragraph}>
-                            Set your transfer preferences
-                        </Text>
-                        <View style={style.inputWrapper}>
-                            
-                            {/* origin warehouse */}
-                            <SelectInput
-                                label={"Select Origin"}
-                                placeholder={"Select origin"}
-                                value={originWarehouse?.warehouse_name}
-                                inputFor={"String"}
-                                onPress={() => openModal("origin")}
-                                active={activeOriginWarehouse}
-                            />
-
-                            {/* destination warehouse */}
-                            <SelectInput
-                                label={"Select Destination"}
-                                placeholder={"Select destination"}
-                                value={destinationWarehouse?.warehouse_name}
-                                inputFor={"String"}
-                                onPress={() => openModal("destination")}
-                                active={activeDestinationWarehouse}
-                            />
-
-                            {/* additional details */}
-                            <Input 
-                                label={"Additional Details"}
-                                multiline={true}
-                                height={64}
-                                textAlign={"top"}
-                                minRows={4}
-                                placeholder={"Input additional details here..."}
-                                value={additionalDetails}
-                                onChange={setAdditionalDetails}
-                                error={additionalDetailsError}
-                                setError={setAdditionalDetailsError}
-                            />
-                        </View>
-                    </View>
-                    <CustomButton
-                        name={"Continue"}
+    return (<>
+        <TouchableWithoutFeedback
+            onPress={Keyboard.dismiss}
+        >
+            <View style={style.container}>
+                <View style={style.mainWrapper}>
+                    <Header
+                        stackName={"Stock transfer"}
+                        navigation={navigation}
                         unpadded={true}
-                        backgroundColor={background}
-                        inactive={originWarehouse === null || destinationWarehouse === null}
-                        onPress={() => navigation.navigate("StockTransferProducts", {
-                            originWarehouse,
-                            destinationWarehouse,
-                            additionalDetails,
-                        })}
                     />
-                </View>
-            </TouchableWithoutFeedback>
-            <CustomBottomSheet
-                bottomSheetModalRef={bottomSheetRef}
-                sheetTitle={"Select Warehouse"}
-                snapPointsArray={["50%", "75%", "100%"]}
-                autoSnapAt={0}
-                closeModal={closeModal}
-            >
-                <SearchBar
-                    searchQuery={searchQuery}
-                    setSearchQuery={setSearchQuery}
-                    placeholder={"Search warehouse"}
-                    backgroundColor={background}
-                    disableFilter={true}
-                />
-                <BottomSheetScrollView style={style.sheetScroll} showsVerticalScrollIndicator={false}>
-                    <Text style={style.headingText}>
-                        Available Warehouses
+                    <Text style={style.paragraph}>
+                        Set your transfer preferences
                     </Text>
-                    <View style={style.listWrapper}>
-                        {modalContent === "origin" && 
-                            warehouses.filter(warehouse => warehouse.id !== destinationWarehouse?.id).map(warehouse => (
-                                <TouchableOpacity
-                                    key={warehouse.id}
-                                    style={style.listItemButton}
-                                    onPress={() => handleWarehouseSelection(warehouse.id, modalContent)}
-                                >
-                                    <Text style={style.listItemText}>
-                                        {warehouse.warehouse_name}
-                                    </Text>
-                                </TouchableOpacity>
-                            ))
-                        }
+                    <View style={style.inputWrapper}>
+                        
+                        {/* origin warehouse */}
+                        <SelectInput
+                            label={"Select Origin"}
+                            placeholder={"Select origin"}
+                            value={originWarehouse?.warehouse_name}
+                            inputFor={"String"}
+                            onPress={() => openModal("origin")}
+                            active={activeOriginWarehouse}
+                        />
 
-                        {modalContent === "destination" && 
-                            warehouses.filter(warehouse => warehouse.id !== originWarehouse?.id).map(warehouse => (
-                                <TouchableOpacity
-                                    key={warehouse.id}
-                                    style={style.listItemButton}
-                                    onPress={() => handleWarehouseSelection(warehouse.id, modalContent)}
-                                >
-                                    <Text style={style.listItemText}>
-                                        {warehouse.warehouse_name}
-                                    </Text>
-                                </TouchableOpacity>
-                            ))
-                        }
+                        {/* destination warehouse */}
+                        <SelectInput
+                            label={"Select Destination"}
+                            placeholder={"Select destination"}
+                            value={destinationWarehouse?.warehouse_name}
+                            inputFor={"String"}
+                            onPress={() => openModal("destination")}
+                            active={activeDestinationWarehouse}
+                        />
+
+                        {/* additional details */}
+                        <Input 
+                            label={"Additional Details"}
+                            multiline={true}
+                            height={64}
+                            textAlign={"top"}
+                            minRows={4}
+                            placeholder={"Input additional details here..."}
+                            value={additionalDetails}
+                            onChange={setAdditionalDetails}
+                            error={additionalDetailsError}
+                            setError={setAdditionalDetailsError}
+                        />
                     </View>
-                </BottomSheetScrollView>
-            </CustomBottomSheet>
-        </>
-    )
+                </View>
+                <CustomButton
+                    name={"Continue"}
+                    unpadded={true}
+                    backgroundColor={background}
+                    inactive={originWarehouse === null || destinationWarehouse === null}
+                    onPress={() => navigation.navigate("StockTransferProducts", {
+                        originWarehouse,
+                        destinationWarehouse,
+                        additionalDetails,
+                    })}
+                />
+            </View>
+        </TouchableWithoutFeedback>
+        <CustomBottomSheet
+            sheetRef={sheetRef}
+            closeModal={closeModal}
+            sheetTitle={"Select Warehouse"}
+            snapPointsArray={["50%", "75%", "100%"]}
+        >
+            <SearchBar
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                placeholder={"Search warehouse"}
+                backgroundColor={background}
+                disableFilter={true}
+            />
+            <BottomSheetScrollView style={style.sheetScroll} showsVerticalScrollIndicator={false}>
+                <Text style={style.headingText}>
+                    Available Warehouses
+                </Text>
+                <View style={style.listWrapper}>
+                    {sheetParameters.content === "origin" && 
+                        warehouses.filter(warehouse => warehouse.id !== destinationWarehouse?.id).map(warehouse => (
+                            <TouchableOpacity
+                                key={warehouse.id}
+                                style={style.listItemButton}
+                                onPress={() => handleWarehouseSelection(warehouse.id, sheetParameters.content)}
+                            >
+                                <Text style={style.listItemText}>
+                                    {warehouse.warehouse_name}
+                                </Text>
+                            </TouchableOpacity>
+                        ))
+                    }
+
+                    {sheetParameters.content === "destination" && 
+                        warehouses.filter(warehouse => warehouse.id !== originWarehouse?.id).map(warehouse => (
+                            <TouchableOpacity
+                                key={warehouse.id}
+                                style={style.listItemButton}
+                                onPress={() => handleWarehouseSelection(warehouse.id, sheetParameters.content)}
+                            >
+                                <Text style={style.listItemText}>
+                                    {warehouse.warehouse_name}
+                                </Text>
+                            </TouchableOpacity>
+                        ))
+                    }
+                </View>
+            </BottomSheetScrollView>
+        </CustomBottomSheet>
+    </>)
 }
 
 export default StockTransfer

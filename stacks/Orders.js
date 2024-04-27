@@ -46,12 +46,30 @@ import { orderList } from "../data/orderList";
 
 const Orders = ({navigation}) => {
 
-    // bottom sheet refs
-    const { bottomSheetRef, filterSheetRef, calendarSheetRef, calendarSheetOpen} = useGlobals();
+    // sheet ref
+    const sheetRef = useRef(null);
+
+    // global states
+    const {
+        setBottomSheet,
+        bottomSheetRef,
+        filterSheetRef,
+        calendarSheetRef,
+        calendarSheetOpen
+    } = useGlobals();
+
+    // update botomsheet global states
+    useEffect(() => {
+        // set bottomsheet state
+        setBottomSheet(prevState=> {
+            return {...prevState, close: () => sheetRef.current?.close()}
+        });
+    }, []);
 
     // state to indicate page loading
     const [pageLoading, setPageLoading] = useState(true);
 
+    // disbale loading state
     useEffect(() => {
         setTimeout(() => {
             setPageLoading(false);
@@ -733,16 +751,34 @@ const Orders = ({navigation}) => {
             unitPosition: "end",
         },
     ];
-    
-    // close modal function
-    const closeModal = () => {
-        bottomSheetRef.current?.close();
-    };
 
     // open modal function
     const openModal = () => {
-        bottomSheetRef.current?.present();
+        // open bottomsheet
+        sheetRef?.current?.present();
+
+        // update bottomsheet global state
+        setBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: true,
+            }
+        });
     }
+    
+    // close modal function
+    const closeModal = () => {
+        // close bottomsheet
+        sheetRef?.current?.close();
+
+        // update bottomsheet global state
+        setBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: false,
+            }
+        });
+    };
 
     // filter state
     const [filterType, setFilterType] = useState("home")
@@ -985,12 +1021,11 @@ const Orders = ({navigation}) => {
             {/* Header component */}
             {/* bottom sheet */}
             <CustomBottomSheet 
-                bottomSheetModalRef={bottomSheetRef}
+                sheetRef={sheetRef}
+                sheetTitle={"Orders"}
                 closeModal={closeModal}
                 snapPointsArray={["100%"]}
-                autoSnapAt={0}
-                sheetTitle={"Orders"}
-                disablePanToClose={true}
+                enablePanDownToClose={false}
             >
                 <SearchBar 
                     placeholder={"Search orders"}

@@ -95,15 +95,27 @@ const Waybill = ({navigation}) => {
     // use auth
     const { authData } = useAuth();
 
+    // sheet ref
+    const sheetRef = useRef(null);
+
     // global variables
     const {
+        setBottomSheet,
         bottomSheetRef,
         bottomSheetOpen,
         filterSheetRef,
         calendarSheetRef,
         calendarSheetOpen,
-        setToast
+        setToast,
     } = useGlobals();
+
+    // update botomsheet global states
+    useEffect(() => {
+        // set bottomsheet state
+        setBottomSheet(prevState=> {
+            return {...prevState, close: () => sheetRef.current?.close()}
+        });
+    }, []);
 
     // page loading state
     const [pageLoading, setPageLoading] = useState(true);
@@ -1315,17 +1327,33 @@ const Waybill = ({navigation}) => {
         }
     }, [calendarSheetOpen])
 
-    // close search modal bottomsheet function
-    const closeModal = () => {
-        bottomSheetRef.current?.close();
-        // reset filter type
-    };
-    
-    // open search modal bottomsheet function
+    // open modal function
     const openModal = () => {
-        // set filter as search filter
-        bottomSheetRef.current?.present();
+        // open bottomsheet
+        sheetRef?.current?.present();
+
+        // update bottomsheet global state
+        setBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: true,
+            }
+        });
     }
+    
+    // close modal function
+    const closeModal = () => {
+        // close bottomsheet
+        sheetRef?.current?.close();
+
+        // update bottomsheet global state
+        setBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: false,
+            }
+        });
+    };
 
     // function to get number of unread messages
     const getNumberOfUnreadMessages = (inventory_action) => {
@@ -1766,429 +1794,418 @@ const Waybill = ({navigation}) => {
         }
     ]);
 
-    // // previous date
-    // const prevDate = new Date();
-    // prevDate.setDate(prevDate.getDate() - 1);
-
-    // incomingFilter.map(filter => {
-    //     console.log(filter.buttons)
-    // })
-
-    return (
-        <>
-            {/* header component */}
-            {!pageLoading ? <>
-                {/* fixed header */}
-                <Header
-                    navigation={navigation}
-                    stackName={"Waybill"}
-                    removeBackArrow={true}
-                    backgroundColor={background}
-                    // icon={<MenuIcon />}
-                    // iconFunction={() => {}}
-                />
-                {/* screen content */}
-                <TouchableWithoutFeedback>
-                    <FlatList 
-                        onScroll={animateHeaderOnScroll}
-                        showsVerticalScrollIndicator={false}
-                        stickyHeaderIndices={[1]}
-                        ListHeaderComponent={
-                            <View 
-                                style={style.headerWrapper}
-                                onLayout={e => {
-                                    stickyHeaderOffset.current = e.nativeEvent.layout.height;
-                                    // where 57 is the height of the Header component
-                                }}
-                            >
-                                {/* stats */}
-                                <StatWrapper>
-                                    {stats.map(stat => (
-                                        <StatCard
-                                            key={stat.id}
-                                            title={stat.title}
-                                            presentValue={stat.presentValue}
-                                            oldValue={stat.oldValue}
-                                            decimal={stat.decimal}
-                                            unit={stat.unit}
-                                            unitPosition={stat.unitPosition}
-                                            isLoading={fetchingBusiness || fetchingWaybills || fetchingProducts} 
-                                        />
-                                    ))}
-                                </StatWrapper>
-                                {/* onPress navigate to send waybill page */}
-                                <CustomButton
-                                    secondaryButton={true}
-                                    name={"Send Waybill"}
-                                    shrinkWrapper={true}
-                                    onPress={() => navigation.navigate("SendWaybill")}
-                                    unpadded={true}
-                                    wrapperStyle={{marginTop: 22, marginBottom: 20}}
-                                />
-                            </View>
-                        }
-                        contentContainerStyle={style.contentContainer}
-                        style={style.container}
-                        keyExtractor={item => item.id}
-                        data={renderData}
-                        renderItem={({ item, index }) => {
-                            if (item.id === "sticky") {
-                                return (<>
+    return (<>
+        {/* header component */}
+        {!pageLoading ? <>
+            {/* fixed header */}
+            <Header
+                navigation={navigation}
+                stackName={"Waybill"}
+                removeBackArrow={true}
+                backgroundColor={background}
+                // icon={<MenuIcon />}
+                // iconFunction={() => {}}
+            />
+            {/* screen content */}
+            <TouchableWithoutFeedback>
+                <FlatList 
+                    onScroll={animateHeaderOnScroll}
+                    showsVerticalScrollIndicator={false}
+                    stickyHeaderIndices={[1]}
+                    ListHeaderComponent={
+                        <View 
+                            style={style.headerWrapper}
+                            onLayout={e => {
+                                stickyHeaderOffset.current = e.nativeEvent.layout.height;
+                                // where 57 is the height of the Header component
+                            }}
+                        >
+                            {/* stats */}
+                            <StatWrapper>
+                                {stats.map(stat => (
+                                    <StatCard
+                                        key={stat.id}
+                                        title={stat.title}
+                                        presentValue={stat.presentValue}
+                                        oldValue={stat.oldValue}
+                                        decimal={stat.decimal}
+                                        unit={stat.unit}
+                                        unitPosition={stat.unitPosition}
+                                        isLoading={fetchingBusiness || fetchingWaybills || fetchingProducts} 
+                                    />
+                                ))}
+                            </StatWrapper>
+                            {/* onPress navigate to send waybill page */}
+                            <CustomButton
+                                secondaryButton={true}
+                                name={"Send Waybill"}
+                                shrinkWrapper={true}
+                                onPress={() => navigation.navigate("SendWaybill")}
+                                unpadded={true}
+                                wrapperStyle={{marginTop: 22, marginBottom: 20}}
+                            />
+                        </View>
+                    }
+                    contentContainerStyle={style.contentContainer}
+                    style={style.container}
+                    keyExtractor={item => item.id}
+                    data={renderData}
+                    renderItem={({ item, index }) => {
+                        if (item.id === "sticky") {
+                            return (<>
+                                <View 
+                                    style={[
+                                        style.stickyHeader,
+                                        scrollHeight > stickyHeaderOffset.current && style.shadow,
+                                    ]}
+                                >
+                                    <View style={style.recentOrderHeading}>
+                                        <Text style={style.recentOrderHeadingText}>Recent Waybills</Text>
+                                        <View style={style.actionWrapper}>
+                                            {/* trigger search modal */}
+                                            <TouchableOpacity 
+                                                style={style.menuIcon}
+                                                onPress={openModal}
+                                            >
+                                                <SearchIcon />
+                                            </TouchableOpacity>
+                                            {/* trigger filter modal */}
+                                            <OpenFilterButton
+                                                onPress={openFilter}
+                                                filterParams={tab === "outgoing" ? outgoingFilter : incomingFilter}
+                                            />
+                                        </View>
+                                    </View>
+                                    {/* page tabs */}
                                     <View 
                                         style={[
-                                            style.stickyHeader,
-                                            scrollHeight > stickyHeaderOffset.current && style.shadow,
+                                            style.tabContainer,
+                                            {flexDirection: authData?.account_type === "Merchant" ? 
+                                                "row" : // for merchant show outgoing tab first
+                                                "row-reverse" // for logistics show incoming tab first
+                                            },
                                         ]}
                                     >
-                                        <View style={style.recentOrderHeading}>
-                                            <Text style={style.recentOrderHeadingText}>Recent Waybills</Text>
-                                            <View style={style.actionWrapper}>
-                                                {/* trigger search modal */}
-                                                <TouchableOpacity 
-                                                    style={style.menuIcon}
-                                                    onPress={openModal}
-                                                >
-                                                    <SearchIcon />
-                                                </TouchableOpacity>
-                                                {/* trigger filter modal */}
-                                                <OpenFilterButton
-                                                    onPress={openFilter}
-                                                    filterParams={tab === "outgoing" ? outgoingFilter : incomingFilter}
-                                                />
-                                            </View>
-                                        </View>
-                                        {/* page tabs */}
-                                        <View 
-                                            style={[
-                                                style.tabContainer,
-                                                {flexDirection: authData?.account_type === "Merchant" ? 
-                                                    "row" : // for merchant show outgoing tab first
-                                                    "row-reverse" // for logistics show incoming tab first
-                                                },
-                                            ]}
+                                        <TouchableOpacity 
+                                            style={tab === "outgoing" ? style.tabButtonSelected : style.tabButton}
+                                            onPress={() => setTab("outgoing")}
                                         >
-                                            <TouchableOpacity 
-                                                style={tab === "outgoing" ? style.tabButtonSelected : style.tabButton}
-                                                onPress={() => setTab("outgoing")}
-                                            >
-                                                <Text style={tab === "outgoing" ? style.tabButtonTextSelected : style.tabButtonText} >Outgoing</Text>
-                                                <Badge number={getNumberOfUnreadMessages(authData?.account_type === "Merchant" ? "increment" : "decrement")} />
-                                            </TouchableOpacity>
-                                            <TouchableOpacity 
-                                                style={tab === "incoming" ? style.tabButtonSelected : style.tabButton}
-                                                onPress={() => setTab("incoming")}
-                                            >
-                                                <Text style={tab === "incoming" ? style.tabButtonTextSelected : style.tabButtonText} >Incoming</Text>
-                                                <Badge number={getNumberOfUnreadMessages(authData?.account_type === "Merchant" ? "decrement" : "increment")} />
-                                            </TouchableOpacity>
-                                        </View>
-                                        {/* check if any filter has been applied, i.e it is not in its default value */}
-                                        {tab === "outgoing" && outgoingFilter.find(filterParam => filterParam.default === false) && (
-                                            <View style={style.filterPillWrapper}>
-                                                {outgoingFilter.map(filterParam => {
-                                                    if (!filterParam.default) {
-                                                        if (filterParam.value !== "Custom Period") {
-                                                            return (
-                                                                <FilterPill
-                                                                    key={filterParam.title}
-                                                                    text={filterParam.value}
-                                                                    onPress={() => handleRemoveFilter(filterParam.title)}
-                                                                    background={white}
-                                                                />
-                                                            )
-                                                        }
-                                                        return (
-                                                            <FilterPill
-                                                                key={filterParam.title}
-                                                                text={moment(queryStartDateTime)?.format('DD MMM, YYYY') + " - " + moment(queryEndDateTime)?.format('DD MMM, YYYY')}
-                                                                onPress={() => handleRemoveFilter(filterParam.title)}
-                                                                background={white}
-                                                            />
-                                                        )
-                                                    }
-                                                })}
-                                            </View>
-                                        )}
-
-                                        {/* check if any filter has been applied, i.e it is not in its default value */}
-                                        {tab === "incoming" && incomingFilter.find(filterParam => filterParam.default === false) && (
-                                            <View style={style.filterPillWrapper}>
-                                                {incomingFilter.map(filterParam => {
-                                                    if (!filterParam.default) {
-                                                        if (filterParam.value !== "Custom Period") {
-                                                            return (
-                                                                <FilterPill
-                                                                    key={filterParam.title}
-                                                                    text={filterParam.value}
-                                                                    onPress={() => handleRemoveFilter(filterParam.title)}
-                                                                    background={white}
-                                                                />
-                                                            )
-                                                        }
-                                                        return (
-                                                            <FilterPill
-                                                                key={filterParam.title}
-                                                                text={moment(queryStartDateTime)?.format('DD MMM, YYYY') + " - " + moment(queryEndDateTime)?.format('DD MMM, YYYY')}
-                                                                onPress={() => handleRemoveFilter(filterParam.title)}
-                                                                background={white}
-                                                            />
-                                                        )
-                                                    }
-                                                })}
-                                            </View>
-                                        )}
+                                            <Text style={tab === "outgoing" ? style.tabButtonTextSelected : style.tabButtonText} >Outgoing</Text>
+                                            <Badge number={getNumberOfUnreadMessages(authData?.account_type === "Merchant" ? "increment" : "decrement")} />
+                                        </TouchableOpacity>
+                                        <TouchableOpacity 
+                                            style={tab === "incoming" ? style.tabButtonSelected : style.tabButton}
+                                            onPress={() => setTab("incoming")}
+                                        >
+                                            <Text style={tab === "incoming" ? style.tabButtonTextSelected : style.tabButtonText} >Incoming</Text>
+                                            <Badge number={getNumberOfUnreadMessages(authData?.account_type === "Merchant" ? "decrement" : "increment")} />
+                                        </TouchableOpacity>
                                     </View>
-                                </>)
-                            } else {
-                                // return list if user isn't fetching results
-                                return !fetchingWaybills && !fetchingBusiness && !fetchingProducts && (
-                                    <View style={style.waybillListWrapper}>
-                                        <WaybillListItem 
-                                            lastWaybill={index === renderData.length - 1}
-                                            firstWaybill={index === 1}
-                                            bannerImage={item?.banner_image}
-                                            businesName={item?.business_name}
-                                            status={item?.status}
-                                            products={item?.products}
-                                            newMessage={item?.new_message}
-                                            createdAt={item?.created_at}
-                                            onPress={() => navigation.navigate("Chat", {
-                                                chatId: item?.chat_id,
-                                                chatType: "Waybill",
-                                                isIncrement: item?.is_increment,
-                                                bannerImage: item?.banner_image,
-                                                businessName: item?.business_name,
-                                                verified: item?.verified
+                                    {/* check if any filter has been applied, i.e it is not in its default value */}
+                                    {tab === "outgoing" && outgoingFilter.find(filterParam => filterParam.default === false) && (
+                                        <View style={style.filterPillWrapper}>
+                                            {outgoingFilter.map(filterParam => {
+                                                if (!filterParam.default) {
+                                                    if (filterParam.value !== "Custom Period") {
+                                                        return (
+                                                            <FilterPill
+                                                                key={filterParam.title}
+                                                                text={filterParam.value}
+                                                                onPress={() => handleRemoveFilter(filterParam.title)}
+                                                                background={white}
+                                                            />
+                                                        )
+                                                    }
+                                                    return (
+                                                        <FilterPill
+                                                            key={filterParam.title}
+                                                            text={moment(queryStartDateTime)?.format('DD MMM, YYYY') + " - " + moment(queryEndDateTime)?.format('DD MMM, YYYY')}
+                                                            onPress={() => handleRemoveFilter(filterParam.title)}
+                                                            background={white}
+                                                        />
+                                                    )
+                                                }
                                             })}
-                                        />
-                                    </View>
-                                ) 
-                            }
-                        }}
-                        ListFooterComponent={<>
-                            {renderData.length === 1 && (
-                                <View style={style.emptyOrderWrapper}>
-                                    <SendOrderIcon />
-                                    <Text style={style.emptyOrderHeading}>No Active Waybill</Text>
-                                    <Text style={style.emptyOrderParagraph}>
-                                        {(() => {
-                                            if (tab === "incoming") {
-                                                if (authData?.account_type === "Merchant") return "Waybills returned by your logistics partners would appear here"
-                                                return "Waybills sent to you by your Merchants would appear here"
-                                            } else {
-                                                if (authData?.account_type !== "Merchant") return "Waybills returned to your Merchants would appear here"
-                                                return "Waybills you send to your logistics partners would appear here"
-                                            }
-                                        })()}
-                                        
-                                    </Text>
+                                        </View>
+                                    )}
+
+                                    {/* check if any filter has been applied, i.e it is not in its default value */}
+                                    {tab === "incoming" && incomingFilter.find(filterParam => filterParam.default === false) && (
+                                        <View style={style.filterPillWrapper}>
+                                            {incomingFilter.map(filterParam => {
+                                                if (!filterParam.default) {
+                                                    if (filterParam.value !== "Custom Period") {
+                                                        return (
+                                                            <FilterPill
+                                                                key={filterParam.title}
+                                                                text={filterParam.value}
+                                                                onPress={() => handleRemoveFilter(filterParam.title)}
+                                                                background={white}
+                                                            />
+                                                        )
+                                                    }
+                                                    return (
+                                                        <FilterPill
+                                                            key={filterParam.title}
+                                                            text={moment(queryStartDateTime)?.format('DD MMM, YYYY') + " - " + moment(queryEndDateTime)?.format('DD MMM, YYYY')}
+                                                            onPress={() => handleRemoveFilter(filterParam.title)}
+                                                            background={white}
+                                                        />
+                                                    )
+                                                }
+                                            })}
+                                        </View>
+                                    )}
                                 </View>
-                            )}
-                            {renderData.length !== 1 && ( fetchingWaybills || fetchingBusiness || fetchingProducts )&& (
-                                <View style={style.orderList}>
-                                    <Skeleton 
-                                        height={50}
-                                        width={windowWidth - 60}
-                                        shimmerColors={shimmerColorArray}
-                                        style={{borderRadius: 2}}
-                                    />
-                                    <Skeleton 
-                                        height={50}
-                                        width={windowWidth - 60}
-                                        shimmerColors={shimmerColorArray}
-                                        style={{borderRadius: 2}}
-                                    />
-                                    <Skeleton 
-                                        height={50}
-                                        width={windowWidth - 60}
-                                        shimmerColors={shimmerColorArray}
-                                        style={{borderRadius: 2}}
-                                    />
-                                    <Skeleton 
-                                        height={50}
-                                        width={windowWidth - 60}
-                                        shimmerColors={shimmerColorArray}
-                                        style={{borderRadius: 2}}
-                                    />
-                                    <Skeleton 
-                                        height={50}
-                                        width={windowWidth - 60}
-                                        shimmerColors={shimmerColorArray}
-                                        style={{borderRadius: 2}}
-                                    />
-                                    <Skeleton 
-                                        height={50}
-                                        width={windowWidth - 60}
-                                        shimmerColors={shimmerColorArray}
-                                        style={{borderRadius: 2}}
+                            </>)
+                        } else {
+                            // return list if user isn't fetching results
+                            return !fetchingWaybills && !fetchingBusiness && !fetchingProducts && (
+                                <View style={style.waybillListWrapper}>
+                                    <WaybillListItem 
+                                        lastWaybill={index === renderData.length - 1}
+                                        firstWaybill={index === 1}
+                                        bannerImage={item?.banner_image}
+                                        businesName={item?.business_name}
+                                        status={item?.status}
+                                        products={item?.products}
+                                        newMessage={item?.new_message}
+                                        createdAt={item?.created_at}
+                                        onPress={() => navigation.navigate("Chat", {
+                                            chatId: item?.chat_id,
+                                            chatType: "Waybill",
+                                            isIncrement: item?.is_increment,
+                                            bannerImage: item?.banner_image,
+                                            businessName: item?.business_name,
+                                            verified: item?.verified
+                                        })}
                                     />
                                 </View>
-                            )}
-                        </>}
-                    />
-                </TouchableWithoutFeedback>
-            </> : <WaybillSkeleton />}
-            {/* bottomsheet */}
-            <CustomBottomSheet 
-                bottomSheetModalRef={bottomSheetRef}
-                closeModal={closeModal}
-                snapPointsArray={["100%"]}
-                autoSnapAt={0}
-                sheetTitle={"Waybills"}
-                disablePanToClose={true}
-            >
-                {/* {modal.modalContent} */}
-                <SearchBar 
-                    placeholder={"Search Waybill"}
-                    searchQuery={searchQuery}
-                    setSearchQuery={setSearchQuery}
-                    backgroundColor={background}
-                    openFilter={openFilter}
-                    filterParams={searchFilter}
+                            ) 
+                        }
+                    }}
+                    ListFooterComponent={<>
+                        {renderData.length === 1 && (
+                            <View style={style.emptyOrderWrapper}>
+                                <SendOrderIcon />
+                                <Text style={style.emptyOrderHeading}>No Active Waybill</Text>
+                                <Text style={style.emptyOrderParagraph}>
+                                    {(() => {
+                                        if (tab === "incoming") {
+                                            if (authData?.account_type === "Merchant") return "Waybills returned by your logistics partners would appear here"
+                                            return "Waybills sent to you by your Merchants would appear here"
+                                        } else {
+                                            if (authData?.account_type !== "Merchant") return "Waybills returned to your Merchants would appear here"
+                                            return "Waybills you send to your logistics partners would appear here"
+                                        }
+                                    })()}
+                                    
+                                </Text>
+                            </View>
+                        )}
+                        {renderData.length !== 1 && ( fetchingWaybills || fetchingBusiness || fetchingProducts )&& (
+                            <View style={style.orderList}>
+                                <Skeleton 
+                                    height={50}
+                                    width={windowWidth - 60}
+                                    shimmerColors={shimmerColorArray}
+                                    style={{borderRadius: 2}}
+                                />
+                                <Skeleton 
+                                    height={50}
+                                    width={windowWidth - 60}
+                                    shimmerColors={shimmerColorArray}
+                                    style={{borderRadius: 2}}
+                                />
+                                <Skeleton 
+                                    height={50}
+                                    width={windowWidth - 60}
+                                    shimmerColors={shimmerColorArray}
+                                    style={{borderRadius: 2}}
+                                />
+                                <Skeleton 
+                                    height={50}
+                                    width={windowWidth - 60}
+                                    shimmerColors={shimmerColorArray}
+                                    style={{borderRadius: 2}}
+                                />
+                                <Skeleton 
+                                    height={50}
+                                    width={windowWidth - 60}
+                                    shimmerColors={shimmerColorArray}
+                                    style={{borderRadius: 2}}
+                                />
+                                <Skeleton 
+                                    height={50}
+                                    width={windowWidth - 60}
+                                    shimmerColors={shimmerColorArray}
+                                    style={{borderRadius: 2}}
+                                />
+                            </View>
+                        )}
+                    </>}
                 />
-                {/* check if any filter has been applied, i.e it is not in its default value */}
-                {searchFilter.find(filterParam => filterParam.default === false) && (
-                    <View style={style.searchOrderPillWrapper}>
-                        {searchFilter.map(filterParam => {
-                            if (!filterParam.default) {
-                                if (filterParam.value !== "Custom period") {
-                                    return (
-                                        <FilterPill
-                                            key={filterParam.title}
-                                            text={filterParam.value}
-                                            onPress={() => handleRemoveFilter(filterParam.title, "search")}
-                                            background={background}
-                                        />
-                                    )
-                                }
-                            }
-                        })}
-                    </View>
-                )}
-                <BottomSheetScrollView showsVerticalScrollIndicator={false} style={style.orderSearchResults}>
-                    {/* {searchedWaybill.map((item, index) => (
-                        <WaybillListItem 
-                            key={item.id}
-                            item={item}
-                            index={index}
-                            lastWaybill={searchedWaybill.length - 1}
-                            firstWaybill={0}
-                            searchQuery={searchQuery}
-                            sideFunctions={closeModal}
-                        />
-                    ))} */}
-                </BottomSheetScrollView>
-            </CustomBottomSheet>
-            {/* filter bottom sheet */}
-            <FilterBottomSheet 
-                fiterSheetRef={filterSheetRef}
-                closeFilter={closeFilter}
-                clearFilterFunction={handleClearAllFilter}
-                applyFilterFunction={() => {
-                    if (bottomSheetOpen) {
-                        return handleApplyFilter("search");
-                    } else if (tab === "incoming") {
-                        return handleApplyFilter("incoming");
-                    } else if (tab === "outgoing") {
-                        return handleApplyFilter("outgoing");
-                        
-                    }
-                }}
-                height={"80%"}
-            >
-                {!bottomSheetOpen && tab === "incoming" && incomingFilter.map(item => (
-                    <FilterButtonGroup
-                        title={item.title}
-                        key={item.title}
-                    >
-                        {/* filter button list */}
-                        {item.buttons.map((button, index) => (
-                            // filter button
-                            <ActionButton
-                                key={item.title + button.text + index}
-                                name={button.text}
-                                removeBottomMargin={true}
-                                selected={button.selected}
-                                onPress={()  => handleFilterParameters(item.title, button.text, tab)}
-                            />
-                        ))}
-                    </FilterButtonGroup>
-                ))}
-
-                {!bottomSheetOpen && tab === "outgoing" && outgoingFilter.map(item => (
-                    <FilterButtonGroup
-                        title={item.title}
-                        key={item.title}
-                    >
-                        {/* filter button list */}
-                        {item.buttons.map((button, index) => (
-                            // filter button
-                            <ActionButton
-                                key={item.title + button.text + index}
-                                name={button.text}
-                                removeBottomMargin={true}
-                                selected={button.selected}
-                                onPress={()  => handleFilterParameters(item.title, button.text, tab)}
-                            />
-                        ))}
-                    </FilterButtonGroup>
-                ))}
-
-                {bottomSheetOpen && searchFilter.map(item => (
-                    <FilterButtonGroup
-                        title={item.title}
-                        key={item.title}
-                    >
-                        {/* filter button list */}
-                        {item.buttons.map(button => (
-                            // filter button
-                            <ActionButton
-                                key={button.text}
-                                name={button.text}
-                                removeBottomMargin={true}
-                                selected={button.selected}
-                                onPress={()  => handleFilterParameters(item.title, button.text, "search")}
-                            />
-                        ))}
-                    </FilterButtonGroup>
-                ))}
-                
-                <View style={style.inputContainer}>
-                    {/* Start date */}
-                    <SelectInput 
-                        label={"Start Date"} 
-                        placeholder={"DD MMMM, YYYY"} 
-                        value={startDate}
-                        onPress={() => openCalendar("StartDate")}
-                        icon={<CalendarIcon />}
-                        active={activeStartDate}
-                        inputFor={"Date"}
-                    />
-
-                    {/* End date */}
-                    <SelectInput
-                        label={"End Date"}
-                        placeholder={"DD MMMM, YYYY"}
-                        value={endDate}
-                        onPress={() => openCalendar("EndDate")}
-                        icon={<CalendarIcon />}
-                        active={activeEndDate}
-                        inputFor={"Date"}
-                    />
-                </View>
-            </FilterBottomSheet>
-            {/* calnedar */}
-            <CalendarSheet 
-                calendarRef={calendarSheetRef} 
-                closeCalendar={closeCalendar}
-                disableActionButtons={true}
-                snapPointsArray={["60%"]}
-                minDate={calendar.minDate}
-                maxDate={calendar.maxDate}
-                setDate={calendar.setDate}
+            </TouchableWithoutFeedback>
+        </> : <WaybillSkeleton />}
+        {/* bottomsheet */}
+        <CustomBottomSheet 
+            sheetRef={sheetRef}
+            sheetTitle={"Waybills"}
+            closeModal={closeModal}
+            snapPointsArray={["100%"]}
+            enablePanDownToClose={false}
+        >
+            {/* {modal.modalContent} */}
+            <SearchBar 
+                placeholder={"Search Waybill"}
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                backgroundColor={background}
+                openFilter={openFilter}
+                filterParams={searchFilter}
             />
-        </>
-    );
+            {/* check if any filter has been applied, i.e it is not in its default value */}
+            {searchFilter.find(filterParam => filterParam.default === false) && (
+                <View style={style.searchOrderPillWrapper}>
+                    {searchFilter.map(filterParam => {
+                        if (!filterParam.default) {
+                            if (filterParam.value !== "Custom period") {
+                                return (
+                                    <FilterPill
+                                        key={filterParam.title}
+                                        text={filterParam.value}
+                                        onPress={() => handleRemoveFilter(filterParam.title, "search")}
+                                        background={background}
+                                    />
+                                )
+                            }
+                        }
+                    })}
+                </View>
+            )}
+            <BottomSheetScrollView showsVerticalScrollIndicator={false} style={style.orderSearchResults}>
+                {/* {searchedWaybill.map((item, index) => (
+                    <WaybillListItem 
+                        key={item.id}
+                        item={item}
+                        index={index}
+                        lastWaybill={searchedWaybill.length - 1}
+                        firstWaybill={0}
+                        searchQuery={searchQuery}
+                        sideFunctions={closeModal}
+                    />
+                ))} */}
+            </BottomSheetScrollView>
+        </CustomBottomSheet>
+        {/* filter bottom sheet */}
+        <FilterBottomSheet 
+            fiterSheetRef={filterSheetRef}
+            closeFilter={closeFilter}
+            clearFilterFunction={handleClearAllFilter}
+            applyFilterFunction={() => {
+                if (bottomSheetOpen) {
+                    return handleApplyFilter("search");
+                } else if (tab === "incoming") {
+                    return handleApplyFilter("incoming");
+                } else if (tab === "outgoing") {
+                    return handleApplyFilter("outgoing");
+                    
+                }
+            }}
+            height={"80%"}
+        >
+            {!bottomSheetOpen && tab === "incoming" && incomingFilter.map(item => (
+                <FilterButtonGroup
+                    title={item.title}
+                    key={item.title}
+                >
+                    {/* filter button list */}
+                    {item.buttons.map((button, index) => (
+                        // filter button
+                        <ActionButton
+                            key={item.title + button.text + index}
+                            name={button.text}
+                            removeBottomMargin={true}
+                            selected={button.selected}
+                            onPress={()  => handleFilterParameters(item.title, button.text, tab)}
+                        />
+                    ))}
+                </FilterButtonGroup>
+            ))}
+
+            {!bottomSheetOpen && tab === "outgoing" && outgoingFilter.map(item => (
+                <FilterButtonGroup
+                    title={item.title}
+                    key={item.title}
+                >
+                    {/* filter button list */}
+                    {item.buttons.map((button, index) => (
+                        // filter button
+                        <ActionButton
+                            key={item.title + button.text + index}
+                            name={button.text}
+                            removeBottomMargin={true}
+                            selected={button.selected}
+                            onPress={()  => handleFilterParameters(item.title, button.text, tab)}
+                        />
+                    ))}
+                </FilterButtonGroup>
+            ))}
+
+            {bottomSheetOpen && searchFilter.map(item => (
+                <FilterButtonGroup
+                    title={item.title}
+                    key={item.title}
+                >
+                    {/* filter button list */}
+                    {item.buttons.map(button => (
+                        // filter button
+                        <ActionButton
+                            key={button.text}
+                            name={button.text}
+                            removeBottomMargin={true}
+                            selected={button.selected}
+                            onPress={()  => handleFilterParameters(item.title, button.text, "search")}
+                        />
+                    ))}
+                </FilterButtonGroup>
+            ))}
+            
+            <View style={style.inputContainer}>
+                {/* Start date */}
+                <SelectInput 
+                    label={"Start Date"} 
+                    placeholder={"DD MMMM, YYYY"} 
+                    value={startDate}
+                    onPress={() => openCalendar("StartDate")}
+                    icon={<CalendarIcon />}
+                    active={activeStartDate}
+                    inputFor={"Date"}
+                />
+
+                {/* End date */}
+                <SelectInput
+                    label={"End Date"}
+                    placeholder={"DD MMMM, YYYY"}
+                    value={endDate}
+                    onPress={() => openCalendar("EndDate")}
+                    icon={<CalendarIcon />}
+                    active={activeEndDate}
+                    inputFor={"Date"}
+                />
+            </View>
+        </FilterBottomSheet>
+        {/* calnedar */}
+        <CalendarSheet 
+            calendarRef={calendarSheetRef} 
+            closeCalendar={closeCalendar}
+            disableActionButtons={true}
+            snapPointsArray={["60%"]}
+            minDate={calendar.minDate}
+            maxDate={calendar.maxDate}
+            setDate={calendar.setDate}
+        />
+    </>);
 }
 
 const style = StyleSheet.create({

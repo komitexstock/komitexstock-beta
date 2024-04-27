@@ -7,7 +7,7 @@ import {
     Keyboard,
     Text,
     TouchableOpacity,
-    BackHandler
+    Platform,
 } from "react-native";
 // components
 import Header from "../components/Header";
@@ -25,7 +25,7 @@ import AlertNotice from "../components/AlertNotice";
 import ArrowDown from "../assets/icons/ArrowDown";
 import InfoIcon from "../assets/icons/InfoIcon";
 // react hooks
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 // colors
 import { accentLight, background, black, primaryColor, white } from "../style/colors";
 // globals
@@ -33,8 +33,17 @@ import { useGlobals } from "../context/AppContext";
 
 const SendOrder = ({navigation, route}) => {
 
+    // sheet ref
+    const sheetRef = useRef(null);
+
     // bottom sheet ref
-    const { bottomSheetRef, bottomSheetOpen } = useGlobals();
+    const { bottomSheet, setBottomSheet } = useGlobals();
+
+    const [sheetParameters, setSheetParameters] = useState({
+        content: '',
+        sheetSubtitle: '',
+        sheetTitle: '',
+    })
 
     // state to store order details
     const [ orderDetails, setOrderdetails] = useState(null);
@@ -92,44 +101,68 @@ const SendOrder = ({navigation, route}) => {
     const [selectLocationActive, setSelectLocationActive] = useState(false);
     // other input active states are handled within the components
     // logistics and location are custom select input thats why their active states needs to be handled differently
-    
 
-    // state to control the type of modal to show in the bottom sheet
-    const [modal, setModal] = useState({
-        type: "Logistics",
-        title: "Select Logistcs",
-        subtitle: null,
-        openAtIndex: 0,
-    });
+    // update botomsheet global states
+    useEffect(() => {
+        // set bottomsheet state
+        setBottomSheet(prevState=> {
+            return {...prevState, close: () => {
+                // close bottomsheet 
+                sheetRef.current?.close()
+                // disable inputs active states
+                setSelectLogisticsActive(false);
+                setSelectLocationActive(false);
+            }}
+        });
+    }, []);
+    
+    // open modal function
+    const openModal = (type) => {
+        // dismiss keyboard
+        Keyboard.dismiss();
+
+        // set sheet parameters
+        setSheetParameters({
+            content: type,
+            sheetTitle: type === "Summary" ? `Order ${type}` : `Select ${type}`,
+            sheetSubtitle: type !== "Summary" ? undefined : "Review your order details",
+        })
+
+        // set active state for corresponding input
+        if (type === "Logistics") setSelectLogisticsActive(true);
+        else if (type === "Location") setSelectLocationActive(true); 
+
+        // open bottomsheet
+        sheetRef?.current?.present();
+
+        // update bottomsheet global state
+        setBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: true,
+            }
+        });
+    }
     
     // close modal function
     const closeModal = () => {
-      bottomSheetRef.current?.close();
-      if (modal.type === "Logistics") setSelectLogisticsActive(false);
-      else if (modal.type === "Location") setSelectLocationActive(false);
-    };
+        // close bottomsheet
+        sheetRef?.current?.close();
 
-    // function to open bottom sheet modal
-    const openModal = (type, title, subtitle, openAtIndex) => {
-        Keyboard.dismiss();
-        setModal({
-            type: type,
-            title: title,
-            subtitle: subtitle,
-            openAtIndex: openAtIndex
+        // deactiavte active states for select inputs
+        //   deactivate logistics input
+        setSelectLogisticsActive(false);
+        // deactivate location input
+        setSelectLocationActive(false);
+
+        // update bottomsheet global state
+        setBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: false,
+            }
         });
-        if (type === "Logistics") setSelectLogisticsActive(true);
-        else if (type === "Location") setSelectLocationActive(true);   
-        bottomSheetRef.current?.present();
-    }
-
-    // use effect to disable active state for dropdown
-    useEffect(() => {
-        if (!bottomSheetOpen) {
-            if (modal.type === "Logistics") setSelectLogisticsActive(false);
-            else if (modal.type === "Location") setSelectLocationActive(false);
-        }
-    }, [bottomSheetOpen])
+    };
 
     // function to check if logistics or orderdetails are empty
     const emptyLogisticsAndOrderDetails = [
@@ -149,7 +182,8 @@ const SendOrder = ({navigation, route}) => {
             address, 
             price
         ].some((item) => {
-            return item === null || item === '' || item === undefined || item === 0 || item === NaN || (Array.isArray(item) && item.length === 0);
+            return [null, '', undefined, 0, NaN].includes(item) || 
+            (Array.isArray(item) && item.length === 0);
         }
     );
 
@@ -167,7 +201,7 @@ const SendOrder = ({navigation, route}) => {
 
     // function to show order summary
     const showOrderSummary = () => {
-        openModal("Summary", "Order Summary", "Review your order details", 2);    
+        openModal("Summary");    
     }
 
     // function to select logistics
@@ -368,206 +402,229 @@ const SendOrder = ({navigation, route}) => {
             newChat: true,
         })
     }
+
+    // listen for keyboard opening or closing
+    useEffect(() => {
+        // if keyboard is open
+        const keyboardDidShowListener = Keyboard.addListener(
+            Platform.OS === 'android' ? 'keyboardDidShow' : 'keyboardWillShow', () => {
+                if (!bottomSheet.opened) return;
+                // set bottomsheet paramteres
+                sheetRef.current?.snapToIndex(2);
+            }
+        );
+        
+        // keyboard is closed
+        const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+            // run any desired function here
+            // if wareehouse address is empty
+            // set bottomsheet paramteres
+
+        });
+
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        };
+    }, [bottomSheet.opened]);
     
     // render send order page
-    return (
-        <>
-            <TouchableWithoutFeedback
-                onPress={() => {
-                    Keyboard.dismiss();
-                    // onclick dismiss keyboard
+    return (<>
+        <TouchableWithoutFeedback
+            onPress={() => {
+                Keyboard.dismiss();
+                // onclick dismiss keyboard
+            }}
+        >
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                style={{
+                    minHeight: "100%",
+                    width: "100%",
+                    backgroundColor: background,
                 }}
             >
-                <ScrollView
-                    showsVerticalScrollIndicator={false}
-                    style={{
-                        minHeight: "100%",
-                        width: "100%",
-                        backgroundColor: background,
-                    }}
-                >
-                    <View style={style.main}>
-                        <View style={style.mainContent}>
-                            {/* Header component */}
-                            <Header 
-                                navigation={navigation} 
-                                stackName={"Send an Order"} 
-                                iconFunction={null} 
-                                icon={null} 
-                                unpadded={true}
-                            />
-                            <View style={style.container}>
-                                <View style={style.inputWrapper}>
-                                    {/* Select Logistics */}
+                <View style={style.main}>
+                    <View style={style.mainContent}>
+                        {/* Header component */}
+                        <Header 
+                            navigation={navigation} 
+                            stackName={"Send an Order"} 
+                            iconFunction={null} 
+                            icon={null} 
+                            unpadded={true}
+                        />
+                        <View style={style.container}>
+                            <View style={style.inputWrapper}>
+                                {/* Select Logistics */}
+                                <SelectInput 
+                                    label={"Select Logistics"} 
+                                    placeholder={"Choose a logistics"} 
+                                    value={logistics}
+                                    onPress={() => openModal("Logistics")}
+                                    icon={<ArrowDown />}
+                                    active={selectLogisticsActive}
+                                    inputFor={"Logistics"}
+                                />
+
+                                {/* Order Details */}
+                                <Input 
+                                    label={"Order Details"} 
+                                    placeholder={"Paste order details here..."} 
+                                    onChange={updateOrderDetails}
+                                    value={orderDetails}
+                                    multiline={true}
+                                    maxRows={5}
+                                    textAlign={"top"}
+                                    height={100}
+                                    keyboardType={"default"}
+                                    error={false}
+                                    setError={() => {}}
+                                />
+
+                                {processOrderResponse && (<>
+                                    {/* select location */}
                                     <SelectInput 
-                                        label={"Select Logistics"} 
-                                        placeholder={"Choose a logistics"} 
-                                        value={logistics}
-                                        onPress={() => openModal("Logistics", "Select Logistics", null, 0)}
+                                        label={"Delivery Location"}
+                                        labelIcon={<InfoIcon />}
+                                        placeholder={"Delivery Location"} 
+                                        value={location}
+                                        onPress={() => openModal("Location")}
                                         icon={<ArrowDown />}
-                                        active={selectLogisticsActive}
-                                        inputFor={"Logistics"}
+                                        active={selectLocationActive}
+                                        inputFor={"Location"}
                                     />
-
-                                    {/* Order Details */}
-                                    <Input 
-                                        label={"Order Details"} 
-                                        placeholder={"Paste order details here..."} 
-                                        onChange={updateOrderDetails}
-                                        value={orderDetails}
-                                        multiline={true}
-                                        maxRows={5}
-                                        textAlign={"top"}
-                                        height={100}
-                                        keyboardType={"default"}
-                                        error={false}
-                                        setError={() => {}}
-                                    />
-
-                                    {processOrderResponse && (<>
-                                        {/* select location */}
-                                        <SelectInput 
-                                            label={"Delivery Location"}
-                                            labelIcon={<InfoIcon />}
-                                            placeholder={"Delivery Location"} 
-                                            value={location}
-                                            onPress={() => openModal("Location", "Delivery Location", null, 0)}
-                                            icon={<ArrowDown />}
-                                            active={selectLocationActive}
-                                            inputFor={"Location"}
-                                        />
-                                        {/* Selected Products Container */}
-                                        <View style={style.productsWrapper}>
-                                            <View style={style.productsHeading}>
-                                                <Text style={style.producPlaceholder}>Products Selected</Text>
-                                                <TouchableOpacity
-                                                    onPress={() => openModal("Products", "Select Products", null, 0)}
-                                                >
-                                                    <Text style={style.addProduct}>+Select Product</Text>
-                                                </TouchableOpacity>
-                                                <TouchableOpacity
-                                                    onPress={() => navigation.navigate("AddProduct", {
-                                                        origin: "SendOrder",
-                                                    })}
-                                                >
-                                                    <Text style={style.addProduct}>+New Product</Text>
-                                                </TouchableOpacity>
-                                            </View>
-                                            { products.length !== 0 ? products.map((product) => (
-                                                // map through selected products
-                                                <Product 
-                                                    key={product.id} 
-                                                    product={product} 
-                                                    removeProduct={removeProduct}
-                                                    increaseQuantity={increaseQuantity}
-                                                    decreaseQuantity={decreaseQuantity}
-                                                />
-                                            )) : (
-                                                // show no product selected component
-                                                <View style={style.noProductWrapper}>
-                                                    <Text style={style.noProductText}>
-                                                        No product selected. Kindly add a new product 
-                                                        or select one from your inventory
-                                                    </Text>
-                                                </View>
-                                            )}
+                                    {/* Selected Products Container */}
+                                    <View style={style.productsWrapper}>
+                                        <View style={style.productsHeading}>
+                                            <Text style={style.producPlaceholder}>Products Selected</Text>
+                                            <TouchableOpacity
+                                                onPress={() => openModal("Products")}
+                                            >
+                                                <Text style={style.addProduct}>+Select Product</Text>
+                                            </TouchableOpacity>
+                                            <TouchableOpacity
+                                                onPress={() => navigation.navigate("AddProduct", {
+                                                    origin: "SendOrder",
+                                                })}
+                                            >
+                                                <Text style={style.addProduct}>+New Product</Text>
+                                            </TouchableOpacity>
                                         </View>
-                                        {inputs.map((input) => (
-                                            // map through other relevant inputs
-                                            <Input 
-                                                key={input.id}
-                                                label={input.label} 
-                                                placeholder={input.placeholder} 
-                                                onChange={input.onChange}
-                                                value={input.value}
-                                                keyboardType={input.keyboardType}
-                                                adornment={input.adornment}
-                                                helperText={input.helperText}
-                                                error={input.error}
-                                                setError={input.setError}
+                                        { products.length !== 0 ? products.map((product) => (
+                                            // map through selected products
+                                            <Product 
+                                                key={product.id} 
+                                                product={product} 
+                                                removeProduct={removeProduct}
+                                                increaseQuantity={increaseQuantity}
+                                                decreaseQuantity={decreaseQuantity}
                                             />
-                                        ))}
-                                    </>)}
-                                </View>
+                                        )) : (
+                                            // show no product selected component
+                                            <View style={style.noProductWrapper}>
+                                                <Text style={style.noProductText}>
+                                                    No product selected. Kindly add a new product 
+                                                    or select one from your inventory
+                                                </Text>
+                                            </View>
+                                        )}
+                                    </View>
+                                    {inputs.map((input) => (
+                                        // map through other relevant inputs
+                                        <Input 
+                                            key={input.id}
+                                            label={input.label} 
+                                            placeholder={input.placeholder} 
+                                            onChange={input.onChange}
+                                            value={input.value}
+                                            keyboardType={input.keyboardType}
+                                            adornment={input.adornment}
+                                            helperText={input.helperText}
+                                            error={input.error}
+                                            setError={input.setError}
+                                        />
+                                    ))}
+                                </>)}
                             </View>
                         </View>
-                        { processOrderResponse && (
-                            // action button to send order
-                            <CustomButton 
-                                name="Continue" 
-                                onPress={showOrderSummary}
-                                backgroundColor={white}
-                                inactive={isAnyFieldEmpty}
-                            />
-                        )}
                     </View>
-                </ScrollView>
-            </TouchableWithoutFeedback>
-            {/* bottom sheet  */}
-            <CustomBottomSheet
-                bottomSheetModalRef={bottomSheetRef}
-                closeModal={closeModal}
-                snapPointsArray={["40%", "60%", "80%"]}
-                autoSnapAt={modal.openAtIndex}
-                sheetTitle={modal.title}
-                sheetSubtitle={modal.subtitle}
-            >   
-                {/* if modal type is logistics, render logistics modal content */}
-                {modal.type === "Logistics" && (
-                    <AddLogisticsModalContent 
-                        handleSelectedLogistics={handleSelectedLogistics}
-                    />
-                )}
-                {/* if modal type is location, render location modal content */}
-                {modal.type === "Location" && (
-                    <AddLocationModalContent 
-                        handleSelectedLocation={handleSelectedLocation}
-                    />
-                )}
-                {/* if modal type is products, render products modal content */}
-                {modal.type === "Products" && (
-                    <AddProductsModalContent 
-                        addProducts={addProducts} selectedProducts={products}
-                    />
-                )}
-                {/* if modal type is summary, render summary modal content */}
-                {modal.type === "Summary" && (
-                    <SummaryModal 
-                        logistics={logistics}
-                        customerName={customerName}
-                        products={products}
-                        location={location}
-                        phoneNumber={phoneNumber}
-                        price={price}
-                        address={address}
-                        type={"order"}
-                        onPress={handleConfirmOrder}
-                        isLoading={isLoading && processOrderResponse}
-                    />
-                )}
-            </CustomBottomSheet>
-            {/* button to process order */}
-            { !processOrderResponse && (
-                <CustomButton 
-                    name="Process Order" 
-                    onPress={processOrderDetails}
-                    backgroundColor={background}
-                    inactive={emptyLogisticsAndOrderDetails}
-                    fixed={true}
-                    isLoading={isLoading}
+                    { processOrderResponse && (
+                        // action button to send order
+                        <CustomButton 
+                            name="Continue" 
+                            onPress={showOrderSummary}
+                            backgroundColor={white}
+                            inactive={isAnyFieldEmpty}
+                        />
+                    )}
+                </View>
+            </ScrollView>
+        </TouchableWithoutFeedback>
+        {/* bottom sheet  */}
+        <CustomBottomSheet
+            index={1}
+            sheetRef={sheetRef}
+            closeModal={closeModal}
+            sheetTitle={sheetParameters.sheetTitle}
+            snapPointsArray={["50%", "75%", "100%"]}
+            sheetSubtitle={sheetParameters.sheetSubtitle}
+        >   
+            {/* if modal type is logistics, render logistics modal content */}
+            {sheetParameters.content === "Logistics" && (
+                <AddLogisticsModalContent 
+                    handleSelectedLogistics={handleSelectedLogistics}
                 />
             )}
-            {/* success alert to display on addproduct or edit product */}
-            { alert.show && (
-                <AlertNotice 
-                    type={alert.type}
-                    text={alert.text}
-                    closeAlert={closeAlert}
-                    show={alert.show}
+            {/* if modal type is location, render location modal content */}
+            {sheetParameters.content === "Location" && (
+                <AddLocationModalContent 
+                    handleSelectedLocation={handleSelectedLocation}
                 />
             )}
-        </>
-    );
+            {/* if modal type is products, render products modal content */}
+            {sheetParameters.content === "Products" && (
+                <AddProductsModalContent 
+                    addProducts={addProducts} selectedProducts={products}
+                />
+            )}
+            {/* if modal type is summary, render summary modal content */}
+            {sheetParameters.content === "Summary" && (
+                <SummaryModal 
+                    logistics={logistics}
+                    customerName={customerName}
+                    products={products}
+                    location={location}
+                    phoneNumber={phoneNumber}
+                    price={price}
+                    address={address}
+                    type={"order"}
+                    onPress={handleConfirmOrder}
+                    isLoading={isLoading && processOrderResponse}
+                />
+            )}
+        </CustomBottomSheet>
+        {/* button to process order */}
+        { !processOrderResponse && (
+            <CustomButton 
+                name="Process Order" 
+                onPress={processOrderDetails}
+                backgroundColor={background}
+                inactive={emptyLogisticsAndOrderDetails}
+                fixed={true}
+                isLoading={isLoading}
+            />
+        )}
+        {/* success alert to display on addproduct or edit product */}
+        { alert.show && (
+            <AlertNotice 
+                type={alert.type}
+                text={alert.text}
+                closeAlert={closeAlert}
+                show={alert.show}
+            />
+        )}
+    </>);
 }
 
 // stylesheet

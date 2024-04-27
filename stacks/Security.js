@@ -4,9 +4,10 @@ import {
     TouchableWithoutFeedback,
     StyleSheet,
     Keyboard,
+    Platform,
 } from "react-native";
 // react hooks
-import { useMemo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 // icons
 import ThumbPrintIcon from "../assets/icons/ThumbPrintIcon";
 import KeyIcon from "../assets/icons/KeyIcon";
@@ -43,8 +44,28 @@ import {
 
 const Security = ({navigation}) => {
 
+    // sheet ref 
+    const sheetRef = useRef(null);
+
     // bottomsheet ref
-    const { bottomSheetRef } = useGlobals();
+    const {
+        bottomSheet,
+        setBottomSheet,
+        setToast
+    } = useGlobals();
+
+    // sheet parameters
+    const [sheetParameters, setSheetParameters] = useState({
+        snapPointsArray: [500],
+    });
+    
+    // update botomsheet global states
+    useEffect(() => {
+        // set bottomsheet state
+        setBottomSheet(prevState=> {
+            return {...prevState, close: () => sheetRef.current?.close()}
+        });
+    }, []);
 
     // auth data
     const { authData, utilityData } = useAuth();
@@ -101,15 +122,33 @@ const Security = ({navigation}) => {
         },
     ];    
 
-    // close modal function
-    const closeModal = () => {
-        bottomSheetRef.current?.close();
-    };
-
     // open modal function
     const openModal = () => {
-        bottomSheetRef.current?.present();
+        // open bottomsheet
+        sheetRef?.current?.present();
+
+        // update bottomsheet global state
+        setBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: true,
+            }
+        });
     }
+    
+    // close modal function
+    const closeModal = () => {
+        // close bottomsheet
+        sheetRef?.current?.close();
+
+        // update bottomsheet global state
+        setBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: false,
+            }
+        });
+    };
 
     // state to store current password
     const [currentPassword, setCurrentPassword] = useState("");
@@ -186,82 +225,105 @@ const Security = ({navigation}) => {
             item => item === ''
     );
 
+    // listen for keyboard opening or closing
+    useEffect(() => {
+        // if keyboard is open
+        const keyboardDidShowListener = Keyboard.addListener(
+            Platform.OS === 'android' ? 'keyboardDidShow' : 'keyboardWillShow', () => {
+                if (!bottomSheet.opened) return;
+                // set bottomsheet paramteres
+                setSheetParameters({ snapPointsArray: ["100%"] });
+            }
+        );
+        
+        // keyboard is closed
+        const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+            // run any desired function here
+            // if wareehouse address is empty
+            // set bottomsheet paramteres
+            setSheetParameters({snapPointsArray: [500] })
+
+        });
+
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        };
+    }, [bottomSheet.opened]);
+
     // render Security Page
-    return (
-        <>
-            <TouchableWithoutFeedback>
-                <View style={style.container}>
-                    <View style={style.main}>
-                        {/* header component */}
-                        <Header 
-                            navigation={navigation} 
-                            stackName={"Security"} 
-                            iconFunction={null} 
-                            icon={null} 
-                            unpadded={true}
-                        />
-                        {/* list security buttons */}
-                        <View>
-                            {securityButtons.map((item, index) => (
-                                <AccountButtons 
-                                    key={item.id}
-                                    title={item.title}
-                                    subtitle={item.subtitle}
-                                    icon={item.icon}
-                                    length={securityButtons.length - 1}
-                                    index={index}
-                                    onPress={item.onPress}
-                                    toggle={item.toggle}
-                                    isEnabled={item.isEnabled}
-                                    handleToggle={item.handleToggle}
-                                />
-                            ))}
-                        </View>
+    return (<>
+        <TouchableWithoutFeedback>
+            <View style={style.container}>
+                <View style={style.main}>
+                    {/* header component */}
+                    <Header 
+                        navigation={navigation} 
+                        stackName={"Security"} 
+                        iconFunction={null} 
+                        icon={null} 
+                        unpadded={true}
+                    />
+                    {/* list security buttons */}
+                    <View>
+                        {securityButtons.map((item, index) => (
+                            <AccountButtons 
+                                key={item.id}
+                                title={item.title}
+                                subtitle={item.subtitle}
+                                icon={item.icon}
+                                length={securityButtons.length - 1}
+                                index={index}
+                                onPress={item.onPress}
+                                toggle={item.toggle}
+                                isEnabled={item.isEnabled}
+                                handleToggle={item.handleToggle}
+                            />
+                        ))}
                     </View>
                 </View>
-            </TouchableWithoutFeedback>
-            {/* bottomsheet modal */}
-            <CustomBottomSheet 
-                bottomSheetModalRef={bottomSheetRef}
-                closeModal={closeModal}
-                snapPointsArray={[0.6 * windowHeight]}
-                autoSnapAt={0}
-                sheetTitle={"Change Password"}
+            </View>
+        </TouchableWithoutFeedback>
+        {/* bottomsheet modal */}
+        <CustomBottomSheet 
+            sheetRef={sheetRef}
+            closeModal={closeModal}
+            sheetTitle={"Change Password"}
+            snapPointsArray={sheetParameters.snapPointsArray}
+        >
+            <TouchableWithoutFeedback
+                // onpress dismiss keyboard
+                onPress={() => Keyboard.dismiss()}
             >
-                <TouchableWithoutFeedback
-                    // onpress dismiss keyboard
-                    onPress={() => Keyboard.dismiss()}
-                >
-                    <View style={style.bottomSheetContainer}>
-                        {/* list out password inputs */}
-                        <View style={style.inputContainer}>
-                            {inputs.map(input => (
-                                <Input
-                                    key={input.id} 
-                                    label={input.label}
-                                    placeholder={input.placeholder}
-                                    onChange={input.onChange}
-                                    value={input.value}
-                                    error={input.error}
-                                    setError={input.setError}
-                                    adornment={input.adornment}
-                                    isPasswordInput={input.isPasswordInput}
-                                />
-                            ))}
-                        </View>
-                        {/* update password */}
-                        <CustomButton
-                            name={"Update Password"}
-                            shrinkWrapper={true}
-                            onPress={() => {}}
-                            unpadded={true}
-                            inactive={emptyFields}
-                        />
-                    </View >
-                </TouchableWithoutFeedback>
-            </CustomBottomSheet>
-        </>
-    );
+                <View style={style.bottomSheetContainer}>
+                    {/* list out password inputs */}
+                    <View style={style.inputContainer}>
+                        {inputs.map(input => (
+                            <Input
+                                key={input.id} 
+                                label={input.label}
+                                placeholder={input.placeholder}
+                                onChange={input.onChange}
+                                value={input.value}
+                                error={input.error}
+                                setError={input.setError}
+                                adornment={input.adornment}
+                                isPasswordInput={input.isPasswordInput}
+                            />
+                        ))}
+                    </View>
+                    {/* update password */}
+                    <CustomButton
+                        name={"Update Password"}
+                        shrinkWrapper={true}
+                        onPress={() => {}}
+                        unpadded={true}
+                        inactive={emptyFields}
+                    />
+                </View >
+            </TouchableWithoutFeedback>
+        </CustomBottomSheet>
+    </>);
 }
 
 // stylesheet

@@ -1,5 +1,13 @@
-import { StyleSheet, TouchableWithoutFeedback, Text, View, Keyboard, ScrollView } from 'react-native'
-import React, { useState, useEffect } from 'react'
+import {
+    StyleSheet,
+    TouchableWithoutFeedback,
+    Text,
+    View,
+    Keyboard,
+    ScrollView,
+    Platform
+} from 'react-native'
+import React, { useState, useEffect, useRef } from 'react'
 // import 
 import Header from '../components/Header';
 import CustomButton from '../components/CustomButton';
@@ -15,8 +23,23 @@ import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 
 const StockTransferProducts = ({navigation, route}) => {
 
+    // sheet ref
+    const sheetRef = useRef(null);
+
     // bottomsheet refs
-    const { bottomSheetRef, bottomSheetOpen } = useGlobals();
+    const {
+        bottomSheet,
+        setBottomSheet,
+        bottomSheetOpen
+    } = useGlobals();
+
+    // update botomsheet global states
+    useEffect(() => {
+        // set bottomsheet state
+        setBottomSheet(prevState=> {
+            return {...prevState, close: () => sheetRef.current?.close()}
+        });
+    }, []);
 
     // originWarehouse
     // stock transfer details
@@ -225,16 +248,56 @@ const StockTransferProducts = ({navigation, route}) => {
     // search query
     const [searchQuery, setSearchQuery] = useState("");
 
-    // open bottomsheet modal function
+    // open modal function
     const openModal = () => {
-        bottomSheetRef.current?.present();
-        updateAvailableProducts();
+        // open bottomsheet
+        sheetRef?.current?.present();
+
+        // update bottomsheet global state
+        setBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: true,
+            }
+        });
     }
     
-    // close bottomsheet modal function
+    // close modal function
     const closeModal = () => {
-        bottomSheetRef.current?.close();
-    }
+        // close bottomsheet
+        sheetRef?.current?.close();
+
+        // update bottomsheet global state
+        setBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: false,
+            }
+        });
+    };
+
+    // listen for keyboard opening or closing
+    useEffect(() => {
+        // if keyboard is open
+        const keyboardDidShowListener = Keyboard.addListener(
+            Platform.OS === 'android' ? 'keyboardDidShow' : 'keyboardWillShow', () => {
+                if (!bottomSheet.opened) return;
+                // set bottomsheet paramteres
+                sheetRef.current?.snapToIndex(2);
+            }
+        );
+        
+        // keyboard is closed
+        const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+            // run any desired function here
+            // if wareehouse address is empty
+        });
+
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        };
+    }, [bottomSheet.opened]);
 
 
     return (
@@ -286,24 +349,13 @@ const StockTransferProducts = ({navigation, route}) => {
                     </View>
                 </ScrollView>
             </TouchableWithoutFeedback>
-            <CustomButton
-                name={"Continue"}
-                backgroundColor={white}
-                inactive={selectedProducts.length === 0}
-                onPress={() => navigation.navigate("StockTransferSummary", {
-                    originWarehouse,
-                    destinationWarehouse,
-                    additionalDetails,
-                    selectedProducts,
-                })}
-            />
             <CustomBottomSheet
-                sheetTitle={"Select products"}
-                bottomSheetModalRef={bottomSheetRef}
-                disablePanToClose={true}
-                snapPointsArray={["100%"]}
-                autoSnapAt={0}
+                index={1}
+                sheetRef={sheetRef}
                 closeModal={closeModal}
+                enablePanDownToClose={false}
+                sheetTitle={"Select products"}
+                snapPointsArray={["50%", "75%", "100%"]}
             >
                 <SearchBar
                     searchQuery={searchQuery}
@@ -343,6 +395,17 @@ const StockTransferProducts = ({navigation, route}) => {
                     wrapperStyle={{marginBottom: 10}}
                 />
             </CustomBottomSheet>
+            <CustomButton
+                name={"Continue"}
+                backgroundColor={white}
+                inactive={selectedProducts.length === 0}
+                onPress={() => navigation.navigate("StockTransferSummary", {
+                    originWarehouse,
+                    destinationWarehouse,
+                    additionalDetails,
+                    selectedProducts,
+                })}
+            />
         </>
     )
 }

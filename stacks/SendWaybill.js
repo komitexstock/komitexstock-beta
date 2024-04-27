@@ -90,8 +90,24 @@ const SendWaybill = ({navigation, route}) => {
     // state to store search queries
     const [searchQuery, setSearchQuery] = useState(null); // string
 
-    // bottom sheet ref
-    const { bottomSheetRef, bottomSheetOpen, setToast } = useGlobals(); // global variables
+    // sheet ref
+    const sheetRef = useRef(null);
+
+    // sheet paramters
+    const [sheetParameters, setSheetParameters] = useState({
+        content: '',
+        sheetSubtitle: '',
+        sheetTitle: '',
+    })
+
+    // global states
+    const {
+        bottomSheet,
+        setBottomSheet,
+        bottomSheetRef,
+        bottomSheetOpen,
+        setToast
+    } = useGlobals(); // global variables
 
     // state to store selected logistics
     const [logistics, setLogistics] = useState([]); // array of objects
@@ -168,6 +184,21 @@ const SendWaybill = ({navigation, route}) => {
     
     // state to indicate if select warehouse input is active
     const [selectWarehouseActive, setSelectWarehouseActive] = useState(false);  // boolean
+
+    // update botomsheet global states
+    useEffect(() => {
+        // set bottomsheet state
+        setBottomSheet(prevState=> {
+            return {...prevState, close: () => {
+                // close bottomsheet 
+                sheetRef.current?.close()
+                // disable inputs active states
+                setSelectLogisticsActive(false);
+                setSelectWarehouseActive(false);
+                setSelectMerchantActive(false);
+            }}
+        });
+    }, []);
 
     // function to select logistics
     const handleSelectedLogistics = (id) => {
@@ -700,44 +731,56 @@ const SendWaybill = ({navigation, route}) => {
 
     }, [selectedLogistics]);
 
+    // open modal function
+    const openModal = (type) => {
+        // dismiss keyboard
+        Keyboard.dismiss();
 
-    // state to control the type of modal to show in the bottom sheet
-    const [modal, setModal] = useState({
-        type: "Logistics",
-        title: "Select Logistcs",
-        subtitle: null,
-        openAtIndex: 0,
-        snapPoints: ["50%", "75%", "100%"],
-    });
+        // set sheet parameters
+        setSheetParameters({
+            content: type,
+            sheetTitle: type === "Summary" ? `Waybill ${type}` : `Select ${type}`,
+            sheetSubtitle: type !== "Summary" ? undefined : "Review your waybill details",
+        })
+
+        // set active state for corresponding input
+        if (type === "Logistics") setSelectLogisticsActive(true);
+        if (type === "Merchant") setSelectMerchantActive(true);
+        if (type === "Warehouse") setSelectWarehouseActive(true);
+
+        // open bottomsheet
+        sheetRef.current?.present();
+
+        // update bottomsheet global state
+        setBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: true,
+            }
+        });
+    }
     
     // close modal function
     const closeModal = () => {
-        // close bottom sheet modal
-        bottomSheetRef.current?.close();
-        // deactive active states for inputs
-        setSelectLogisticsActive(false);
-        setSelectWarehouseActive(false);
-        setSelectMerchantActive(false);
-    };
+        // close bottomsheet
+        sheetRef?.current?.close();
 
-    // function to open bottom sheet modal
-    const openModal = (type, title, subtitle, openAtIndex) => {
-        // open bottom sheet
-        bottomSheetRef.current?.present();
-        Keyboard.dismiss();
-        // set modal parameters
-        setModal({
-            type: type,
-            title: title,
-            subtitle: subtitle,
-            openAtIndex: openAtIndex,
-            snapPoints: ["50%", "75%", "100%"],
+        // deactiavte active states for select inputs
+        // select logistics
+        setSelectLogisticsActive(false);
+        // selcte warehouse
+        setSelectWarehouseActive(false);
+        // selcte merchnat
+        setSelectMerchantActive(false);
+
+        // update bottomsheet global state
+        setBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: false,
+            }
         });
-        // set active state of dedicated input
-        if (type === "Logistics") return setSelectLogisticsActive(true);
-        if (type === "Merchant") return setSelectMerchantActive(true);
-        if (type === "Warehouse") return setSelectWarehouseActive(true);
-    }
+    };
 
     // check if any field is empty
     const isAnyFieldEmpty = [
@@ -760,7 +803,7 @@ const SendWaybill = ({navigation, route}) => {
     // function to show waybill summary bottomsheet modal
     const showWaybillSummary = () => {
         // show waybill summary modal
-        openModal("Summary", "Waybill Summary", "Review your waybill details", 2);    
+        openModal("Summary");    
     }
 
     // function to decrease quantity of a selected products
@@ -872,34 +915,25 @@ const SendWaybill = ({navigation, route}) => {
         // if keyboard is open
         const keyboardDidShowListener = Keyboard.addListener(
             Platform.OS === 'android' ? 'keyboardDidShow' : 'keyboardWillShow', () => {
-                // if bottom sheet is open just return early
-                if (bottomSheetOpen) {
-                    return setModal(prevModal => {
-                        return {
-                            ...prevModal,
-                            openAtIndex: 0,
-                            snapPoints: ["100%"], //fullscreen
-                        }
-                    })
-                };
-                // if keyboard was opened to edit waybill details, retun
-                if (inputRef.current.isFocused()) return;
-
-                // just scroll to the show product inputs properly
-                handleScrollToTarget(windowHeight);
+                if (!bottomSheet.opened) return;
+                // set bottomsheet paramteres
+                sheetRef.current?.snapToIndex(2);
             }
         );
         
         // keyboard is closed
         const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
             // run any desired function here
+            // if wareehouse address is empty
+            // set bottomsheet paramteres
+
         });
-    
+
         return () => {
             keyboardDidShowListener.remove();
             keyboardDidHideListener.remove();
         };
-    }, [bottomSheetOpen ]);
+    }, [bottomSheet.opened]);
 
     // reset inputs function
     const handleResetInputs = () => {
@@ -1117,7 +1151,7 @@ const SendWaybill = ({navigation, route}) => {
                                             label={"Select Logistics"} 
                                             placeholder={"Choose a logistics"} 
                                             value={selectedLogistics?.business_name}
-                                            onPress={() => openModal("Logistics", "Select Logistics", null, 0)}
+                                            onPress={() => openModal("Logistics")}
                                             icon={<ArrowDown />}
                                             active={selectLogisticsActive}
                                             inputFor={"String"}
@@ -1127,7 +1161,7 @@ const SendWaybill = ({navigation, route}) => {
                                             label={"Select Warehouse"} 
                                             placeholder={"Choose a destination warehouse"} 
                                             value={selectedWarehouse?.warehouse_name}
-                                            onPress={() => openModal("Warehouse", "Select Warehouse")}
+                                            onPress={() => openModal("Warehouse")}
                                             icon={<ArrowDown />}
                                             active={selectWarehouseActive}
                                             inputFor={"String"}
@@ -1138,7 +1172,7 @@ const SendWaybill = ({navigation, route}) => {
                                             label={"Select Merchant"} 
                                             placeholder={"Choose a Merchant"} 
                                             value={selectedMerchant?.business_name}
-                                            onPress={() => openModal("Merchant", "Select Merchant", null, 0)}
+                                            onPress={() => openModal("Merchant")}
                                             icon={<ArrowDown />}
                                             active={selectMerchantActive}
                                             inputFor={"String"}
@@ -1163,7 +1197,7 @@ const SendWaybill = ({navigation, route}) => {
                                                 <View style={style.productsHeading}>
                                                     <Text style={style.producPlaceholder}>Products Selected</Text>
                                                     <TouchableOpacity
-                                                        onPress={() => openModal("Products", "Select Products", null, 2)}
+                                                        onPress={() => openModal("Products")}
                                                     >
                                                         <Text style={style.addProduct}>+Select Product</Text>
                                                     </TouchableOpacity>
@@ -1215,32 +1249,32 @@ const SendWaybill = ({navigation, route}) => {
             </> : <SendWaybillSkeleton />}
             {/* bottom sheet */}
             <CustomBottomSheet
-                bottomSheetModalRef={bottomSheetRef}
+                index={0}
+                sheetRef={sheetRef}
                 closeModal={closeModal}
-                snapPointsArray={modal.snapPoints}
-                autoSnapAt={modal.openAtIndex}
-                sheetTitle={modal.title}
-                sheetSubtitle={modal.subtitle}
+                sheetTitle={sheetParameters.sheetTitle}
+                snapPointsArray={["50%", "75%", "100%"]}
+                sheetSubtitle={sheetParameters.sheetSubtitle}
             >
                 {/* logistics modal content */}
-                {["Logistics", "Merchant"].includes(modal?.type)  && (
+                {["Logistics", "Merchant"].includes(sheetParameters.content)  && (
                     <SelectBusinessModal
                         business={authData?.account_type === "Merchant" ? logistics : merchants}
                         searchQuery={searchQuery}
                         setSearchQuery={setSearchQuery}
                         onPress={authData?.account_type === "Merchant" ? handleSelectedLogistics : handleSelectedMerchant}
-                        modalType={modal?.type}
+                        modalType={sheetParameters.content}
                     />
                 )}
                 {/* warehouse modal content */}
-                {modal?.type === "Warehouse" && (
+                {sheetParameters.content === "Warehouse" && (
                     <SelectWarehouseModal
                         warehouses={warehouses}
                         onPress={handleSelectedWarehouse}
                     />
                 )}
                 {/* products modal content */}
-                {modal?.type === "Products" && (
+                {sheetParameters.content === "Products" && (
                     <SelectProductsModal 
                         products={products}
                         setProducts={setProducts}
@@ -1251,7 +1285,7 @@ const SendWaybill = ({navigation, route}) => {
                     />
                 )}
                 {/* waybill summary modal content */}
-                {modal?.type === "Summary" && (
+                {sheetParameters.content === "Summary" && (
                     <SummaryModal
                         type={"waybill"}
                         selectedLogistics={selectedLogistics?.business_name}
