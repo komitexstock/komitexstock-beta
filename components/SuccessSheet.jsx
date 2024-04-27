@@ -52,7 +52,7 @@ const SuccessSheet = ({successSheetRef, closeSuccessModal, caution, height, head
         []
     );
    
-    // render PopUpBottomSheet component
+    // render success sheet component
     return (
         <View style={style.container}>
             <BottomSheetModal

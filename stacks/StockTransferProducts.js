@@ -30,7 +30,6 @@ const StockTransferProducts = ({navigation, route}) => {
     const {
         bottomSheet,
         setBottomSheet,
-        bottomSheetOpen
     } = useGlobals();
 
     // update botomsheet global states
@@ -208,7 +207,7 @@ const StockTransferProducts = ({navigation, route}) => {
         else textInput = parseInt(text);
 
         // that means we should edit the avaialble list
-        if (bottomSheetOpen) return setQuantity(id, setAvailableProducts, true, textInput);
+        if (bottomSheet.opened) return setQuantity(id, setAvailableProducts, true, textInput);
         return setQuantity(id, setSelectedProducts, true, textInput);
     }
 

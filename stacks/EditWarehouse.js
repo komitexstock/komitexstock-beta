@@ -88,7 +88,6 @@ const EditWarehouse = ({navigation, route}) => {
         bottomSheet,
         setBottomSheet,
         stackedSheetRef,
-        stackedSheetOpen,
         successSheetRef,
         setToast
     } = useGlobals();

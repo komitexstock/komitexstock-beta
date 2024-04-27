@@ -52,7 +52,6 @@ const Orders = ({navigation}) => {
     // global states
     const {
         setBottomSheet,
-        bottomSheetRef,
         filterSheetRef,
         calendarSheetRef,
         calendarSheetOpen

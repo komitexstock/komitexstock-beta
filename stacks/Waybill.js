@@ -100,9 +100,8 @@ const Waybill = ({navigation}) => {
 
     // global variables
     const {
+        bottomSheet,
         setBottomSheet,
-        bottomSheetRef,
-        bottomSheetOpen,
         filterSheetRef,
         calendarSheetRef,
         calendarSheetOpen,
@@ -408,7 +407,7 @@ const Waybill = ({navigation}) => {
     // get filtervlaue
     const getFilterValue = (title) => {
         // if bottomsheets open, return search filter value
-        if (bottomSheetOpen) {
+        if (bottomSheet.opened) {
             return searchFilter?.find(filterParam => filterParam?.title === title)?.value
         }
         // if tab is incoming return incoming filter value
@@ -1557,7 +1556,7 @@ const Waybill = ({navigation}) => {
     // function to remove filter
     const handleRemoveFilter = (title) => {
         // bottoms sheet is open so set search ilter
-        if (bottomSheetOpen) {
+        if (bottomSheet.opened) {
             return setSearchFilter(prevParamters => {
                 return prevParamters.map(filterParam => {
                     if (filterParam.title === title) {
@@ -2103,7 +2102,7 @@ const Waybill = ({navigation}) => {
             closeFilter={closeFilter}
             clearFilterFunction={handleClearAllFilter}
             applyFilterFunction={() => {
-                if (bottomSheetOpen) {
+                if (bottomSheet.opened) {
                     return handleApplyFilter("search");
                 } else if (tab === "incoming") {
                     return handleApplyFilter("incoming");
@@ -2114,7 +2113,7 @@ const Waybill = ({navigation}) => {
             }}
             height={"80%"}
         >
-            {!bottomSheetOpen && tab === "incoming" && incomingFilter.map(item => (
+            {!bottomSheet.opened && tab === "incoming" && incomingFilter.map(item => (
                 <FilterButtonGroup
                     title={item.title}
                     key={item.title}
@@ -2133,7 +2132,7 @@ const Waybill = ({navigation}) => {
                 </FilterButtonGroup>
             ))}
 
-            {!bottomSheetOpen && tab === "outgoing" && outgoingFilter.map(item => (
+            {!bottomSheet.opened && tab === "outgoing" && outgoingFilter.map(item => (
                 <FilterButtonGroup
                     title={item.title}
                     key={item.title}
@@ -2152,7 +2151,7 @@ const Waybill = ({navigation}) => {
                 </FilterButtonGroup>
             ))}
 
-            {bottomSheetOpen && searchFilter.map(item => (
+            {bottomSheet.opened && searchFilter.map(item => (
                 <FilterButtonGroup
                     title={item.title}
                     key={item.title}

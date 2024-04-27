@@ -13,29 +13,17 @@ const AppProvider = ({children}) => {
     const navigation = useNavigation();
     const [currentStack, setCurrentStack] = useState("");
 
-    // regular bottom sheet ref
-    const bottomSheetRef = useRef(null);
-    // stacked bottom sheet ref
-    const stackedSheetRef = useRef(null);
     // filter bottom sheet ref
     const filterSheetRef = useRef(null);
     // calendar bottom sheet ref
     const calendarSheetRef = useRef(null);
     // popup bottom sheet ref
-    const popUpSheetRef = useRef(null);
-    // popup bottom sheet ref
     const successSheetRef = useRef(null);
 
-    // state to keep track if bottomsheet is open
-    const [bottomSheetOpen, setBottomSheetOpen] = useState(false);
-    // state to keep track if stacked bottomsheet is open
-    const [stackedSheetOpen, setStackedSheetOpen] = useState(false);
     // state to keep track if filter bottomsheet is open
     const [filterSheetOpen, setFilterSheetOpen] = useState(false);
     // state to keep track if calendar bottomsheet is open
     const [calendarSheetOpen, setCalendarSheetOpen] = useState(false);
-    // state to keep track if pop up bottomsheet is open
-    const [popUpSheetOpen, setPopUpSheetOpen] = useState(false);
     // state to keep track if success up bottomsheet is open
     const [successSheetOpen, setSuccessSheetOpen] = useState(false);
     
@@ -64,12 +52,42 @@ const AppProvider = ({children}) => {
         close: () => {},
     })
 
+    // stacked bottomsheet
+    const [filterBottomSheet, setFilterBottomSheet] = useState({
+        opened: false,
+        close: () => {},
+    });
+
+
+    // back handler dependencies
+    const backHanderDependencies = [
+        bottomSheet,
+        stackedBottomSheet,
+        filterBottomSheet,
+        isLoading,
+        isLoadingSecondary
+    ];
+
     // block of code to listen for onPress back button
     useEffect(() => {
         // function to run if back button is pressed
         const backAction = () => {
 
-            if (stackedBottomSheet.opened) { // if stacked bottomsheet is opened
+            // dont allow users to go back if loading states is active
+            if (isLoading || isLoadingSecondary) {
+                return true; 
+            }
+
+            if (filterBottomSheet.opened) { // if filter bottomsheet is opened
+                filterBottomSheet.close();
+                setFilterBottomSheet(prevState => {
+                    return {
+                        ...prevState,
+                        opened: false,
+                    }
+                })
+                return true;
+            } else if (stackedBottomSheet.opened) { // if stacked bottomsheet is opened
                 stackedBottomSheet.close();
                 setStackedBottomSheet(prevState => {
                     return {
@@ -100,7 +118,7 @@ const AppProvider = ({children}) => {
     
         return () => backHandler.remove();
 
-    }, [bottomSheet, stackedBottomSheet]);
+    }, [...backHanderDependencies]);
 
     // function to listen for change in navigation, and update currentStack
     useEffect(() => {
@@ -119,8 +137,6 @@ const AppProvider = ({children}) => {
             }
         });
 
-
-
         return unsubscribe;
     }, [isFocused, navigation]);
 
@@ -129,22 +145,6 @@ const AppProvider = ({children}) => {
         <AppContext.Provider 
             value={{
                 currentStack,
-                bottomSheetRef,
-                stackedSheetRef,
-                filterSheetRef,
-                calendarSheetRef,
-                popUpSheetRef,
-                successSheetRef,
-                bottomSheetOpen,
-                calendarSheetOpen,
-                popUpSheetOpen,
-                stackedSheetOpen,
-                setBottomSheetOpen,
-                setCalendarSheetOpen,
-                setFilterSheetOpen,
-                setPopUpSheetOpen,
-                setStackedSheetOpen,
-                setSuccessSheetOpen,
                 toast,
                 setToast,
                 isLoading,
@@ -155,6 +155,15 @@ const AppProvider = ({children}) => {
                 setBottomSheet,
                 stackedBottomSheet,
                 setStackedBottomSheet,
+
+
+                filterSheetRef,
+                calendarSheetRef,
+                successSheetRef,
+                calendarSheetOpen,
+                setCalendarSheetOpen,
+                setFilterSheetOpen,
+                setSuccessSheetOpen,
             }}
         >
            {children}

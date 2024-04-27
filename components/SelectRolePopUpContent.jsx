@@ -57,7 +57,6 @@ const style = StyleSheet.create({
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: 20,
     },
     roleDescription: {
         width: "100%",

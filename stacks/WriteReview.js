@@ -25,7 +25,7 @@ import { useGlobals } from "../context/AppContext";
 const WriteReview = ({navigation}) => {
 
     // popup sheet ref
-    const { popUpSheetRef, successSheetRef } = useGlobals();
+    const { successSheetRef } = useGlobals();
 
     const [deliverySpeedRating, setDeliverySpeedRating] = useState(0);
     const [inventoryManagementRating, setInventoryManagementRating] = useState(0);

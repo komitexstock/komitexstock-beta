@@ -8,11 +8,9 @@ import {
 // components
 import Header from "../components/Header";
 import CustomButton from "../components/CustomButton";
-import SuccessPrompt from "../components/SuccessPrompt";
 import SelectInput from "../components/SelectInput";
 import CalendarSheet from "../components/CalendarSheet";
 import CustomBottomSheet from "../components/CustomBottomSheet";
-import PopUpBottomSheet from "../components/PopUpBottomSheet";
 import SuccessSheet from "../components/SuccessSheet";
 // colors
 import { background, black, bodyText} from "../style/colors";

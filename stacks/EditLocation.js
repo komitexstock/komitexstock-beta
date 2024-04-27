@@ -90,7 +90,6 @@ const EditLocation = ({navigation, route}) => {
     const {
         setBottomSheet,
         setStackedBottomSheet,
-        bottomSheetRef,
         setToast
     } = useGlobals();
 

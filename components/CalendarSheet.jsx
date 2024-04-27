@@ -123,7 +123,7 @@ const CalendarSheet = ({calendarRef, closeCalendar, snapPointsArray, setDate, di
         return setCalendarSheetOpen(true);
     }
    
-    // render PopUpBottomSheet component
+    // render calendar sheet component
     return (
         <View style={style.container}>
             <BottomSheetModal

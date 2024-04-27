@@ -7,6 +7,7 @@ import {
     TouchableWithoutFeedback,
     Keyboard,
     Platform,
+    Modal,
 } from "react-native";
 
 // react hooks
@@ -19,7 +20,6 @@ import CustomButton from "../components/CustomButton";
 import Input from "../components/Input";
 import SelectInput from "../components/SelectInput";
 import Indicator from "../components/Indicator";
-import PopUpBottomSheet from "../components/PopUpBottomSheet";
 import Avatar from "../components/Avatar";
 import SelectRolePopUpContent from "../components/SelectRolePopUpContent";
 import TeamMemberCard from "../components/TeamMemberCard";
@@ -66,6 +66,7 @@ import { httpsCallable } from "firebase/functions";
 //local database
 import { handleUsers } from "../sql/handleUsers";
 import { useSQLiteContext } from "expo-sqlite/next";
+import { windowWidth } from "../utils/helpers";
 
 const TeamMembers = ({ navigation, route }) => {
 
@@ -79,10 +80,7 @@ const TeamMembers = ({ navigation, route }) => {
     const {
         bottomSheet,
         setBottomSheet,
-        bottomSheetRef,
-        bottomSheetOpen,
         successSheetRef,
-        popUpSheetRef,
         popUpSheetOpen,
         setToast,
     } = useGlobals();
@@ -92,7 +90,7 @@ const TeamMembers = ({ navigation, route }) => {
         content: '',
         sheetTitle: '',
         snapPointsArray: [],
-    })
+    });
 
     // state to trigger getting data from local database
     const [triggerReload, setTriggerReload] = useState(1);
@@ -349,13 +347,33 @@ const TeamMembers = ({ navigation, route }) => {
         if (authData?.role !== "Manager") return true;
         // else return false
         return false;
-    }, [selectedId])
+    }, [selectedId]);
+
+    // modal visible
+    const [modalVisible, setModalVisible] = useState(false);
+
+    // function to open bottom sheet popup
+    const openPopUpModal = (type) => {
+        setForceBlur(true);
+        setModalVisible(true);
+        setRoleInputActive(true);
+        setPopUp({
+            type: type,
+        });
+    }
 
     // function to close Popup modal
     const closePopUpModal = () => {
-        popUpSheetRef.current?.close();
+        setModalVisible(false);
         setRoleInputActive(false);
     };
+
+    // check if popup modal has been closed and disable active input
+    useEffect(() => {
+        if (!modalVisible) return;
+        // disable input active state
+        setRoleInputActive(false);
+    }, [modalVisible])
 
     // function to close all bottomsheet moda;
     const closeAllModal = () => {
@@ -366,16 +384,6 @@ const TeamMembers = ({ navigation, route }) => {
         setFullName("");
         setWorkEmail("");
         setRole("");
-    }
-
-    // function to open bottom sheet popup
-    const openPopUpModal = (type) => {
-        setForceBlur(true);
-        popUpSheetRef.current?.present();
-        setRoleInputActive(true);
-        setPopUp({
-            type: type,
-        });
     }
 
     // succes modal state
@@ -485,13 +493,6 @@ const TeamMembers = ({ navigation, route }) => {
     const closeSuccessModal = () => {
         successSheetRef.current?.close();
     }
-
-    // set role select button as inactive if back button is pressed and role modal is opened
-    useEffect(() => {
-        if (!popUpSheetOpen) {
-            setRoleInputActive(false);
-        }
-    }, [popUpSheetOpen])
 
     // state to store first name input value
     const [fullName, setFullName] = useState("");
@@ -981,30 +982,34 @@ const TeamMembers = ({ navigation, route }) => {
             )}
 
         </CustomBottomSheet>
-        {/* popup bottom sheet */}
-        <PopUpBottomSheet
-            bottomSheetModalRef={popUpSheetRef}
-            closeModal={closePopUpModal}
-            snapPointsArray={[250]}
-            autoSnapAt={0}
-            sheetTitle={"Select Role"}
-            hideCloseButton={true}
-            centered={true}
-        >   
-            {/* select role pop up for editing team member role */}
-            { popUp.type === "Edit" && 
-                <SelectRolePopUpContent
-                    hanldeRoleSelect={hanldeRoleUpdate}
-                />
-            }
+        {/* popup modal */}
+        <Modal
+            visible={modalVisible}
+            transparent={true}
+            onRequestClose={() => setModalVisible(false)}
+            animationType="fade"
+        >
+            <View style={style.modal}>
+                <View style={style.modalView}>
+                    <Text style={style.modalTitle}>
+                        Select Role
+                    </Text>
+                    {/* select role pop up for editing team member role */}
+                    { popUp.type === "Edit" && 
+                        <SelectRolePopUpContent
+                            hanldeRoleSelect={hanldeRoleUpdate}
+                        />
+                    }
 
-            {/* select role pop up for adding new team member */}
-            { popUp.type === "Add" && 
-                <SelectRolePopUpContent
-                    hanldeRoleSelect={hanldeRoleSelect}
-                />
-            }
-        </PopUpBottomSheet>
+                    {/* select role pop up for adding new team member */}
+                    { popUp.type === "Add" && 
+                        <SelectRolePopUpContent
+                            hanldeRoleSelect={hanldeRoleSelect}
+                        />
+                    }
+                </View>
+            </View>
+        </Modal>
         {/* success bottom sheet */}
         {/* success up modal */}
         <SuccessSheet
@@ -1053,6 +1058,36 @@ const style = StyleSheet.create({
         flexDirection: "column",
         justifyContent: "space-between",
         alignItems: "flex-start",
+    },
+    modal: {
+        flex: 1,
+        backgroundColor: 'red',
+        backgroundColor: 'rgba(0, 0, 0, 0.3)',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalView:{
+        width: windowWidth - 40,
+        flex: 1,
+        maxHeight: 261,
+        backgroundColor: white,
+        display: "flex",
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+        borderRadius: 24,
+        padding: 20,
+    },
+    modalTitle: {
+        marginTop: 8,
+        fontFamily: 'mulish-bold',
+        color: black,
+        fontSize: 16,
+        lineHeight: 20,
+        marginBottom: 20,
+        width:'100%',
+        textAlign: 'center',
     },
     modalWrapper: {
         width: "100%",

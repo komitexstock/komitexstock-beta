@@ -103,7 +103,6 @@ const Chat = ({navigation, route}) => {
         setBottomSheet,
         setStackedBottomSheet,
         calendarSheetRef,
-        bottomSheetOpen,
         setToast
     } = useGlobals();
 
@@ -118,12 +117,18 @@ const Chat = ({navigation, route}) => {
         sheetTitle: "Products",
     });
 
+    
+    // state to store text typed into reason text input
+    const [reason, setReason] = useState("");
 
     // set bottomsheets gloabl states
     useEffect(() => {
         // set bottomsheet state
         setBottomSheet(prevState=> {
-            return {...prevState, close: () => sheetRef.current?.close()}
+            return {...prevState, close: () => {
+                sheetRef.current?.close()
+                setReason("");
+            }}
         });
 
         // set bottomsheet state
@@ -1009,9 +1014,6 @@ const Chat = ({navigation, route}) => {
         setUploading(false);
     }
 
-    // state to store text typed into reason text input
-    const [reason, setReason] = useState("");
-
     // state to indicate if the input field has an error/or is left empty
     const [errorReason, setErrorReason] = useState(false);
 
@@ -1382,14 +1384,8 @@ const Chat = ({navigation, route}) => {
         },
     ];
 
-    // if bottomsheet modal is closed with back button set reason as ""
-    useEffect(() => {
-        if (!bottomSheetOpen) return setReason("");
-    }, [bottomSheetOpen])
-
-
+    // scroll ref
     const [scrollOffset, setScrollOffset] = useState(null);
-    // console.log(scrollOffset);
 
     return (<>
         {/* chat header */}

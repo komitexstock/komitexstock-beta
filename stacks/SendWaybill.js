@@ -104,8 +104,6 @@ const SendWaybill = ({navigation, route}) => {
     const {
         bottomSheet,
         setBottomSheet,
-        bottomSheetRef,
-        bottomSheetOpen,
         setToast
     } = useGlobals(); // global variables
 
