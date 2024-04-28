@@ -15,7 +15,7 @@ import { background, bodyText, white } from "../style/colors";
 // icons
 import CalendarIcon from "../assets/icons/CalendarIcon";
 // react hooks
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 // moment
 import moment from "moment";
 // skeleton screen
@@ -25,7 +25,23 @@ import { useGlobals } from "../context/AppContext";
 
 const Share = ({navigation}) => {
 
-    const { filterSheetRef, calendarSheetRef, calendarSheetOpen } = useGlobals();
+    // sheet ref
+    const filterSheetRef = useRef(null);
+
+    // global states
+    const {
+        setFilterBottomSheet,
+        calendarSheetRef,
+        calendarSheetOpen
+    } = useGlobals();
+
+    // update botomsheet global states
+    useEffect(() => {
+        // set filter bottomsheet global state
+        setFilterBottomSheet(prevState=> {
+            return {...prevState, close: () => filterSheetRef.current?.close()}
+        });
+    }, []);
 
     // order list
     const [orders, setOrders] = useState([
@@ -1218,15 +1234,36 @@ const Share = ({navigation}) => {
         }
     }
 
+
+
     // open filter function
-    const openFilter = () => {
+    const openFilter = (type) => {
+        // dismmis keyboard
         Keyboard.dismiss();
+
+        // open filtr botomsheet
         filterSheetRef.current?.present()
+
+        // update filter bottomsheet global state
+        setFilterBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: true,
+            }
+        });
     }
     
-    // close filter bottomsheet
     const closeFilter = () => {
-        filterSheetRef.current?.close()
+        // close filter bottomsheet
+        filterSheetRef.current?.close();
+
+        // update filter bottomsheet global state
+        setFilterBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: false,
+            }
+        });
     }
 
     // function to setEnd date as today if start date is selected as today
@@ -1492,11 +1529,11 @@ const Share = ({navigation}) => {
             )}
             {/* filter bottom sheet */}
             <FilterBottomSheet 
-                fiterSheetRef={filterSheetRef}
+                height={606}
                 closeFilter={closeFilter}
-                clearFilterFunction={handleClearAllFilter}
+                fiterSheetRef={filterSheetRef}
                 applyFilterFunction={handleApplyFilter}
-                height={"80%"}
+                clearFilterFunction={handleClearAllFilter}
             >
                 {filterParameters.map(item => (
                     <FilterButtonGroup

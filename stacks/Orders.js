@@ -48,11 +48,12 @@ const Orders = ({navigation}) => {
 
     // sheet ref
     const sheetRef = useRef(null);
+    const filterSheetRef = useRef(null);
 
     // global states
     const {
         setBottomSheet,
-        filterSheetRef,
+        setFilterBottomSheet,
         calendarSheetRef,
         calendarSheetOpen
     } = useGlobals();
@@ -62,6 +63,11 @@ const Orders = ({navigation}) => {
         // set bottomsheet state
         setBottomSheet(prevState=> {
             return {...prevState, close: () => sheetRef.current?.close()}
+        });
+
+        // set filter bottomsheet global state
+        setFilterBottomSheet(prevState=> {
+            return {...prevState, close: () => filterSheetRef.current?.close()}
         });
     }, []);
 
@@ -784,14 +790,35 @@ const Orders = ({navigation}) => {
 
     // open filter function
     const openFilter = (type) => {
+        // dismmis keyboard
         Keyboard.dismiss();
-        setFilterType(type)
+
+        // set filter type
+        setFilterType(type);
+
+        // open filtr botomsheet
         filterSheetRef.current?.present()
+
+        // update filter bottomsheet global state
+        setFilterBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: true,
+            }
+        });
     }
     
     const closeFilter = () => {
         // close filter bottomsheet
-        filterSheetRef.current?.close()
+        filterSheetRef.current?.close();
+
+        // update filter bottomsheet global state
+        setFilterBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: false,
+            }
+        });
     }
 
     // sticky header offset
@@ -883,254 +910,254 @@ const Orders = ({navigation}) => {
 
     }
 
-    return (
-        <>
-            {!pageLoading ? (<>
-                <Header
-                    navigation={navigation}
-                    stackName={"Orders"}
-                    removeBackArrow={true}
-                    icon={<MenuIcon />}
-                    iconFunction={() => {}}
-                    backgroundColor={background}
-                />
-                {/* page content */}
-                <TouchableWithoutFeedback style={{flex: 1}}>
-                    <FlatList 
-                        // onscroll event run function
-                        onScroll={animateHeaderOnScroll}
-                        // disable flatlist vertical scroll indicator
-                        showsVerticalScrollIndicator={false}
-                        stickyHeaderIndices={[1]}
-                        // flat list header component
-                        ListHeaderComponent={
-                            <View 
-                                style={style.headerWrapper}
-                                onLayout={e => {
-                                    stickyHeaderOffset.current = e.nativeEvent.layout.height + 57;
-                                    // where 57 is the height of the Header component
-                                }}
-                            >
-                                <StatWrapper>
-                                    {stats.map(stat => (
-                                        <StatCard
-                                            key={stat.id}
-                                            title={stat.title}
-                                            presentValue={stat.presentValue}
-                                            oldValue={stat.oldValue}
-                                            decimal={stat.decimal}
-                                            unit={stat.unit}
-                                            unitPosition={stat.unitPosition}
-                                        />
-                                    ))}
-                                </StatWrapper>
-                                {/* onPress navigate to sendOrder page */}
-                                <CustomButton
-                                    secondaryButton={true}
-                                    name={"Send an Order"}
-                                    shrinkWrapper={true}
-                                    onPress={() => navigation.navigate("SendOrder")}
-                                    unpadded={true}
-                                    wrapperStyle={{marginTop: 22}}
+    return (<>
+        {!pageLoading ? (<>
+            <Header
+                navigation={navigation}
+                stackName={"Orders"}
+                removeBackArrow={true}
+                icon={<MenuIcon />}
+                iconFunction={() => {}}
+                backgroundColor={background}
+            />
+            {/* page content */}
+            <TouchableWithoutFeedback style={{flex: 1}}>
+                <FlatList 
+                    // onscroll event run function
+                    onScroll={animateHeaderOnScroll}
+                    // disable flatlist vertical scroll indicator
+                    showsVerticalScrollIndicator={false}
+                    stickyHeaderIndices={[1]}
+                    // flat list header component
+                    ListHeaderComponent={
+                        <View 
+                            style={style.headerWrapper}
+                            onLayout={e => {
+                                stickyHeaderOffset.current = e.nativeEvent.layout.height + 57;
+                                // where 57 is the height of the Header component
+                            }}
+                        >
+                            <StatWrapper>
+                                {stats.map(stat => (
+                                    <StatCard
+                                        key={stat.id}
+                                        title={stat.title}
+                                        presentValue={stat.presentValue}
+                                        oldValue={stat.oldValue}
+                                        decimal={stat.decimal}
+                                        unit={stat.unit}
+                                        unitPosition={stat.unitPosition}
+                                    />
+                                ))}
+                            </StatWrapper>
+                            {/* onPress navigate to sendOrder page */}
+                            <CustomButton
+                                secondaryButton={true}
+                                name={"Send an Order"}
+                                shrinkWrapper={true}
+                                onPress={() => navigation.navigate("SendOrder")}
+                                unpadded={true}
+                                wrapperStyle={{marginTop: 22}}
+                            />
+                        </View>
+                    }
+                    // pad the bottom due to presence of a bottom nav
+                    contentContainerStyle={{paddingBottom: 90}}
+                    style={style.listWrapper}
+                    keyExtractor={item => item.id}
+                    data={orders}
+                    renderItem={({ item, index }) => {
+                        // console.log(index);
+                        if (item.id === "sticky") {
+                            return (<>
+                                <Animated.View
+                                    style={[
+                                        style.stickyBar,
+                                        {elevation: shadowElevation}
+                                    ]}
+                                >
+                                    <View style={style.recentOrderHeading}>
+                                        <View style={style.recentOrderTextWrapper}>
+                                            <Text style={style.recentOrderHeadingText}>Recent Orders</Text>
+                                            {/* badge showing numbers of unread orders */}
+                                            <Badge number={orders.filter(order => order.newMessage).length} />
+                                        </View>
+                                        <View style={style.actionWrapper}>
+                                            {/* search button to trigger search bottomsheet */}
+                                            <TouchableOpacity 
+                                                style={style.menuIcon}
+                                                onPress={() => openModal("search")}
+                                                >
+                                                <SearchIcon />
+                                            </TouchableOpacity>
+                                            <OpenFilterButton
+                                                onPress={() => openFilter("home")}
+                                                filterParams={filterParameters}
+                                            />
+                                        </View>
+                                    </View>
+                                    <View style={style.orderPillWrapper}>
+                                        {filterParameters.map(filterParam => {
+                                            if (!filterParam.default) {
+                                                if (filterParam.value !== "Custom period") {
+                                                    return (
+                                                        <FilterPill
+                                                            key={filterParam.title}
+                                                            text={filterParam.value}
+                                                            onPress={() => handleRemoveFilter(filterParam.title)}
+                                                            background={white}
+                                                        />
+                                                    )
+                                                }
+                                            }
+                                        })}
+
+                                    </View>
+                                </Animated.View>
+                                {orders.length === 1 && (
+                                    <View style={style.emptyOrderWrapper}>
+                                        <SendOrderIcon />
+                                        <Text style={style.emptyOrderHeading}>Send your first order</Text>
+                                        <Text style={style.emptyOrderParagraph}>
+                                            Makes sales by sending orders to your logistics partners
+                                        </Text>
+                                    </View>
+                                )}
+                            </>)
+                        }
+
+                        // if order list is empty
+                        return (
+                            <View style={style.orderWrapper}>
+                                <OrderListItem 
+                                    item={item} 
+                                    index={index} 
+                                    lastOrder={orders.length - 1}
+                                    firstOrder={1}
+                                    navigation={navigation}
+                                    extraVerticalPadding={true} 
                                 />
                             </View>
-                        }
-                        // pad the bottom due to presence of a bottom nav
-                        contentContainerStyle={{paddingBottom: 90}}
-                        style={style.listWrapper}
-                        keyExtractor={item => item.id}
-                        data={orders}
-                        renderItem={({ item, index }) => {
-                            // console.log(index);
-                            if (item.id === "sticky") {
-                                return (<>
-                                    <Animated.View
-                                        style={[
-                                            style.stickyBar,
-                                            {elevation: shadowElevation}
-                                        ]}
-                                    >
-                                        <View style={style.recentOrderHeading}>
-                                            <View style={style.recentOrderTextWrapper}>
-                                                <Text style={style.recentOrderHeadingText}>Recent Orders</Text>
-                                                {/* badge showing numbers of unread orders */}
-                                                <Badge number={orders.filter(order => order.newMessage).length} />
-                                            </View>
-                                            <View style={style.actionWrapper}>
-                                                {/* search button to trigger search bottomsheet */}
-                                                <TouchableOpacity 
-                                                    style={style.menuIcon}
-                                                    onPress={() => openModal("search")}
-                                                    >
-                                                    <SearchIcon />
-                                                </TouchableOpacity>
-                                                <OpenFilterButton
-                                                    onPress={() => openFilter("home")}
-                                                    filterParams={filterParameters}
-                                                />
-                                            </View>
-                                        </View>
-                                        <View style={style.orderPillWrapper}>
-                                            {filterParameters.map(filterParam => {
-                                                if (!filterParam.default) {
-                                                    if (filterParam.value !== "Custom period") {
-                                                        return (
-                                                            <FilterPill
-                                                                key={filterParam.title}
-                                                                text={filterParam.value}
-                                                                onPress={() => handleRemoveFilter(filterParam.title)}
-                                                                background={white}
-                                                            />
-                                                        )
-                                                    }
-                                                }
-                                            })}
+                        )
+                    }}
+                />
+            </TouchableWithoutFeedback>
+        </>) : <OrdersSkeleton />}
+        {/* Header component */}
+        {/* bottom sheet */}
+        <CustomBottomSheet 
+            sheetRef={sheetRef}
+            sheetTitle={"Orders"}
+            closeModal={closeModal}
+            snapPointsArray={["100%"]}
+        >
+            <SearchBar 
+                placeholder={"Search orders"}
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                backgroundColor={background}
+                openFilter={() => openFilter("search")}
+                filterParams={searchFilterParameters}
+            />
 
-                                        </View>
-                                    </Animated.View>
-                                    {orders.length === 1 && (
-                                        <View style={style.emptyOrderWrapper}>
-                                            <SendOrderIcon />
-                                            <Text style={style.emptyOrderHeading}>Send your first order</Text>
-                                            <Text style={style.emptyOrderParagraph}>
-                                                Makes sales by sending orders to your logistics partners
-                                            </Text>
-                                        </View>
-                                    )}
-                                </>)
-                            }
-
-                            // if order list is empty
-                            return (
-                                <View style={style.orderWrapper}>
-                                    <OrderListItem 
-                                        item={item} 
-                                        index={index} 
-                                        lastOrder={orders.length - 1}
-                                        firstOrder={1}
-                                        navigation={navigation}
-                                        extraVerticalPadding={true} 
+            {/* check if any filter has been applied, i.e it is not in its default value */}
+            {searchFilterParameters.find(filterParam => filterParam.default === false) && (
+                <View style={style.searchOrderPillWrapper}>
+                    {searchFilterParameters.map(filterParam => {
+                        if (!filterParam.default) {
+                            if (filterParam.value !== "Custom period") {
+                                return (
+                                    <FilterPill
+                                        key={filterParam.title}
+                                        text={filterParam.value}
+                                        onPress={() => handleRemoveFilter(filterParam.title, "search")}
+                                        background={background}
                                     />
-                                </View>
-                            )
-                        }}
-                    />
-                </TouchableWithoutFeedback>
-            </>) : <OrdersSkeleton />}
-            {/* Header component */}
-            {/* bottom sheet */}
-            <CustomBottomSheet 
-                sheetRef={sheetRef}
-                sheetTitle={"Orders"}
-                closeModal={closeModal}
-                snapPointsArray={["100%"]}
-                enablePanDownToClose={false}
+                                )
+                            }
+                        }
+                    })}
+                </View>
+            )}
+
+            <BottomSheetScrollView 
+                showsVerticalScrollIndicator={false} 
+                style={style.orderSearchResults}
             >
-                <SearchBar 
-                    placeholder={"Search orders"}
-                    searchQuery={searchQuery}
-                    setSearchQuery={setSearchQuery}
-                    backgroundColor={background}
-                    openFilter={() => openFilter("search")}
-                    filterParams={searchFilterParameters}
+                {searchedOrders.map((order, index) => (
+                    <OrderListItem
+                        key={order.id} 
+                        item={order} 
+                        index={index}
+                        firstOrder={0}
+                        lastOrder={searchedOrders.length}
+                        searchQuery={searchQuery}
+                        sideFunctions={closeModal}
+                    />   
+                ))}
+            </BottomSheetScrollView>
+        </CustomBottomSheet>
+        {/* filter bottom sheet */}
+        <FilterBottomSheet 
+            height={606}
+            closeFilter={closeFilter}
+            fiterSheetRef={filterSheetRef}
+            clearFilterFunction={handleClearAllFilter}
+            applyFilterFunction={filterType === "search" ? 
+                () => handleApplyFilter("search") : 
+                handleApplyFilter
+            }
+        >
+            {filterType === "home" && filterParameters.map(item => (
+                <FilterButtonGroup
+                    buttons={item.buttons}
+                    title={item.title}
+                    key={item.title}
+                />
+            ))}
+
+            {filterType === "search" && searchFilterParameters.map(item => (
+                <FilterButtonGroup
+                    buttons={item.buttons}
+                    title={item.title}
+                    key={item.title}
+                />
+            ))}
+            <View style={style.inputContainer}>
+                {/* Start date */}
+                <SelectInput 
+                    label={"Start Date"} 
+                    placeholder={"DD MMMM, YYYY"} 
+                    value={startDate}
+                    onPress={() => {openCalendar("StartDate")}}
+                    icon={<CalendarIcon />}
+                    active={activeStartDate}
+                    inputFor={"Date"}
                 />
 
-                {/* check if any filter has been applied, i.e it is not in its default value */}
-                {searchFilterParameters.find(filterParam => filterParam.default === false) && (
-                    <View style={style.searchOrderPillWrapper}>
-                        {searchFilterParameters.map(filterParam => {
-                            if (!filterParam.default) {
-                                if (filterParam.value !== "Custom period") {
-                                    return (
-                                        <FilterPill
-                                            key={filterParam.title}
-                                            text={filterParam.value}
-                                            onPress={() => handleRemoveFilter(filterParam.title, "search")}
-                                            background={background}
-                                        />
-                                    )
-                                }
-                            }
-                        })}
-                    </View>
-                )}
-
-                <BottomSheetScrollView 
-                    showsVerticalScrollIndicator={false} 
-                    style={style.orderSearchResults}
-                >
-                    {searchedOrders.map((order, index) => (
-                        <OrderListItem
-                            key={order.id} 
-                            item={order} 
-                            index={index}
-                            firstOrder={0}
-                            lastOrder={searchedOrders.length}
-                            searchQuery={searchQuery}
-                            sideFunctions={closeModal}
-                        />   
-                    ))}
-                </BottomSheetScrollView>
-            </CustomBottomSheet>
-            {/* filter bottom sheet */}
-            <FilterBottomSheet 
-                fiterSheetRef={filterSheetRef}
-                closeFilter={closeFilter}
-                clearFilterFunction={handleClearAllFilter}
-                applyFilterFunction={filterType === "search" ? () => handleApplyFilter("search") : handleApplyFilter}
-                height={"80%"}
-            >
-                {filterType === "home" && filterParameters.map(item => (
-                    <FilterButtonGroup
-                        buttons={item.buttons}
-                        title={item.title}
-                        key={item.title}
-                    />
-                ))}
-
-                {filterType === "search" && searchFilterParameters.map(item => (
-                    <FilterButtonGroup
-                        buttons={item.buttons}
-                        title={item.title}
-                        key={item.title}
-                    />
-                ))}
-                <View style={style.inputContainer}>
-                    {/* Start date */}
-                    <SelectInput 
-                        label={"Start Date"} 
-                        placeholder={"DD MMMM, YYYY"} 
-                        value={startDate}
-                        onPress={() => {openCalendar("StartDate")}}
-                        icon={<CalendarIcon />}
-                        active={activeStartDate}
-                        inputFor={"Date"}
-                    />
-
-                    {/* End date */}
-                    <SelectInput
-                        label={"End Date"}
-                        placeholder={"DD MMMM, YYYY"}
-                        value={endDate}
-                        onPress={() => {openCalendar("EndDate")}}
-                        icon={<CalendarIcon />}
-                        active={activeEndDate}
-                        inputFor={"Date"}
-                    />
-                </View>
-            </FilterBottomSheet>
-            {/* calnedar */}
-            <CalendarSheet 
-                closeCalendar={closeCalendar}
-                setDate={calendar.setDate}
-                disableActionButtons={true}
-                snapPointsArray={["60%"]}
-                minDate={calendar.minDate}
-                maxDate={calendar.maxDate}
-                calendarRef={calendarSheetRef} 
-            />
-        </>
-    );
+                {/* End date */}
+                <SelectInput
+                    label={"End Date"}
+                    placeholder={"DD MMMM, YYYY"}
+                    value={endDate}
+                    onPress={() => {openCalendar("EndDate")}}
+                    icon={<CalendarIcon />}
+                    active={activeEndDate}
+                    inputFor={"Date"}
+                />
+            </View>
+        </FilterBottomSheet>
+        {/* calnedar */}
+        <CalendarSheet 
+            closeCalendar={closeCalendar}
+            setDate={calendar.setDate}
+            disableActionButtons={true}
+            snapPointsArray={["60%"]}
+            minDate={calendar.minDate}
+            maxDate={calendar.maxDate}
+            calendarRef={calendarSheetRef} 
+        />
+    </>);
 }
 
 // stylesheet

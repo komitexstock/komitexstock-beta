@@ -95,14 +95,15 @@ const Waybill = ({navigation}) => {
     // use auth
     const { authData } = useAuth();
 
-    // sheet ref
+    // sheet refs
     const sheetRef = useRef(null);
+    const filterSheetRef = useRef(null);
 
     // global variables
     const {
         bottomSheet,
+        setFilterBottomSheet,
         setBottomSheet,
-        filterSheetRef,
         calendarSheetRef,
         calendarSheetOpen,
         setToast,
@@ -113,6 +114,11 @@ const Waybill = ({navigation}) => {
         // set bottomsheet state
         setBottomSheet(prevState=> {
             return {...prevState, close: () => sheetRef.current?.close()}
+        });
+
+        // set filter bottomsheet global state
+        setFilterBottomSheet(prevState=> {
+            return {...prevState, close: () => filterSheetRef.current?.close()}
         });
     }, []);
 
@@ -1378,14 +1384,32 @@ const Waybill = ({navigation}) => {
 
     // open filter function
     const openFilter = () => {
+        // dismmis keyboard
         Keyboard.dismiss();
+
+        // open filtr botomsheet
         filterSheetRef.current?.present()
+
+        // update filter bottomsheet global state
+        setFilterBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: true,
+            }
+        });
     }
     
-    // close filter
     const closeFilter = () => {
         // close filter bottomsheet
-        filterSheetRef.current?.close()
+        filterSheetRef.current?.close();
+
+        // update filter bottomsheet global state
+        setFilterBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: false,
+            }
+        });
     }
 
     // function to apply filter
@@ -2052,7 +2076,6 @@ const Waybill = ({navigation}) => {
             sheetTitle={"Waybills"}
             closeModal={closeModal}
             snapPointsArray={["100%"]}
-            enablePanDownToClose={false}
         >
             {/* {modal.modalContent} */}
             <SearchBar 
@@ -2098,20 +2121,16 @@ const Waybill = ({navigation}) => {
         </CustomBottomSheet>
         {/* filter bottom sheet */}
         <FilterBottomSheet 
-            fiterSheetRef={filterSheetRef}
+            height={606}
             closeFilter={closeFilter}
+            fiterSheetRef={filterSheetRef}
             clearFilterFunction={handleClearAllFilter}
             applyFilterFunction={() => {
                 if (bottomSheet.opened) {
                     return handleApplyFilter("search");
-                } else if (tab === "incoming") {
-                    return handleApplyFilter("incoming");
-                } else if (tab === "outgoing") {
-                    return handleApplyFilter("outgoing");
-                    
                 }
+                return tab === "incoming" ? handleApplyFilter("incoming") : handleApplyFilter("outgoing") 
             }}
-            height={"80%"}
         >
             {!bottomSheet.opened && tab === "incoming" && incomingFilter.map(item => (
                 <FilterButtonGroup

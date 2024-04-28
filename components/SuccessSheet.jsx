@@ -26,8 +26,6 @@ const SuccessSheet = ({successSheetRef, closeSuccessModal, caution, height, head
     // children => jsx
     // sheetSubtitle, sheetTitle => string
 
-    const { setSuccessSheetOpen } = useGlobals()
-
     // return default height of 320 if height prop is not given
     const modalHeight = useMemo(() => height ? height : 320, [height]);
     // const snapPoints = snapPointsArray;
@@ -78,8 +76,13 @@ const SuccessSheet = ({successSheetRef, closeSuccessModal, caution, height, head
                     <ModalHandle />
                 )}
                 onChange={(index) => {
-                    if (index === -1) return setSuccessSheetOpen(false)
-                    return setSuccessSheetOpen(true);
+                    if (index === -1) {
+                        if (closeSuccessModal === undefined) {
+                            primaryFunction()
+                        } else {
+                            closeSuccessModal()
+                        }
+                    }
                 }}
             >
                 {/* sheetitle */}

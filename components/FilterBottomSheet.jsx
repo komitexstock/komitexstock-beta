@@ -14,12 +14,8 @@ import { bodyText, primaryColor, secondaryColor, white } from "../style/colors";
 // window height
 import { windowHeight, windowWidth } from "../utils/helpers";
 // globals
-import { useGlobals } from "../context/AppContext";
 
 const FilterBottomSheet = ({fiterSheetRef, height, closeFilter, children, clearFilterFunction, applyFilterFunction}) => {
-
-    // set filter bottomsheet state
-    const { setFilterSheetOpen } = useGlobals();
 
     // render popup bottomsheet modal backdrop 
     const renderBackdrop = useCallback(
@@ -36,94 +32,66 @@ const FilterBottomSheet = ({fiterSheetRef, height, closeFilter, children, clearF
     );
 
     return (
-        <View style={style.container}>
-            <BottomSheetModal
-                ref={fiterSheetRef}
-                index={0}
-                snapPoints={[height]}
-                enableContentPanningGestures={false}
-                enablePanDownToClose={false}
-                backgroundStyle={{
-                    borderRadius: 32,
-                    paddingBottom: 90,
-                }}
-                handleComponent={() => (
-                    <ModalHandle />
-                )}
-                stackBehavior={"push"}
-                backdropComponent={renderBackdrop}
-                onChange={(index) => {
-                    if (index === -1) return setFilterSheetOpen(false)
-                    return setFilterSheetOpen(true);
-                }}
-            >
-                <View style={style.sheetTitle}>
-                    <TouchableOpacity 
-                        style={style.closeButtonWrapper} 
-                        onPress={closeFilter}
-                    >
-                        <CloseIcon />
-                    </TouchableOpacity>
-                    <Text style={style.sheetTitleText}>
-                        Filter by
-                    </Text>
-                </View>
-                <BottomSheetScrollView 
-                    style={[
-                        style.modalWrapper, 
-                    ]}
+        <BottomSheetModal
+            ref={fiterSheetRef}
+            index={0}
+            snapPoints={[height]}
+            enablePanDownToClose={true}
+            backgroundStyle={{
+                borderRadius: 32,
+                paddingBottom: 90,
+            }}
+            handleComponent={() => (
+                <ModalHandle />
+            )}
+            stackBehavior={"push"}
+            backdropComponent={renderBackdrop}
+            onChange={(index) => {
+                if (index === -1) return closeFilter()
+            }}
+        >
+            <View style={style.sheetTitle}>
+                <TouchableOpacity 
+                    style={style.closeButtonWrapper} 
+                    onPress={closeFilter}
                 >
-                    {children}
-                </BottomSheetScrollView>
-                <View style={style.filterButtonsWrapper}>
-                    {/* clear all */}
-                    <CustomButton
-                        secondaryButton={true}
-                        name={"Clear All"}
-                        shrinkWrapper={true}
-                        onPress={clearFilterFunction}
-                        unpadded={true}
-                        wrapperStyle={{width: (windowWidth - 56) / 2}}
-                    />
-                    {/* apply */}
-                    <CustomButton
-                        name={"Apply"}
-                        shrinkWrapper={true}
-                        onPress={applyFilterFunction}
-                        unpadded={true}
-                        wrapperStyle={{width: (windowWidth - 56) / 2}}
-                    />
-                </View>
-            </BottomSheetModal>
-        </View>
+                    <CloseIcon />
+                </TouchableOpacity>
+                <Text style={style.sheetTitleText}>
+                    Filter by
+                </Text>
+            </View>
+            <BottomSheetScrollView 
+                style={[
+                    style.modalWrapper, 
+                ]}
+            >
+                {children}
+            </BottomSheetScrollView>
+            <View style={style.filterButtonsWrapper}>
+                {/* clear all */}
+                <CustomButton
+                    secondaryButton={true}
+                    name={"Clear All"}
+                    shrinkWrapper={true}
+                    onPress={clearFilterFunction}
+                    unpadded={true}
+                    wrapperStyle={{width: (windowWidth - 56) / 2}}
+                />
+                {/* apply */}
+                <CustomButton
+                    name={"Apply"}
+                    shrinkWrapper={true}
+                    onPress={applyFilterFunction}
+                    unpadded={true}
+                    wrapperStyle={{width: (windowWidth - 56) / 2}}
+                />
+            </View>
+        </BottomSheetModal>
     );
 }
  
 const style = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
-        width: "100%",
-        height: "100%",
-        backgroundColor: "transparent",
-        zIndex: 999,
-    },
-    overlay: {
-        position: 'absolute',
-        width: "100%",
-        height: "100%",
-        bottom: 0,
-        left: 0,
-        top: 0,
-        right: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.3)',
-        zIndex: 100,
-    }, 
-    closeOverlay: {
-        widyth: "100%",
-        height: "100%",
-    },
     sheetTitle: {
         width: "100%",
         minHeight: 20,

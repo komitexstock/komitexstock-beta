@@ -78,14 +78,15 @@ const Warehouse = ({navigation, route}) => {
     // page loading state
     const [pageLoading, setPageLoading] = useState(true);
 
-    // sheet ref
+    // sheet refs
     const sheetRef = useRef(null);
+    const filterSheetRef = useRef(null);
 
     // globals
     const {
         bottomSheet,
         setBottomSheet,
-        filterSheetRef,
+        setFilterBottomSheet,
         calendarSheetRef,
         calendarSheetOpen,
         setToast 
@@ -96,13 +97,18 @@ const Warehouse = ({navigation, route}) => {
         content: "Edit",
         sheetTitle: "",
         snapPointsArray: [124],
-        enablePanDownToClose: true,
     });
 
     // update bottomsheet global state
     useEffect(() => {
+        // set bottomsheet global state
         setBottomSheet(prevState=> {
             return {...prevState, close: () => sheetRef.current?.close()}
+        });
+
+        // set filter bottomsheet global state
+        setFilterBottomSheet(prevState=> {
+            return {...prevState, close: () => filterSheetRef.current?.close()}
         });
     }, [])
 
@@ -343,7 +349,6 @@ const Warehouse = ({navigation, route}) => {
             content: type,
             sheetTitle: type === "Edit" ? "" : "Stock Transfers",
             snapPointsArray: type === "Edit" ? [124] : ["100%"],
-            enablePanDownToClose: type === "Edit",
         });
 
         // open bottom sheet
@@ -560,16 +565,35 @@ const Warehouse = ({navigation, route}) => {
         }
     ]);
 
+
     // open filter function
     const openFilter = () => {
+        // dismmis keyboard
         Keyboard.dismiss();
+
+        // open filtr botomsheet
         filterSheetRef.current?.present()
+
+        // update filter bottomsheet global state
+        setFilterBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: true,
+            }
+        });
     }
     
-    // close filter
     const closeFilter = () => {
         // close filter bottomsheet
-        filterSheetRef.current?.close()
+        filterSheetRef.current?.close();
+
+        // update filter bottomsheet global state
+        setFilterBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: false,
+            }
+        });
     }
 
     // function to apply filter
@@ -738,293 +762,290 @@ const Warehouse = ({navigation, route}) => {
     }, [calendarSheetOpen])
     
 
-    return (
-        <>
-            { !pageLoading ? (<>
-                {/* header */}
-                <Header
-                    stackName={"Warehouse"}
-                    removeBackArrow={true}
-                    backgroundColor={background}
-                    // unpadded={true}
-                />
-                {/* main screen content */}
-                <TouchableWithoutFeedback
-                    // onPress={() => Keyboard.dismiss()}
-                >
-                    <FlatList
-                        ref={flatListRef}
-                        style={[
-                            styles.container,
-                        ]}
-                        contentContainerStyle={styles.contentContainer}
-                        showsVerticalScrollIndicator={false}
-                        columnWrapperStyle={tab === "warehouse" ? styles.columnWrapper : null}
-                        onScroll={handleScroll}
-                        stickyHeaderIndices={[0, 1]}
-                        numColumns={tab === "warehouse" ? 2 : 1}
-                        // data={tab === "warehouse" ? warehouses : stockTransfer}
-                        data={(() => {
-                            if (tab !== "warehouse") return stockTransfer;
-                            if (!searchWarehouseQuery) return warehouses;
-                            // return searched warehouse
-                            // process searched result 
-                            const searchedResult = warehouses.filter(warehouse => {
-                                return warehouse?.warehouse_name?.toLowerCase()?.includes(searchWarehouseQuery.toLowerCase())
-                            });
+    return (<>
+        { !pageLoading ? (<>
+            {/* header */}
+            <Header
+                stackName={"Warehouse"}
+                removeBackArrow={true}
+                backgroundColor={background}
+                // unpadded={true}
+            />
+            {/* main screen content */}
+            <TouchableWithoutFeedback
+                // onPress={() => Keyboard.dismiss()}
+            >
+                <FlatList
+                    ref={flatListRef}
+                    style={[
+                        styles.container,
+                    ]}
+                    contentContainerStyle={styles.contentContainer}
+                    showsVerticalScrollIndicator={false}
+                    columnWrapperStyle={tab === "warehouse" ? styles.columnWrapper : null}
+                    onScroll={handleScroll}
+                    stickyHeaderIndices={[0, 1]}
+                    numColumns={tab === "warehouse" ? 2 : 1}
+                    // data={tab === "warehouse" ? warehouses : stockTransfer}
+                    data={(() => {
+                        if (tab !== "warehouse") return stockTransfer;
+                        if (!searchWarehouseQuery) return warehouses;
+                        // return searched warehouse
+                        // process searched result 
+                        const searchedResult = warehouses.filter(warehouse => {
+                            return warehouse?.warehouse_name?.toLowerCase()?.includes(searchWarehouseQuery.toLowerCase())
+                        });
 
-                            return [
-                                { id: "stickyLeft" },
-                                { id: "stickyRight" },
-                                ...searchedResult,
-                                {
-                                    id: "add_new",
-                                    add_new: true,
-                                    onPress: () => navigation.navigate("AddWarehouse"),
-                                },
-                            ]
-                        })()}
-                        key={tab + warehouses.length + stockTransfer.length }
-                        keyExtractor={item => item.id}
-                        ListHeaderComponent={(
-                            <View
-                                style={[
-                                    styles.headerComponent,
-                                    // {opacity}
-                                ]}
-                                onLayout={e => {
-                                    setStickyHeaderOffset(e.nativeEvent.layout.height);
-                                }}
-                            >
-                                {/* stats */}
-                                <StatWrapper>
-                                    {stats.map(stat => (
-                                        <StatCard
-                                            key={stat.id}
-                                            title={stat.title}
-                                            presentValue={stat.presentValue}
-                                            oldValue={stat.oldValue}
-                                            decimal={stat.decimal}
-                                        />
-                                    ))}
-                                </StatWrapper>
-                                <View style={styles.mainButtonWrapper}>
-                                    <CustomButton 
-                                        name={"Stock Transfer"}
-                                        shrinkWrapper={true}
-                                        secondaryButton={true}
-                                        onPress={() => {navigation.navigate("StockTransfer")}}
-                                        unpadded={true}
+                        return [
+                            { id: "stickyLeft" },
+                            { id: "stickyRight" },
+                            ...searchedResult,
+                            {
+                                id: "add_new",
+                                add_new: true,
+                                onPress: () => navigation.navigate("AddWarehouse"),
+                            },
+                        ]
+                    })()}
+                    key={tab + warehouses.length + stockTransfer.length }
+                    keyExtractor={item => item.id}
+                    ListHeaderComponent={(
+                        <View
+                            style={[
+                                styles.headerComponent,
+                                // {opacity}
+                            ]}
+                            onLayout={e => {
+                                setStickyHeaderOffset(e.nativeEvent.layout.height);
+                            }}
+                        >
+                            {/* stats */}
+                            <StatWrapper>
+                                {stats.map(stat => (
+                                    <StatCard
+                                        key={stat.id}
+                                        title={stat.title}
+                                        presentValue={stat.presentValue}
+                                        oldValue={stat.oldValue}
+                                        decimal={stat.decimal}
                                     />
-                                </View>
+                                ))}
+                            </StatWrapper>
+                            <View style={styles.mainButtonWrapper}>
+                                <CustomButton 
+                                    name={"Stock Transfer"}
+                                    shrinkWrapper={true}
+                                    secondaryButton={true}
+                                    onPress={() => {navigation.navigate("StockTransfer")}}
+                                    unpadded={true}
+                                />
                             </View>
-                        )}
-                        renderItem={({item, index}) => {
-                            if (item.id === "stickyLeft") {
+                        </View>
+                    )}
+                    renderItem={({item, index}) => {
+                        if (item.id === "stickyLeft") {
+                            return (
+                                <View 
+                                    style={[
+                                        styles.stickyHeader,
+                                        {elevation: scrollOffset > stickyHeaderOffset ? 3 : 0},
+                                        tab === "warehouse" && {marginBottom: -16}
+                                    ]}
+                                >
+                                    {/* search */}
+                                    <SearchBar 
+                                        placeholder={`Search ${tab}`}
+                                        searchQuery={searchWarehouseQuery}
+                                        setSearchQuery={setSearchWarehouseQuery}
+                                        backgroundColor={white}
+                                        disableFilter={true}
+                                        // if tab is switched to stock transfer, turn search input into a button
+                                        button={tab !== "warehouse" ? true : false}
+                                        onPress={() => openModal("Search")}
+                                    />
+                                    {/* page tabs */}
+                                    <View style={styles.tabContainer}>
+                                        <TouchableOpacity 
+                                            style={tab === "warehouse" ? styles.tabButtonSelected : styles.tabButton}
+                                            onPress={() => setTab("warehouse")}
+                                        >
+                                            <Text style={tab === "warehouse" ? styles.tabButtonTextSelected : styles.tabButtonText}>Warehouse</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity 
+                                            style={tab === "stock transfer" ? styles.tabButtonSelected : styles.tabButton}
+                                            onPress={() => setTab("stock transfer")}
+                                        >
+                                            <Text style={tab === "stock transfer" ? styles.tabButtonTextSelected : styles.tabButtonText}>Stock Transfer</Text>
+                                            <Badge number={3} />
+                                        </TouchableOpacity>
+                                    </View>
+                                    <View style={styles.filterPillWrapper}></View>
+                                </View>
+                            )
+                        } else if (item.id === "stickyRight") {
+                            return (
+                                <></>
+                            )
+                        } else {
+                            // console.log(index)
+                            if (tab === "warehouse") {
                                 return (
                                     <View 
                                         style={[
-                                            styles.stickyHeader,
-                                            {elevation: scrollOffset > stickyHeaderOffset ? 3 : 0},
-                                            tab === "warehouse" && {marginBottom: -16}
+                                            index % 2 === 0 ? styles.leftCard : styles.rightCard,
                                         ]}
                                     >
-                                        {/* search */}
-                                        <SearchBar 
-                                            placeholder={`Search ${tab}`}
-                                            searchQuery={searchWarehouseQuery}
-                                            setSearchQuery={setSearchWarehouseQuery}
-                                            backgroundColor={white}
-                                            disableFilter={true}
-                                            // if tab is switched to stock transfer, turn search input into a button
-                                            button={tab !== "warehouse" ? true : false}
-                                            onPress={() => openModal("Search")}
+                                        <WarehouseCard
+                                            warehouseName={item?.warehouse_name}
+                                            inventoriesCount={item?.inventories_count}
+                                            address={item?.warehouse_address}
+                                            addNew={item?.add_new}
+                                            onPressMenu={() => openModal("Edit", item?.id)}
+                                            onPress={() => navigation.navigate("Inventory", {
+                                                warehouse_id: item?.id,
+                                            })}
                                         />
-                                        {/* page tabs */}
-                                        <View style={styles.tabContainer}>
-                                            <TouchableOpacity 
-                                                style={tab === "warehouse" ? styles.tabButtonSelected : styles.tabButton}
-                                                onPress={() => setTab("warehouse")}
-                                            >
-                                                <Text style={tab === "warehouse" ? styles.tabButtonTextSelected : styles.tabButtonText}>Warehouse</Text>
-                                            </TouchableOpacity>
-                                            <TouchableOpacity 
-                                                style={tab === "stock transfer" ? styles.tabButtonSelected : styles.tabButton}
-                                                onPress={() => setTab("stock transfer")}
-                                            >
-                                                <Text style={tab === "stock transfer" ? styles.tabButtonTextSelected : styles.tabButtonText}>Stock Transfer</Text>
-                                                <Badge number={3} />
-                                            </TouchableOpacity>
-                                        </View>
-                                        <View style={styles.filterPillWrapper}></View>
                                     </View>
                                 )
-                            } else if (item.id === "stickyRight") {
-                                return (
-                                    <></>
-                                )
                             } else {
-                                // console.log(index)
-                                if (tab === "warehouse") {
+                                return (
+                                    <View style={styles.stockTransferItemWrapper}>
+                                        <StockTransferListItem 
+                                            item={item} 
+                                            index={index} 
+                                            lastOrder={stockTransfer.length - 1}
+                                            firstOrder={1}
+                                            navigation={navigation}
+                                            extraVerticalPadding={true} 
+                                        />
+                                    </View>
+                                )
+                            }
+                        }
+                    }}
+                />
+            </TouchableWithoutFeedback>
+        </>) : <WarehouseSkeleton /> }
+        {/* bottomsheet */}
+        <CustomBottomSheet
+            index={0}
+            sheetRef={sheetRef}
+            closeModal={closeModal}
+            sheetTitle={sheetParameters.sheetTitle} 
+            snapPointsArray={sheetParameters.snapPointsArray}
+        >
+            {sheetParameters.content === "Edit" && (
+                <View style={styles.modalWrapper}>
+                    <TouchableOpacity
+                        style={styles.sheetButton}
+                        onPress={handleEditWarehouse}
+                    >
+                        <EditBlackLargeIcon />
+                        <Text style={styles.sheetButtonText}>
+                            Edit warehouse
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+            )}
+            {sheetParameters.content === "Search" && <>
+                {/* text input search bar */}
+                <SearchBar 
+                    placeholder={"Search stock transfers"}
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                    backgroundColor={background}
+                    openFilter={openFilter}
+                    filterParams={filterParameters}
+                />
+                {/* check if any filter has been applied, i.e it is not in its default value */}
+                {filterParameters.find(filterParam => filterParam.default === false) && (
+                    <View style={styles.searchOrderPillWrapper}>
+                        {filterParameters.map(filterParam => {
+                            if (!filterParam.default) {
+                                if (filterParam.value !== "Custom period") {
                                     return (
-                                        <View 
-                                            style={[
-                                                index % 2 === 0 ? styles.leftCard : styles.rightCard,
-                                            ]}
-                                        >
-                                            <WarehouseCard
-                                                warehouseName={item?.warehouse_name}
-                                                inventoriesCount={item?.inventories_count}
-                                                address={item?.warehouse_address}
-                                                addNew={item?.add_new}
-                                                onPressMenu={() => openModal("Edit", item?.id)}
-                                                onPress={() => navigation.navigate("Inventory", {
-                                                    warehouse_id: item?.id,
-                                                })}
-                                            />
-                                        </View>
-                                    )
-                                } else {
-                                    return (
-                                        <View style={styles.stockTransferItemWrapper}>
-                                            <StockTransferListItem 
-                                                item={item} 
-                                                index={index} 
-                                                lastOrder={stockTransfer.length - 1}
-                                                firstOrder={1}
-                                                navigation={navigation}
-                                                extraVerticalPadding={true} 
-                                            />
-                                        </View>
+                                        <FilterPill
+                                            key={filterParam.title}
+                                            text={filterParam.value}
+                                            onPress={() => handleRemoveFilter(filterParam.title, "search")}
+                                            background={background}
+                                        />
                                     )
                                 }
                             }
-                        }}
-                    />
-                </TouchableWithoutFeedback>
-            </>) : <WarehouseSkeleton /> }
-            {/* bottomsheet */}
-            <CustomBottomSheet
-                index={0}
-                sheetRef={sheetRef}
-                closeModal={closeModal}
-                sheetTitle={sheetParameters.sheetTitle} 
-                snapPointsArray={sheetParameters.snapPointsArray}
-                enablePanDownToClose={sheetParameters.enablePanDownToClose}
-            >
-                {sheetParameters.content === "Edit" && (
-                    <View style={styles.modalWrapper}>
-                        <TouchableOpacity
-                            style={styles.sheetButton}
-                            onPress={handleEditWarehouse}
-                        >
-                            <EditBlackLargeIcon />
-                            <Text style={styles.sheetButtonText}>
-                                Edit warehouse
-                            </Text>
-                        </TouchableOpacity>
+                        })}
                     </View>
                 )}
-                {sheetParameters.content === "Search" && <>
-                    {/* text input search bar */}
-                    <SearchBar 
-                        placeholder={"Search stock transfers"}
-                        searchQuery={searchQuery}
-                        setSearchQuery={setSearchQuery}
-                        backgroundColor={background}
-                        openFilter={openFilter}
-                        filterParams={filterParameters}
-                    />
-                    {/* check if any filter has been applied, i.e it is not in its default value */}
-                    {filterParameters.find(filterParam => filterParam.default === false) && (
-                        <View style={styles.searchOrderPillWrapper}>
-                            {filterParameters.map(filterParam => {
-                                if (!filterParam.default) {
-                                    if (filterParam.value !== "Custom period") {
-                                        return (
-                                            <FilterPill
-                                                key={filterParam.title}
-                                                text={filterParam.value}
-                                                onPress={() => handleRemoveFilter(filterParam.title, "search")}
-                                                background={background}
-                                            />
-                                        )
-                                    }
-                                }
-                            })}
-                        </View>
-                    )}
 
-                    {/* search result order list */}
-                    <BottomSheetScrollView 
-                        style={styles.orderSearchResults}
-                        showsVerticalScrollIndicator={false}
-                    >
-                        {stockTransferList.map((item, index) => (
-                            <StockTransferListItem 
-                                item={item} 
-                                key={item.id}
-                                index={index} 
-                                lastOrder={stockTransfer.length - 1}
-                                firstOrder={1}
-                                extraVerticalPadding={true} 
-                            />
-                        ))}
-                    </BottomSheetScrollView>
-                </>}
-            </CustomBottomSheet>
-            {/* filter bottom sheet */}
-            <FilterBottomSheet 
-                fiterSheetRef={filterSheetRef}
-                closeFilter={closeFilter}
-                clearFilterFunction={handleClearAllFilter}
-                applyFilterFunction={handleApplyFilter}
-                height={"80%"}
-            >
-                {filterParameters.map(item => (
-                    <FilterButtonGroup
-                        buttons={item.buttons}
-                        title={item.title}
-                        key={item.title}
-                    />
-                ))}
+                {/* search result order list */}
+                <BottomSheetScrollView 
+                    style={styles.orderSearchResults}
+                    showsVerticalScrollIndicator={false}
+                >
+                    {stockTransferList.map((item, index) => (
+                        <StockTransferListItem 
+                            item={item} 
+                            key={item.id}
+                            index={index} 
+                            lastOrder={stockTransfer.length - 1}
+                            firstOrder={1}
+                            extraVerticalPadding={true} 
+                        />
+                    ))}
+                </BottomSheetScrollView>
+            </>}
+        </CustomBottomSheet>
+        {/* filter bottom sheet */}
+        <FilterBottomSheet 
+            height={606}
+            closeFilter={closeFilter}
+            fiterSheetRef={filterSheetRef}
+            clearFilterFunction={handleClearAllFilter}
+            applyFilterFunction={handleApplyFilter}
+        >
+            {filterParameters.map(item => (
+                <FilterButtonGroup
+                    buttons={item.buttons}
+                    title={item.title}
+                    key={item.title}
+                />
+            ))}
 
-                <View style={styles.inputContainer}>
-                    {/* Start date */}
-                    <SelectInput 
-                        label={"Start Date"} 
-                        placeholder={"DD MMMM, YYYY"} 
-                        value={startDate}
-                        onPress={() => {openCalendar("StartDate")}}
-                        icon={<CalendarIcon />}
-                        active={activeStartDate}
-                        inputFor={"Date"}
-                    />
+            <View style={styles.inputContainer}>
+                {/* Start date */}
+                <SelectInput 
+                    label={"Start Date"} 
+                    placeholder={"DD MMMM, YYYY"} 
+                    value={startDate}
+                    onPress={() => {openCalendar("StartDate")}}
+                    icon={<CalendarIcon />}
+                    active={activeStartDate}
+                    inputFor={"Date"}
+                />
 
-                    {/* End date */}
-                    <SelectInput
-                        label={"End Date"}
-                        placeholder={"DD MMMM, YYYY"}
-                        value={endDate}
-                        onPress={() => {openCalendar("EndDate")}}
-                        icon={<CalendarIcon />}
-                        active={activeEndDate}
-                        inputFor={"Date"}
-                    />
-                </View>
-            </FilterBottomSheet>
-            {/* calnedar */}
-            <CalendarSheet 
-                closeCalendar={closeCalendar}
-                setDate={calendar.setDate}
-                disableActionButtons={true}
-                snapPointsArray={["60%"]}
-                minDate={calendar.minDate}
-                maxDate={calendar.maxDate}
-                calendarRef={calendarSheetRef} 
-            />
-        </>
-    )
+                {/* End date */}
+                <SelectInput
+                    label={"End Date"}
+                    placeholder={"DD MMMM, YYYY"}
+                    value={endDate}
+                    onPress={() => {openCalendar("EndDate")}}
+                    icon={<CalendarIcon />}
+                    active={activeEndDate}
+                    inputFor={"Date"}
+                />
+            </View>
+        </FilterBottomSheet>
+        {/* calnedar */}
+        <CalendarSheet 
+            closeCalendar={closeCalendar}
+            setDate={calendar.setDate}
+            disableActionButtons={true}
+            snapPointsArray={["60%"]}
+            minDate={calendar.minDate}
+            maxDate={calendar.maxDate}
+            calendarRef={calendarSheetRef} 
+        />
+    </>)
 }
 
 export default Warehouse

@@ -29,8 +29,6 @@ const calendarWidth = windowWidth - paddingHorizontal;
 
 const CalendarSheet = ({calendarRef, closeCalendar, snapPointsArray, setDate, disableActionButtons, minDate, maxDate}) => {
 
-    const { setCalendarSheetOpen } = useGlobals();
-
     // render popup bottomsheet modal backdrop 
     const renderBackdrop = useCallback(
         props => (
@@ -116,11 +114,9 @@ const CalendarSheet = ({calendarRef, closeCalendar, snapPointsArray, setDate, di
     const handleOnSheetChange = (index) => {
         if (index === -1) {
             closeCalendar();
-            setCalendarSheetOpen(false);
             setTempDate("");
             return;
         }
-        return setCalendarSheetOpen(true);
     }
    
     // render calendar sheet component
@@ -141,9 +137,6 @@ const CalendarSheet = ({calendarRef, closeCalendar, snapPointsArray, setDate, di
                         // {translateX: -windowWidth * 0.7},
                         {translateY: -windowHeight * 0.15},
                     ]
-                    // styling to center modal
-                    // marginTop: -windowWidth/1.3,
-                    // marginBottom: windowWidth/1.3,
                 }}
                 handleComponent={() => (
                     <></>

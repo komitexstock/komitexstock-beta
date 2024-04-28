@@ -50,16 +50,25 @@ const Products = ({navigation, route}) => {
     const { authData } = useAuth();
 
     // sheet ref
-    const sheetRef= useRef(null);
+    const sheetRef = useRef(null);
+    const filterSheetRef = useRef(null);
 
     // bottomsheet ref
-    const { setBottomSheet, filterSheetRef } = useGlobals();
+    const {
+        setBottomSheet,
+        setFilterBottomSheet,
+    } = useGlobals();
 
     // update botomsheet global states
     useEffect(() => {
         // set bottomsheet state
         setBottomSheet(prevState=> {
             return {...prevState, close: () => sheetRef.current?.close()}
+        });
+
+        // set filter bottomsheet global state
+        setFilterBottomSheet(prevState=> {
+            return {...prevState, close: () => filterSheetRef.current?.close()}
         });
     }, []);
 
@@ -261,14 +270,35 @@ const Products = ({navigation, route}) => {
 
     // open filter function
     const openFilter = (type) => {
+        // dismmis keyboard
         Keyboard.dismiss();
-        setFilterType(type)
+
+        // set filter type
+        setFilterType(type);
+
+        // open filtr botomsheet
         filterSheetRef.current?.present()
+
+        // update filter bottomsheet global state
+        setFilterBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: true,
+            }
+        });
     }
     
     const closeFilter = () => {
         // close filter bottomsheet
-        filterSheetRef.current?.close()
+        filterSheetRef.current?.close();
+
+        // update filter bottomsheet global state
+        setFilterBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: false,
+            }
+        });
     }
 
     // function to apply filter
@@ -687,233 +717,233 @@ const Products = ({navigation, route}) => {
     }, [searchQuery])
 
     // render Products page
-    return (
-        <>
-            {!pageLoading ? <>
-                {/* header */}
-                <Header 
-                    navigation={navigation}
-                    stackName={ authData.account_type === "Merchant" && (
-                        <View style={style.header}>
-                            <Text style={style.headerText}>{business_name}</Text>
-                            { verified && <VerifiedIcon /> }
-                        </View>
-                    )}
-                    removeBackArrow={true}
-                    inlineArrow={true}
-                    component={true}
-                    backgroundColor={background}
-                />
-                {/* Merchant Banner */}
-                {authData.account_type !== "Merchant" && (
-                    <View style={style.warehouseBannerWrapper}>
-                        <View style={style.warehouseBanner}>
-                            <Avatar 
-                                fullname={"Abiodun Johnson"}
-                                imageUrl={'../assets/images/style_bazaar.png'}
-                                smallerSize={true}
-                            />
-                            <View style={style.managerText}>
-                                <View style={style.merchantBusinessNameWrapper}>
-                                    <Text style={style.merchantBusinessName}>
-                                        Style Bazaar
-                                    </Text>
-                                    <VerifiedIcon />
-                                </View>
-                                <Text style={style.merchantFullname}>
-                                    Jon Snow
-                                </Text>
-                            </View>
-                        </View>
+    return (<>
+        {!pageLoading ? <>
+            {/* header */}
+            <Header 
+                navigation={navigation}
+                stackName={ authData.account_type === "Merchant" && (
+                    <View style={style.header}>
+                        <Text style={style.headerText}>{business_name}</Text>
+                        { verified && <VerifiedIcon /> }
                     </View>
                 )}
-                <TouchableWithoutFeedback style={{flex: 1}}>
-                    <FlatList
-                        onScroll={animateHeaderOnScroll}
-                        showsVerticalScrollIndicator={false}
-                        stickyHeaderIndices={[1]}
-                        // list header component
-                        ListHeaderComponent={
-                            <View 
-                                style={style.headerWrapper}
-                                onLayout={e => {
-                                    stickyHeaderOffset.current = e.nativeEvent.layout.height + 57;
-                                    // where 57 is the height of the Header component
-                                }}
-                            >
-                                {/* stats */}
-                                <StatWrapper>
-                                    {stats.map(stat => (
-                                        <StatCard
-                                            key={stat.id}
-                                            title={stat.title}
-                                            presentValue={stat.presentValue}
-                                            oldValue={stat.oldValue}
-                                            decimal={stat.decimal}
-                                        />
-                                    ))}
-                                </StatWrapper>
-                            </View>
-                        }
-                        contentContainerStyle={style.contentContainer}
-                        columnWrapperStyle={products.length !== 0 ? style.listContainer : null}
-                        style={style.listWrapper}
-                        keyExtractor={item => item.id}
-                        data={products}
-                        // render items in two rows if theres data, else one row
-                        numColumns={products.length !== 0 ? 2 : 1}
-                        renderItem={({ item, index }) => {
-                            if (item.id === "stickyLeft") {
-                                return (
-                                    <Animated.View 
-                                        style={[
-                                            style.recentOrderHeading,
-                                            {elevation: shadowElevation}
-                                        ]}
-                                    >
-                                        <View style={style.headingWrapper}>
-                                            <Text style={style.recentOrderHeadingText}>Products</Text>
-                                            <View style={style.iconsContainer}>
-                                                {/* open bottomsheet search modal */}
-                                                <TouchableOpacity 
-                                                    style={style.menuIcon}
-                                                    onPress={openModal}
-                                                >
-                                                    <SearchIcon />
-                                                </TouchableOpacity>
-                                                {/* open bottomsheet filter modal */}
-                                                <OpenFilterButton
-                                                    onPress={() => {openFilter("products")}}
-                                                    filterParams={filterParameters}
-                                                />
-                                            </View>
-                                        </View>
-                                        {filterParameters.find(filterParam => filterParam.default === false) && (
-                                            <View style={style.filterPillWrapper}>
-                                                {filterParameters.map(filterParam => {
-                                                    if (!filterParam.default) {
-                                                        if (filterParam.value !== "Custom period") {
-                                                            return (
-                                                                <FilterPill
-                                                                    key={filterParam.title}
-                                                                    text={filterParam.value}
-                                                                    onPress={() => handleRemoveFilter(filterParam.title)}
-                                                                    background={white}
-                                                                />
-                                                            )
-                                                        }
-                                                    }
-                                                })}
-                                            </View>
-                                        )}
-                                    </Animated.View>
-                                )
-                            } else if (item.id === "stickyRight") {
-                                return (
-                                    <></>   
-                                )
-                            } else {
-                                return (
-                                    <View 
-                                        style={[
-                                            index % 2 === 0 && style.productCardWrapperLeft,
-                                            index % 2 === 1 && style.productCardWrapperRight,
-                                        ]}
-                                    >
-                                        {/* Product card */}
-                                        <ProductCard
-                                            product_name={item.product_name}
-                                            quantity={item.quantity}
-                                            price={item.price}
-                                            imageUrl={item.imageUrl}
-                                            onPress={item.onPress}
-                                        />
-                                    </View>
-                                )
-                            }
-                        }}
-                    />
-                </TouchableWithoutFeedback>
-            </> : <ProductsSkeleton />}
-            {/* search products bottomsheet */}
-            <CustomBottomSheet 
-                sheetRef={sheetRef}
-                closeModal={closeModal}
-                snapPointsArray={["100%"]}
-                sheetTitle={"Products"}
-                enablePanDownToClose={false}
-            >
-                <SearchBar 
-                    placeholder={"Search prodcuts"}
-                    searchQuery={searchQuery}
-                    setSearchQuery={setSearchQuery}
-                    backgroundColor={background}
-                    openFilter={() => openFilter("search")}
-                    filterParams={searchFilterParameters}
-                />
-                
-                {searchFilterParameters.find(filterParam => filterParam.default === false) && (
-                    <View style={style.searchFilterPillWrapper}>
-                        {searchFilterParameters.map(filterParam => {
-                            if (!filterParam.default) {
-                                if (filterParam.value !== "Custom period") {
-                                    return (
-                                        <FilterPill
-                                            key={filterParam.title}
-                                            text={filterParam.value}
-                                            onPress={() => handleRemoveFilter(filterParam.title, "search")}
-                                            background={background}
-                                        />
-                                    )
-                                }
-                            }
-                        })}
-                    </View>
-                )}
-                <BottomSheetScrollView 
-                    showsVerticalScrollIndicator={false} 
-                    style={style.orderSearchResults}
-                >
-                    {searchedProducts.map(item => (
-                        <ProductListItem 
-                            key={item.id}
-                            product_name={item.product_name}
-                            quantity={item.quantity}
-                            price={item.price}
-                            imageUrl={item.imageUrl}
-                            onPress={item.onPress}
-                            searchQuery={searchQuery}
+                removeBackArrow={true}
+                inlineArrow={true}
+                component={true}
+                backgroundColor={background}
+            />
+            {/* Merchant Banner */}
+            {authData.account_type !== "Merchant" && (
+                <View style={style.warehouseBannerWrapper}>
+                    <View style={style.warehouseBanner}>
+                        <Avatar 
+                            fullname={"Abiodun Johnson"}
+                            imageUrl={'../assets/images/style_bazaar.png'}
+                            smallerSize={true}
                         />
-                    ))}
-                </BottomSheetScrollView>
-
-            </CustomBottomSheet>
-            {/* filter bottom sheet */}
-            <FilterBottomSheet 
-                fiterSheetRef={filterSheetRef}
-                closeFilter={closeFilter}
-                clearFilterFunction={handleClearAllFilter}
-                applyFilterFunction={filterType === "search" ? () => handleApplyFilter("search") : handleApplyFilter}
-                height={"60%"}
+                        <View style={style.managerText}>
+                            <View style={style.merchantBusinessNameWrapper}>
+                                <Text style={style.merchantBusinessName}>
+                                    Style Bazaar
+                                </Text>
+                                <VerifiedIcon />
+                            </View>
+                            <Text style={style.merchantFullname}>
+                                Jon Snow
+                            </Text>
+                        </View>
+                    </View>
+                </View>
+            )}
+            <TouchableWithoutFeedback style={{flex: 1}}>
+                <FlatList
+                    onScroll={animateHeaderOnScroll}
+                    showsVerticalScrollIndicator={false}
+                    stickyHeaderIndices={[1]}
+                    // list header component
+                    ListHeaderComponent={
+                        <View 
+                            style={style.headerWrapper}
+                            onLayout={e => {
+                                stickyHeaderOffset.current = e.nativeEvent.layout.height + 57;
+                                // where 57 is the height of the Header component
+                            }}
+                        >
+                            {/* stats */}
+                            <StatWrapper>
+                                {stats.map(stat => (
+                                    <StatCard
+                                        key={stat.id}
+                                        title={stat.title}
+                                        presentValue={stat.presentValue}
+                                        oldValue={stat.oldValue}
+                                        decimal={stat.decimal}
+                                    />
+                                ))}
+                            </StatWrapper>
+                        </View>
+                    }
+                    contentContainerStyle={style.contentContainer}
+                    columnWrapperStyle={products.length !== 0 ? style.listContainer : null}
+                    style={style.listWrapper}
+                    keyExtractor={item => item.id}
+                    data={products}
+                    // render items in two rows if theres data, else one row
+                    numColumns={products.length !== 0 ? 2 : 1}
+                    renderItem={({ item, index }) => {
+                        if (item.id === "stickyLeft") {
+                            return (
+                                <Animated.View 
+                                    style={[
+                                        style.recentOrderHeading,
+                                        {elevation: shadowElevation}
+                                    ]}
+                                >
+                                    <View style={style.headingWrapper}>
+                                        <Text style={style.recentOrderHeadingText}>Products</Text>
+                                        <View style={style.iconsContainer}>
+                                            {/* open bottomsheet search modal */}
+                                            <TouchableOpacity 
+                                                style={style.menuIcon}
+                                                onPress={openModal}
+                                            >
+                                                <SearchIcon />
+                                            </TouchableOpacity>
+                                            {/* open bottomsheet filter modal */}
+                                            <OpenFilterButton
+                                                onPress={() => {openFilter("products")}}
+                                                filterParams={filterParameters}
+                                            />
+                                        </View>
+                                    </View>
+                                    {filterParameters.find(filterParam => filterParam.default === false) && (
+                                        <View style={style.filterPillWrapper}>
+                                            {filterParameters.map(filterParam => {
+                                                if (!filterParam.default) {
+                                                    if (filterParam.value !== "Custom period") {
+                                                        return (
+                                                            <FilterPill
+                                                                key={filterParam.title}
+                                                                text={filterParam.value}
+                                                                onPress={() => handleRemoveFilter(filterParam.title)}
+                                                                background={white}
+                                                            />
+                                                        )
+                                                    }
+                                                }
+                                            })}
+                                        </View>
+                                    )}
+                                </Animated.View>
+                            )
+                        } else if (item.id === "stickyRight") {
+                            return (
+                                <></>   
+                            )
+                        } else {
+                            return (
+                                <View 
+                                    style={[
+                                        index % 2 === 0 && style.productCardWrapperLeft,
+                                        index % 2 === 1 && style.productCardWrapperRight,
+                                    ]}
+                                >
+                                    {/* Product card */}
+                                    <ProductCard
+                                        product_name={item.product_name}
+                                        quantity={item.quantity}
+                                        price={item.price}
+                                        imageUrl={item.imageUrl}
+                                        onPress={item.onPress}
+                                    />
+                                </View>
+                            )
+                        }
+                    }}
+                />
+            </TouchableWithoutFeedback>
+        </> : <ProductsSkeleton />}
+        {/* search products bottomsheet */}
+        <CustomBottomSheet 
+            sheetRef={sheetRef}
+            closeModal={closeModal}
+            snapPointsArray={["100%"]}
+            sheetTitle={"Products"}
+        >
+            <SearchBar 
+                placeholder={"Search prodcuts"}
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                backgroundColor={background}
+                openFilter={() => openFilter("search")}
+                filterParams={searchFilterParameters}
+            />
+            
+            {searchFilterParameters.find(filterParam => filterParam.default === false) && (
+                <View style={style.searchFilterPillWrapper}>
+                    {searchFilterParameters.map(filterParam => {
+                        if (!filterParam.default) {
+                            if (filterParam.value !== "Custom period") {
+                                return (
+                                    <FilterPill
+                                        key={filterParam.title}
+                                        text={filterParam.value}
+                                        onPress={() => handleRemoveFilter(filterParam.title, "search")}
+                                        background={background}
+                                    />
+                                )
+                            }
+                        }
+                    })}
+                </View>
+            )}
+            <BottomSheetScrollView 
+                showsVerticalScrollIndicator={false} 
+                style={style.orderSearchResults}
             >
-                {filterType === "products" && filterParameters.map(item => (
-                    <FilterButtonGroup
-                        buttons={item.buttons}
-                        title={item.title}
-                        key={item.title}
+                {searchedProducts.map(item => (
+                    <ProductListItem 
+                        key={item.id}
+                        product_name={item.product_name}
+                        quantity={item.quantity}
+                        price={item.price}
+                        imageUrl={item.imageUrl}
+                        onPress={item.onPress}
+                        searchQuery={searchQuery}
                     />
                 ))}
+            </BottomSheetScrollView>
 
-                {filterType === "search" && searchFilterParameters.map(item => (
-                    <FilterButtonGroup
-                        buttons={item.buttons}
-                        title={item.title}
-                        key={item.title}
-                    />
-                ))}
-            </FilterBottomSheet>
-        </>
-    );
+        </CustomBottomSheet>
+        {/* filter bottom sheet */}
+        <FilterBottomSheet 
+            height={450}
+            closeFilter={closeFilter}
+            fiterSheetRef={filterSheetRef}
+            clearFilterFunction={handleClearAllFilter}
+            applyFilterFunction={filterType === "search" ? 
+                () => handleApplyFilter("search") : 
+                handleApplyFilter
+            }
+        >
+            {filterType === "products" && filterParameters.map(item => (
+                <FilterButtonGroup
+                    buttons={item.buttons}
+                    title={item.title}
+                    key={item.title}
+                />
+            ))}
+
+            {filterType === "search" && searchFilterParameters.map(item => (
+                <FilterButtonGroup
+                    buttons={item.buttons}
+                    title={item.title}
+                    key={item.title}
+                />
+            ))}
+        </FilterBottomSheet>
+    </>);
 }
 
 // stylesheet

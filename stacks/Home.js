@@ -87,13 +87,14 @@ const Home = ({navigation}) => {
 
     const { authData, authLoading } = useAuth();
 
-    // sheet ref
+    // sheet refs
     const sheetRef = useRef(null);
+    const filterSheetRef = useRef(null);
 
     // globals sates
     const {
+        setFilterBottomSheet,
         setBottomSheet,
-        filterSheetRef,
         calendarSheetRef,
         calendarSheetOpen,
         setToast,
@@ -103,7 +104,6 @@ const Home = ({navigation}) => {
         content: "Search",
         sheetTitle: "",
         snapPointsArray: ["100%"],
-        enablePanDownToClose: false,
     })
 
     // update botomsheet global state
@@ -111,6 +111,11 @@ const Home = ({navigation}) => {
         // set bottomsheet state
         setBottomSheet(prevState=> {
             return {...prevState, close: () => sheetRef.current?.close()}
+        });
+
+        // set filter bottomsheet global state
+        setFilterBottomSheet(prevState=> {
+            return {...prevState, close: () => filterSheetRef.current?.close()}
         });
     }, []);
 
@@ -275,7 +280,6 @@ const Home = ({navigation}) => {
             content: type,
             sheetTitle: type === "Search" ? "" : "Review",
             snapPointsArray: type === "Search" ? ["100%"] : [359],
-            enablePanDownToClose: type !== "Search",
         });
 
         // open bottomsheet
@@ -465,13 +469,32 @@ const Home = ({navigation}) => {
 
     // open filter function
     const openFilter = () => {
+        // dismiss keyboard
         Keyboard.dismiss();
+
+        // open filter bottomsheet
         filterSheetRef.current?.present()
+
+        // update filter bottomsheet global state
+        setFilterBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: true,
+            }
+        });
     }
     
     const closeFilter = () => {
         // close filter bottomsheet
-        filterSheetRef.current?.close()
+        filterSheetRef.current?.close();
+
+        // update filter bottomsheet global state
+        setFilterBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: false,
+            }
+        });
     }
 
     // function to setEnd date as today if start date is selected as today
@@ -867,7 +890,7 @@ const Home = ({navigation}) => {
                                         // onPress={() => {navigation.navigate("OrderDetails")}}
                                         // onPress={() => {navigation.navigate("WaybillDetails")}}
                                         // onPress={() => {navigation.navigate("TransferDetails")}}
-                                        // onPress={() => {navigation.navigate("Share")}}
+                                        onPress={() => {navigation.navigate("Share")}}
                                         // onPress={() => {navigation.navigate("WriteReview")}}
                                         // onPress={bottomSheetParameters.openModal}
                                     >
@@ -947,63 +970,60 @@ const Home = ({navigation}) => {
                 closeModal={closeModal}
                 sheetTitle={sheetParameters.sheetTitle}
                 snapPointsArray={sheetParameters.snapPointsArray}
-                enablePanDownToClose={sheetParameters.enablePanDownToClose}
             >
-                {sheetParameters.content === "Search" && 
-                    <>
-                        {/* text input search bar */}
-                        <SearchBar 
-                            placeholder={"Search Komitex"}
-                            searchQuery={searchQuery}
-                            setSearchQuery={setSearchQuery}
-                            backgroundColor={background}
-                            openFilter={openFilter}
-                            filterParams={filterParameters}
-                        />
+                {sheetParameters.content === "Search" && <>
+                    {/* text input search bar */}
+                    <SearchBar 
+                        placeholder={"Search Komitex"}
+                        searchQuery={searchQuery}
+                        setSearchQuery={setSearchQuery}
+                        backgroundColor={background}
+                        openFilter={openFilter}
+                        filterParams={filterParameters}
+                    />
 
-                        {/* check if any filter has been applied, i.e it is not in its default value */}
-                        {filterParameters.find(filterParam => filterParam.default === false) && (
-                            <View style={style.searchOrderPillWrapper}>
-                                {filterParameters.map(filterParam => {
-                                    if (!filterParam.default) {
-                                        if (filterParam.value !== "Custom period") {
-                                            return (
-                                                <FilterPill
-                                                    key={filterParam.title}
-                                                    text={filterParam.value}
-                                                    onPress={() => handleRemoveFilter(filterParam.title, "search")}
-                                                    background={background}
-                                                />
-                                            )
-                                        }
+                    {/* check if any filter has been applied, i.e it is not in its default value */}
+                    {filterParameters.find(filterParam => filterParam.default === false) && (
+                        <View style={style.searchOrderPillWrapper}>
+                            {filterParameters.map(filterParam => {
+                                if (!filterParam.default) {
+                                    if (filterParam.value !== "Custom period") {
+                                        return (
+                                            <FilterPill
+                                                key={filterParam.title}
+                                                text={filterParam.value}
+                                                onPress={() => handleRemoveFilter(filterParam.title, "search")}
+                                                background={background}
+                                            />
+                                        )
                                     }
-                                })}
-                            </View>
+                                }
+                            })}
+                        </View>
+                    )}
+
+                    {/* search result order list */}
+                    <BottomSheetScrollView 
+                        style={style.orderSearchResults}
+                        showsVerticalScrollIndicator={false}
+                    >
+                        {searchedOrders.map((order, index) => (
+                            <OrderListItem 
+                                key={order.id} 
+                                item={order} 
+                                index={index} 
+                                firstOrder={0}
+                                lastOrder={searchedOrders.length - 1}
+                                searchQuery={searchQuery} 
+                                sideFunctions={closeModal}
+                            />
+                        ))}
+
+                        {searchQuery !== "" && searchedOrders.length === 0 && (
+                            <NoResult />
                         )}
-
-                        {/* search result order list */}
-                        <BottomSheetScrollView 
-                            style={style.orderSearchResults}
-                            showsVerticalScrollIndicator={false}
-                        >
-                            {searchedOrders.map((order, index) => (
-                                <OrderListItem 
-                                    key={order.id} 
-                                    item={order} 
-                                    index={index} 
-                                    firstOrder={0}
-                                    lastOrder={searchedOrders.length - 1}
-                                    searchQuery={searchQuery} 
-                                    sideFunctions={closeModal}
-                                />
-                            ))}
-
-                            {searchQuery !== "" && searchedOrders.length === 0 && (
-                                <NoResult />
-                            )}
-                        </BottomSheetScrollView>
-                    </> 
-                }
+                    </BottomSheetScrollView>
+                </>}
 
                 {sheetParameters.content === "Review" && 
                     <View style={style.modalWrapper}>
@@ -1050,7 +1070,7 @@ const Home = ({navigation}) => {
                 closeFilter={closeFilter}
                 clearFilterFunction={handleClearAllFilter}
                 applyFilterFunction={handleApplyFilter}
-                height={"80%"}
+                height={606}
             >
                 {filterParameters.map(item => (
                     <FilterButtonGroup

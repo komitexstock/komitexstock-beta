@@ -352,7 +352,6 @@ const StockTransferProducts = ({navigation, route}) => {
                 index={1}
                 sheetRef={sheetRef}
                 closeModal={closeModal}
-                enablePanDownToClose={false}
                 sheetTitle={"Select products"}
                 snapPointsArray={["50%", "75%", "100%"]}
             >
