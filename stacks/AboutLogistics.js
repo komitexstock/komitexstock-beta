@@ -22,7 +22,7 @@ import StatWrapper from "../components/StatWrapper";
 import StatCard from "../components/StatCard";
 import Accordion from "../components/Accordion";
 import CustomButton from "../components/CustomButton";
-import SuccessSheet from "../components/SuccessSheet";
+import ConfirmationBottomSheet from "../components/ConfirmationBottomSheet";
 import Avatar from "../components/Avatar";
 // icons
 import VerifiedIcon from '../assets/icons/VerifiedIcon';
@@ -31,7 +31,7 @@ import PhoneIcon from "../assets/icons/PhoneIcon";
 import LocationIcon from "../assets/icons/LocationIcon";
 import ReportFlagIcon from "../assets/icons/ReportFlagIcon";
 // react hooks
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 // skeleton screen
 import AboutLogisticsSkeleton from "../skeletons/AboutLogisticsSkeleton";
 // global context to access bottom sheet parameter
@@ -44,8 +44,19 @@ const AboutLogistics = ({navigation, route}) => {
 
     const {business_id, business_name, banner_image, verified} = route?.params
 
-    // reference for popup bottomsheet
-    const { successSheetRef } = useGlobals();
+    // reference for confirmation bottomsheet
+    const confirmationSheetRef = useRef(null);
+
+    // global states
+    const { setConfirmationBottomSheet } = useGlobals();
+
+    // update botomsheet global states
+    useEffect(() => {
+        // set confirmation bottomsheet state
+        setConfirmationBottomSheet(prevState=> {
+            return {...prevState, close: () => confirmationSheetRef.current?.close()}
+        });
+    }, []);
 
     // array of states covered and delivery locations
     const states = [
@@ -457,15 +468,33 @@ const AboutLogistics = ({navigation, route}) => {
     const [confirmDeactivation, setConfirmDeactivation] = useState(false);
 
 
-    // close popup modal bottomsheet function
-    const closePopUpModal = () => {
-        successSheetRef.current?.close();
-    };
-
     // function to open bottom sheet modal to deactivate logistics
-    const openPopUpModal = () => {
-        successSheetRef.current?.present();
+    const openConfirmtionModal = () => {
+        // open bottom sheet
+        confirmationSheetRef.current?.present();
+
+        // update filter bottomsheet global state
+        setConfirmationBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: true,
+            }
+        });
     }
+
+    // close popup modal bottomsheet function
+    const closeConfirmationModal = () => {
+        // close bottomsheet
+        confirmationSheetRef.current?.close();
+
+        // update filter bottomsheet global state
+        setConfirmationBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: false,
+            }
+        });
+    };
 
     // function to confirm deactivation of logistics
     const handleDeactivation = () => {
@@ -477,180 +506,184 @@ const AboutLogistics = ({navigation, route}) => {
 
             setIsLoading(false);
         }, 2000);
+
+        // set confirmation bottomsheet state
+        setConfirmationBottomSheet(prevState=> {
+            return {...prevState, close: () => {}}
+        });
     }
 
     // confirm deactivation of merchant
     const handleConfirmDeactivation = () => {
-        closePopUpModal();
+        closeConfirmationModal();
         navigation.goBack();
     }
 
     // render AboutLogistics page
-    return (
-        <>
-            {!pageLoading ? (
-                <ScrollView
-                    showsVerticalScrollIndicator={false}
-                    style={style.container}
-                >
-                    <View style={style.main}>
-                        <View style={style.paddedContent}> 
-                            {/* header component */}
-                            {/* header component showing logsitics banner, business name and verified status */}
-                            <Header 
-                                navigation={navigation} 
-                                stackName={
-                                    <View style={style.headerWrapper}>
-                                        <Avatar 
-                                            fullname={business_name}
-                                            imageUrl={banner_image}
-                                            squared={true}
-                                        />
-                                        <Text style={style.headerText}>{business_name}</Text>
-                                        { verified && <VerifiedIcon />}
-                                    </View>
-                                }  
-                                component={true} 
-                                unpadded={true}
-                            />
-
-                            {/* logistics contatct information */}
-                            <View style={style.contactInformationWrapper}>
-                                <View style={style.contactDetailsWrapper}>
-                                    {/* email address */}
-                                    <View style={style.contactDetails}>
-                                        <EmailIcon />
-                                        <TouchableOpacity 
-                                            style={style.linkButton}
-                                            onPress= {() => Linking.openURL('mailto:Komitexlogistics@gmail.com')}
-                                        >
-                                            <Text style={style.linkText}>
-                                                Komitexlogistics@gmail.com
-                                            </Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                    {/* phone number */}
-                                    <View style={style.contactDetails}>
-                                        <PhoneIcon />
-                                        <TouchableOpacity 
-                                            style={style.linkButton}
-                                            onPress= {() => Linking.openURL('tel:+2348116320575')}
-                                        >
-                                            <Text style={style.linkText}>
-                                                08122266618
-                                            </Text>
-                                        </TouchableOpacity>
-                                    </View>
+    return (<>
+        {!pageLoading ? (
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                style={style.container}
+            >
+                <View style={style.main}>
+                    <View style={style.paddedContent}> 
+                        {/* header component */}
+                        {/* header component showing logsitics banner, business name and verified status */}
+                        <Header 
+                            navigation={navigation} 
+                            stackName={
+                                <View style={style.headerWrapper}>
+                                    <Avatar 
+                                        fullname={business_name}
+                                        imageUrl={banner_image}
+                                        squared={true}
+                                    />
+                                    <Text style={style.headerText}>{business_name}</Text>
+                                    { verified && <VerifiedIcon />}
                                 </View>
-                                {/* numbner of locations covered */}
-                                <View style={style.contactDetailsWrapper}>
-                                    <View style={style.contactDetails}>
-                                        <LocationIcon />
-                                        <Text style={style.locationText}>
-                                            200 Locations
+                            }  
+                            component={true} 
+                            unpadded={true}
+                        />
+
+                        {/* logistics contatct information */}
+                        <View style={style.contactInformationWrapper}>
+                            <View style={style.contactDetailsWrapper}>
+                                {/* email address */}
+                                <View style={style.contactDetails}>
+                                    <EmailIcon />
+                                    <TouchableOpacity 
+                                        style={style.linkButton}
+                                        onPress= {() => Linking.openURL('mailto:Komitexlogistics@gmail.com')}
+                                    >
+                                        <Text style={style.linkText}>
+                                            Komitexlogistics@gmail.com
                                         </Text>
-                                    </View>
+                                    </TouchableOpacity>
+                                </View>
+                                {/* phone number */}
+                                <View style={style.contactDetails}>
+                                    <PhoneIcon />
+                                    <TouchableOpacity 
+                                        style={style.linkButton}
+                                        onPress= {() => Linking.openURL('tel:+2348116320575')}
+                                    >
+                                        <Text style={style.linkText}>
+                                            08122266618
+                                        </Text>
+                                    </TouchableOpacity>
                                 </View>
                             </View>
-
-                            {/* total delivereies and delivery success rate stats */}
-                            <StatWrapper>
-                                {stats.map(stat => (
-                                    <StatCard
-                                        key={stat.id}
-                                        title={stat.title}
-                                        presentValue={stat.presentValue}
-                                        oldValue={stat.oldValue}
-                                        decimal={stat.decimal}
-                                        unit={stat.unit}
-                                        unitPosition={stat.unitPosition}
-                                        backgroundColor={white}
-                                    />
-                                ))}
-                            </StatWrapper>
-
-                            {/* link to logistics analytics screen */}
-                            <TouchableOpacity
-                                onPress={() => navigation.navigate('BusinessAnalytics', {
-                                    business_id: business_id,
-                                    business_name: business_name,
-                                    banner_image: banner_image,
-                                    verified: true,
-                                })}
-                            >
-                                <Text style={[style.showAll, style.smallerText]}>View Full Analytics</Text>
-                            </TouchableOpacity>
-                            
-                            <View style={style.locationsContainer}>
-                                <Text style={style.locationsHeading}>Available Locations</Text>
-                                <Text style={style.locationsParagraph}>
-                                    Find all available locations and the associated fees Komitex offers
-                                </Text>
-                                <View style={style.locationsList}>
-                                    { states.map((state, index) => {
-                                        if (index < 5) {
-                                            return (
-                                                <Accordion
-                                                    key={state.id}
-                                                    state={state.name}
-                                                    locations={state.locations}
-                                                    opened={state.opened}
-                                                />
-                                            )
-                                        }
-                                    })}
+                            {/* numbner of locations covered */}
+                            <View style={style.contactDetailsWrapper}>
+                                <View style={style.contactDetails}>
+                                    <LocationIcon />
+                                    <Text style={style.locationText}>
+                                        200 Locations
+                                    </Text>
                                 </View>
-                                { states.length > 5 && (
-                                    <TouchableOpacity
-                                        onPress={() => navigation.navigate('AvailableLocations', {
-                                            business_id: business_id,
-                                            business_name: business_name,
-                                        })}
-                                    >
-                                        <Text style={style.showAll}>Show all locations</Text>
-                                    </TouchableOpacity>
-                                )}
                             </View>
                         </View>
-                        <View style={style.reportWrapper}>
-                            <TouchableOpacity
-                                style={style.reportButton}
-                                onPress={() => {}}
-                            >
-                                <ReportFlagIcon />
-                                <Text style={style.reportText}>Report this logistics</Text>
-                            </TouchableOpacity>
+
+                        {/* total delivereies and delivery success rate stats */}
+                        <StatWrapper>
+                            {stats.map(stat => (
+                                <StatCard
+                                    key={stat.id}
+                                    title={stat.title}
+                                    presentValue={stat.presentValue}
+                                    oldValue={stat.oldValue}
+                                    decimal={stat.decimal}
+                                    unit={stat.unit}
+                                    unitPosition={stat.unitPosition}
+                                    backgroundColor={white}
+                                />
+                            ))}
+                        </StatWrapper>
+
+                        {/* link to logistics analytics screen */}
+                        <TouchableOpacity
+                            onPress={() => navigation.navigate('BusinessAnalytics', {
+                                business_id: business_id,
+                                business_name: business_name,
+                                banner_image: banner_image,
+                                verified: true,
+                            })}
+                        >
+                            <Text style={[style.showAll, style.smallerText]}>View Full Analytics</Text>
+                        </TouchableOpacity>
+                        
+                        <View style={style.locationsContainer}>
+                            <Text style={style.locationsHeading}>Available Locations</Text>
+                            <Text style={style.locationsParagraph}>
+                                Find all available locations and the associated fees Komitex offers
+                            </Text>
+                            <View style={style.locationsList}>
+                                { states.map((state, index) => {
+                                    if (index < 5) {
+                                        return (
+                                            <Accordion
+                                                key={state.id}
+                                                state={state.name}
+                                                locations={state.locations}
+                                                opened={state.opened}
+                                            />
+                                        )
+                                    }
+                                })}
+                            </View>
+                            { states.length > 5 && (
+                                <TouchableOpacity
+                                    onPress={() => navigation.navigate('AvailableLocations', {
+                                        business_id: business_id,
+                                        business_name: business_name,
+                                    })}
+                                >
+                                    <Text style={style.showAll}>Show all locations</Text>
+                                </TouchableOpacity>
+                            )}
                         </View>
                     </View>
-                </ScrollView>
-            ) : <AboutLogisticsSkeleton />}
-            <CustomButton
-                name="Deactive Logistics"
-                onPress={openPopUpModal}
-                backgroundColor={background}
-                secondaryButton={true}
-            />
-            {/* success bottom sheet */}
-            <SuccessSheet
-                caution={!confirmDeactivation}
-                successSheetRef={successSheetRef}
-                height={!confirmDeactivation ? 381 : 320}
-                heading={!confirmDeactivation ? 
-                    "Deactivate Logistics" : 
-                    business_name + " Successfully Deactivated"
-                }
-                paragraph={!confirmDeactivation ?
-                    "Are you sure you want to deactivate " + business_name : 
-                    "You have successfully deactivated " + business_name
-                }
-                primaryFunction={!confirmDeactivation ? handleDeactivation : handleConfirmDeactivation}
-                primaryButtonText={!confirmDeactivation ? "Yes, deactivate" : "Done"}
-                secondaryFunction={!confirmDeactivation && closePopUpModal}
-                secondaryButtonText={!confirmDeactivation && "No, cancel"}
-                isLoadingPrimary={isLoading}
-            />
-        </>
-    );
+                    <View style={style.reportWrapper}>
+                        <TouchableOpacity
+                            style={style.reportButton}
+                            onPress={() => {}}
+                        >
+                            <ReportFlagIcon />
+                            <Text style={style.reportText}>Report this logistics</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </ScrollView>
+        ) : <AboutLogisticsSkeleton />}
+        <CustomButton
+            name="Deactive Logistics"
+            onPress={openConfirmtionModal}
+            backgroundColor={background}
+            secondaryButton={true}
+        />
+        {/* success bottom sheet */}
+        <ConfirmationBottomSheet 
+            caution={!confirmDeactivation}
+            sheetRef={confirmationSheetRef}
+            height={!confirmDeactivation ? 381 : 320}
+            heading={!confirmDeactivation ? 
+                "Deactivate Logistics" : 
+                business_name + " Successfully Deactivated"
+            }
+            paragraph={!confirmDeactivation ?
+                "Are you sure you want to deactivate " + business_name : 
+                "You have successfully deactivated " + business_name
+            }
+            primaryFunction={!confirmDeactivation ? handleDeactivation : handleConfirmDeactivation}
+            primaryButtonText={!confirmDeactivation ? "Yes, deactivate" : "Done"}
+            secondaryFunction={!confirmDeactivation && closeConfirmationModal}
+            secondaryButtonText={!confirmDeactivation && "No, cancel"}
+            isLoadingPrimary={isLoading}
+            closeConfirmationModal={!confirmDeactivation ? closeConfirmationModal : undefined}
+        />
+    </>);
 }
 
 // stylesheet

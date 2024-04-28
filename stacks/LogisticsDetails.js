@@ -34,9 +34,9 @@ import EmailIcon from "../assets/icons/EmailIcon";
 import PhoneIcon from "../assets/icons/PhoneIcon";
 import StarIcon from "../assets/icons/StarIcon";
 import LocationIcon from "../assets/icons/LocationIcon";
-import SuccessSheet from "../components/SuccessSheet";
+import ConfirmationBottomSheet from "../components/ConfirmationBottomSheet";
 // react hooks
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 // skeleton
 import LogisticsDetailsSkeleton from "../skeletons/LogisticsDetailsSkeleton";
 // globals
@@ -52,8 +52,19 @@ if (Platform.OS === 'android') {
 
 const LogisticsDetails = ({navigation, route}) => {
 
+    // reference for confirmation bottomsheet
+    const confirmationSheetRef = useRef(null);
+
     // calendar sheet
-    const { successSheetRef } = useGlobals();
+    const { setConfirmationBottomSheet } = useGlobals();
+
+    // update bottomsheet close function
+    useEffect(() => {
+        // set confirmation bottomsheet state
+        setConfirmationBottomSheet(prevState=> {
+            return {...prevState, close: () => {}}
+        });
+    }, []);
 
     const { business_id, business_name, banner_image, verified } = route?.params;
 
@@ -429,9 +440,6 @@ const LogisticsDetails = ({navigation, route}) => {
         }
     ];
 
-    // is loading state
-    const [isLoading, setIsLoading] = useState(false); 
-
     // page loading state
     const [pageLaoding, setPageLoading] = useState(true);
 
@@ -559,234 +567,250 @@ const LogisticsDetails = ({navigation, route}) => {
         }
     };
 
-    // close popup modal bottomsheet function
-    const closeSuccessModal = () => {
-        successSheetRef.current?.close();
-    };
+    // function to open bottom sheet modal to deactivate logistics
+    const openConfirmtionModal = () => {
+        // open bottom sheet
+        confirmationSheetRef.current?.present();
 
-    // function to open bottom sheet modal
-    const openSuccessModal = () => {
-        successSheetRef.current?.present();
+        // update filter bottomsheet global state
+        setConfirmationBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: true,
+            }
+        });
     }
+
+    // close popup modal bottomsheet function
+    const closeConfirmationModal = () => {
+        // close bottomsheet
+        confirmationSheetRef.current?.close();
+
+        // update filter bottomsheet global state
+        setConfirmationBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: false,
+            }
+        });
+    };
 
     // handle add logistics 
     const handleAddLogistics = () => {
-        openSuccessModal();
+        openConfirmtionModal();
     }
     
 
     const handleAddLogisticsSuccess = () => {
-        closeSuccessModal();
+        closeConfirmationModal();
         navigation.navigate("Inventory");
     }
     
     // render LogisticsDetails page
-    return (
-        <>
-            {!pageLaoding ? (
-                <ScrollView
-                    showsVerticalScrollIndicator={false}
-                    style={style.container}
-                >
-                    <View style={style.main}>
-                        <View style={style.paddedContent}> 
-                            {/* header component */}
-                            <Header 
-                                navigation={navigation} 
-                                stackName={
-                                    <View style={style.headerWrapper}>
-                                        <Avatar 
-                                            fullname={business_name}
-                                            imageUrl={banner_image}
-                                            squared={true}
-                                        />
-                                        <Text style={style.headerText}>{business_name}</Text>
-                                        { verified && <VerifiedIcon /> }
-                                    </View>
-                                }
-                                component={true}
-                                unpadded={true}
-                            />
-
-                            <View style={style.contactInformationWrapper}>
-                                <View style={style.contactDetailsWrapper}>
-                                    <View style={style.contactDetails}>
-                                        <EmailIcon />
-                                        <TouchableOpacity 
-                                            style={style.linkButton}
-                                            onPress= {() => Linking.openURL('mailto:Komitexlogistics@gmail.com')}
-                                        >
-                                            <Text style={style.linkText}>
-                                                Komitexlogistics@gmail.com
-                                            </Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                    <View style={style.contactDetails}>
-                                        <PhoneIcon />
-                                        <TouchableOpacity 
-                                            style={style.linkButton}
-                                            onPress= {() => Linking.openURL('tel:+2348116320575')}
-                                        >
-                                            <Text style={style.linkText}>
-                                                08122266618
-                                            </Text>
-                                        </TouchableOpacity>
-                                    </View>
+    return (<>
+        {!pageLaoding ? (
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                style={style.container}
+            >
+                <View style={style.main}>
+                    <View style={style.paddedContent}> 
+                        {/* header component */}
+                        <Header 
+                            navigation={navigation} 
+                            stackName={
+                                <View style={style.headerWrapper}>
+                                    <Avatar 
+                                        fullname={business_name}
+                                        imageUrl={banner_image}
+                                        squared={true}
+                                    />
+                                    <Text style={style.headerText}>{business_name}</Text>
+                                    { verified && <VerifiedIcon /> }
                                 </View>
-                                <View style={style.contactDetailsWrapper}>
-                                    <View style={style.contactDetails}>
-                                        <LocationIcon />
-                                        <Text style={style.locationText}>
-                                            200 Locations
+                            }
+                            component={true}
+                            unpadded={true}
+                        />
+
+                        <View style={style.contactInformationWrapper}>
+                            <View style={style.contactDetailsWrapper}>
+                                <View style={style.contactDetails}>
+                                    <EmailIcon />
+                                    <TouchableOpacity 
+                                        style={style.linkButton}
+                                        onPress= {() => Linking.openURL('mailto:Komitexlogistics@gmail.com')}
+                                    >
+                                        <Text style={style.linkText}>
+                                            Komitexlogistics@gmail.com
                                         </Text>
-                                    </View>
-                                    <View style={style.contactDetails}>
-                                        <StarIcon />
-                                        <Text style={style.ratingText}>
-                                            4.4
+                                    </TouchableOpacity>
+                                </View>
+                                <View style={style.contactDetails}>
+                                    <PhoneIcon />
+                                    <TouchableOpacity 
+                                        style={style.linkButton}
+                                        onPress= {() => Linking.openURL('tel:+2348116320575')}
+                                    >
+                                        <Text style={style.linkText}>
+                                            08122266618
                                         </Text>
-                                        <Text style={style.bulletPoint}>{'\u2022'}</Text>
-                                        <TouchableOpacity 
-                                            style={style.linkButton}
-                                            onPress={() => navigation.navigate('Reviews')}
-                                        >
-                                            <Text style={style.linkTextUnderlined}>
-                                                10 reviews
-                                            </Text>
-                                        </TouchableOpacity>
-                                    </View>
+                                    </TouchableOpacity>
                                 </View>
                             </View>
+                            <View style={style.contactDetailsWrapper}>
+                                <View style={style.contactDetails}>
+                                    <LocationIcon />
+                                    <Text style={style.locationText}>
+                                        200 Locations
+                                    </Text>
+                                </View>
+                                <View style={style.contactDetails}>
+                                    <StarIcon />
+                                    <Text style={style.ratingText}>
+                                        4.4
+                                    </Text>
+                                    <Text style={style.bulletPoint}>{'\u2022'}</Text>
+                                    <TouchableOpacity 
+                                        style={style.linkButton}
+                                        onPress={() => navigation.navigate('Reviews')}
+                                    >
+                                        <Text style={style.linkTextUnderlined}>
+                                            10 reviews
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </View>
 
-                            <StatWrapper>
-                                {stats.map(stat => (
-                                    <StatCard
-                                        key={stat.id}
-                                        title={stat.title}
-                                        presentValue={stat.presentValue}
-                                        oldValue={stat.oldValue}
-                                        decimal={stat.decimal}
-                                        unit={stat.unit}
-                                        unitPosition={stat.unitPosition}
-                                        backgroundColor={white}
+                        <StatWrapper>
+                            {stats.map(stat => (
+                                <StatCard
+                                    key={stat.id}
+                                    title={stat.title}
+                                    presentValue={stat.presentValue}
+                                    oldValue={stat.oldValue}
+                                    decimal={stat.decimal}
+                                    unit={stat.unit}
+                                    unitPosition={stat.unitPosition}
+                                    backgroundColor={white}
+                                />
+                            ))}
+                        </StatWrapper>
+                        
+                        <View style={style.locationsContainer}>
+                            <Text style={style.locationsHeading}>Available Locations</Text>
+                            <Text style={style.locationsParagraph}>
+                                Find all available locations and the associated fees Komitex offers
+                            </Text>
+                            <View style={style.locationsList}>
+                                { states.map((state, index) => {
+                                    if (index < 5) {
+                                        return (
+                                            <Accordion
+                                                key={state.id}
+                                                state={state.name}
+                                                locations={state.locations}
+                                                opened={state.opened}
+                                            />
+                                        )
+                                    }
+                                })}
+                            </View>
+                            { states.length > 5 && (
+                                <TouchableOpacity
+                                    onPress={() => navigation.navigate('AvailableLocations', {
+                                        business_id: business_id,
+                                        business_name: business_name,
+                                    })}
+                                >
+                                    <Text style={style.showAll}>Show all locations</Text>
+                                </TouchableOpacity>
+                            )}
+                        </View>
+                    </View>
+
+                    <View style={[style.reviewsContainer, reviewsContainerStyle]}>
+                        <View style={style.contactDetails}>
+                            <StarIcon />
+                            <Text style={[style.ratingHeadingText, style.ratingScore]}>
+                                4.4
+                            </Text>
+                            <Text style={style.bulletPoint}>{'\u2022'}</Text>
+                            <Text style={style.ratingHeadingText}>
+                                10 reviews
+                            </Text>
+                        </View>
+                        <ScrollView 
+                            horizontal={true}
+                            showsHorizontalScrollIndicator={false}
+                            onScroll={handleScroll}
+                            scrollEventThrottle={16} // the frequency the scroll event is triggered, 16 milliseconds
+                        >
+                            <TouchableOpacity 
+                                style={style.reviewsWrapper} 
+                                activeOpacity={1}
+                                onPress={() => navigation.navigate("Reviews")}
+                            >
+                                {reviews.map((review, index) => (
+                                    <ReviewCard
+                                        key={review.id}
+                                        imageUrl={review.imageUrl}
+                                        fullname={review.fullname}
+                                        timestamp={review.timestamp}
+                                        review={review.review}
+                                        width={214}
+                                        background={background}
+                                        containerStyle={index === reviews.length - 1 && {marginRight: 40}}
+                                        navigation={navigation}
                                     />
                                 ))}
-                            </StatWrapper>
-                            
-                            <View style={style.locationsContainer}>
-                                <Text style={style.locationsHeading}>Available Locations</Text>
-                                <Text style={style.locationsParagraph}>
-                                    Find all available locations and the associated fees Komitex offers
-                                </Text>
-                                <View style={style.locationsList}>
-                                    { states.map((state, index) => {
-                                        if (index < 5) {
-                                            return (
-                                                <Accordion
-                                                    key={state.id}
-                                                    state={state.name}
-                                                    locations={state.locations}
-                                                    opened={state.opened}
-                                                />
-                                            )
-                                        }
-                                    })}
-                                </View>
-                                { states.length > 5 && (
-                                    <TouchableOpacity
-                                        onPress={() => navigation.navigate('AvailableLocations', {
-                                            business_id: business_id,
-                                            business_name: business_name,
-                                        })}
-                                    >
-                                        <Text style={style.showAll}>Show all locations</Text>
-                                    </TouchableOpacity>
-                                )}
-                            </View>
-                        </View>
+                            </TouchableOpacity>
+                        </ScrollView>
+                        <TouchableOpacity
+                            onPress={() => navigation.navigate('Reviews')}
+                        >
+                            <Text style={style.showAll}>Show all reviews</Text>
+                        </TouchableOpacity>
+                    </View>
 
-                        <View style={[style.reviewsContainer, reviewsContainerStyle]}>
-                            <View style={style.contactDetails}>
-                                <StarIcon />
-                                <Text style={[style.ratingHeadingText, style.ratingScore]}>
-                                    4.4
-                                </Text>
-                                <Text style={style.bulletPoint}>{'\u2022'}</Text>
-                                <Text style={style.ratingHeadingText}>
-                                    10 reviews
-                                </Text>
+                    <View style={style.policyContainer}>
+                        <View style={style.policyWrapper}>
+                            <Text style={style.locationsHeading}>Company Policy</Text>
+                            <View style={style.policyContent}>
+                                <Text style={style.policyText}>Remittance Duration: 24hrs after Delivery </Text>
+                                <Text style={style.policyText}>Cost for failed delivery: 50% of delivery charges</Text>
+                                <Text style={style.policyText}>Inactive Inventory: 3 months maximum</Text>
                             </View>
-                            <ScrollView 
-                                horizontal={true}
-                                showsHorizontalScrollIndicator={false}
-                                onScroll={handleScroll}
-                                scrollEventThrottle={16} // the frequency the scroll event is triggered, 16 milliseconds
-                            >
-                                <TouchableOpacity 
-                                    style={style.reviewsWrapper} 
-                                    activeOpacity={1}
-                                    onPress={() => navigation.navigate("Reviews")}
-                                >
-                                    {reviews.map((review, index) => (
-                                        <ReviewCard
-                                            key={review.id}
-                                            imageUrl={review.imageUrl}
-                                            fullname={review.fullname}
-                                            timestamp={review.timestamp}
-                                            review={review.review}
-                                            width={214}
-                                            background={background}
-                                            containerStyle={index === reviews.length - 1 && {marginRight: 40}}
-                                            navigation={navigation}
-                                        />
-                                    ))}
-                                </TouchableOpacity>
-                            </ScrollView>
                             <TouchableOpacity
-                                onPress={() => navigation.navigate('Reviews')}
+                                onPress={() => navigation.navigate('BusinessPolicy', {
+                                    business_id: business_id,
+                                })}
                             >
-                                <Text style={style.showAll}>Show all reviews</Text>
+                                <Text style={style.showAll}>Show more</Text>
                             </TouchableOpacity>
                         </View>
-
-                        <View style={style.policyContainer}>
-                            <View style={style.policyWrapper}>
-                                <Text style={style.locationsHeading}>Company Policy</Text>
-                                <View style={style.policyContent}>
-                                    <Text style={style.policyText}>Remittance Duration: 24hrs after Delivery </Text>
-                                    <Text style={style.policyText}>Cost for failed delivery: 50% of delivery charges</Text>
-                                    <Text style={style.policyText}>Inactive Inventory: 3 months maximum</Text>
-                                </View>
-                                <TouchableOpacity
-                                    onPress={() => navigation.navigate('BusinessPolicy', {
-                                        business_id: business_id,
-                                    })}
-                                >
-                                    <Text style={style.showAll}>Show more</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-
-                        <CustomButton 
-                            name="Add Komitex" 
-                            onPress={handleAddLogistics}
-                            backgroundColor={white}
-                        />
                     </View>
-                </ScrollView>
-            ) : <LogisticsDetailsSkeleton />}
-            {/* success sheet */}
-            <SuccessSheet
-                successSheetRef={successSheetRef}
-                heading={"Komitex Successfully Added"}
-                height={320}
-                paragraph={<>
-                    Hi Raymond, You have successfully linked your store to Komitex Logistics
-                </>}
-                primaryFunction={handleAddLogisticsSuccess}
-            />
-        </>
-    );
+
+                    <CustomButton 
+                        name="Add Komitex" 
+                        onPress={handleAddLogistics}
+                        backgroundColor={white}
+                    />
+                </View>
+            </ScrollView>
+        ) : <LogisticsDetailsSkeleton />}
+        {/* success sheet */}
+        <ConfirmationBottomSheet 
+            sheetRef={confirmationSheetRef}
+            heading={"Komitex Successfully Added"}
+            height={320}
+            paragraph={<>
+                Hi Raymond, You have successfully linked your store to Komitex Logistics
+            </>}
+            primaryFunction={handleAddLogisticsSuccess}
+        />
+    </>);
 }
 
 // stylesheet

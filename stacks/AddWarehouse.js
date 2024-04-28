@@ -19,7 +19,7 @@ import Input from '../components/Input';
 import CustomButton from '../components/CustomButton';
 import CustomBottomSheet from '../components/CustomBottomSheet';
 import SearchBar from '../components/SearchBar';
-import SuccessSheet from '../components/SuccessSheet';
+import ConfirmationBottomSheet from '../components/ConfirmationBottomSheet';
 import CheckBox from '../components/CheckBox'
 
 // bottomsheet components
@@ -66,19 +66,27 @@ const AddWarehouse = ({navigation}) => {
 
     // bottom sheet ref
     const sheetRef = useRef(null);
+    // reference for confirmation bottomsheet
+    const confirmationSheetRef = useRef(null);
 
     // bottomsheet refs
     const {
+        setToast,
         bottomSheet,
         setBottomSheet,
-        successSheetRef,
-        setToast
+        setConfirmationBottomSheet,
     } = useGlobals();
 
     // update bottomsheet close function
     useEffect(() => {
+        // set bottomsheet state
         setBottomSheet(prevState=> {
             return {...prevState, close: () => sheetRef.current?.close()}
+        });
+
+        // set confirmation bottomsheet state
+        setConfirmationBottomSheet(prevState=> {
+            return {...prevState, close: () => {}}
         });
     }, []);
 
@@ -199,89 +207,107 @@ const AddWarehouse = ({navigation}) => {
         // close select warehouse bottomsheet modal
         closeModal();
     }
-
     
-    // open success pop up bottomsheet modal
-    const openSuccessModal = () => {
-        // present succes bottom sheet
-        successSheetRef?.current?.present();
+    // function to open bottom sheet modal to deactivate logistics
+    const openConfirmtionModal = () => {
+        // open bottom sheet
+        confirmationSheetRef.current?.present();
+
+        // update filter bottomsheet global state
+        setConfirmationBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: true,
+            }
+        });
     }
 
-    // close success pop up bottomsheet modal
-    const closeSuccessModal = () => {
-        // close success bottomsheet
-        successSheetRef?.current?.close();
-    }
+    // close popup modal bottomsheet function
+    const closeConfirmationModal = () => {
+        // close bottomsheet
+        confirmationSheetRef.current?.close();
+
+        // update filter bottomsheet global state
+        setConfirmationBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: false,
+            }
+        });
+    };
 
     // handle create new warehouse
     const handleCreateWarehouse = async () => {
         // dismiss keyboard first
         Keyboard.dismiss();
         // signify loading state for main button
-        setIsLoading(true);
-        try {
-            // check for empty fields
-            if (warehouseName === "" || warehouseManager === null || warehouseAddress === "") {
-                // throw error if fields are empty
-                throw new Error("Please fill in all fields");
-            }
+        // setIsLoading(true);
+        // try {
+        //     // check for empty fields
+        //     if (warehouseName === "" || warehouseManager === null || warehouseAddress === "") {
+        //         // throw error if fields are empty
+        //         throw new Error("Please fill in all fields");
+        //     }
 
-            // ref to warehouses collection
-            const warehousesRef = collection(database, "warehouses");
+        //     // ref to warehouses collection
+        //     const warehousesRef = collection(database, "warehouses");
 
-            // check if they exist a wreahouse_name in warehouses collection
-            // where warehouse_name = warehouseName and business_id = authData.business_id
-            const q = query(
-                warehousesRef, 
-                where("business_id", "==", authData?.business_id), 
-                where("warehouse_name", "==", warehouseName.toLowerCase())
-            );
+        //     // check if they exist a wreahouse_name in warehouses collection
+        //     // where warehouse_name = warehouseName and business_id = authData.business_id
+        //     const q = query(
+        //         warehousesRef, 
+        //         where("business_id", "==", authData?.business_id), 
+        //         where("warehouse_name", "==", warehouseName.toLowerCase())
+        //     );
 
-            // get docs
-            const querySnapshot = await getDocs(q);
-            // if data exist throw error, warehouse already exist
-            if (querySnapshot.size > 0) {
-                setIsLoading(false);
-                // throw error, if warehouse already exist
-                throw new Error("Warehouse already exist");
-            }
+        //     // get docs
+        //     const querySnapshot = await getDocs(q);
+        //     // if data exist throw error, warehouse already exist
+        //     if (querySnapshot.size > 0) {
+        //         setIsLoading(false);
+        //         // throw error, if warehouse already exist
+        //         throw new Error("Warehouse already exist");
+        //     }
             
-            // save data in database
-            await addDoc(warehousesRef, {
-                business_id: authData?.business_id, // business id
-                warehouse_name: warehouseName.trim().toLowerCase(), // convert to lowercase
-                warehouse_manager: warehouseManager?.id, // save just manager id
-                warehouse_address: warehouseAddress, // save address in nomral input format 
-                waybill_receivable: waybillReceivable, 
-                created_at: serverTimestamp(), // timestamp
-                created_by: authData?.uid, // uid
-                edited_at: serverTimestamp(), // timestamp
-                edited_by: authData?.uid, // uid
-            });
+        //     // save data in database
+        //     await addDoc(warehousesRef, {
+        //         business_id: authData?.business_id, // business id
+        //         warehouse_name: warehouseName.trim().toLowerCase(), // convert to lowercase
+        //         warehouse_manager: warehouseManager?.id, // save just manager id
+        //         warehouse_address: warehouseAddress, // save address in nomral input format 
+        //         waybill_receivable: waybillReceivable, 
+        //         created_at: serverTimestamp(), // timestamp
+        //         created_by: authData?.uid, // uid
+        //         edited_at: serverTimestamp(), // timestamp
+        //         edited_by: authData?.uid, // uid
+        //     });
 
-            // disable button loading state
-            setIsLoading(false);
+        //     // disable button loading state
+        //     setIsLoading(false);
 
-            // indicate success modal
-            openSuccessModal();
+        //     // indicate success modal
+        //     openConfirmtionModal();
 
-        } catch (error) { // handke errors
-            console.log(error.message);
-            // show error toast
-            setToast({
-                visible: true,
-                type: "error",
-                text: error.message,
-            });
-            // disable loading state
-            setIsLoading(false);
-        }
+        // } catch (error) { // handke errors
+        //     console.log(error.message);
+        //     // show error toast
+        //     setToast({
+        //         visible: true,
+        //         type: "error",
+        //         text: error.message,
+        //     });
+        //     // disable loading state
+        //     setIsLoading(false);
+        // }
+
+        // indicate success modal
+        openConfirmtionModal();
     }
 
     // handle confirm add warehouse
     const handleConfirmAddWarehouse = () => {
         // close success modal bottomsheet
-        closeSuccessModal();
+        closeConfirmationModal();
         // navigate back to warehouse screen
         navigation.navigate("Warehouse");
     }
@@ -310,144 +336,141 @@ const AddWarehouse = ({navigation}) => {
     }, [bottomSheet.opened]);
 
 
-    return (
-        <>
-            <TouchableWithoutFeedback
-                onPress={Keyboard.dismiss}
-                // onclick anywhere else on screen besides the input and keyboard, dismiss keyboard
-            >
-                <View style={style.container}>
-                    <View style={style.mainWrapper}>
-                        {/* Header Compnent */}
-                        <Header
-                            stackName={"Add New Warehouse"}
-                            navigation={navigation}
-                            unpadded={true}
-                        />
-                        {/* paragraph text */}
-                        <Text style={style.paragraph}>
-                            Create a new warehouse for your business
-                        </Text>
-                        {/* input container/wrapper */}
-                        <View style={style.inputWrapper}>
-                            {/* warehouse name Input*/}
-                            <Input 
-                                label={"Warehouse Name"}
-                                placeholder={"Warehouse name"}
-                                value={warehouseName}
-                                onChange={updateWarehouseName}
-                                error={errorWarehouseName}
-                                setError={setErrorWarehouseName}
-                            />
-                            {/* warehouse address Inpput*/}
-                            <Input 
-                                label={"Warehouse Address"}
-                                placeholder={"Warehouse address"}
-                                value={warehouseAddress}
-                                onChange={setWarehouseAddress}
-                                error={errorWarehouseAddress}
-                                setError={setErrorWarehouseAddress}
-                            />
-                            {/* warehouse manager select input */}
-                            <SelectInput
-                                label={"Warehouse Manager"}
-                                placeholder={"Selecte a warehouse manager"}
-                                value={warehouseManager?.full_name}
-                                inputFor={"String"}
-                                onPress={obtainedManagers ? openModal : () => {}}
-                                active={activeWarehouseManager}
-                            />
-                            {/* receive waybill check box */}
-                            <TouchableOpacity 
-                                style={style.receiveWaybillWrapper}
-                                onPress={() => setWaybillReceivable(prevValue => !prevValue)}
-                            >
-                                <CheckBox
-                                    value={waybillReceivable}
-                                    onPress={() => setWaybillReceivable(prevValue => !prevValue)}
-                                />
-                                <Text style={style.receiveWaybillText}>Receive waybill in this warehouse</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                    {/* create warehouse button, disabled if inputs are empty */}
-                    <CustomButton
-                        name={"Create Warehouse"}
+    return (<>
+        <TouchableWithoutFeedback
+            onPress={Keyboard.dismiss}
+            // onclick anywhere else on screen besides the input and keyboard, dismiss keyboard
+        >
+            <View style={style.container}>
+                <View style={style.mainWrapper}>
+                    {/* Header Compnent */}
+                    <Header
+                        stackName={"Add New Warehouse"}
+                        navigation={navigation}
                         unpadded={true}
-                        isLoading={isLoading}
-                        backgroundColor={background}
-                        inactive={warehouseManager === null || warehouseName === "" || warehouseAddress === ""}
-                        onPress={handleCreateWarehouse}
                     />
-                </View>
-            </TouchableWithoutFeedback>
-            {/* bottomsheet to select managers */}
-            <CustomBottomSheet
-                index={0}
-                sheetRef={sheetRef}
-                closeModal={closeModal}
-                sheetTitle={"Select Manager"}
-                snapPointsArray={["50%", "75%", "100%"]}
-            >
-                {/* search bar to search for managers */}
-                <SearchBar
-                    searchQuery={searchQuery}
-                    setSearchQuery={setSearchQuery}
-                    placeholder={"Search warehouse"}
-                    backgroundColor={background}
-                    disableFilter={true}
-                />
-                <BottomSheetScrollView style={style.sheetScroll} showsVerticalScrollIndicator={false}>
-                    <Text style={style.headingText}>
-                        Managers in your team
+                    {/* paragraph text */}
+                    <Text style={style.paragraph}>
+                        Create a new warehouse for your business
                     </Text>
-                    {/* list of managers */}
-                    <View style={style.listWrapper}>
-                        {/* if search query input is empty */}
-                        {/* display all managers but already selected manager */}
-                        {!searchQuery && managers.filter(manager => manager.id !== warehouseManager?.id).map(manager => (
-                            <TouchableOpacity
-                                key={manager.id}
-                                style={style.listItemButton}
-                                onPress={() => handleWarehouseSelection(manager.id)}
-                            >
-                                <Text style={style.listItemText}>
-                                    {manager.full_name}
-                                </Text>
-                            </TouchableOpacity>
-                        ))}
-
-                        {/* if search query input is not empty, filter according to search input */}
-                        {/* display all not selected managers according to search keyword */}
-                        {searchQuery && managers.filter(manager => manager.id !== warehouseManager?.id && 
-                        manager.full_name.toLowerCase().includes(searchQuery.toLowerCase())).map(manager => (
-                            <TouchableOpacity
-                                key={manager.id}
-                                style={style.listItemButton}
-                                onPress={() => handleWarehouseSelection(manager.id)}
-                            >
-                                <Text style={style.listItemText}>
-                                    {manager.full_name}
-                                </Text>
-                            </TouchableOpacity>
-                        ))}
+                    {/* input container/wrapper */}
+                    <View style={style.inputWrapper}>
+                        {/* warehouse name Input*/}
+                        <Input 
+                            label={"Warehouse Name"}
+                            placeholder={"Warehouse name"}
+                            value={warehouseName}
+                            onChange={updateWarehouseName}
+                            error={errorWarehouseName}
+                            setError={setErrorWarehouseName}
+                        />
+                        {/* warehouse address Inpput*/}
+                        <Input 
+                            label={"Warehouse Address"}
+                            placeholder={"Warehouse address"}
+                            value={warehouseAddress}
+                            onChange={setWarehouseAddress}
+                            error={errorWarehouseAddress}
+                            setError={setErrorWarehouseAddress}
+                        />
+                        {/* warehouse manager select input */}
+                        <SelectInput
+                            label={"Warehouse Manager"}
+                            placeholder={"Selecte a warehouse manager"}
+                            value={warehouseManager?.full_name}
+                            inputFor={"String"}
+                            onPress={obtainedManagers ? openModal : () => {}}
+                            active={activeWarehouseManager}
+                        />
+                        {/* receive waybill check box */}
+                        <TouchableOpacity 
+                            style={style.receiveWaybillWrapper}
+                            onPress={() => setWaybillReceivable(prevValue => !prevValue)}
+                        >
+                            <CheckBox
+                                value={waybillReceivable}
+                                onPress={() => setWaybillReceivable(prevValue => !prevValue)}
+                            />
+                            <Text style={style.receiveWaybillText}>Receive waybill in this warehouse</Text>
+                        </TouchableOpacity>
                     </View>
-                </BottomSheetScrollView>
-            </CustomBottomSheet>
-            {/* success bottom sheet to indicate warehouse was created successfully */}
-            <SuccessSheet
-                closeSuccessModal={closeSuccessModal}
-                successSheetRef={successSheetRef}
-                heading={"New warehouse created"}
-                height={320}
-                paragraph={<>
-                    You have successfully created a new warehouse: 
-                    <Text style={style.boldText}> {warehouseName}</Text>
-                </>}
-                primaryFunction={handleConfirmAddWarehouse}
+                </View>
+                {/* create warehouse button, disabled if inputs are empty */}
+                <CustomButton
+                    name={"Create Warehouse"}
+                    unpadded={true}
+                    isLoading={isLoading}
+                    backgroundColor={background}
+                    inactive={warehouseManager === null || warehouseName === "" || warehouseAddress === ""}
+                    onPress={handleCreateWarehouse}
+                />
+            </View>
+        </TouchableWithoutFeedback>
+        {/* bottomsheet to select managers */}
+        <CustomBottomSheet
+            index={0}
+            sheetRef={sheetRef}
+            closeModal={closeModal}
+            sheetTitle={"Select Manager"}
+            snapPointsArray={["50%", "75%", "100%"]}
+        >
+            {/* search bar to search for managers */}
+            <SearchBar
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                placeholder={"Search warehouse"}
+                backgroundColor={background}
+                disableFilter={true}
             />
-        </>
-    )
+            <BottomSheetScrollView style={style.sheetScroll} showsVerticalScrollIndicator={false}>
+                <Text style={style.headingText}>
+                    Managers in your team
+                </Text>
+                {/* list of managers */}
+                <View style={style.listWrapper}>
+                    {/* if search query input is empty */}
+                    {/* display all managers but already selected manager */}
+                    {!searchQuery && managers.filter(manager => manager.id !== warehouseManager?.id).map(manager => (
+                        <TouchableOpacity
+                            key={manager.id}
+                            style={style.listItemButton}
+                            onPress={() => handleWarehouseSelection(manager.id)}
+                        >
+                            <Text style={style.listItemText}>
+                                {manager.full_name}
+                            </Text>
+                        </TouchableOpacity>
+                    ))}
+
+                    {/* if search query input is not empty, filter according to search input */}
+                    {/* display all not selected managers according to search keyword */}
+                    {searchQuery && managers.filter(manager => manager.id !== warehouseManager?.id && 
+                    manager.full_name.toLowerCase().includes(searchQuery.toLowerCase())).map(manager => (
+                        <TouchableOpacity
+                            key={manager.id}
+                            style={style.listItemButton}
+                            onPress={() => handleWarehouseSelection(manager.id)}
+                        >
+                            <Text style={style.listItemText}>
+                                {manager.full_name}
+                            </Text>
+                        </TouchableOpacity>
+                    ))}
+                </View>
+            </BottomSheetScrollView>
+        </CustomBottomSheet>
+        {/* success bottom sheet to indicate warehouse was created successfully */}
+        <ConfirmationBottomSheet 
+            sheetRef={confirmationSheetRef}
+            heading={"New warehouse created"}
+            height={320}
+            paragraph={<>
+                You have successfully created a new warehouse: 
+                <Text style={style.boldText}> {warehouseName}</Text>
+            </>}
+            primaryFunction={handleConfirmAddWarehouse}
+        />
+    </>)
 }
 
 export default AddWarehouse

@@ -45,7 +45,7 @@ const Accordion = ({states, state, locations, opened, searchQuery, showEditButto
                 maxCharge = charge;
             }
         }
-        return maxCharge.toLocaleString();
+        return maxCharge?.toLocaleString();
     };
         
     const getMinCharge = (locationsArray) => {
@@ -56,7 +56,7 @@ const Accordion = ({states, state, locations, opened, searchQuery, showEditButto
                 minCharge = charge;
             }
         }
-        return minCharge.toLocaleString();
+        return minCharge?.toLocaleString();
     };
 
     const maxCharge = getMaxCharge(locations);
@@ -95,7 +95,7 @@ const Accordion = ({states, state, locations, opened, searchQuery, showEditButto
                             <Text style={style.locationsText}>{location?.region}</Text>
                         )}
                         <Text style={style.locationsPrice}>
-                            ₦{location.delivery_charge.toLocaleString()}
+                            ₦{location.delivery_charge?.toLocaleString()}
                             <Text style={style.decimal}>.00</Text>    
                         </Text>
                     </View>

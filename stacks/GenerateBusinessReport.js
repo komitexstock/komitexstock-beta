@@ -11,7 +11,7 @@ import CustomButton from "../components/CustomButton";
 import SelectInput from "../components/SelectInput";
 import CalendarSheet from "../components/CalendarSheet";
 import CustomBottomSheet from "../components/CustomBottomSheet";
-import SuccessSheet from "../components/SuccessSheet";
+import ConfirmationBottomSheet from "../components/ConfirmationBottomSheet";
 // colors
 import { background, black, bodyText} from "../style/colors";
 // icons
@@ -30,13 +30,15 @@ const GenerateBusinessReport = ({navigation}) => {
 
     // sheet ref
     const sheetRef = useRef(null);
+    // reference for confirmation bottomsheet
+    const confirmationSheetRef = useRef(null);
 
     // global variables/states
     const {
         setBottomSheet,
-        successSheetRef,
         calendarSheetRef,
         calendarSheetOpen,
+        setConfirmationBottomSheet,
     } = useGlobals();
 
     // update bottomsheet global state
@@ -53,12 +55,14 @@ const GenerateBusinessReport = ({navigation}) => {
                 },
             }
         });
+
+        // set confirmation bottomsheet state
+        setConfirmationBottomSheet(prevState=> {
+            return {...prevState, close: () => confirmationSheetRef.current?.close()}
+        });
     }, [])
 
     const [isLoading, setIsLoading] = useState(false);
-
-    // modal overlay
-    const [showOverlay, setShowOverlay] = useState(false);
 
     // variable to store start date
     const [startDate, setStartDate] = useState("");
@@ -162,22 +166,41 @@ const GenerateBusinessReport = ({navigation}) => {
             }
         });
     };
-    
-    // close popup modal bottomsheet function
-    const closeSuccessModal = () => {
-        successSheetRef.current?.close();
-    };
-    // function to open bottom sheet modal
-    const openSuccessModal = () => {
-        successSheetRef.current?.present();
+
+    // function to open bottom sheet modal to deactivate logistics
+    const openConfirmtionModal = () => {
+        // open bottom sheet
+        confirmationSheetRef.current?.present();
+
+        // update filter bottomsheet global state
+        setConfirmationBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: true,
+            }
+        });
     }
+
+    // close popup modal bottomsheet function
+    const closeConfirmationModal = () => {
+        // close bottomsheet
+        confirmationSheetRef.current?.close();
+
+        // update filter bottomsheet global state
+        setConfirmationBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: false,
+            }
+        });
+    };
 
     const handleGenerateBusinessReport = () => {
         setIsLoading(true);
 
         setTimeout(() => {
             setIsLoading(false);
-            openSuccessModal();
+            openConfirmtionModal();
         }, 3000);
     }
 
@@ -293,8 +316,8 @@ const GenerateBusinessReport = ({navigation}) => {
             </CustomBottomSheet>
 
             {/* success up modal */}
-            <SuccessSheet
-                successSheetRef={successSheetRef}
+            <ConfirmationBottomSheet 
+                sheetRef={confirmationSheetRef}
                 heading={"Report Generated Successfully"}
                 height={320}
                 paragraph={<>
@@ -303,7 +326,7 @@ const GenerateBusinessReport = ({navigation}) => {
                         raymondreddington@komitex.ng
                     </Text>
                 </>}
-                primaryFunction={closeSuccessModal}
+                primaryFunction={closeConfirmationModal}
             />
         </>
     );

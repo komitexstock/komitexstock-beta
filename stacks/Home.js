@@ -890,8 +890,8 @@ const Home = ({navigation}) => {
                                         // onPress={() => {navigation.navigate("OrderDetails")}}
                                         // onPress={() => {navigation.navigate("WaybillDetails")}}
                                         // onPress={() => {navigation.navigate("TransferDetails")}}
-                                        onPress={() => {navigation.navigate("Share")}}
-                                        // onPress={() => {navigation.navigate("WriteReview")}}
+                                        // onPress={() => {navigation.navigate("Share")}}
+                                        onPress={() => {navigation.navigate("WriteReview")}}
                                         // onPress={bottomSheetParameters.openModal}
                                     >
                                         <Text style={style.seeMore} >

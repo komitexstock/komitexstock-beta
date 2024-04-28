@@ -10,14 +10,12 @@ import ModalHandle from "./ModalHandle";
 import CloseIcon from "../assets/icons/CloseIcon";
 // colors
 import { black, bodyText, white } from "../style/colors";
-// globals
-import { useGlobals } from "../context/AppContext";
 // components
 import CautionPrompt from './CautionPrompt';
 import SuccessPrompt from './SuccessPrompt';
 import CustomButton from './CustomButton';
 
-const SuccessSheet = ({successSheetRef, closeSuccessModal, caution, height, heading, paragraph, secondaryFunction, primaryFunction, secondaryButtonText, primaryButtonText, isLoadingPrimary, isLoadingSecondary}) => {
+const ConfirmationBottomSheet = ({sheetRef, closeConfirmationModal, caution, height, heading, paragraph, secondaryFunction, primaryFunction, secondaryButtonText, primaryButtonText, isLoadingPrimary, isLoadingSecondary}) => {
     // bottomsheet modal ref => useRef variable for bottomsheet modal ref
     // hideCloseButton, centered => boolean
     // closeModal => function
@@ -37,14 +35,9 @@ const SuccessSheet = ({successSheetRef, closeSuccessModal, caution, height, head
                 {...props}
                 disappearsOnIndex={-1}
                 appearsOnIndex={0}
+                
                 opacity={0.3}
-                onPress={() => {
-                    if (closeSuccessModal === undefined) {
-                        primaryFunction()
-                    } else {
-                        closeSuccessModal()
-                    }
-                }}
+                onPress={closeConfirmationModal !== undefined ? primaryFunction : closeConfirmationModal}
             />
         ),
         []
@@ -54,7 +47,7 @@ const SuccessSheet = ({successSheetRef, closeSuccessModal, caution, height, head
     return (
         <View style={style.container}>
             <BottomSheetModal
-                ref={successSheetRef}
+                ref={sheetRef}
                 index={0}
                 snapPoints={[modalHeight]}
                 enablePanDownToClose={false}
@@ -77,10 +70,10 @@ const SuccessSheet = ({successSheetRef, closeSuccessModal, caution, height, head
                 )}
                 onChange={(index) => {
                     if (index === -1) {
-                        if (closeSuccessModal === undefined) {
+                        if (closeConfirmationModal === undefined) {
                             primaryFunction()
                         } else {
-                            closeSuccessModal()
+                            closeConfirmationModal()
                         }
                     }
                 }}
@@ -90,13 +83,7 @@ const SuccessSheet = ({successSheetRef, closeSuccessModal, caution, height, head
                     {/* display close icon by default */}
                     <TouchableOpacity 
                         style={style.closeButtonWrapper} 
-                        onPress={() => {
-                            if (closeSuccessModal === undefined) {
-                                primaryFunction()
-                            } else {
-                                closeSuccessModal()
-                            }
-                        }}
+                        onPress={closeConfirmationModal !== undefined ? primaryFunction : closeConfirmationModal}
                     >
                         <CloseIcon />
                     </TouchableOpacity>
@@ -206,4 +193,4 @@ const style = StyleSheet.create({
     }
 });
 
-export default SuccessSheet;
+export default ConfirmationBottomSheet;

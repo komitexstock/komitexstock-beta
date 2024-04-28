@@ -11,9 +11,9 @@ import {
 // components
 import Header from "../components/Header";
 import Input from "../components/Input";
-import SuccessSheet from "../components/SuccessSheet";
+import ConfirmationBottomSheet from "../components/ConfirmationBottomSheet";
 // react hooks
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { background, black, bodyText, neutral } from "../style/colors";
 import CustomButton from "../components/CustomButton";
 // icons
@@ -24,8 +24,21 @@ import { useGlobals } from "../context/AppContext";
 
 const WriteReview = ({navigation}) => {
 
+    // reference for confirmation bottomsheet
+    const confirmationSheetRef = useRef(null);
+
     // popup sheet ref
-    const { successSheetRef } = useGlobals();
+    const {
+        setConfirmationBottomSheet,
+    } = useGlobals();
+
+    // update bottomsheet close function
+    useEffect(() => {
+        // set confirmation bottomsheet state
+        setConfirmationBottomSheet(prevState=> {
+            return {...prevState, close: () => {}}
+        });
+    }, []);
 
     const [deliverySpeedRating, setDeliverySpeedRating] = useState(0);
     const [inventoryManagementRating, setInventoryManagementRating] = useState(0);
@@ -91,101 +104,118 @@ const WriteReview = ({navigation}) => {
             (item) => item === 0 || item === ''
     );
 
-    // close popup modal bottomsheet function
-    const closeSuccessModal = () => {
-        successSheetRef.current?.close();
-    };
-    // function to open bottom sheet modal
-    const openSuccessModal = () => {
-        successSheetRef.current?.present();
+    // function to open bottom sheet modal to deactivate logistics
+    const openConfirmtionModal = () => {
+        // open bottom sheet
+        confirmationSheetRef.current?.present();
+
+        // update filter bottomsheet global state
+        setConfirmationBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: true,
+            }
+        });
     }
 
+    // close popup modal bottomsheet function
+    const closeConfirmationModal = () => {
+        // close bottomsheet
+        confirmationSheetRef.current?.close();
+
+        // update filter bottomsheet global state
+        setConfirmationBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: false,
+            }
+        });
+    };
+
     const handleSubmitReview = () => {
-        openSuccessModal();
+        openConfirmtionModal();
     }
     
 
     const handleSubmitReviewSuccess = () => {
-        closeSuccessModal();
+        closeConfirmationModal();
         navigation.navigate("Home");
     }
 
-    return (
-        <>
-            <TouchableWithoutFeedback
-                onPress={() => {
-                    Keyboard.dismiss();
-                }}
+    return (<>
+        <TouchableWithoutFeedback
+            onPress={() => {
+                Keyboard.dismiss();
+            }}
+        >
+            <ScrollView
+                style={style.container}
+                // showsHorizontalScrollIndicator={false}
+                showsVerticalScrollIndicator={false}
             >
-                <ScrollView
-                    style={style.container}
-                    // showsHorizontalScrollIndicator={false}
-                    showsVerticalScrollIndicator={false}
-                >
-                    <Header 
-                        stackName={"Rate & Review"}
-                        unpadded={true}
-                        navigation={navigation}
-                    />
-                    <View style={style.main}>
-                        { ratingsList.map((item) => (
-                            <View key={item.id} style={style.ratingGroup}>
-                                <Text style={style.ratingTitle}>{item.title}</Text>
-                                <Text style={style.ratingDescription}>{item.description}</Text>
-                                <View style={style.ratingButtonGroup}>
-                                    { item.ratingScores.map((score) => (
-                                        <TouchableOpacity
-                                            key={score}
-                                            style={style.ratingButton}
-                                            onPress={() => item.setRating(score)}
-                                        >
-                                            {item.rating >= score ? <StarActiveIcon /> : <StarInactiveIcon />}
-                                        </TouchableOpacity>
-                                    ))}
-                                </View>
+                <Header 
+                    stackName={"Rate & Review"}
+                    unpadded={true}
+                    navigation={navigation}
+                />
+                <View style={style.main}>
+                    { ratingsList.map((item) => (
+                        <View key={item.id} style={style.ratingGroup}>
+                            <Text style={style.ratingTitle}>{item.title}</Text>
+                            <Text style={style.ratingDescription}>{item.description}</Text>
+                            <View style={style.ratingButtonGroup}>
+                                { item.ratingScores.map((score) => (
+                                    <TouchableOpacity
+                                        key={score}
+                                        style={style.ratingButton}
+                                        onPress={() => item.setRating(score)}
+                                    >
+                                        {item.rating >= score ? <StarActiveIcon /> : <StarInactiveIcon />}
+                                    </TouchableOpacity>
+                                ))}
                             </View>
-                        ))}
-                        <View style={style.ratingGroup}>
-                            <Text style={style.ratingTitle}>
-                                Describe your Experience 
-                                <Text style={style.neutralText}> (required)</Text>
-                            </Text>
-                            <Text style={style.ratingDescription}>
-                                We’ll show this to other merchants. Your review will be public on the logistics' profile 
-                            </Text>
-                            <Input
-                                multiline={true}
-                                placeholder={"What was it like to do business with Komitex?"}
-                                value={review}
-                                onChange={setReview}
-                                height={100}
-                                textAlign={"top"}
-                                error={errorReview}
-                                setError={setErrorReview}
-                                characterLimit={1000} 
-                            />
                         </View>
-                        <CustomButton
-                            name={"Submit"}
-                            unpadded={true}
-                            inactive={emptyFields}
-                            onPress={handleSubmitReview}
+                    ))}
+                    <View style={style.ratingGroup}>
+                        <Text style={style.ratingTitle}>
+                            Describe your Experience 
+                            <Text style={style.neutralText}> (required)</Text>
+                        </Text>
+                        <Text style={style.ratingDescription}>
+                            We’ll show this to other merchants. Your review will be public on the logistics' profile 
+                        </Text>
+                        <Input
+                            multiline={true}
+                            placeholder={"What was it like to do business with Komitex?"}
+                            value={review}
+                            onChange={setReview}
+                            height={100}
+                            textAlign={"top"}
+                            error={errorReview}
+                            setError={setErrorReview}
+                            characterLimit={1000} 
                         />
                     </View>
-                </ScrollView>
-            </TouchableWithoutFeedback>
-            {/* success sheet */}
-            <SuccessSheet
-                successSheetRef={successSheetRef}
-                heading={"Review submitted for Komitex Logistics"}
-                height={320}
-                paragraph={<>
-                    Thanks for your review! We value your feedback to improve our services
-                </>}
-                primaryFunction={handleSubmitReviewSuccess}
-            />
-        </>
-    );
+                    <CustomButton
+                        name={"Submit"}
+                        unpadded={true}
+                        inactive={emptyFields}
+                        onPress={handleSubmitReview}
+                    />
+                </View>
+            </ScrollView>
+        </TouchableWithoutFeedback>
+        {/* success sheet */}
+        <ConfirmationBottomSheet 
+            sheetRef={confirmationSheetRef}
+            heading={"Review submitted for Komitex Logistics"}
+            height={320}
+            paragraph={<>
+                Thanks for your review! We value your feedback to improve our services
+            </>}
+            primaryFunction={handleSubmitReviewSuccess}
+        />
+    </>);
 }
 
 const style = StyleSheet.create({

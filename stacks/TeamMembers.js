@@ -23,7 +23,7 @@ import Indicator from "../components/Indicator";
 import Avatar from "../components/Avatar";
 import SelectRolePopUpContent from "../components/SelectRolePopUpContent";
 import TeamMemberCard from "../components/TeamMemberCard";
-import SuccessSheet from "../components/SuccessSheet";
+import ConfirmationBottomSheet from "../components/ConfirmationBottomSheet";
 
 // colors
 import { background, black, bodyText, white } from "../style/colors";
@@ -75,14 +75,15 @@ const TeamMembers = ({ navigation, route }) => {
 
     // sheet ref
     const sheetRef = useRef(null);
+    // reference for confirmation bottomsheet
+    const confirmationSheetRef = useRef(null);
 
     // bottoms sheef refs
     const {
+        setToast,
         bottomSheet,
         setBottomSheet,
-        successSheetRef,
-        popUpSheetOpen,
-        setToast,
+        setConfirmationBottomSheet,
     } = useGlobals();
 
     // sheet parameters
@@ -90,6 +91,19 @@ const TeamMembers = ({ navigation, route }) => {
         content: '',
         sheetTitle: '',
         snapPointsArray: [],
+    });
+
+    // confirmation sheet
+    const [confirmationParamters, setConfirmationParameters] = useState({
+        heading: '',
+        height: 320,
+        paragragh: <></>,
+        caution: false,
+        primaryFunction: () => {},
+        primaryButtonText: '',
+        secondaryFunction: () => {},
+        secondaryButtonText: '',
+        closeConfirmationModal: undefined,
     });
 
     // state to trigger getting data from local database
@@ -269,6 +283,11 @@ const TeamMembers = ({ navigation, route }) => {
                 setSelectedId(null);
             }}
         });
+
+        // set confirmation bottomsheet state
+        setConfirmationBottomSheet(prevState=> {
+            return {...prevState, close: () => {}}
+        });
     }, []);
 
     // selected member
@@ -277,16 +296,6 @@ const TeamMembers = ({ navigation, route }) => {
         if (!selectedId) return null;
         return members?.find((member) => member?.id === selectedId);
     }, [selectedId, members]);
-
-    // state to control popUp type
-    const [popUp, setPopUp] = useState({
-        type: "",
-        title: "",
-        snapPoints: ["45%"],
-        centered: false,
-        closeModal: closePopUpModal,
-        popUpVisible: false,
-    });
 
     // state to prompt user to confirm deactivation
     const [roleInputActive, setRoleInputActive] = useState(false);
@@ -349,62 +358,61 @@ const TeamMembers = ({ navigation, route }) => {
         return false;
     }, [selectedId]);
 
-    // modal visible
-    const [modalVisible, setModalVisible] = useState(false);
+    // modal parameters
+    const [modal, setModal] = useState({
+        type: '',
+        visible: false,
+    });
 
     // function to open bottom sheet popup
     const openPopUpModal = (type) => {
+        // force blur all inputs
         setForceBlur(true);
-        setModalVisible(true);
+
+        // make modal visible
+        setModal({ type: type, visible: true });
+
+        // set role input at active state
         setRoleInputActive(true);
-        setPopUp({
-            type: type,
-        });
     }
 
     // function to close Popup modal
     const closePopUpModal = () => {
-        setModalVisible(false);
+
+        // make modal not visible
+        setModal(prevModal => {
+            return {...prevModal, visible: false }
+        });
+
+        // set role inactive as inactive
         setRoleInputActive(false);
     };
 
     // check if popup modal has been closed and disable active input
     useEffect(() => {
-        if (!modalVisible) return;
+        if (!modal.visible) return;
         // disable input active state
         setRoleInputActive(false);
-    }, [modalVisible])
+    }, [modal.visible])
 
     // function to close all bottomsheet moda;
     const closeAllModal = () => {
         closeModal();
         closePopUpModal();
-        closeSuccessModal();
+        closeConfirmationModal();
         // reset all inputs
         setFullName("");
         setWorkEmail("");
         setRole("");
     }
 
-    // succes modal state
-    const [successModal, setSuccessModal] = useState({
-        heading: '',
-        height: 320,
-        paragragh: <></>,
-        caution: false,
-        primaryFunction: () => {},
-        primaryButtonText: '',
-        secondaryFunction: () => {},
-        secondaryButtonText: '',
-    })
-
     // function to open success modal
-    const openSuccessModal = (type) => {
-        successSheetRef.current?.present();
+    const openConfirmtionModal = (type) => {
 
+        // set sheet paramters
         switch (type) {
             case "Deactivate":
-                setSuccessModal({
+                setConfirmationParameters({
                     heading: 'Deactivate User',
                     height: 381,
                     paragragh: <>
@@ -414,13 +422,14 @@ const TeamMembers = ({ navigation, route }) => {
                     caution: true,
                     primaryFunction: handleDeactivateUser,
                     primaryButtonText: 'Yes, deactivate',
-                    secondaryFunction: closeSuccessModal,
+                    secondaryFunction: closeConfirmationModal,
                     secondaryButtonText: 'No, cancel',
+                    closeConfirmationModal: closeConfirmationModal,
                 })
                 break;
         
             case "Activate":
-                setSuccessModal({
+                setConfirmationParameters({
                     heading: 'Activate User',
                     height: 381,
                     paragragh: <>
@@ -430,13 +439,14 @@ const TeamMembers = ({ navigation, route }) => {
                     caution: true,
                     primaryFunction: handleDeactivateUser,
                     primaryButtonText: 'Yes, activate',
-                    secondaryFunction: closeSuccessModal,
+                    secondaryFunction: closeConfirmationModal,
                     secondaryButtonText: 'No, cancel',
+                    closeConfirmationModal: closeConfirmationModal,
                 })
                 break;
         
             case "Confirmed Deactivation":
-                setSuccessModal({
+                setConfirmationParameters({
                     heading: `${selectedMember.full_name} Succesfully Deactivated`,
                     height: 320,
                     paragragh: <>
@@ -448,7 +458,7 @@ const TeamMembers = ({ navigation, route }) => {
                 break;
 
             case "Confirmed Activation":
-                setSuccessModal({
+                setConfirmationParameters({
                     heading: `${selectedMember.full_name} Succesfully Activated`,
                     height: 320,
                     paragragh: <>
@@ -460,7 +470,7 @@ const TeamMembers = ({ navigation, route }) => {
                 break;
 
             case "UpdateSuccess":
-                setSuccessModal({
+                setConfirmationParameters({
                     heading: 'Role Updated Succesfully',
                     height: 320,
                     paragragh: <>
@@ -472,7 +482,7 @@ const TeamMembers = ({ navigation, route }) => {
                 break;
 
             case "AddSuccess":
-                setSuccessModal({
+                setConfirmationParameters({
                     heading: <>{fullName} Succesfully Added</>,
                     height: 320,
                     paragragh: <>
@@ -486,13 +496,34 @@ const TeamMembers = ({ navigation, route }) => {
         
             default:
                 break;
-        }
+        };
+
+        // open cinfirmation bottom sheet
+        confirmationSheetRef.current?.present();
+
+        // update filter bottomsheet global state
+        setConfirmationBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: true,
+            }
+        });
     }
 
-    // function to close success modal
-    const closeSuccessModal = () => {
-        successSheetRef.current?.close();
-    }
+
+    // close confirmation bottomsheet function
+    const closeConfirmationModal = () => {
+        // close bottomsheet
+        confirmationSheetRef.current?.close();
+
+        // update filter bottomsheet global state
+        setConfirmationBottomSheet(prevState => {
+            return {
+                ...prevState,
+                opened: false,
+            }
+        });
+    };
 
     // state to store first name input value
     const [fullName, setFullName] = useState("");
@@ -644,7 +675,7 @@ const TeamMembers = ({ navigation, route }) => {
             setIsLoading(false);
             
             // open success modal
-            openSuccessModal("UpdateSuccess");
+            openConfirmtionModal("UpdateSuccess");
 
             // reset edited role
             setEditRole("");
@@ -738,7 +769,7 @@ const TeamMembers = ({ navigation, route }) => {
             setIsLoading(false);
     
             // open success pop up modal
-            openSuccessModal(selectedMember.deactivated ? "Confirmed Activation" : "Confirmed Deactivation")
+            openConfirmtionModal(selectedMember.deactivated ? "Confirmed Activation" : "Confirmed Deactivation")
 
         } catch (error) {
             console.log("Error: ", error.message);
@@ -803,7 +834,7 @@ const TeamMembers = ({ navigation, route }) => {
             // console.log(response);
 
             setIsLoading(false);
-            openSuccessModal("AddSuccess");
+            openConfirmtionModal("AddSuccess");
         } catch (error) {
             console.log("Error: ", error.message);
             setToast({
@@ -973,7 +1004,7 @@ const TeamMembers = ({ navigation, route }) => {
                             secondaryButton={true}
                             name={selectedMember?.deactivated ? "Activate User" : "Deactivate User"}
                             shrinkWrapper={true}
-                            onPress={() => openSuccessModal(selectedMember?.deactivated ? "Activate" : "Deactivate")}
+                            onPress={() => openConfirmtionModal(selectedMember?.deactivated ? "Activate" : "Deactivate")}
                             unpadded={true}
                             inactive={selectedMember?.deactivated ? false : handleCantDeactivate}
                         />
@@ -984,45 +1015,60 @@ const TeamMembers = ({ navigation, route }) => {
         </CustomBottomSheet>
         {/* popup modal */}
         <Modal
-            visible={modalVisible}
+            visible={modal.visible}
             transparent={true}
-            onRequestClose={() => setModalVisible(false)}
+            onRequestClose={() => {
+                // make modal not visible
+                setModal(prevModal => {
+                    return {...prevModal, visible: false }
+                });
+            }}
             animationType="fade"
         >
-            <View style={style.modal}>
-                <View style={style.modalView}>
-                    <Text style={style.modalTitle}>
-                        Select Role
-                    </Text>
-                    {/* select role pop up for editing team member role */}
-                    { popUp.type === "Edit" && 
-                        <SelectRolePopUpContent
-                            hanldeRoleSelect={hanldeRoleUpdate}
-                        />
-                    }
+            <TouchableWithoutFeedback
+                onPress={() => {
+                    // make modal not visible
+                    setModal(prevModal => {
+                        return {...prevModal, visible: false }
+                    });
+                }}
+            >
+                <View style={style.modal}>
+                    <View style={style.modalView}>
+                        <Text style={style.modalTitle}>
+                            Select Role
+                        </Text>
+                        {/* select role pop up for editing team member role */}
+                        { modal.type === "Edit" && 
+                            <SelectRolePopUpContent
+                                hanldeRoleSelect={hanldeRoleUpdate}
+                            />
+                        }
 
-                    {/* select role pop up for adding new team member */}
-                    { popUp.type === "Add" && 
-                        <SelectRolePopUpContent
-                            hanldeRoleSelect={hanldeRoleSelect}
-                        />
-                    }
+                        {/* select role pop up for adding new team member */}
+                        { modal.type === "Add" && 
+                            <SelectRolePopUpContent
+                                hanldeRoleSelect={hanldeRoleSelect}
+                            />
+                        }
+                    </View>
                 </View>
-            </View>
+            </TouchableWithoutFeedback>
         </Modal>
         {/* success bottom sheet */}
         {/* success up modal */}
-        <SuccessSheet
-            successSheetRef={successSheetRef}
-            heading={successModal?.heading}
-            height={successModal?.height}
-            paragraph={successModal?.paragragh}
-            caution={successModal?.caution}
-            primaryFunction={successModal?.primaryFunction}
-            primaryButtonText={successModal?.primaryButtonText}
-            secondaryFunction={successModal?.secondaryFunction}
-            secondaryButtonText={successModal?.secondaryButtonText}
+        <ConfirmationBottomSheet 
+            sheetRef={confirmationSheetRef}
+            heading={confirmationParamters?.heading}
+            height={confirmationParamters?.height}
+            paragraph={confirmationParamters?.paragragh}
+            caution={confirmationParamters?.caution}
+            primaryFunction={confirmationParamters?.primaryFunction}
+            primaryButtonText={confirmationParamters?.primaryButtonText}
+            secondaryFunction={confirmationParamters?.secondaryFunction}
+            secondaryButtonText={confirmationParamters?.secondaryButtonText}
             isLoadingPrimary={isLoading}
+            closeConfirmationModal={confirmationParamters?.closeConfirmationModal}
         />
     </>);
 }

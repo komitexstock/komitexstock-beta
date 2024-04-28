@@ -15,13 +15,9 @@ const AppProvider = ({children}) => {
 
     // calendar bottom sheet ref
     const calendarSheetRef = useRef(null);
-    // popup bottom sheet ref
-    const successSheetRef = useRef(null);
 
     // state to keep track if calendar bottomsheet is open
     const [calendarSheetOpen, setCalendarSheetOpen] = useState(false);
-    // state to keep track if success up bottomsheet is open
-    const [successSheetOpen, setSuccessSheetOpen] = useState(false);
     
     // states to indicate a loading action is being carried out
     const [isLoading, setIsLoading] = useState(false);
@@ -61,7 +57,7 @@ const AppProvider = ({children}) => {
     });
 
     // success bottomsheet
-    const [successBottomSheet, setSuccessBottomSheet] = useState({
+    const [confirmationBottomSheet, setConfirmationBottomSheet] = useState({
         opened: false,
         close: () => {},
     });
@@ -73,7 +69,7 @@ const AppProvider = ({children}) => {
         stackedBottomSheet,
         filterBottomSheet,
         calendarBottomSheet,
-        successBottomSheet,
+        confirmationBottomSheet,
         isLoading,
         isLoadingSecondary
     ];
@@ -115,8 +111,8 @@ const AppProvider = ({children}) => {
                     }
                 })
                 return true;
-            } else if (successBottomSheet.opened) { // if success bottomsheet is opened
-                successBottomSheet.close();
+            } else if (confirmationBottomSheet.opened) { // if success bottomsheet is opened
+                confirmationBottomSheet.close();
                 setStackedBottomSheet(prevState => {
                     return {
                         ...prevState,
@@ -184,14 +180,12 @@ const AppProvider = ({children}) => {
                 setStackedBottomSheet,
                 setFilterBottomSheet,
                 setCalendarBottomSheet,
-                setSuccessBottomSheet,
+                setConfirmationBottomSheet,
 
 
                 calendarSheetRef,
-                successSheetRef,
                 calendarSheetOpen,
                 setCalendarSheetOpen,
-                setSuccessSheetOpen,
             }}
         >
            {children}

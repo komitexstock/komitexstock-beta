@@ -901,9 +901,16 @@ const Warehouse = ({navigation, route}) => {
                                             address={item?.warehouse_address}
                                             addNew={item?.add_new}
                                             onPressMenu={() => openModal("Edit", item?.id)}
-                                            onPress={() => navigation.navigate("Inventory", {
-                                                warehouse_id: item?.id,
-                                            })}
+                                            onPress={() => {
+                                                if (item.add_new) {
+                                                    // navigate to add new screen
+                                                    return navigation.navigate("AddWarehouse")
+                                                }
+                                                // else navigate to inventory screen
+                                                navigation.navigate("Inventory", {
+                                                    warehouse_id: item?.id,
+                                                })
+                                            }}
                                         />
                                     </View>
                                 )
