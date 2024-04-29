@@ -23,9 +23,7 @@ import { useGlobals } from "../context/AppContext";
 
 const Login = ({navigation}) => {
 
-    const { setToast } = useGlobals();
-
-    const [isLoading, setIsLoading] = useState(false); // boolean
+    const { setToast, isLoading, setIsLoading } = useGlobals();
 
     // state to store password
     const [password, setPassword] = useState("komitex1234"); // string

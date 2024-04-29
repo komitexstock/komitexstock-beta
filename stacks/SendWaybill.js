@@ -84,9 +84,6 @@ const SendWaybill = ({navigation, route}) => {
         if (!fetchingProducts && !fetchingWarehouse) setPageLoading(false); 
     }, [fetchingProducts, fetchingWarehouse]);
 
-    // button loading state
-    const [isLoading, setIsLoading] = useState(false); // boolean
-
     // state to store search queries
     const [searchQuery, setSearchQuery] = useState(null); // string
 
@@ -104,7 +101,9 @@ const SendWaybill = ({navigation, route}) => {
     const {
         bottomSheet,
         setBottomSheet,
-        setToast
+        setToast,
+        isLoading, 
+        setIsLoading
     } = useGlobals(); // global variables
 
     // state to store selected logistics

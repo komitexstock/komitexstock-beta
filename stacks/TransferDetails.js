@@ -9,8 +9,13 @@ import MerchantProduct from '../components/MerchantProduct';
 // icons
 import WarehouseDirectionArrowIcon from '../assets/icons/WarehouseDirectionArrowIcon';
 import EditIcon from "../assets/icons/EditIcon";
+// global states in app cpntext
+import { useGlobals } from '../context/AppContext';
 
 const TransferDetails = ({navigation, route}) => {
+
+    // use global states
+    const { isLoading, setIsLoading } = useGlobals()
 
     // origin warehouse
     const originWarehouse = {
@@ -24,6 +29,7 @@ const TransferDetails = ({navigation, route}) => {
         warehouse_name: "Benin"
     };
 
+    // selected products
     const selectedProducts = [
         {
             id: 2,
@@ -52,11 +58,9 @@ const TransferDetails = ({navigation, route}) => {
             quantity: 1,
             selected: false
         },
-    ]
+    ];
 
     const additionalDetails = "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Vel, incidunt.";
-
-    const [isLoading, setIsLoading] = useState(false);
 
     return (
         <>
@@ -116,7 +120,7 @@ const TransferDetails = ({navigation, route}) => {
 
             </ScrollView>
         </>
-    )
+    );
 }
 
 export default TransferDetails

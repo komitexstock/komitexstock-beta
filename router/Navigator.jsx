@@ -36,7 +36,6 @@ import AddLogistics from '../stacks/AddLogistics';
 import AvailableLocations from '../stacks/AvailableLocations';
 import AddProduct from '../stacks/AddProduct';
 import EditProduct from '../stacks/EditProduct';
-import ImportInventory from '../stacks/ImportInventory';
 // warehouse related stacks
 import Warehouse from '../stacks/Warehouse';
 import AddWarehouse from '../stacks/AddWarehouse';
@@ -165,11 +164,6 @@ const Navigator = () => {
                     <Stack.Screen 
                         name="EditProduct" 
                         component={EditProduct} 
-                    />
-                    {/* Import Inventory stack */}
-                    <Stack.Screen 
-                        name="ImportInventory" 
-                        component={ImportInventory} 
                     />
                     {/* Add Logistics stack */}
                     <Stack.Screen 

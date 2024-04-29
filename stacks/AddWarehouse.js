@@ -59,7 +59,7 @@ const AddWarehouse = ({navigation}) => {
     const { authData } = useAuth();
 
     // isloading state for buttons
-    const [isLoading, setIsLoading] = useState(false);
+    const [] = useState(false);
 
     // state to store progress of obtaining managers list
     const [obtainedManagers, setObtainedManagers] = useState(false);
@@ -72,7 +72,9 @@ const AddWarehouse = ({navigation}) => {
     // bottomsheet refs
     const {
         setToast,
+        isLoading, 
         bottomSheet,
+        setIsLoading,
         setBottomSheet,
         setConfirmationBottomSheet,
     } = useGlobals();

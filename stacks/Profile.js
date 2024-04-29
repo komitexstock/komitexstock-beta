@@ -36,8 +36,6 @@ const Profile = ({navigation}) => {
     // auth data
     const { authData, setStoredData } = useAuth();
 
-    const [isLoading, setIsLoading] = useState(false);
-
     // sheet ref
     const sheetRef = useRef(null);
 
@@ -45,7 +43,9 @@ const Profile = ({navigation}) => {
     const {
         bottomSheet,
         setBottomSheet,
-        setToast
+        setToast,
+        isLoading, 
+        setIsLoading
     } = useGlobals();
 
     const [sheetParameters, setSheetParameters] = useState({

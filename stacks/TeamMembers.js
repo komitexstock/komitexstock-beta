@@ -84,6 +84,8 @@ const TeamMembers = ({ navigation, route }) => {
         bottomSheet,
         setBottomSheet,
         setConfirmationBottomSheet,
+        isLoading, 
+        setIsLoading
     } = useGlobals();
 
     // sheet parameters
@@ -124,9 +126,6 @@ const TeamMembers = ({ navigation, route }) => {
 
     // state to check if online data has been loaded
     const [onlineDataFetched, setOnlineDataFetched] = useState(false);
-
-    // button loading state
-    const [isLoading, setIsLoading] = useState(false);
 
     // members from local database
     const [members, setMembers] = useState(preloaded_data);

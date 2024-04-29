@@ -59,14 +59,11 @@ const CreateAccount = ({navigation}) => {
     const { setStoredData } = useAuth();
 
     // toast parameters
-    const { setToast } = useGlobals();
+    const { setToast, isLoading, setIsLoading } = useGlobals();
 
     // total number of step in the creating account proccess
     const totalSteps = [1, 2, 3];
     const [currentStep, setCurrentStep] = useState(1);
-
-    // state to indicate loading
-    const [isLoading, setIsLoading] = useState(false);
 
     // email address
     const [emailAddress, setEmailAddress] = useState("johndoe@gmail.com");

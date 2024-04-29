@@ -67,15 +67,12 @@ const AddProduct = ({navigation, route}) => {
         return route.params || "Inventory"
     }, [route]);
 
-    // toast function
-    const { setToast } = useGlobals();
+    // global variables
+    const { setToast, isLoading, setIsLoading } = useGlobals();
     
     // state to store product name
     const [productName, setProductName] = useState("");
 
-    // button loading state
-    const [isLoading, setIsLoading] = useState(false);
-    
     // state to store price value
     const [price, setPrice] = useState("");
 

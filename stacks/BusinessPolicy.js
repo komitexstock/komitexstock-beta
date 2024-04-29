@@ -87,7 +87,9 @@ const BusinessPolicy = ({navigation, route}) => {
     const {
         bottomSheet,
         setBottomSheet,
-        setToast
+        setToast,
+        isLoading, 
+        setIsLoading,
     } = useGlobals();
 
     // update bottomsheet close function
@@ -143,9 +145,6 @@ const BusinessPolicy = ({navigation, route}) => {
             }
         });
     }
-
-    // const indicate lodaing state for buttons
-    const [isLoading, setIsLoading] = useState(false);
 
     // remittance policy
     const [remittancePolicy, setRemittancePolicy] = useState(preloaded_data?.max_remittance_duration || "");

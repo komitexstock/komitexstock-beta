@@ -67,9 +67,6 @@ const EditLocation = ({navigation, route}) => {
 
     // page loading
     const [pageLoading, setPageLoading] = useState(true);
-
-    // button loading state
-    const [isLoading, setIsLoading] = useState(false);
     
     // state locations
     const {stateLocations} = route?.params || {};
@@ -88,9 +85,11 @@ const EditLocation = ({navigation, route}) => {
 
     // globals
     const {
+        setToast,
+        isLoading,
+        setIsLoading,
         setBottomSheet,
         setStackedBottomSheet,
-        setToast
     } = useGlobals();
 
     // update global bottomsheet states

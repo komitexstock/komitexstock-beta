@@ -35,6 +35,8 @@ const GenerateBusinessReport = ({navigation}) => {
 
     // global variables/states
     const {
+        isLoading, 
+        setIsLoading,
         setBottomSheet,
         setConfirmationBottomSheet,
     } = useGlobals();
@@ -59,8 +61,6 @@ const GenerateBusinessReport = ({navigation}) => {
             return {...prevState, close: () => confirmationSheetRef.current?.close()}
         });
     }, [])
-
-    const [isLoading, setIsLoading] = useState(false);
 
     // variable to store start date
     const [startDate, setStartDate] = useState("");

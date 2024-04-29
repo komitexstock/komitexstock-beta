@@ -65,9 +65,6 @@ const EditWarehouse = ({navigation, route}) => {
     // auth data
     const { authData } = useAuth();
 
-    // loading state for buttons
-    const [isLoading, setIsLoading] = useState(false);
-
     // state to store progress of obtaining managers list
     const [obtainedManagers, setObtainedManagers] = useState(false);
 
@@ -89,6 +86,8 @@ const EditWarehouse = ({navigation, route}) => {
     const {
         setToast,
         bottomSheet,
+        isLoading, 
+        setIsLoading,
         setBottomSheet,
         setConfirmationBottomSheet,
     } = useGlobals();

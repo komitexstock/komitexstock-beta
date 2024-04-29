@@ -78,11 +78,10 @@ const AddLocation = ({navigation}) => {
     const {
         setBottomSheet,
         setStackedBottomSheet,
-        setToast
+        setToast,
+        isLoading, 
+        setIsLoading
     } = useGlobals();
-
-    // main action button loadins state
-    const [isLoading, setIsLoading] = useState(false);
 
     // location state, to store list of locations
     const [sublocations, setSublocations] = useState([]);

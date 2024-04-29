@@ -48,7 +48,7 @@ const AboutLogistics = ({navigation, route}) => {
     const confirmationSheetRef = useRef(null);
 
     // global states
-    const { setConfirmationBottomSheet } = useGlobals();
+    const { setConfirmationBottomSheet, isLoading, setIsLoading } = useGlobals();
 
     // update botomsheet global states
     useEffect(() => {
@@ -432,9 +432,6 @@ const AboutLogistics = ({navigation, route}) => {
       
     // page loading state
     const [pageLoading, setPageLoading] = useState(true);
-
-    // varaible to indiacte button loading state
-    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         setTimeout(() => {

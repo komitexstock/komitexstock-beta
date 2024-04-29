@@ -37,7 +37,7 @@ const SendOrder = ({navigation, route}) => {
     const sheetRef = useRef(null);
 
     // bottom sheet ref
-    const { bottomSheet, setBottomSheet } = useGlobals();
+    const { bottomSheet, setBottomSheet, isLoading, setIsLoading } = useGlobals();
 
     const [sheetParameters, setSheetParameters] = useState({
         content: '',
@@ -186,9 +186,6 @@ const SendOrder = ({navigation, route}) => {
             (Array.isArray(item) && item.length === 0);
         }
     );
-
-    // state to indicate loading
-    const [isLoading, setIsLoading] = useState(false)
 
     // function to process order, would send a request to ChatGPT 3.5
     const processOrderDetails = async () => {
