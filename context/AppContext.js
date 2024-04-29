@@ -13,12 +13,6 @@ const AppProvider = ({children}) => {
     const navigation = useNavigation();
     const [currentStack, setCurrentStack] = useState("");
 
-    // calendar bottom sheet ref
-    const calendarSheetRef = useRef(null);
-
-    // state to keep track if calendar bottomsheet is open
-    const [calendarSheetOpen, setCalendarSheetOpen] = useState(false);
-    
     // states to indicate a loading action is being carried out
     const [isLoading, setIsLoading] = useState(false);
     // secondary loading state
@@ -50,12 +44,6 @@ const AppProvider = ({children}) => {
         close: () => {},
     });
 
-    // calendar bottomsheet
-    const [calendarBottomSheet, setCalendarBottomSheet] = useState({
-        opened: false,
-        close: () => {},
-    });
-
     // success bottomsheet
     const [confirmationBottomSheet, setConfirmationBottomSheet] = useState({
         opened: false,
@@ -68,7 +56,6 @@ const AppProvider = ({children}) => {
         bottomSheet,
         stackedBottomSheet,
         filterBottomSheet,
-        calendarBottomSheet,
         confirmationBottomSheet,
         isLoading,
         isLoadingSecondary
@@ -84,7 +71,17 @@ const AppProvider = ({children}) => {
                 return true; 
             }
 
-            if (filterBottomSheet.opened) { // if filter bottomsheet is opened
+            
+            if (confirmationBottomSheet.opened) { // if success bottomsheet is opened
+                confirmationBottomSheet.close();
+                setStackedBottomSheet(prevState => {
+                    return {
+                        ...prevState,
+                        opened: false,
+                    }
+                })
+                return true;
+            }else if (filterBottomSheet.opened) { // if filter bottomsheet is opened
                 filterBottomSheet.close();
                 setFilterBottomSheet(prevState => {
                     return {
@@ -95,24 +92,6 @@ const AppProvider = ({children}) => {
                 return true;
             } else if (stackedBottomSheet.opened) { // if stacked bottomsheet is opened
                 stackedBottomSheet.close();
-                setStackedBottomSheet(prevState => {
-                    return {
-                        ...prevState,
-                        opened: false,
-                    }
-                })
-                return true;
-            } else if (calendarBottomSheet.opened) { // if calendar bottomsheet is opened
-                calendarBottomSheet.close();
-                setStackedBottomSheet(prevState => {
-                    return {
-                        ...prevState,
-                        opened: false,
-                    }
-                })
-                return true;
-            } else if (confirmationBottomSheet.opened) { // if success bottomsheet is opened
-                confirmationBottomSheet.close();
                 setStackedBottomSheet(prevState => {
                     return {
                         ...prevState,
@@ -179,13 +158,7 @@ const AppProvider = ({children}) => {
                 setBottomSheet,
                 setStackedBottomSheet,
                 setFilterBottomSheet,
-                setCalendarBottomSheet,
                 setConfirmationBottomSheet,
-
-
-                calendarSheetRef,
-                calendarSheetOpen,
-                setCalendarSheetOpen,
             }}
         >
            {children}

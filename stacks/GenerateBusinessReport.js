@@ -9,7 +9,7 @@ import {
 import Header from "../components/Header";
 import CustomButton from "../components/CustomButton";
 import SelectInput from "../components/SelectInput";
-import CalendarSheet from "../components/CalendarSheet";
+import Calendar from "../components/Calendar";
 import CustomBottomSheet from "../components/CustomBottomSheet";
 import ConfirmationBottomSheet from "../components/ConfirmationBottomSheet";
 // colors
@@ -36,8 +36,6 @@ const GenerateBusinessReport = ({navigation}) => {
     // global variables/states
     const {
         setBottomSheet,
-        calendarSheetRef,
-        calendarSheetOpen,
         setConfirmationBottomSheet,
     } = useGlobals();
 
@@ -100,31 +98,42 @@ const GenerateBusinessReport = ({navigation}) => {
         setDate: setStartDate,
         maxDate: false,
         minDate: false,
+        visible: false,
     });
 
     const openCalendar = (inputType) => {
+        // set calendar paramteres for start date
         if (inputType === "StartDate") {
             setActiveStartDate(true);
             setCalendar({
                 setDate: setStartDate,
                 maxDate: endDate ? moment(endDate).subtract(1, 'days') : prevDate,
-                minDate: false
+                minDate: false,
+                visible: true,
             });
-        } else {
+        } else { // set calendar paramters for end date
             setActiveEndDate(true);
             setCalendar({
                 setDate: setEndDate,
                 maxDate: today,
                 minDate: startDate ? moment(startDate).add(1, 'days') : startDate,
+                visible: true,
             });
         }
-        calendarSheetRef.current?.present();
     }
 
     const closeCalendar = () => {
+        // disable inut active states
         setActiveEndDate(false);
         setActiveStartDate(false);
-        calendarSheetRef.current?.close();
+
+        // hide calendar
+        setCalendar(prevCalendar => {
+            return {
+                ...prevCalendar,
+                visible: false,
+            }
+        })
     }
 
     // check for empty fields
@@ -203,15 +212,6 @@ const GenerateBusinessReport = ({navigation}) => {
             openConfirmtionModal();
         }, 3000);
     }
-
-    // check if calendar sheet is closed and disable active state for date inputs
-    useEffect(() => {
-        if (!calendarSheetOpen) {
-            setActiveEndDate(false);
-            setActiveStartDate(false);
-        }
-
-    }, [calendarSheetOpen])
     
     // render GenerateBusinessReport page
     return (
@@ -276,16 +276,6 @@ const GenerateBusinessReport = ({navigation}) => {
                 fixed={false}
                 inactive={emptyFields}
             />
-            {/* calendar */}
-            <CalendarSheet 
-                closeCalendar={closeCalendar}
-                setDate={calendar.setDate}
-                disableActionButtons={true}
-                snapPointsArray={["60%"]}
-                minDate={calendar.minDate}
-                maxDate={calendar.maxDate}
-                calendarRef={calendarSheetRef} 
-            />
 
             {/* custome bottom sheet */}
             <CustomBottomSheet 
@@ -328,6 +318,17 @@ const GenerateBusinessReport = ({navigation}) => {
                 </>}
                 primaryFunction={closeConfirmationModal}
             />
+
+            {/* calendar */}
+            <Calendar 
+                minDate={calendar.minDate}
+                maxDate={calendar.maxDate}
+                setDate={calendar.setDate}
+                visible={calendar.visible}
+                disableActionButtons={true}
+                closeCalendar={closeCalendar}
+            />
+
         </>
     );
 }

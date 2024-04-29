@@ -30,7 +30,7 @@ import CustomBottomSheet from '../components/CustomBottomSheet';
 import FilterBottomSheet from "../components/FilterBottomSheet";
 import FilterButtonGroup from "../components/FilterButtonGroup";
 import SelectInput from "../components/SelectInput";
-import CalendarSheet from "../components/CalendarSheet";
+import Calendar from "../components/Calendar";
 import FilterPill from "../components/FilterPill";
 
 // skeleon screen
@@ -87,8 +87,6 @@ const Warehouse = ({navigation, route}) => {
         bottomSheet,
         setBottomSheet,
         setFilterBottomSheet,
-        calendarSheetRef,
-        calendarSheetOpen,
         setToast 
     } = useGlobals();
     
@@ -722,45 +720,46 @@ const Warehouse = ({navigation, route}) => {
         setDate: setStartDate,
         maxDate: false,
         minDate: false,
+        visible: false,
     });
+
 
     // function to open calendar
     const openCalendar = (inputType) => {
+        // set calendar parameters for start date
         if (inputType === "StartDate") {
             setActiveStartDate(true);
             setCalendar({
                 setDate: setStartDate,
                 maxDate: endDate ? moment(endDate).subtract(1, 'days') : today,
-                minDate: false
+                minDate: false,
+                visible: true,
             });
-        } else {
+        } else { // set calendar parameters for end date
             setActiveEndDate(true);
             setCalendar({
                 setDate: setEndDate,
                 maxDate: today,
                 minDate: startDate ? moment(startDate).add(1, 'days') : startDate,
+                visible: true,
             });
         }
-        calendarSheetRef.current?.present();
     }
 
     // close calendar
     const closeCalendar = () => {
+        // deactivate actibe sates for inputs
         setActiveEndDate(false);
         setActiveStartDate(false);
-        calendarSheetRef.current?.close();
+
+        // hide ecalendar
+        setCalendar(prevCalendar => {
+            return {
+                ...prevCalendar,
+                visible: false,
+            }
+        })
     }
-
-    // to disable avtive states for date inputs if back button is pressed
-    // ...when calendar sheet if open
-    useEffect(() => {
-        if (!calendarSheetOpen) {
-            setActiveEndDate(false);
-            setActiveStartDate(false);
-        }
-
-    }, [calendarSheetOpen])
-    
 
     return (<>
         { !pageLoading ? (<>
@@ -1043,14 +1042,13 @@ const Warehouse = ({navigation, route}) => {
             </View>
         </FilterBottomSheet>
         {/* calnedar */}
-        <CalendarSheet 
-            closeCalendar={closeCalendar}
+        <Calendar 
             setDate={calendar.setDate}
-            disableActionButtons={true}
-            snapPointsArray={["60%"]}
             minDate={calendar.minDate}
             maxDate={calendar.maxDate}
-            calendarRef={calendarSheetRef} 
+            visible={calendar.visible} 
+            disableActionButtons={true}
+            closeCalendar={closeCalendar}
         />
     </>)
 }

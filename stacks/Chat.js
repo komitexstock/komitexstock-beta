@@ -43,7 +43,7 @@ import AlertNewChat from "../components/AlertNewChat";
 import CustomBottomSheet from "../components/CustomBottomSheet";
 import AddProductsModalContent from "../components/AddProductsModalContent";
 import AddLocationModalContent from "../components/AddLocationModalContent";
-import CalendarSheet from "../components/CalendarSheet";
+import Calendar from "../components/Calendar";
 import Product from "../components/Product";
 import CustomButton from "../components/CustomButton";
 import Input from "../components/Input";
@@ -102,8 +102,7 @@ const Chat = ({navigation, route}) => {
     const {
         setBottomSheet,
         setStackedBottomSheet,
-        calendarSheetRef,
-        setToast
+        setToast,
     } = useGlobals();
 
     // sheet paramteres
@@ -492,16 +491,20 @@ const Chat = ({navigation, route}) => {
     // before user decides on texting, calling or whatsapp message
     const [linkPhoneNumber, setLinkPhoneNumber] = useState("");
 
-    // function to close calendar bottomsheet
-    const closeCalendar = () => {
-        calendarSheetRef.current?.close();
+    // calendar visible state
+    const [calendarVisible, setCalendarVisible] = useState(false);
+
+    // open calendar function
+    const openCalendar = () => {
+        // show calendar
+        setCalendarVisible(true);
     }
     
-    // function to open calendar bottomsheet
-    const openCalendar = () => {
-        calendarSheetRef.current?.present();
+    // close calendar function
+    const closeCalendar = () => {
+        // hide calendar
+        setCalendarVisible(false)
     }
-
     // function handle selected location when location of an order or waybill is being edited
     const handleSelectedLocation = (data) => {
         closeStackedModal();
@@ -1674,13 +1677,12 @@ const Chat = ({navigation, route}) => {
         </View>
 
         {/* calendar */}
-        <CalendarSheet 
-            closeCalendar={closeCalendar}
+        <Calendar 
+            minDate={tomorrow}
+            visible={calendarVisible}
             setDate={setRescheduleDate}
             disableActionButtons={true}
-            snapPointsArray={["55%"]}
-            minDate={tomorrow}
-            calendarRef={calendarSheetRef} 
+            closeCalendar={closeCalendar}
         />
         
         {/* Bottom sheet component */}

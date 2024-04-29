@@ -1,5 +1,5 @@
 // react native components
-import { StyleSheet, View, Dimensions } from "react-native";
+import { StyleSheet, View, Dimensions, Modal, TouchableWithoutFeedback } from "react-native";
 // bottomsheet components
 import { BottomSheetModal, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 // react hooks
@@ -15,7 +15,6 @@ import NextArrowIcon from '../assets/icons/NextArrowIcon';
 import CustomButton from "./CustomButton";
 import ActionButton from './ActionButton';
 // gloabl variables from App context
-import { useGlobals } from "../context/AppContext";
 
 const windowWidth = Dimensions.get("window").width;
 
@@ -27,7 +26,7 @@ const paddingHorizontal = 40;
 
 const calendarWidth = windowWidth - paddingHorizontal;
 
-const CalendarSheet = ({calendarRef, closeCalendar, snapPointsArray, setDate, disableActionButtons, minDate, maxDate}) => {
+const Calendar = ({visible, closeCalendar, setDate, disableActionButtons, minDate, maxDate}) => {
 
     // render popup bottomsheet modal backdrop 
     const renderBackdrop = useCallback(
@@ -121,35 +120,16 @@ const CalendarSheet = ({calendarRef, closeCalendar, snapPointsArray, setDate, di
    
     // render calendar sheet component
     return (
-        <View style={style.container}>
-            <BottomSheetModal
-                ref={calendarRef}
-                index={0}
-                snapPoints={snapPointsArray}
-                backgroundStyle={{
-                    borderRadius: 24,
-                }}
-                containerStyle={{
-                    borderRadius: 24,
-                    marginHorizontal: 20,
-                    // transform move in x axis -50% and y axis -50%
-                    transform: [
-                        // {translateX: -windowWidth * 0.7},
-                        {translateY: -windowHeight * 0.15},
-                    ]
-                }}
-                handleComponent={() => (
-                    <></>
-                )}
-                style={{
-                }}
-                // push stackbehaviour to allow popup modal to display
-                // over other bottomsheet
-                stackBehavior="push"
-                backdropComponent={renderBackdrop}
-                onChange={(index) => handleOnSheetChange(index)}
+        <Modal
+            visible={visible}
+            transparent={true}
+            onRequestClose={closeCalendar}
+            animationType="fade"
+        >
+            <TouchableWithoutFeedback
+                onPress={closeCalendar}
             >
-                <View style={style.modalWrapper}>
+                <View style={style.modal}>
                     <View style={style.calenderWrapper}>
                         <CalendarPicker
                             textStyle={calenderStyles.textStyle}
@@ -198,28 +178,20 @@ const CalendarSheet = ({calendarRef, closeCalendar, snapPointsArray, setDate, di
                         </View>
                     </View>
                 </View>
-            </BottomSheetModal>
-        </View>
+            </TouchableWithoutFeedback>
+        </Modal>
     );
 }
  
 // stylesheet
 const style = StyleSheet.create({
-    container: {
+    modal: {
         flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
-        width: "100%",
-        height: "100%",
-        backgroundColor: "transparent",
-    },
-    modalWrapper: {
-        display: "flex",
-        justifyContent: "flex-start",
-        alignItems: "center",
-        flexDirection: "column",
-        flex: 1,
-        width: "100%",
+        backgroundColor: 'red',
+        backgroundColor: 'rgba(0, 0, 0, 0.3)',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     calenderWrapper: {
         backgroundColor: white,
@@ -230,7 +202,7 @@ const style = StyleSheet.create({
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        height: '100%',
+        minHeight: 350,
     },
     calendarBaseContainer: {
         display: 'flex',
@@ -295,4 +267,4 @@ const calenderStyles = {
 
 
 
-export default CalendarSheet;
+export default Calendar;

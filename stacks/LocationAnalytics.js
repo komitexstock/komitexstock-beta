@@ -21,7 +21,7 @@ import BarChart from "../components/BarChart";
 import StatWrapper from "../components/StatWrapper";
 import StatCard from "../components/StatCard";
 import BusinessAnalyticsItem from "../components/BusinessAnalyticsItem";
-import CalendarSheet from "../components/CalendarSheet";
+import Calendar from "../components/Calendar";
 // icons
 import ArrowDownSmall from '../assets/icons/ArrowDownSmall';
 // react hooks
@@ -34,7 +34,7 @@ import { useGlobals } from "../context/AppContext";
 const LocationAnalytics = ({navigation}) => {
 
     // calendar sheet
-    const { calendarSheetRef } = useGlobals();
+    // const {  } = useGlobals();
 
     // bar chart data
     const data = [
@@ -148,13 +148,19 @@ const LocationAnalytics = ({navigation}) => {
         },
     ];
 
+    // calendar visible state
+    const [calendarVisible, setCalendarVisible] = useState(false);
+
     // open calendar function
     const openCalendar = () => {
-        calendarSheetRef.current?.present();
+        // show calendar
+        setCalendarVisible(true);
     }
     
+    // close calendar function
     const closeCalendar = () => {
-        calendarSheetRef.current?.close();
+        // hide calendar
+        setCalendarVisible(false)
     }
 
     const [date, setDate] = useState(null);
@@ -238,13 +244,12 @@ const LocationAnalytics = ({navigation}) => {
                 </ScrollView>
             ) : <LocationAnalyticsSkeleton />}
             {/* calendar */}
-            <CalendarSheet 
-                closeCalendar={closeCalendar}
+            <Calendar 
                 setDate={setDate}
-                disableActionButtons={false}
-                snapPointsArray={["70%"]}
                 maxDate={new Date()}
-                calendarRef={calendarSheetRef} 
+                visible={calendarVisible} 
+                disableActionButtons={false}
+                closeCalendar={closeCalendar}
             />
         </>
     );

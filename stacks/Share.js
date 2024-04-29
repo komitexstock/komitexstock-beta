@@ -8,7 +8,7 @@ import CustomButton from "../components/CustomButton";
 import FilterBottomSheet from "../components/FilterBottomSheet";
 import FilterButtonGroup from "../components/FilterButtonGroup";
 import FilterPill from "../components/FilterPill";
-import CalendarSheet from "../components/CalendarSheet";
+import Calendar from "../components/Calendar";
 import SelectInput from "../components/SelectInput";
 // colors
 import { background, bodyText, white } from "../style/colors";
@@ -31,8 +31,6 @@ const Share = ({navigation}) => {
     // global states
     const {
         setFilterBottomSheet,
-        calendarSheetRef,
-        calendarSheetOpen
     } = useGlobals();
 
     // update botomsheet global states
@@ -1395,42 +1393,45 @@ const Share = ({navigation}) => {
         setDate: setStartDate,
         maxDate: false,
         minDate: false,
+        visible: false,
     });
 
     // function to open calendar
     const openCalendar = (inputType) => {
+        // set calendar parameters for start date
         if (inputType === "StartDate") {
             setActiveStartDate(true);
             setCalendar({
                 setDate: setStartDate,
                 maxDate: endDate ? moment(endDate).subtract(1, 'days') : today,
-                minDate: false
+                minDate: false,
+                visible: true,
             });
-        } else {
+        } else { // set calendar parameters for end date
             setActiveEndDate(true);
             setCalendar({
                 setDate: setEndDate,
                 maxDate: today,
                 minDate: startDate ? moment(startDate).add(1, 'days') : startDate,
+                visible: true,
             });
         }
-        calendarSheetRef.current?.present();
     }
 
     // close calendar
     const closeCalendar = () => {
+        // deactivate actibe sates for inputs
         setActiveEndDate(false);
         setActiveStartDate(false);
-        calendarSheetRef.current?.close();
-    }
 
-    // disable active states of select input if calendar is closed with back button
-    useEffect(() => {
-        if (!calendarSheetOpen) {
-            setActiveEndDate(false);
-            setActiveStartDate(false);
-        }
-    }, [calendarSheetOpen])
+        // hide ecalendar
+        setCalendar(prevCalendar => {
+            return {
+                ...prevCalendar,
+                visible: false,
+            }
+        })
+    }
 
     // share screen
     return (
@@ -1568,14 +1569,13 @@ const Share = ({navigation}) => {
                 </View>
             </FilterBottomSheet>
             {/* calnedar */}
-            <CalendarSheet 
-                closeCalendar={closeCalendar}
+            <Calendar 
                 setDate={calendar.setDate}
-                disableActionButtons={true}
-                snapPointsArray={["60%"]}
                 minDate={calendar.minDate}
                 maxDate={calendar.maxDate}
-                calendarRef={calendarSheetRef} 
+                visible={calendar.visible} 
+                disableActionButtons={true}
+                closeCalendar={closeCalendar}
             />
         </>
 

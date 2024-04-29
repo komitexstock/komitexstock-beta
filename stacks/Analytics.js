@@ -23,7 +23,7 @@ import StatCard from "../components/StatCard";
 import BusinessAnalyticsItem from "../components/BusinessAnalyticsItem";
 import LocationAnalyticsItem from "../components/LocationAnalyticsItem";
 import ProductAnalyticsItem from "../components/ProductAnalyticsItem";
-import CalendarSheet from "../components/CalendarSheet";
+import Calendar from "../components/Calendar";
 // icons
 import ArrowDownSmall from '../assets/icons/ArrowDownSmall';
 // react hooks
@@ -41,8 +41,7 @@ const Analytics = ({navigation}) => {
     // auth data
     const { authData } = useAuth();
 
-    // calendar ref
-    const { calendarSheetRef } = useGlobals();
+    // const {  } = useGlobals();
 
     // bar chart data
     const data = [57000, 72000, 58000, 81500, 83750, 67000, 39000];
@@ -298,12 +297,19 @@ const Analytics = ({navigation}) => {
 
     // console.log(tabs)
 
+    // calendaer visible state
+    const [calendarVisible, setCalendarVisible] = useState(false);
+
+    // open calemdar function
     const openCalendar = () => {
-        calendarSheetRef.current?.present();
+        // open calendar
+        setCalendarVisible(true);
     }
     
+    // close calemdar function
     const closeCalendar = () => {
-        calendarSheetRef.current?.close();
+        // close calendar
+        setCalendarVisible(false);
     }
 
     const [date, setDate] = useState("");
@@ -509,13 +515,12 @@ const Analytics = ({navigation}) => {
             </ScrollView>
         ) : <AnalyticsSkeleton />}
         {/* calendar bottomsheet modal */}
-        <CalendarSheet 
-            closeCalendar={closeCalendar}
+        <Calendar 
             setDate={setDate}
-            disableActionButtons={false}
-            snapPointsArray={["70%"]}
             maxDate={new Date()}
-            calendarRef={calendarSheetRef} 
+            visible={calendarVisible}
+            disableActionButtons={false}
+            closeCalendar={closeCalendar}
         />
     </>);
 }

@@ -30,7 +30,7 @@ import SearchBar from "../components/SearchBar";
 import Badge from "../components/Badge";
 import Header from "../components/Header";
 import FilterBottomSheet from "../components/FilterBottomSheet";
-import CalendarSheet from "../components/CalendarSheet";
+import Calendar from "../components/Calendar";
 import FilterPill from "../components/FilterPill";
 import OpenFilterButton from "../components/OpenFilterButton";
 // bottomsheet components
@@ -54,8 +54,6 @@ const Orders = ({navigation}) => {
     const {
         setBottomSheet,
         setFilterBottomSheet,
-        calendarSheetRef,
-        calendarSheetOpen
     } = useGlobals();
 
     // update botomsheet global states
@@ -862,6 +860,7 @@ const Orders = ({navigation}) => {
         setDate: setStartDate,
         maxDate: false,
         minDate: false,
+        visible: false,
     });
 
     // function to setEnd date as today if start date is selected as today
@@ -874,37 +873,40 @@ const Orders = ({navigation}) => {
     }, [startDate])
 
     const openCalendar = (inputType) => {
+        // set parameters for startdate calendar
         if (inputType === "StartDate") {
             setActiveStartDate(true);
             setCalendar({
                 setDate: setStartDate,
                 maxDate: endDate ? moment(endDate).subtract(1, 'days') : today,
-                minDate: false
+                minDate: false,
+                visible: true,
             });
-        } else {
+        } else { // set parameters for enddate calendar
             setActiveEndDate(true);
             setCalendar({
                 setDate: setEndDate,
                 maxDate: today,
                 minDate: startDate ? moment(startDate).add(1, 'days') : startDate,
+                visible: false,
             });
         }
-        calendarSheetRef.current?.present();
     }
 
     const closeCalendar = () => {
+        // disable active sate for inputs
         setActiveEndDate(false);
         setActiveStartDate(false);
-        calendarSheetRef.current?.close();
+
+        // hide caleldar
+        setCalendar(prevCalendar => {
+            return {
+                ...prevCalendar,
+                visible: false
+            }
+        })
     }
-
-    useEffect(() => {
-        if (!calendarSheetOpen) {
-            setActiveEndDate(false);
-            setActiveStartDate(false);
-        };
-    }, [])
-
+    
     // function to set startDate and endDate based on range provided
     const handleSetTimeRange = (range) => {
 
@@ -1148,14 +1150,13 @@ const Orders = ({navigation}) => {
             </View>
         </FilterBottomSheet>
         {/* calnedar */}
-        <CalendarSheet 
-            closeCalendar={closeCalendar}
+        <Calendar 
             setDate={calendar.setDate}
-            disableActionButtons={true}
-            snapPointsArray={["60%"]}
             minDate={calendar.minDate}
             maxDate={calendar.maxDate}
-            calendarRef={calendarSheetRef} 
+            visible={calendar.visible} 
+            disableActionButtons={true}
+            closeCalendar={closeCalendar}
         />
     </>);
 }

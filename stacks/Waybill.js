@@ -46,7 +46,7 @@ import Header from "../components/Header";
 import FilterBottomSheet from "../components/FilterBottomSheet";
 import SelectInput from "../components/SelectInput";
 import FilterButtonGroup from "../components/FilterButtonGroup";
-import CalendarSheet from "../components/CalendarSheet";
+import Calendar from "../components/Calendar";
 import OpenFilterButton from "../components/OpenFilterButton";
 import ActionButton from "../components/ActionButton";
 
@@ -104,8 +104,6 @@ const Waybill = ({navigation}) => {
         bottomSheet,
         setFilterBottomSheet,
         setBottomSheet,
-        calendarSheetRef,
-        calendarSheetOpen,
         setToast,
     } = useGlobals();
 
@@ -1294,43 +1292,46 @@ const Waybill = ({navigation}) => {
         setDate: setStartDate,
         maxDate: false,
         minDate: false,
+        visible: false, // hide calendar by default
     });
 
+
+    // function to open calendar
     const openCalendar = (inputType) => {
-        handleFilterParameters("Period", "Custom Period", tab);
+        // set calendar parameters for start date
         if (inputType === "StartDate") {
             setActiveStartDate(true);
             setCalendar({
                 setDate: setStartDate,
-                startPoint: true,
-                maxDate: today,
+                maxDate: endDate ? moment(endDate).subtract(1, 'days') : today,
                 minDate: false,
+                visible: true,
             });
-        } else {
+        } else { // set calendar parameters for end date
             setActiveEndDate(true);
             setCalendar({
                 setDate: setEndDate,
-                startPoint: false,
                 maxDate: today,
-                minDate: startDate,
+                minDate: startDate ? moment(startDate).add(1, 'days') : startDate,
+                visible: true,
             });
         }
-        calendarSheetRef.current?.present();
     }
 
+    // close calendar
     const closeCalendar = () => {
+        // deactivate actibe sates for inputs
         setActiveEndDate(false);
         setActiveStartDate(false);
-        calendarSheetRef.current?.close();
-    }
 
-    // disable active calendar inputs
-    useEffect(() => {
-        if (!calendarSheetOpen) {
-            setActiveEndDate(false);
-            setActiveStartDate(false);
-        }
-    }, [calendarSheetOpen])
+        // hide ecalendar
+        setCalendar(prevCalendar => {
+            return {
+                ...prevCalendar,
+                visible: false,
+            }
+        })
+    }
 
     // open modal function
     const openModal = () => {
@@ -2214,14 +2215,13 @@ const Waybill = ({navigation}) => {
             </View>
         </FilterBottomSheet>
         {/* calnedar */}
-        <CalendarSheet 
-            calendarRef={calendarSheetRef} 
-            closeCalendar={closeCalendar}
-            disableActionButtons={true}
-            snapPointsArray={["60%"]}
+        <Calendar 
+            visible={calendar.visible} 
             minDate={calendar.minDate}
             maxDate={calendar.maxDate}
             setDate={calendar.setDate}
+            disableActionButtons={true}
+            closeCalendar={closeCalendar}
         />
     </>);
 }

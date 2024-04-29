@@ -22,7 +22,7 @@ import BarChart from "../components/BarChart";
 import StatWrapper from "../components/StatWrapper";
 import StatCard from "../components/StatCard";
 import LocationAnalyticsItem from "../components/LocationAnalyticsItem";
-import CalendarSheet from "../components/CalendarSheet";
+import Calendar from "../components/Calendar";
 import Avatar from "../components/Avatar";
 // icons
 import ArrowDownSmall from '../assets/icons/ArrowDownSmall';
@@ -40,7 +40,7 @@ const BusinessAnalytics = ({navigation, route}) => {
     const {business_id, business_name, banner_image, verified} = route?.params || {};
 
     // calendar sheet
-    const { calendarSheetRef } = useGlobals();
+    // const {  } = useGlobals();
 
     // bar chart data
     const data = [
@@ -152,14 +152,19 @@ const BusinessAnalytics = ({navigation, route}) => {
         },
     ];
 
+    // calendar visible state
+    const [calendarVisible, setCalendarVisible] = useState(false);
+
     // open calendar function
     const openCalendar = () => {
-        calendarSheetRef.current?.present();
+        // show calendar
+        setCalendarVisible(true);
     }
     
     // close calendar function
     const closeCalendar = () => {
-        calendarSheetRef.current?.close();
+        // hide calendar
+        setCalendarVisible(false)
     }
 
     // date selected
@@ -254,13 +259,12 @@ const BusinessAnalytics = ({navigation, route}) => {
             </ScrollView>
         ) : <LogisticsAnalyticsSkeleton />}
         {/* calendar bottomsheet*/}
-        <CalendarSheet 
-            closeCalendar={closeCalendar}
+        <Calendar 
             setDate={setDate}
-            disableActionButtons={false}
-            snapPointsArray={["70%"]}
             maxDate={new Date()}
-            calendarRef={calendarSheetRef} 
+            visible={calendarVisible}
+            disableActionButtons={false}
+            closeCalendar={closeCalendar}
         />
     </>);
 }
